@@ -1,0 +1,1 @@
+closure-library/closure/bin/build/closurebuilder.py --root=js-lib/ --root=closure-library/ --namespace="asciiflow.launch" --compiler_flags="--warning_level=VERBOSE" --compiler_flags="--formatting=PRETTY_PRINT" --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" --output_mode=compiled --compiler_jar=closure-library/compiler.jar > js-compiled.js
