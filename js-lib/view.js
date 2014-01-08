@@ -3,6 +3,8 @@
  */
 goog.provide('asciiflow.View');
 
+goog.require('asciiflow.common');
+
 /**
  * @constructor
  */
@@ -10,8 +12,7 @@ asciiflow.View = function(state) {
   /** type {Element} */ this.canvas = document.getElementById('ascii-canvas');
   /** type {Object} */ this.context = this.canvas.getContext('2d');
   /** type {number} */ this.zoom = 1;
-  /** type {number} */ this.offsetX = 0;
-  /** type {number} */ this.offsetY = 0;
+  /** type {asciiflow.common.Position} */ this.offset = new asciiflow.common.Position(0, 0);
   /** type {asciiflow.State} */ this.state = state;
   this.resizeCanvas();
 };
@@ -39,9 +40,17 @@ asciiflow.View.prototype.render = function() {
   for (var i = 0; i < this.state.cells.length; i++) {
     for (var j = 0; j < this.state.cells[i].length; j++) {
       if (this.state.cells[i][j].value != null) {
-        this.context.fillText(this.state.cells[i][j].value, i*15 - this.offsetX, j*15 - this.offsetY);
+        this.context.fillText(this.state.cells[i][j].value, i*15 - this.offset.x, j*15 - this.offset.y);
       }
     }
   }
 };
- 
+
+/**
+ * Given a screen coordinate, find the integer cell position that it relates to.
+ */
+asciiflow.View.prototype.getCell = function(x, y) {
+  
+};
+
+
