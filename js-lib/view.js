@@ -30,7 +30,6 @@ asciiflow.View.prototype.drawState = function() {
   // Clear the visible area.
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-  this.context.translate(-this.offsetX/this.zoom, -this.offsetY/this.zoom);
   this.context.scale(this.zoom, this.zoom);
   this.context.translate(this.canvas.width/2/this.zoom, this.canvas.height/2/this.zoom);
 
@@ -38,7 +37,7 @@ asciiflow.View.prototype.drawState = function() {
   for (var i = 0; i < this.state.cells.length; i++) {
     for (var j = 0; j < this.state.cells[i].length; j++) {
       if (this.state.cells[i][j].value != null) {
-        this.context.fillText(this.state.cells[i][j].value, i*15, j*15);
+        this.context.fillText(this.state.cells[i][j].value, i*15 - this.offsetX, j*15 - this.offsetY);
       }
     }
   }
