@@ -23,13 +23,11 @@ asciiflow.Controller.prototype.handlePress = function(x, y) {
 asciiflow.Controller.prototype.handleZoom = function(delta) {
   this.view.zoom *= delta > 0 ? 1.1 : 0.9;
   this.view.zoom = Math.max(Math.min(this.view.zoom, 5), 0.2);
-  this.view.drawState();
 };
 
 asciiflow.Controller.prototype.handlePan = function(deltaX, deltaY) {
   this.view.offsetX += deltaX;
   this.view.offsetY += deltaY;
-  this.view.drawState();
 };
 
 asciiflow.Controller.prototype.installDesktopBindings = function() {

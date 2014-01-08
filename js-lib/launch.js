@@ -1,7 +1,6 @@
 /**
  * Application main entry point.
  */
-
 goog.provide('asciiflow.launch');
 
 goog.require('asciiflow.Controller');
@@ -12,7 +11,7 @@ asciiflow.launch = function() {
     var state = new asciiflow.State();
     var view = new asciiflow.View(state);
     var controller = new asciiflow.Controller(view);
-    view.drawState();
+    view.animate();
 };
 
 asciiflow.launch();

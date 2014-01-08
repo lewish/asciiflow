@@ -21,11 +21,13 @@ asciiflow.View.prototype.resizeCanvas = function() {
   this.canvas.height = document.documentElement.clientHeight;
 };
 
-asciiflow.View.prototype.getContext = function() {
-  return this.context;
+asciiflow.View.prototype.animate = function() {
+  this.render();
+  var view = this;
+  window.requestAnimationFrame(function() { view.animate(); });
 };
 
-asciiflow.View.prototype.drawState = function() {
+asciiflow.View.prototype.render = function() {
   this.context.setTransform(1, 0, 0, 1, 0, 0);
   // Clear the visible area.
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
