@@ -1,17 +1,20 @@
 /**
  * Application main entry point.
  */
-goog.provide('asciiflow.launch');
+goog.provide('ascii.launch');
 
-goog.require('asciiflow.Controller');
-goog.require('asciiflow.State');
-goog.require('asciiflow.View');
+goog.require('ascii.Controller');
+goog.require('ascii.State');
+goog.require('ascii.View');
 
-asciiflow.launch = function() {
-    var state = new asciiflow.State();
-    var view = new asciiflow.View(state);
-    var controller = new asciiflow.Controller(view);
+/**
+ * @private
+ */
+ascii.launch = function() {
+    var state = new ascii.State();
+    var view = new ascii.View(state);
+    var controller = new ascii.Controller(view);
     view.animate();
 };
 
-asciiflow.launch();
+ascii.launch();

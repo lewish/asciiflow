@@ -1,31 +1,31 @@
 /**
  * Classes holding the state of the ascii-diagram.
  */
-goog.provide('asciiflow.State');
+goog.provide('ascii.State');
 
 /**
  * @constructor
  */
-asciiflow.Cell = function() {
+ascii.Cell = function() {
   /** @type {string|null} */ // Uses the string "#" for lines.
   this.value = null;
 };
 
-asciiflow.Cell.prototype.setValue = function(value) {
+ascii.Cell.prototype.setValue = function(value) {
   this.value = value;
 };
 
 /**
  * @constructor
  */
-asciiflow.State = function() {
-  /** @type {Array.<Array.<asciiflow.Cell>>} */
-  this.cells = new Array(asciiflow.State.MAX_SIZE);
+ascii.State = function() {
+  /** @type {Array.<Array.<ascii.Cell>>} */
+  this.cells = new Array(ascii.State.MAX_SIZE);
 
   for (var i = 0; i < this.cells.length; i++) {
-    this.cells[i] = new Array(asciiflow.State.MAX_SIZE);
+    this.cells[i] = new Array(ascii.State.MAX_SIZE);
     for (var j = 0; j < this.cells[i].length; j++) {
-      this.cells[i][j] = new asciiflow.Cell();
+      this.cells[i][j] = new ascii.Cell();
       // Hack: Just fill image with random stuff for now.
       if ((i % 10 == 0) && (j % 10 == 0)) {
         var jstr = ("" + j);
@@ -35,7 +35,7 @@ asciiflow.State = function() {
   }
 };
 
-/** @const */ asciiflow.State.MAX_SIZE = 1000;
+/** @const */ ascii.State.MAX_SIZE = 1000;
 
-asciiflow.State.prototype.blah = function() {
+ascii.State.prototype.blah = function() {
 };

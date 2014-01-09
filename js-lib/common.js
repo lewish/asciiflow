@@ -1,12 +1,23 @@
 /**
  * Common classes.
  */
-goog.provide('asciiflow.common');
+goog.provide('ascii.Position');
 
 /**
  * @constructor
  */
-asciiflow.common.Position = function(x, y) {
+ascii.Position = function(x, y) {
   /** type {Number} */ this.x = x;
   /** type {Number} */ this.y = y;
 };
+
+goog.provide('ascii.Blah');
+
+/**
+ * @constructor
+ */
+ascii.Blah = function(x, y) {
+  /** type {Number} */ this.x = x;
+  /** type {Number} */ this.y = y;
+};
+

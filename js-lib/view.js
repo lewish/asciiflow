@@ -1,34 +1,34 @@
 /**
  * Functions relating to view operations and management of the screen.
  */
-goog.provide('asciiflow.View');
+goog.provide('ascii.View');
 
-goog.require('asciiflow.common');
+goog.require('ascii.Position');
 
 /**
  * @constructor
  */
-asciiflow.View = function(state) {
+ascii.View = function(state) {
   /** type {Element} */ this.canvas = document.getElementById('ascii-canvas');
   /** type {Object} */ this.context = this.canvas.getContext('2d');
   /** type {number} */ this.zoom = 1;
-  /** type {asciiflow.common.Position} */ this.offset = new asciiflow.common.Position(0, 0);
-  /** type {asciiflow.State} */ this.state = state;
+  /** type {ascii.Position} */ this.offset = new ascii.Position(0, 0);
+  /** type {ascii.State} */ this.state = state;
   this.resizeCanvas();
 };
 
-asciiflow.View.prototype.resizeCanvas = function() {
+ascii.View.prototype.resizeCanvas = function() {
   this.canvas.width = document.documentElement.clientWidth;
   this.canvas.height = document.documentElement.clientHeight;
 };
 
-asciiflow.View.prototype.animate = function() {
+ascii.View.prototype.animate = function() {
   this.render();
   var view = this;
   window.requestAnimationFrame(function() { view.animate(); });
 };
 
-asciiflow.View.prototype.render = function() {
+ascii.View.prototype.render = function() {
   this.context.setTransform(1, 0, 0, 1, 0, 0);
   // Clear the visible area.
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -49,7 +49,7 @@ asciiflow.View.prototype.render = function() {
 /**
  * Given a screen coordinate, find the integer cell position that it relates to.
  */
-asciiflow.View.prototype.getCell = function(x, y) {
+ascii.View.prototype.getCell = function(x, y) {
   
 };
 
