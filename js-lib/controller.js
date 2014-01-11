@@ -7,7 +7,7 @@ goog.require('ascii.StateController');
 goog.require('ascii.Vector');
 goog.require('ascii.View');
 
-/** @const */ var DRAG_LATENCY = 100; // Milliseconds.
+/** @const */ var DRAG_LATENCY = 150; // Milliseconds.
 /** @const */ var DRAG_ACCURACY = 0.1; // Pixels.
 
 /**
@@ -24,7 +24,6 @@ ascii.Controller = function(view, state) {
   /** @type {ascii.Vector} */ this.pressVector;
   /** @type {number} */ this.pressTimestamp;
 
-  // TODO: Setup different bindings for tablet/mobile.
   this.installDesktopBindings();
   this.installTouchBindings();
 };
@@ -93,7 +92,6 @@ ascii.Controller.prototype.handleZoom = function(delta) {
 ascii.Controller.prototype.installDesktopBindings = function() {
   var controller = this;
   $(this.view.canvas).bind('mousewheel', function(e) {
-      
       controller.handleZoom(e.originalEvent.wheelDelta);
   });
   $(this.view.canvas).mousedown(function(e) {
@@ -111,21 +109,21 @@ ascii.Controller.prototype.installDesktopBindings = function() {
 ascii.Controller.prototype.installTouchBindings = function() {
   var controller = this;
   $(this.view.canvas).bind("touchstart", function(e) {
-      e.stopPropagation();
+      e.preventDefault();
       controller.handlePress(
-         e.originalEvent.touches[0].clientX,
-         e.originalEvent.touches[0].clientY);
+         e.originalEvent.touches[0].pageX,
+         e.originalEvent.touches[0].pageY);
   });
   $(this.view.canvas).bind("touchend", function(e) {
-      e.stopPropagation();
+      e.preventDefault();
       controller.handleRelease(
-         e.originalEvent.touches[0].clientX,
-         e.originalEvent.touches[0].clientY);
+         e.originalEvent.touches[0].pageX,
+         e.originalEvent.touches[0].pageY);
   });
   $(this.view.canvas).bind("touchmove", function(e) {
-      e.stopPropagation();
+      e.preventDefault();
       controller.handleMove(
-         e.originalEvent.touches[0].clientX,
-         e.originalEvent.touches[0].clientY);
+         e.originalEvent.touches[0].pageX,
+         e.originalEvent.touches[0].pageY);
   });
 };
