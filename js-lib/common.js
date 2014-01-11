@@ -31,3 +31,9 @@ ascii.Vector.prototype.add = function(other) {
 ascii.Vector.prototype.length = function() {
   return Math.sqrt(this.x * this.x + this.y * this.y);
 };
+
+/** @return {ascii.Vector} */
+ascii.Vector.prototype.scale = function(scale) {
+  return new ascii.Vector(this.x * scale, this.y * scale);
+};
+

@@ -7,6 +7,9 @@ goog.provide('ascii.Controller');
 goog.require('ascii.Vector');
 goog.require('ascii.View');
 
+/** @const */ var DRAG_LATENCY = 200; // Milliseconds.
+/** @const */ var DRAG_ACCURACY = 5; // Pixels.
+
 /**
  * @constructor
  */
@@ -14,32 +17,56 @@ ascii.Controller = function(view, state) {
   /** @type {ascii.View} */ this.view = view;
   /** @type {ascii.State} */ this.state = state;
 
+  /** @type {ascii.Vector} */ this.dragOrigin;
   /** @type {ascii.Vector} */ this.pressVector;
+  /** @type {number} */ this.pressTimestamp;
 
   this.installDesktopBindings();
 };
 
 ascii.Controller.prototype.handlePress = function(x, y) {
   this.pressVector = new ascii.Vector(x, y);
+  this.pressTimestamp = $.now();
 };
 
 ascii.Controller.prototype.handleMove = function(x, y) {
-  if (this.pressVector != null) {
-    // Drag has started.
-    this.view.offset.x -= (x - this.pressVector.x)/this.view.zoom;
-    this.view.offset.y -= (y - this.pressVector.y)/this.view.zoom;
-    this.pressVector = new ascii.Vector(x, y);
+  var position = new ascii.Vector(x, y);
+
+  if (this.pressVector == null) { return; } // No clicks, so just ignore.
+
+  // Initiate a drag if we have moved enough, quickly enough.
+  if (this.dragOrigin == null &&
+      ($.now() - this.pressTimestamp) < DRAG_LATENCY &&
+      position.subtract(this.pressVector).length() > DRAG_ACCURACY) {
+      this.dragOrigin = this.view.offset;
+  }
+
+  // Drag in progress, update the view origin.
+  if (this.dragOrigin != null) {
+    this.view.offset = this.dragOrigin.add(
+        this.pressVector
+            .subtract(new ascii.Vector(x, y))
+            .scale(1/this.view.zoom));
+  }
+
+  // Drag wasn't initiated in time, treat this as a drawing event.
+  if (this.dragOrigin == null && ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
+    // TODO: Draw stuff.
+    this.state.getCell(this.view.screenToCell(position)).value = 'O';
   }
 };
 
 ascii.Controller.prototype.handleRelease = function(x, y) {
   var position = new ascii.Vector(x, y);
-  if (this.pressVector.equals(position)) {
-    // We should handle this as a 'click' as there was no dragging involved.
-    // Hand off to the state controller, as this will initiate a modification of the diagram itself.
-    this.state.getCell(this.view.screenToFrame(position)).value = 'P';
+  // Drag wasn't initiated in time, treat this as a drawing event.
+  if (this.dragOrigin == null &&
+      ($.now() - this.pressTimestamp) >= DRAG_LATENCY &&
+      position.subtract(this.pressVector).length() > DRAG_ACCURACY) {
+    // TODO: Draw stuff.
   }
   this.pressVector = null;
+  this.pressTimestamp = 0;
+  this.dragOrigin = null;
 };
 
 ascii.Controller.prototype.handleZoom = function(delta) {
@@ -62,4 +89,5 @@ ascii.Controller.prototype.installDesktopBindings = function() {
   $(this.view.canvas).mousemove(function(e) {
       controller.handleMove(e.clientX, e.clientY);
   });
+  $(window).resize(function(e) { controller.view.resizeCanvas() });
 };

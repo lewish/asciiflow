@@ -32,10 +32,6 @@ ascii.State = function() {
   }
 };
 
-/**
- * @param {ascii.Vector} vector
- * @return {ascii.Cell}
- */
 ascii.State.prototype.getCell = function(vector) {
-  return this.cells[Math.round((vector.x-7.5)/15)][Math.round((vector.y+7.5)/15)];
+  return this.cells[vector.x][vector.y];
 };
