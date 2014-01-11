@@ -26,6 +26,7 @@ ascii.Controller = function(view, state) {
 
   // TODO: Setup different bindings for tablet/mobile.
   this.installDesktopBindings();
+  this.installTouchBindings();
 };
 
 ascii.Controller.prototype.handlePress = function(x, y) {
@@ -92,6 +93,7 @@ ascii.Controller.prototype.handleZoom = function(delta) {
 ascii.Controller.prototype.installDesktopBindings = function() {
   var controller = this;
   $(this.view.canvas).bind('mousewheel', function(e) {
+      
       controller.handleZoom(e.originalEvent.wheelDelta);
   });
   $(this.view.canvas).mousedown(function(e) {
@@ -104,4 +106,26 @@ ascii.Controller.prototype.installDesktopBindings = function() {
       controller.handleMove(e.clientX, e.clientY);
   });
   $(window).resize(function(e) { controller.view.resizeCanvas() });
+};
+
+ascii.Controller.prototype.installTouchBindings = function() {
+  var controller = this;
+  $(this.view.canvas).bind("touchstart", function(e) {
+      e.stopPropagation();
+      controller.handlePress(
+         e.originalEvent.touches[0].clientX,
+         e.originalEvent.touches[0].clientY);
+  });
+  $(this.view.canvas).bind("touchend", function(e) {
+      e.stopPropagation();
+      controller.handleRelease(
+         e.originalEvent.touches[0].clientX,
+         e.originalEvent.touches[0].clientY);
+  });
+  $(this.view.canvas).bind("touchmove", function(e) {
+      e.stopPropagation();
+      controller.handleMove(
+         e.originalEvent.touches[0].clientX,
+         e.originalEvent.touches[0].clientY);
+  });
 };
