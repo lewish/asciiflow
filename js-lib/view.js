@@ -2,7 +2,7 @@ goog.provide('ascii.View');
 
 goog.require('ascii.Vector');
 
-/** @const */ ascii.CHARACTER_PIXELS = 15;
+/** @const */ var CHARACTER_PIXELS = 15;
 
 
 /**
@@ -51,19 +51,19 @@ ascii.View.prototype.render = function() {
   this.context.beginPath();
   for (var i = 0; i < this.state.cells.length; i++) {
     this.context.moveTo(
-        i*ascii.CHARACTER_PIXELS - this.offset.x,
+        i*CHARACTER_PIXELS - this.offset.x,
         0 - this.offset.y);
     this.context.lineTo(
-        i*ascii.CHARACTER_PIXELS - this.offset.x,
-        ascii.MAX_GRID_SIZE*ascii.CHARACTER_PIXELS - this.offset.y);
+        i*CHARACTER_PIXELS - this.offset.x,
+        this.state.cells.length*CHARACTER_PIXELS - this.offset.y);
   }
   for (var j = 0; j < this.state.cells[0].length; j++) {
     this.context.moveTo(
         0 - this.offset.x,
-        j*ascii.CHARACTER_PIXELS - this.offset.y);
+        j*CHARACTER_PIXELS - this.offset.y);
     this.context.lineTo(
-        ascii.MAX_GRID_SIZE*ascii.CHARACTER_PIXELS - this.offset.x,
-        j*ascii.CHARACTER_PIXELS - this.offset.y);
+        this.state.cells.length*CHARACTER_PIXELS - this.offset.x,
+        j*CHARACTER_PIXELS - this.offset.y);
   }
   this.context.stroke();
 
@@ -73,8 +73,8 @@ ascii.View.prototype.render = function() {
     for (var j = 0; j < this.state.cells[i].length; j++) {
       if (this.state.cells[i][j].value != null) {
         this.context.fillText(this.state.cells[i][j].value,
-            i*ascii.CHARACTER_PIXELS - this.offset.x + 3,
-            j*ascii.CHARACTER_PIXELS - this.offset.y - 2);
+            i*CHARACTER_PIXELS - this.offset.x + 3,
+            j*CHARACTER_PIXELS - this.offset.y - 2);
       }
     }
   }
@@ -108,7 +108,9 @@ ascii.View.prototype.frameToScreen = function(vector) {
  * @return {ascii.Vector}
  */
 ascii.View.prototype.frameToCell = function(vector) {
-  return new ascii.Vector(Math.round((vector.x-7.5)/15), Math.round((vector.y+7.5)/15));
+  return new ascii.Vector(
+    Math.round((vector.x-CHARACTER_PIXELS/2)/CHARACTER_PIXELS),
+    Math.round((vector.y+CHARACTER_PIXELS/2)/CHARACTER_PIXELS));
 };
 
 /**
