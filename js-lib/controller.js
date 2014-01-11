@@ -4,40 +4,42 @@
  */
 goog.provide('ascii.Controller');
 
-goog.require('ascii.Position');
+goog.require('ascii.Vector');
 goog.require('ascii.View');
 
 /**
  * @constructor
  */
-ascii.Controller = function(view) {
-  /** type {ascii.View} */ this.view = view;
-  /** type {ascii.StateControler */ this.stateController;
-  /** type {ascii.Position} */ this.pressPosition;
+ascii.Controller = function(view, state) {
+  /** @type {ascii.View} */ this.view = view;
+  /** @type {ascii.State} */ this.state = state;
+
+  /** @type {ascii.Vector} */ this.pressVector;
 
   this.installDesktopBindings();
 };
 
 ascii.Controller.prototype.handlePress = function(x, y) {
-  this.pressPosition = new ascii.Position(x, y);
+  this.pressVector = new ascii.Vector(x, y);
 };
 
 ascii.Controller.prototype.handleMove = function(x, y) {
-  if (this.clickPosition) {
+  if (this.pressVector != null) {
     // Drag has started.
-    this.view.offset.x -= (x - this.pressPosition.x)/this.view.zoom;
-    this.view.offset.y -= (y - this.pressPosition.y)/this.view.zoom;
-    this.clickPosition = new ascii.Position(x, y);
+    this.view.offset.x -= (x - this.pressVector.x)/this.view.zoom;
+    this.view.offset.y -= (y - this.pressVector.y)/this.view.zoom;
+    this.pressVector = new ascii.Vector(x, y);
   }
 };
 
 ascii.Controller.prototype.handleRelease = function(x, y) {
-  if (this.pressPosition.equals(new ascii.Position(x, y))) {
+  var position = new ascii.Vector(x, y);
+  if (this.pressVector.equals(position)) {
     // We should handle this as a 'click' as there was no dragging involved.
     // Hand off to the state controller, as this will initiate a modification of the diagram itself.
-    // TODO: Work out how to pass off work into state-controller.
+    this.state.getCell(this.view.screenToFrame(position)).value = 'P';
   }
-  this.pressPosition = null;
+  this.pressVector = null;
 };
 
 ascii.Controller.prototype.handleZoom = function(delta) {

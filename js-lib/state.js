@@ -3,6 +3,8 @@
  */
 goog.provide('ascii.State');
 
+/** @const */ ascii.MAX_GRID_SIZE = 1000;
+
 /**
  * @constructor
  */
@@ -20,22 +22,20 @@ ascii.Cell.prototype.setValue = function(value) {
  */
 ascii.State = function() {
   /** @type {Array.<Array.<ascii.Cell>>} */
-  this.cells = new Array(ascii.State.MAX_SIZE);
+  this.cells = new Array(ascii.MAX_GRID_SIZE);
 
   for (var i = 0; i < this.cells.length; i++) {
-    this.cells[i] = new Array(ascii.State.MAX_SIZE);
+    this.cells[i] = new Array(ascii.MAX_GRID_SIZE);
     for (var j = 0; j < this.cells[i].length; j++) {
       this.cells[i][j] = new ascii.Cell();
-      // Hack: Just fill image with random stuff for now.
-      if ((i % 10 == 0) && (j % 10 == 0)) {
-        var jstr = ("" + j);
-        this.cells[i][j].setValue(jstr.substring(jstr.length-1,jstr.length));
-      }
     }
   }
 };
 
-/** @const */ ascii.State.MAX_SIZE = 1000;
-
-ascii.State.prototype.blah = function() {
+/**
+ * @param {ascii.Vector} vector
+ * @return {ascii.Cell}
+ */
+ascii.State.prototype.getCell = function(vector) {
+  return this.cells[Math.round((vector.x-7.5)/15)][Math.round((vector.y+7.5)/15)];
 };
