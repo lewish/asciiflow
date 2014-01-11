@@ -67,9 +67,13 @@ function l(a) {
   a.c = $.now();
   window.setTimeout(function() {
     null == this.a && (this.d.state.cells[l(k(this.view, e)).x][l(k(this.view, e)).y].value = "O");
-  }.bind(a), 100);
+  }.bind(a), 150);
 }
-function p(a) {
+function p(a, b, c) {
+  var e = new d(b, c);
+  null != a.b && (null == a.a && 150 > $.now() - a.c && 0.1 < (new d(e.x - a.b.x, e.y - a.b.y)).length() && (a.a = a.view.offset), null == a.a && 150 <= $.now() - a.c && (a.d.state.cells[l(k(a.view, e)).x][l(k(a.view, e)).y].value = "O"), null != a.a && (e = a.b, b = new d(b, c), a.view.offset = a.a.add((new d(e.x - b.x, e.y - b.y)).scale(1 / a.view.zoom))));
+}
+function q(a) {
   $(a.view.canvas).bind("mousewheel", function(b) {
     a.view.zoom *= 0 < b.originalEvent.wheelDelta ? 1.1 : 0.9;
     a.view.zoom = Math.max(Math.min(a.view.zoom, 5), 0.2);
@@ -83,32 +87,46 @@ function p(a) {
     a.a = null;
   });
   $(a.view.canvas).mousemove(function(b) {
-    var c = b.clientX;
-    b = b.clientY;
-    var e = new d(c, b);
-    null != a.b && (null == a.a && 100 > $.now() - a.c && 0.1 < (new d(e.x - a.b.x, e.y - a.b.y)).length() && (a.a = a.view.offset), null == a.a && 100 <= $.now() - a.c && (a.d.state.cells[l(k(a.view, e)).x][l(k(a.view, e)).y].value = "O"), null != a.a && (e = a.b, c = new d(c, b), a.view.offset = a.a.add((new d(e.x - c.x, e.y - c.y)).scale(1 / a.view.zoom))));
+    p(a, b.clientX, b.clientY);
   });
   $(window).resize(function() {
     g(a.view);
   });
 }
-;function q() {
+function r(a) {
+  $(a.view.canvas).bind("touchstart", function(b) {
+    b.preventDefault();
+    n(a, b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY);
+  });
+  $(a.view.canvas).bind("touchend", function(b) {
+    b.preventDefault();
+    a.b = null;
+    a.c = 0;
+    a.a = null;
+  });
+  $(a.view.canvas).bind("touchmove", function(b) {
+    b.preventDefault();
+    p(a, b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY);
+  });
+}
+;function s() {
   this.value = null;
 }
-;var r = new function() {
+;var t = new function() {
   this.cells = Array(1E3);
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(1E3);
     for (var b = 0;b < this.cells[a].length;b++) {
-      this.cells[a][b] = new q;
+      this.cells[a][b] = new s;
     }
   }
-}, s = new f(r);
+}, u = new f(t);
 new function(a, b) {
   this.view = a;
   this.state = b;
   this.d = new m(b);
-  p(this);
-}(s, r);
-s.animate();
+  q(this);
+  r(this);
+}(u, t);
+u.animate();
 
