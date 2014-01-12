@@ -1,18 +1,16 @@
-Follow the following to get asciiflow running locally.
+Follow the instructions to get asciiflow running locally.
 
-Clone closure-library at the same level as asciiflow2:
+Compile the javascript:
+~/asciiflow2$ ./compile.sh
 
-$git clone https://code.google.com/p/closure-library/
-
-Update compile.sh script if neccessary and run it:
-$./compile.sh
-
-This may require chmod a+x on some files.
+If you get a permissions error:
+~/asciiflow2$ chmod a+x closure-compiler.jar
 
 Run a simple web server:
-$python -m SimpleHttpServer
+~/asciiflow2$python -m SimpleHttpServer
 
-Goto localhost:8000/root.html
+Goto: http://localhost:8000/root.html
 
+When developing, use the Google JS linter, gjslint.
 
-
+Adding new source files will require a change to compile.sh.

@@ -1,1 +1,11 @@
-../closure-library/closure/bin/build/closurebuilder.py --root=../closure-library/ --root=js-lib/ --namespace="ascii.launch" --compiler_flags="--warning_level=VERBOSE" --compiler_flags="--formatting=PRETTY_PRINT" --compiler_flags="--language_in=ECMASCRIPT5" --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" --compiler_flags="--externs=jquery-1.9-externs.js" --output_mode=compiled --compiler_jar=closure-compiler.jar > js-compiled.js && cp js-compiled.js js-compiled.js~
+java -client -jar closure-compiler.jar \
+  --js js-lib/common.js \
+  --js js-lib/view.js \
+  --js js-lib/state-controller.js \
+  --js js-lib/controller.js \
+  --js js-lib/state.js \
+  --js js-lib/launch.js \
+  --warning_level=VERBOSE --formatting=PRETTY_PRINT --language_in=ECMASCRIPT5 --compilation_level=ADVANCED_OPTIMIZATIONS \
+  --externs=jquery-1.9-externs.js \
+  > js-compiled.js \
+&& cp js-compiled.js js-compiled.js~
