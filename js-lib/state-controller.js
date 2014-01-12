@@ -18,7 +18,7 @@ ascii.StateController = function(state) {
  * @param {ascii.Vector} position
  */
 ascii.StateController.prototype.handleDrawingPress = function(position) {
-  this.state.getCell(position).value = 'O';
+  this.state.setValue(position, 'O');
 };
 
 /**
@@ -33,5 +33,5 @@ ascii.StateController.prototype.handleDrawingRelease = function(position) {
  * @param {ascii.Vector} position
  */
 ascii.StateController.prototype.handleDrawingMove = function(position) {
-  this.state.getCell(position).value = 'O';
+  this.state.setValue(position, 'O');
 };

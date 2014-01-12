@@ -68,10 +68,10 @@ ascii.Controller.prototype.handleMove = function(position) {
 
   // Drag in progress, update the view origin.
   if (this.dragOrigin != null) {
-    this.view.offset = this.dragOrigin.add(
+    this.view.setOffset(this.dragOrigin.add(
         this.pressVector
             .subtract(position)
-            .scale(1 / this.view.zoom));
+            .scale(1 / this.view.zoom)));
   }
 };
 
@@ -93,8 +93,9 @@ ascii.Controller.prototype.handleRelease = function(position) {
  * @param {number} delta
  */
 ascii.Controller.prototype.handleZoom = function(delta) {
-  this.view.zoom *= delta > 0 ? 1.1 : 0.9;
-  this.view.zoom = Math.max(Math.min(this.view.zoom, 5), 0.2);
+  var newzoom = this.view.zoom * (delta > 0 ? 1.1 : 0.9);
+  newzoom = Math.max(Math.min(newzoom, 5), 0.2);
+  this.view.setZoom(newzoom);
 };
 
 /**

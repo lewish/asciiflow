@@ -12,11 +12,15 @@ goog.require('ascii.Vector');
  * @param {ascii.State} state
  */
 ascii.View = function(state) {
+  /** @type {ascii.State} */ this.state = state;
+
   /** @type {Element} */ this.canvas = document.getElementById('ascii-canvas');
   /** @type {Object} */ this.context = this.canvas.getContext('2d');
+
   /** @type {number} */ this.zoom = 1;
   /** @type {ascii.Vector} */ this.offset = new ascii.Vector(7500, 7500);
-  /** @type {ascii.State} */ this.state = state;
+  /** @type {boolean} */ this.dirty = true;
+
   this.resizeCanvas();
 };
 
@@ -26,14 +30,18 @@ ascii.View = function(state) {
 ascii.View.prototype.resizeCanvas = function() {
   this.canvas.width = document.documentElement.clientWidth;
   this.canvas.height = document.documentElement.clientHeight;
+  this.dirty = true;
 };
 
 /**
  * Starts the animation loop for the canvas. Should only be called once.
  */
 ascii.View.prototype.animate = function() {
-  // TODO: Only render incrementally.
-  this.render();
+  if (this.dirty || this.state.dirty) {
+    this.dirty = false;
+    this.state.dirty = false;
+    this.render();
+  }
   var view = this;
   window.requestAnimationFrame(function() { view.animate(); });
 };
@@ -94,6 +102,22 @@ ascii.View.prototype.render = function() {
       }
     }
   }
+};
+
+/**
+ * @param {number} zoom
+ */
+ascii.View.prototype.setZoom = function(zoom) {
+  this.zoom = zoom;
+  this.dirty = true;
+};
+
+/**
+ * @param {ascii.Vector} offset
+ */
+ascii.View.prototype.setOffset = function(offset) {
+  this.offset = offset;
+  this.dirty = true;
 };
 
 /**

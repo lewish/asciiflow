@@ -12,15 +12,6 @@ ascii.Cell = function() {
 };
 
 /**
- * Sets the cells value.
- *
- * @param {string} value
- */
-ascii.Cell.prototype.setValue = function(value) {
-  this.value = value;
-};
-
-/**
  * Holds the entire state of the diagram as a 2D array of cells.
  *
  * @constructor
@@ -28,6 +19,7 @@ ascii.Cell.prototype.setValue = function(value) {
 ascii.State = function() {
   /** @type {Array.<Array.<ascii.Cell>>} */
   this.cells = new Array(MAX_GRID_SIZE);
+  /** @type {boolean} */ this.dirty = true;
 
   for (var i = 0; i < this.cells.length; i++) {
     this.cells[i] = new Array(MAX_GRID_SIZE);
@@ -45,4 +37,15 @@ ascii.State = function() {
  */
 ascii.State.prototype.getCell = function(vector) {
   return this.cells[vector.x][vector.y];
+};
+
+/**
+ * Sets the cells value at the given position.
+ *
+ * @param {ascii.Vector} position
+ * @param {string} value
+ */
+ascii.State.prototype.setValue = function(position, value) {
+  this.getCell(position).value = value;
+  this.dirty = true;
 };
