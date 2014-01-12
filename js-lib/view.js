@@ -3,6 +3,7 @@ goog.provide('ascii.View');
 goog.require('ascii.Vector');
 
 /** @const */ var CHARACTER_PIXELS = 15;
+/** @const */ var RENDER_PADDING = 20;
 
 
 /**
@@ -36,32 +37,40 @@ ascii.View.prototype.animate = function() {
  * Renders the given state to the canvas.
  */
 ascii.View.prototype.render = function() {
-  this.context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = this.context;
+
+  context.setTransform(1, 0, 0, 1, 0, 0);
   // Clear the visible area.
-  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-  this.context.scale(this.zoom, this.zoom);
-  this.context.translate(this.canvas.width/2/this.zoom, this.canvas.height/2/this.zoom);
+  context.scale(this.zoom, this.zoom);
+  context.translate(this.canvas.width/2/this.zoom, this.canvas.height/2/this.zoom);
 
-  // TODO: Only render grid lines and cells that are visible.
+  // Only render grid lines and cells that are visible.
+  var startOffset = this.screenToCell(new ascii.Vector(
+      -RENDER_PADDING,
+      -RENDER_PADDING));
+  var endOffset = this.screenToCell(new ascii.Vector(
+      this.canvas.width + RENDER_PADDING,
+      this.canvas.height + RENDER_PADDING));
 
   // Render the grid.
-  this.context.lineWidth="1";
-  this.context.strokeStyle="#EEEEEE";
-  this.context.beginPath();
-  for (var i = 0; i < this.state.cells.length; i++) {
-    this.context.moveTo(
+  context.lineWidth="1";
+  context.strokeStyle="#EEEEEE";
+  context.beginPath();
+  for (var i = startOffset.x; i < endOffset.x; i++) {
+    context.moveTo(
         i*CHARACTER_PIXELS - this.offset.x,
         0 - this.offset.y);
-    this.context.lineTo(
+    context.lineTo(
         i*CHARACTER_PIXELS - this.offset.x,
         this.state.cells.length*CHARACTER_PIXELS - this.offset.y);
   }
-  for (var j = 0; j < this.state.cells[0].length; j++) {
-    this.context.moveTo(
+  for (var j = startOffset.y; j < endOffset.y; j++) {
+    context.moveTo(
         0 - this.offset.x,
         j*CHARACTER_PIXELS - this.offset.y);
-    this.context.lineTo(
+    context.lineTo(
         this.state.cells.length*CHARACTER_PIXELS - this.offset.x,
         j*CHARACTER_PIXELS - this.offset.y);
   }
@@ -69,10 +78,10 @@ ascii.View.prototype.render = function() {
 
   // Render cells.
   this.context.font = '15px Courier New';
-  for (var i = 0; i < this.state.cells.length; i++) {
-    for (var j = 0; j < this.state.cells[i].length; j++) {
+  for (var i = startOffset.x; i < endOffset.x; i++) {
+    for (var j = startOffset.y; j < endOffset.y; j++) {
       if (this.state.cells[i][j].value != null) {
-        this.context.fillText(this.state.cells[i][j].value,
+        context.fillText(this.state.cells[i][j].value,
             i*CHARACTER_PIXELS - this.offset.x + 3,
             j*CHARACTER_PIXELS - this.offset.y - 2);
       }
