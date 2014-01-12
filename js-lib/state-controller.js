@@ -67,6 +67,55 @@ DrawBox.prototype.draw = function() {
  * @implements {DrawFunction}
  * @param {ascii.State} state
  */
+function DrawLine(state) {
+  this.state = state;
+  /** @type {ascii.Vector} */ this.startPosition = null;
+  /** @type {ascii.Vector} */ this.endPosition = null;
+}
+
+DrawLine.prototype.start = function(position) {
+  this.startPosition = position;
+  this.endPosition = position;
+  this.draw();
+};
+DrawLine.prototype.move = function(position) {
+  this.endPosition = position;
+  this.state.clearDraw();
+  this.draw();
+};
+DrawLine.prototype.end = function(position) {
+  this.state.commitDraw();
+};
+
+/** Draws the currently dragged out line. */
+DrawLine.prototype.draw = function() {
+  // TODO: Infer line direction.
+  var isClockwise = true;
+
+  var hX1 = Math.min(this.startPosition.x, this.endPosition.x);
+  var vY1 = Math.min(this.startPosition.y, this.endPosition.y);
+  var hX2 = Math.max(this.startPosition.x, this.endPosition.x);
+  var vY2 = Math.max(this.startPosition.y, this.endPosition.y);
+
+  var hY = isClockwise ? this.startPosition.y : this.endPosition.y;
+  var vX = isClockwise ? this.endPosition.x : this.startPosition.x;
+
+  while (hX1++ < hX2) {
+    this.state.drawValue(new ascii.Vector(hX1, hY), '\u2014');
+  }
+  while (vY1++ < vY2) {
+    this.state.drawValue(new ascii.Vector(vX, vY1), '|');
+  }
+  this.state.drawValue(new ascii.Vector(this.startPosition.x, this.startPosition.y), '+');
+  this.state.drawValue(new ascii.Vector(this.endPosition.x, this.endPosition.y), '+');
+  this.state.drawValue(new ascii.Vector(vX, hY), '+');
+};
+
+/**
+ * @constructor
+ * @implements {DrawFunction}
+ * @param {ascii.State} state
+ */
 function DrawFreeform(state) {
   this.state = state;
 }
@@ -92,6 +141,18 @@ DrawFreeform.prototype.end = function(position) {
 ascii.StateController = function(state) {
   /** @type {ascii.State} */ this.state = state;
   /** @type {DrawFunction} */ this.drawFunction = new DrawBox(state);
+
+  $('#box-button').click(function(e) {
+    this.drawFunction = new DrawBox(state);
+  }.bind(this));
+
+  $('#line-button').click(function(e) {
+    this.drawFunction = new DrawLine(state);
+  }.bind(this));
+
+  $('#freeform-button').click(function(e) {
+    this.drawFunction = new DrawFreeform(state);
+  }.bind(this));
 };
 
 /**

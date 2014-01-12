@@ -27,8 +27,7 @@ ascii.Controller = function(view, state) {
   /** @type {ascii.Vector} */ this.lastMoveCell;
   /** @type {number} */ this.pressTimestamp;
 
-  this.installDesktopBindings();
-  this.installTouchBindings();
+  this.installBindings();
 };
 
 /**
@@ -40,7 +39,7 @@ ascii.Controller.prototype.handlePress = function(position) {
 
   // Check to see if a drag happened in the given allowed time.
   window.setTimeout(function() {
-    if (this.dragOrigin == null) {
+    if (this.dragOrigin == null && this.pressVector != null) {
       this.stateController.handleDrawingPress(this.view.screenToCell(position));
       this.view.dirty = true;
     }
@@ -110,43 +109,45 @@ ascii.Controller.prototype.handleZoom = function(delta) {
 /**
  * Installs input bindings for desktop devices.
  */
-ascii.Controller.prototype.installDesktopBindings = function() {
+ascii.Controller.prototype.installBindings = function() {
   var controller = this;
+
   $(this.view.canvas).bind('mousewheel', function(e) {
       controller.handleZoom(e.originalEvent.wheelDelta);
   });
+
   $(this.view.canvas).mousedown(function(e) {
       controller.handlePress(new ascii.Vector(e.clientX, e.clientY));
   });
+
   $(this.view.canvas).mouseup(function(e) {
       controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
   });
+
   $(this.view.canvas).mouseleave(function(e) {
       controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
   });
+
   $(this.view.canvas).mousemove(function(e) {
       controller.handleMove(new ascii.Vector(e.clientX, e.clientY));
   });
-  $(window).resize(function(e) { controller.view.resizeCanvas() });
-};
 
-/**
- * Installs input bindings for touch devices.
- */
-ascii.Controller.prototype.installTouchBindings = function() {
-  var controller = this;
+  $(window).resize(function(e) { controller.view.resizeCanvas() });
+
   $(this.view.canvas).bind('touchstart', function(e) {
       e.preventDefault();
       controller.handlePress(new ascii.Vector(
          e.originalEvent.touches[0].pageX,
          e.originalEvent.touches[0].pageY));
   });
+
   $(this.view.canvas).bind('touchend', function(e) {
       e.preventDefault();
       // TODO: This works for now as we don't use a touchend position anywhere.
       //       Need to track last position from touchmove and use it here.
       controller.handleRelease(new ascii.Vector(0, 0));
   });
+
   $(this.view.canvas).bind('touchmove', function(e) {
       e.preventDefault();
       controller.handleMove(new ascii.Vector(

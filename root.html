@@ -4,9 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 <title>asciiflow-2.0</title>
+<style>
+#menu {
+  margin-left: auto;
+  margin-right: auto;
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  right: 0px;
+  z-index: 100;
+  width: 300px;
+  background: #EEE;
+  text-align: center;
+}
+
+button {
+  width: 97px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#ascii-canvas {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  cursor: crosshair;
+};
+</style>
 </head>
 <body>
-<canvas id="ascii-canvas" style="position:absolute; left:0px; top:0px;"></canvas>
+<div id="menu">
+  <button id="box-button">Box</button>
+  <button id="line-button">Line</button>
+  <button id="freeform-button">Freeform</button>
+</div>
+<canvas id="ascii-canvas"></canvas>
 <script src="jquery-1.9.1.min.js"></script>
 <script src="js-compiled.js"></script>
 </body>
