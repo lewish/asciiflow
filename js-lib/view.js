@@ -3,7 +3,7 @@ goog.provide('ascii.View');
 goog.require('ascii.Vector');
 
 /** @const */ var CHARACTER_PIXELS = 15;
-/** @const */ var RENDER_PADDING = 20;
+/** @const */ var RENDER_PADDING = 70;
 
 /**
  * Handles view operations, state and management of the screen.
