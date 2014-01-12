@@ -143,9 +143,9 @@ ascii.Controller.prototype.installTouchBindings = function() {
   });
   $(this.view.canvas).bind('touchend', function(e) {
       e.preventDefault();
-      controller.handleRelease(new ascii.Vector(
-         e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY));
+      // TODO: This works for now as we don't use a touchend position anywhere.
+      //       Need to track last position from touchmove and use it here.
+      controller.handleRelease(new ascii.Vector(0, 0));
   });
   $(this.view.canvas).bind('touchmove', function(e) {
       e.preventDefault();
