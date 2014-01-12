@@ -23,7 +23,7 @@ ascii.Vector.prototype.equals = function(other) {
 
 /**
  * @param {ascii.Vector} other
- * @return {boolean}
+ * @return {ascii.Vector}
  */
 ascii.Vector.prototype.subtract = function(other) {
   return new ascii.Vector(this.x - other.x, this.y - other.y);
@@ -31,7 +31,7 @@ ascii.Vector.prototype.subtract = function(other) {
 
 /**
  * @param {ascii.Vector} other
- * @return {boolean}
+ * @return {ascii.Vector}
  */
 ascii.Vector.prototype.add = function(other) {
   return new ascii.Vector(this.x + other.x, this.y + other.y);

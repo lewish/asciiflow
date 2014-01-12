@@ -41,7 +41,7 @@ ascii.State = function() {
  * Returns the cell at the given coordinates.
  *
  * @param {ascii.Vector} vector
- * @return {asii.Cell}
+ * @return {ascii.Cell}
  */
 ascii.State.prototype.getCell = function(vector) {
   return this.cells[vector.x][vector.y];
