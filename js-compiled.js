@@ -17,18 +17,16 @@ function h(a) {
   this.context = this.canvas.getContext("2d");
   this.zoom = 1;
   this.offset = new c(7500, 7500);
-  this.a = !0;
+  this.b = !0;
   k(this);
 }
 function k(a) {
   a.canvas.width = document.documentElement.clientWidth;
   a.canvas.height = document.documentElement.clientHeight;
-  a.a = !0;
+  a.b = !0;
 }
 h.prototype.animate = function() {
-  if (this.a || this.state.a) {
-    this.a = !1, this.state.a = !1, l(this);
-  }
+  this.b && (this.b = !1, l(this));
   var a = this;
   window.requestAnimationFrame(function() {
     a.animate();
@@ -40,21 +38,22 @@ function l(a) {
   b.clearRect(0, 0, a.canvas.width, a.canvas.height);
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
-  var d = m(n(a, new c(-20, -20))), e = m(n(a, new c(a.canvas.width + 20, a.canvas.height + 20)));
+  var d = m(n(a, new c(-70, -70))), g = m(n(a, new c(a.canvas.width + 70, a.canvas.height + 70)));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
-  for (var f = d.x;f < e.x;f++) {
-    b.moveTo(15 * f - a.offset.x, 0 - a.offset.y), b.lineTo(15 * f - a.offset.x, 15 * a.state.cells.length - a.offset.y);
+  for (var e = d.x;e < g.x;e++) {
+    b.moveTo(15 * e - a.offset.x, 0 - a.offset.y), b.lineTo(15 * e - a.offset.x, 15 * a.state.cells.length - a.offset.y);
   }
-  for (var g = d.y;g < e.y;g++) {
-    b.moveTo(0 - a.offset.x, 15 * g - a.offset.y), b.lineTo(15 * a.state.cells.length - a.offset.x, 15 * g - a.offset.y);
+  for (var f = d.y;f < g.y;f++) {
+    b.moveTo(0 - a.offset.x, 15 * f - a.offset.y), b.lineTo(15 * a.state.cells.length - a.offset.x, 15 * f - a.offset.y);
   }
   a.context.stroke();
   a.context.font = "15px Courier New";
-  for (f = d.x;f < e.x;f++) {
-    for (g = d.y;g < e.y;g++) {
-      null != a.state.cells[f][g].value && b.fillText(a.state.cells[f][g].value, 15 * f - a.offset.x + 3, 15 * g - a.offset.y - 2);
+  for (e = d.x;e < g.x;e++) {
+    for (f = d.y;f < g.y;f++) {
+      var r = null != a.state.cells[e][f].d ? a.state.cells[e][f].d : a.state.cells[e][f].value;
+      null != r && b.fillText(r, 15 * e - a.offset.x + 3, 15 * f - a.offset.y - 2);
     }
   }
 }
@@ -66,87 +65,127 @@ function m(a) {
 }
 ;function p(a) {
   this.state = a;
+  this.e = this.h = null;
 }
-;function q(a, b) {
-  a.c = b;
-  a.d = $.now();
-  window.setTimeout(function() {
-    if (null == this.b) {
-      var a = this.e.state, e = m(n(this.view, b));
-      a.cells[e.x][e.y].value = "O";
-      a.a = !0;
-    }
-  }.bind(a), 150);
-}
-function r(a, b) {
-  if (null != a.c) {
-    null == a.b && 150 > $.now() - a.d && 0.1 < (new c(b.x - a.c.x, b.y - a.c.y)).length() && (a.b = a.view.offset);
-    if (null == a.b && 150 <= $.now() - a.d) {
-      var d = a.e.state, e = m(n(a.view, b));
-      d.cells[e.x][e.y].value = "O";
-      d.a = !0;
-    }
-    null != a.b && (d = a.view, e = a.b.add((new c(a.c.x - b.x, a.c.y - b.y)).scale(1 / a.view.zoom)), d.offset = e, d.a = !0);
+p.prototype.start = function(a) {
+  this.e = this.h = a;
+  q(this);
+};
+p.prototype.move = function(a) {
+  this.e = a;
+  a = this.state;
+  for (var b in a.a) {
+    a.a[b].d = null;
+  }
+  a.a.length = 0;
+  q(this);
+};
+p.prototype.end = function() {
+  var a = this.state, b;
+  for (b in a.a) {
+    a.a[b].value = null != a.a[b].d ? a.a[b].d : a.a[b].value, a.a[b].d = null;
+  }
+};
+function q(a) {
+  var b = Math.min(a.h.x, a.e.x), d = Math.min(a.h.y, a.e.y), g = Math.max(a.h.x, a.e.x), e = Math.max(a.h.y, a.e.y);
+  s(a.state, new c(b, d), "+");
+  s(a.state, new c(b, e), "+");
+  s(a.state, new c(g, d), "+");
+  s(a.state, new c(g, e), "+");
+  for (var f = b + 1;f < g;f++) {
+    s(a.state, new c(f, d), "\u2014"), s(a.state, new c(f, e), "\u2014");
+  }
+  for (d += 1;d < e;d++) {
+    s(a.state, new c(b, d), "|"), s(a.state, new c(g, d), "|");
   }
 }
-function s(a) {
+function t(a) {
+  this.state = a;
+  this.j = new p(a);
+}
+;function u(a, b) {
+  a.f = b;
+  a.i = $.now();
+  window.setTimeout(function() {
+    null == this.c && (this.k.j.start(m(n(this.view, b))), this.view.b = !0);
+  }.bind(a), 150);
+}
+function v(a, b) {
+  if (null != a.f && (null == a.c && 150 > $.now() - a.i && 0.1 < (new c(b.x - a.f.x, b.y - a.f.y)).length() && (a.c = a.view.offset), null == a.c && 150 <= $.now() - a.i && (null == a.g || null == m(n(a.view, a.g)) || m(n(a.view, b)).x != m(n(a.view, a.g)).x || m(n(a.view, b)).y != m(n(a.view, a.g)).y) && (a.k.j.move(m(n(a.view, b))), a.view.b = !0, a.g = b), null != a.c)) {
+    var d = a.view, g = a.c.add((new c(a.f.x - b.x, a.f.y - b.y)).scale(1 / a.view.zoom));
+    d.offset = g;
+    d.b = !0;
+  }
+}
+function w(a, b) {
+  null == a.c && 150 <= $.now() - a.i && (a.k.j.end(m(n(a.view, b))), a.view.b = !0);
+  a.f = null;
+  a.i = 0;
+  a.c = null;
+  a.g = null;
+}
+function x(a) {
   $(a.view.canvas).bind("mousewheel", function(b) {
     b = a.view.zoom * (0 < b.originalEvent.wheelDelta ? 1.1 : 0.9);
     b = Math.max(Math.min(b, 5), 0.2);
     var d = a.view;
     d.zoom = b;
-    d.a = !0;
+    d.b = !0;
   });
   $(a.view.canvas).mousedown(function(b) {
-    q(a, new c(b.clientX, b.clientY));
+    u(a, new c(b.clientX, b.clientY));
   });
-  $(a.view.canvas).mouseup(function() {
-    a.c = null;
-    a.d = 0;
-    a.b = null;
+  $(a.view.canvas).mouseup(function(b) {
+    w(a, new c(b.clientX, b.clientY));
+  });
+  $(a.view.canvas).mouseleave(function(b) {
+    w(a, new c(b.clientX, b.clientY));
   });
   $(a.view.canvas).mousemove(function(b) {
-    r(a, new c(b.clientX, b.clientY));
+    v(a, new c(b.clientX, b.clientY));
   });
   $(window).resize(function() {
     k(a.view);
   });
 }
-function t(a) {
+function y(a) {
   $(a.view.canvas).bind("touchstart", function(b) {
     b.preventDefault();
-    q(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
+    u(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
   });
   $(a.view.canvas).bind("touchend", function(b) {
     b.preventDefault();
-    a.c = null;
-    a.d = 0;
-    a.b = null;
+    w(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
   });
   $(a.view.canvas).bind("touchmove", function(b) {
     b.preventDefault();
-    r(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
+    v(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
   });
 }
-;function u() {
-  this.value = null;
+;function z() {
+  this.d = this.value = null;
 }
-;var v = new function() {
+function s(a, b, d) {
+  b = a.cells[b.x][b.y];
+  a.a.push(b);
+  b.d = d;
+}
+;var A = new function() {
   this.cells = Array(1E3);
-  this.a = !0;
+  this.a = [];
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(1E3);
     for (var b = 0;b < this.cells[a].length;b++) {
-      this.cells[a][b] = new u;
+      this.cells[a][b] = new z;
     }
   }
-}, w = new h(v);
+}, B = new h(A);
 new function(a, b) {
   this.view = a;
   this.state = b;
-  this.e = new p(b);
-  s(this);
-  t(this);
-}(w, v);
-w.animate();
+  this.k = new t(b);
+  x(this);
+  y(this);
+}(B, A);
+B.animate();
 
