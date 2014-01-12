@@ -9,6 +9,12 @@ goog.provide('ascii.State');
  */
 ascii.Cell = function() {
   /** @type {?string} */ this.value = null;
+  /** @type {?string} */ this.scratchValue = null;
+};
+
+/** @return {?string} */
+ascii.Cell.prototype.getDrawValue = function() {
+  return (this.scratchValue != null ? this.scratchValue : this.value);
 };
 
 /**
@@ -19,7 +25,8 @@ ascii.Cell = function() {
 ascii.State = function() {
   /** @type {Array.<Array.<ascii.Cell>>} */
   this.cells = new Array(MAX_GRID_SIZE);
-  /** @type {boolean} */ this.dirty = true;
+  /** @type {Array.<ascii.Cell>} */
+  this.scratchCells = new Array();
 
   for (var i = 0; i < this.cells.length; i++) {
     this.cells[i] = new Array(MAX_GRID_SIZE);
@@ -40,12 +47,45 @@ ascii.State.prototype.getCell = function(vector) {
 };
 
 /**
- * Sets the cells value at the given position.
+ * Sets the cells value at the given position. Probably shouldn't
+ * be used directly in many cases. Used drawValue instead.
  *
  * @param {ascii.Vector} position
  * @param {string} value
  */
 ascii.State.prototype.setValue = function(position, value) {
   this.getCell(position).value = value;
-  this.dirty = true;
 };
+
+/**
+ * Sets the cells scratch (uncommitted) value at the given position.
+ *
+ * @param {ascii.Vector} position
+ * @param {string} value
+ */
+ascii.State.prototype.drawValue = function(position, value) {
+  var cell = this.getCell(position);
+  this.scratchCells.push(cell);
+  cell.scratchValue = value;
+};
+
+/**
+ * Clears the current drawing scratchpad.
+ */
+ascii.State.prototype.clearDraw = function() {
+  for (var i in this.scratchCells) {
+    this.scratchCells[i].scratchValue = null;
+  }
+  this.scratchCells.length = 0;
+};
+
+/**
+ * Ends the current draw, commiting anything currently drawn the scratchpad.
+ */
+ascii.State.prototype.commitDraw = function() {
+  for (var i in this.scratchCells) {
+    this.scratchCells[i].value = this.scratchCells[i].getDrawValue();
+    this.scratchCells[i].scratchValue = null;
+  }
+};
+

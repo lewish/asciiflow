@@ -37,9 +37,8 @@ ascii.View.prototype.resizeCanvas = function() {
  * Starts the animation loop for the canvas. Should only be called once.
  */
 ascii.View.prototype.animate = function() {
-  if (this.dirty || this.state.dirty) {
+  if (this.dirty) {
     this.dirty = false;
-    this.state.dirty = false;
     this.render();
   }
   var view = this;
@@ -48,6 +47,8 @@ ascii.View.prototype.animate = function() {
 
 /**
  * Renders the given state to the canvas.
+ * TODO: Room for efficiency here still. Drawing should be incremental,
+ *       however performance is currently very acceptable on test devices.
  */
 ascii.View.prototype.render = function() {
   var context = this.context;
@@ -95,8 +96,9 @@ ascii.View.prototype.render = function() {
   this.context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
-      if (this.state.cells[i][j].value != null) {
-        context.fillText(this.state.cells[i][j].value,
+      var cellValue = this.state.cells[i][j].getDrawValue();
+      if (cellValue != null) {
+        context.fillText(cellValue,
             i * CHARACTER_PIXELS - this.offset.x + 3,
             j * CHARACTER_PIXELS - this.offset.y - 2);
       }

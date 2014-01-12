@@ -42,6 +42,7 @@ ascii.Controller.prototype.handlePress = function(position) {
   window.setTimeout(function() {
     if (this.dragOrigin == null) {
       this.stateController.handleDrawingPress(this.view.screenToCell(position));
+      this.view.dirty = true;
     }
     // TODO: Skip this if release happens before timeout.
   }.bind(this), DRAG_LATENCY);
@@ -68,6 +69,7 @@ ascii.Controller.prototype.handleMove = function(position) {
           !this.view.screenToCell(position)
           .equals(this.view.screenToCell(this.lastMoveCell)))) {
     this.stateController.handleDrawingMove(this.view.screenToCell(position));
+    this.view.dirty = true;
     this.lastMoveCell = position;
   }
 
@@ -88,6 +90,7 @@ ascii.Controller.prototype.handleRelease = function(position) {
   if (this.dragOrigin == null &&
       ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
     this.stateController.handleDrawingRelease(this.view.screenToCell(position));
+    this.view.dirty = true;
   }
   this.pressVector = null;
   this.pressTimestamp = 0;
@@ -116,6 +119,9 @@ ascii.Controller.prototype.installDesktopBindings = function() {
       controller.handlePress(new ascii.Vector(e.clientX, e.clientY));
   });
   $(this.view.canvas).mouseup(function(e) {
+      controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
+  });
+  $(this.view.canvas).mouseleave(function(e) {
       controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
   });
   $(this.view.canvas).mousemove(function(e) {

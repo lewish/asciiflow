@@ -3,6 +3,86 @@ goog.provide('ascii.StateController');
 goog.require('ascii.Vector');
 
 /**
+ * Common interface for different drawing functions, e.g. box, line, etc.
+ * @interface
+ */
+function DrawFunction() {}
+/** Start of drawing. @param {ascii.Vector} position */
+DrawFunction.prototype.start = function(position) {};
+/** Drawing move. @param {ascii.Vector} position */
+DrawFunction.prototype.move = function(position) {};
+/** End of drawing. @param {ascii.Vector} position */
+DrawFunction.prototype.end = function(position) {};
+
+/**
+ * @constructor
+ * @implements {DrawFunction}
+ * @param {ascii.State} state
+ */
+function DrawBox(state) {
+  this.state = state;
+  /** @type {ascii.Vector} */ this.startPosition = null;
+  /** @type {ascii.Vector} */ this.endPosition = null;
+}
+
+DrawBox.prototype.start = function(position) {
+  this.startPosition = position;
+  this.endPosition = position;
+  this.draw();
+};
+DrawBox.prototype.move = function(position) {
+  this.endPosition = position;
+  this.state.clearDraw();
+  this.draw();
+};
+DrawBox.prototype.end = function(position) {
+  this.state.commitDraw();
+};
+
+/** Draws the currently dragged out box. */
+DrawBox.prototype.draw = function() {
+  var x1 = Math.min(this.startPosition.x, this.endPosition.x);
+  var y1 = Math.min(this.startPosition.y, this.endPosition.y);
+  var x2 = Math.max(this.startPosition.x, this.endPosition.x);
+  var y2 = Math.max(this.startPosition.y, this.endPosition.y);
+
+  this.state.drawValue(new ascii.Vector(x1, y1), '+');
+  this.state.drawValue(new ascii.Vector(x1, y2), '+');
+  this.state.drawValue(new ascii.Vector(x2, y1), '+');
+  this.state.drawValue(new ascii.Vector(x2, y2), '+');
+
+
+  for (var x = x1 + 1; x < x2; x++) {
+    this.state.drawValue(new ascii.Vector(x, y1), '\u2014');
+    this.state.drawValue(new ascii.Vector(x, y2), '\u2014');
+  }
+  for (var y = y1 + 1; y < y2; y++) {
+    this.state.drawValue(new ascii.Vector(x1, y), '|');
+    this.state.drawValue(new ascii.Vector(x2, y), '|');
+  }
+};
+
+/**
+ * @constructor
+ * @implements {DrawFunction}
+ * @param {ascii.State} state
+ */
+function DrawFreeform(state) {
+  this.state = state;
+}
+
+DrawFreeform.prototype.start = function(position) {
+  this.state.drawValue(position, 'O');
+};
+DrawFreeform.prototype.move = function(position) {
+  this.state.drawValue(position, 'O');
+};
+
+DrawFreeform.prototype.end = function(position) {
+  this.state.commitDraw();
+};
+
+/**
  * Handles management of the diagram state. Input events are cleaned in the
  * parent controller and passed down to this class for dealing with drawing.
  *
@@ -11,6 +91,7 @@ goog.require('ascii.Vector');
  */
 ascii.StateController = function(state) {
   /** @type {ascii.State} */ this.state = state;
+  /** @type {DrawFunction} */ this.drawFunction = new DrawBox(state);
 };
 
 /**
@@ -18,7 +99,7 @@ ascii.StateController = function(state) {
  * @param {ascii.Vector} position
  */
 ascii.StateController.prototype.handleDrawingPress = function(position) {
-  this.state.setValue(position, 'O');
+  this.drawFunction.start(position);
 };
 
 /**
@@ -26,6 +107,7 @@ ascii.StateController.prototype.handleDrawingPress = function(position) {
  * @param {ascii.Vector} position
  */
 ascii.StateController.prototype.handleDrawingRelease = function(position) {
+  this.drawFunction.end(position);
 };
 
 /**
@@ -33,6 +115,5 @@ ascii.StateController.prototype.handleDrawingRelease = function(position) {
  * @param {ascii.Vector} position
  */
 ascii.StateController.prototype.handleDrawingMove = function(position) {
-  this.state.setValue(position, 'O');
+  this.drawFunction.move(position);
 };
-
