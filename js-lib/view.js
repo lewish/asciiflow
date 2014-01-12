@@ -5,10 +5,11 @@ goog.require('ascii.Vector');
 /** @const */ var CHARACTER_PIXELS = 15;
 /** @const */ var RENDER_PADDING = 20;
 
-
 /**
- * Object relating to view operations and management of the screen.
+ * Handles view operations, state and management of the screen.
+ *
  * @constructor
+ * @param {ascii.State} state
  */
 ascii.View = function(state) {
   /** @type {Element} */ this.canvas = document.getElementById('ascii-canvas');
@@ -19,6 +20,9 @@ ascii.View = function(state) {
   this.resizeCanvas();
 };
 
+/**
+ * Resizes the canvas, should be called if the viewport size changes.
+ */
 ascii.View.prototype.resizeCanvas = function() {
   this.canvas.width = document.documentElement.clientWidth;
   this.canvas.height = document.documentElement.clientHeight;
@@ -28,6 +32,7 @@ ascii.View.prototype.resizeCanvas = function() {
  * Starts the animation loop for the canvas. Should only be called once.
  */
 ascii.View.prototype.animate = function() {
+  // TODO: Only render incrementally.
   this.render();
   var view = this;
   window.requestAnimationFrame(function() { view.animate(); });
@@ -44,7 +49,9 @@ ascii.View.prototype.render = function() {
   context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
   context.scale(this.zoom, this.zoom);
-  context.translate(this.canvas.width/2/this.zoom, this.canvas.height/2/this.zoom);
+  context.translate(
+      this.canvas.width / 2 / this.zoom,
+      this.canvas.height / 2 / this.zoom);
 
   // Only render grid lines and cells that are visible.
   var startOffset = this.screenToCell(new ascii.Vector(
@@ -55,24 +62,24 @@ ascii.View.prototype.render = function() {
       this.canvas.height + RENDER_PADDING));
 
   // Render the grid.
-  context.lineWidth="1";
-  context.strokeStyle="#EEEEEE";
+  context.lineWidth = '1';
+  context.strokeStyle = '#EEEEEE';
   context.beginPath();
   for (var i = startOffset.x; i < endOffset.x; i++) {
     context.moveTo(
-        i*CHARACTER_PIXELS - this.offset.x,
+        i * CHARACTER_PIXELS - this.offset.x,
         0 - this.offset.y);
     context.lineTo(
-        i*CHARACTER_PIXELS - this.offset.x,
-        this.state.cells.length*CHARACTER_PIXELS - this.offset.y);
+        i * CHARACTER_PIXELS - this.offset.x,
+        this.state.cells.length * CHARACTER_PIXELS - this.offset.y);
   }
   for (var j = startOffset.y; j < endOffset.y; j++) {
     context.moveTo(
         0 - this.offset.x,
-        j*CHARACTER_PIXELS - this.offset.y);
+        j * CHARACTER_PIXELS - this.offset.y);
     context.lineTo(
-        this.state.cells.length*CHARACTER_PIXELS - this.offset.x,
-        j*CHARACTER_PIXELS - this.offset.y);
+        this.state.cells.length * CHARACTER_PIXELS - this.offset.x,
+        j * CHARACTER_PIXELS - this.offset.y);
   }
   this.context.stroke();
 
@@ -82,8 +89,8 @@ ascii.View.prototype.render = function() {
     for (var j = startOffset.y; j < endOffset.y; j++) {
       if (this.state.cells[i][j].value != null) {
         context.fillText(this.state.cells[i][j].value,
-            i*CHARACTER_PIXELS - this.offset.x + 3,
-            j*CHARACTER_PIXELS - this.offset.y - 2);
+            i * CHARACTER_PIXELS - this.offset.x + 3,
+            j * CHARACTER_PIXELS - this.offset.y - 2);
       }
     }
   }
@@ -96,8 +103,8 @@ ascii.View.prototype.render = function() {
  */
 ascii.View.prototype.screenToFrame = function(vector) {
   return new ascii.Vector(
-      (vector.x - this.canvas.width/2)/this.zoom + this.offset.x,
-      (vector.y - this.canvas.height/2)/this.zoom + this.offset.y);
+      (vector.x - this.canvas.width / 2) / this.zoom + this.offset.x,
+      (vector.y - this.canvas.height / 2) / this.zoom + this.offset.y);
 };
 
 /**
@@ -107,8 +114,8 @@ ascii.View.prototype.screenToFrame = function(vector) {
  */
 ascii.View.prototype.frameToScreen = function(vector) {
   return new ascii.Vector(
-      (vector.x - this.offset.x) * this.zoom + this.canvas.width/2,
-      (vector.y - this.offset.y) * this.zoom + this.canvas.height/2);
+      (vector.x - this.offset.x) * this.zoom + this.canvas.width / 2,
+      (vector.y - this.offset.y) * this.zoom + this.canvas.height / 2);
 };
 
 /**
@@ -118,8 +125,8 @@ ascii.View.prototype.frameToScreen = function(vector) {
  */
 ascii.View.prototype.frameToCell = function(vector) {
   return new ascii.Vector(
-    Math.round((vector.x-CHARACTER_PIXELS/2)/CHARACTER_PIXELS),
-    Math.round((vector.y+CHARACTER_PIXELS/2)/CHARACTER_PIXELS));
+    Math.round((vector.x - CHARACTER_PIXELS / 2) / CHARACTER_PIXELS),
+    Math.round((vector.y + CHARACTER_PIXELS / 2) / CHARACTER_PIXELS));
 };
 
 /**

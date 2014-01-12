@@ -8,7 +8,7 @@ goog.require('ascii.State');
 goog.require('ascii.View');
 
 /**
- * @private
+ * Runs the application.
  */
 ascii.launch = function() {
     var state = new ascii.State();

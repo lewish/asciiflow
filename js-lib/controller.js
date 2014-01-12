@@ -12,6 +12,8 @@ goog.require('ascii.View');
 
 /**
  * @constructor
+ * @param {ascii.View} view
+ * @param {ascii.State} state
  */
 ascii.Controller = function(view, state) {
   /** @type {ascii.View} */ this.view = view;
@@ -28,10 +30,11 @@ ascii.Controller = function(view, state) {
   this.installTouchBindings();
 };
 
-ascii.Controller.prototype.handlePress = function(x, y) {
-  var position = new ascii.Vector(x, y);
-
-  this.pressVector = new ascii.Vector(x, y);
+/**
+ * @param {ascii.Vector} position
+ */
+ascii.Controller.prototype.handlePress = function(position) {
+  this.pressVector = position;
   this.pressTimestamp = $.now();
 
   // Check to see if a drag happened in the given allowed time.
@@ -43,11 +46,12 @@ ascii.Controller.prototype.handlePress = function(x, y) {
   }.bind(this), DRAG_LATENCY);
 };
 
-ascii.Controller.prototype.handleMove = function(x, y) {
-  var position = new ascii.Vector(x, y);
-
+/**
+ * @param {ascii.Vector} position
+ */
+ascii.Controller.prototype.handleMove = function(position) {
   // No clicks, so just ignore.
-  if (this.pressVector == null) { return; } 
+  if (this.pressVector == null) { return; }
 
   // Initiate a drag if we have moved enough, quickly enough.
   if (this.dragOrigin == null &&
@@ -66,14 +70,15 @@ ascii.Controller.prototype.handleMove = function(x, y) {
   if (this.dragOrigin != null) {
     this.view.offset = this.dragOrigin.add(
         this.pressVector
-            .subtract(new ascii.Vector(x, y))
-            .scale(1/this.view.zoom));
+            .subtract(position)
+            .scale(1 / this.view.zoom));
   }
 };
 
-ascii.Controller.prototype.handleRelease = function(x, y) {
-  var position = new ascii.Vector(x, y);
-
+/**
+ * @param {ascii.Vector} position
+ */
+ascii.Controller.prototype.handleRelease = function(position) {
   // Drag wasn't initiated in time, treat this as a drawing event.
   if (this.dragOrigin == null &&
       ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
@@ -84,46 +89,55 @@ ascii.Controller.prototype.handleRelease = function(x, y) {
   this.dragOrigin = null;
 };
 
+/**
+ * @param {number} delta
+ */
 ascii.Controller.prototype.handleZoom = function(delta) {
   this.view.zoom *= delta > 0 ? 1.1 : 0.9;
   this.view.zoom = Math.max(Math.min(this.view.zoom, 5), 0.2);
 };
 
+/**
+ * Installs input bindings for desktop devices.
+ */
 ascii.Controller.prototype.installDesktopBindings = function() {
   var controller = this;
   $(this.view.canvas).bind('mousewheel', function(e) {
       controller.handleZoom(e.originalEvent.wheelDelta);
   });
   $(this.view.canvas).mousedown(function(e) {
-      controller.handlePress(e.clientX, e.clientY);
+      controller.handlePress(new ascii.Vector(e.clientX, e.clientY));
   });
   $(this.view.canvas).mouseup(function(e) {
-      controller.handleRelease(e.clientX, e.clientY);
+      controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
   });
   $(this.view.canvas).mousemove(function(e) {
-      controller.handleMove(e.clientX, e.clientY);
+      controller.handleMove(new ascii.Vector(e.clientX, e.clientY));
   });
   $(window).resize(function(e) { controller.view.resizeCanvas() });
 };
 
+/**
+ * Installs input bindings for touch devices.
+ */
 ascii.Controller.prototype.installTouchBindings = function() {
   var controller = this;
-  $(this.view.canvas).bind("touchstart", function(e) {
+  $(this.view.canvas).bind('touchstart', function(e) {
       e.preventDefault();
-      controller.handlePress(
+      controller.handlePress(new ascii.Vector(
          e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY);
+         e.originalEvent.touches[0].pageY));
   });
-  $(this.view.canvas).bind("touchend", function(e) {
+  $(this.view.canvas).bind('touchend', function(e) {
       e.preventDefault();
-      controller.handleRelease(
+      controller.handleRelease(new ascii.Vector(
          e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY);
+         e.originalEvent.touches[0].pageY));
   });
-  $(this.view.canvas).bind("touchmove", function(e) {
+  $(this.view.canvas).bind('touchmove', function(e) {
       e.preventDefault();
-      controller.handleMove(
+      controller.handleMove(new ascii.Vector(
          e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY);
+         e.originalEvent.touches[0].pageY));
   });
 };
