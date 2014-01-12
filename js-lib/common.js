@@ -18,7 +18,7 @@ ascii.Vector = function(x, y) {
  * @return {boolean}
  */
 ascii.Vector.prototype.equals = function(other) {
-  return (this.x == other.x) && (this.y == other.y);
+  return (other != null) && (this.x == other.x) && (this.y == other.y);
 };
 
 /**

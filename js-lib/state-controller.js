@@ -35,3 +35,4 @@ ascii.StateController.prototype.handleDrawingRelease = function(position) {
 ascii.StateController.prototype.handleDrawingMove = function(position) {
   this.state.setValue(position, 'O');
 };
+

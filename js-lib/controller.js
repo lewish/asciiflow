@@ -24,6 +24,7 @@ ascii.Controller = function(view, state) {
 
   /** @type {ascii.Vector} */ this.dragOrigin;
   /** @type {ascii.Vector} */ this.pressVector;
+  /** @type {ascii.Vector} */ this.lastMoveCell;
   /** @type {number} */ this.pressTimestamp;
 
   this.installDesktopBindings();
@@ -60,10 +61,14 @@ ascii.Controller.prototype.handleMove = function(position) {
       this.dragOrigin = this.view.offset;
   }
 
-  // Not dragging, so pass the mouse move on.
+  // Not dragging, so pass the mouse move on, but remove duplicates.
   if (this.dragOrigin == null &&
-      ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
+      ($.now() - this.pressTimestamp) >= DRAG_LATENCY &&
+      (this.lastMoveCell == null ||
+          !this.view.screenToCell(position)
+          .equals(this.view.screenToCell(this.lastMoveCell)))) {
     this.stateController.handleDrawingMove(this.view.screenToCell(position));
+    this.lastMoveCell = position;
   }
 
   // Drag in progress, update the view origin.
@@ -87,6 +92,7 @@ ascii.Controller.prototype.handleRelease = function(position) {
   this.pressVector = null;
   this.pressTimestamp = 0;
   this.dragOrigin = null;
+  this.lastMoveCell = null;
 };
 
 /**
@@ -141,4 +147,5 @@ ascii.Controller.prototype.installTouchBindings = function() {
          e.originalEvent.touches[0].pageX,
          e.originalEvent.touches[0].pageY));
   });
+  // TODO: Handle pinch to zoom.
 };
