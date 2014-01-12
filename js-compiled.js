@@ -155,7 +155,7 @@ function y(a) {
   });
   $(a.view.canvas).bind("touchend", function(b) {
     b.preventDefault();
-    w(a, new c(b.originalEvent.touches[0].pageX, b.originalEvent.touches[0].pageY));
+    w(a, new c(0, 0));
   });
   $(a.view.canvas).bind("touchmove", function(b) {
     b.preventDefault();
