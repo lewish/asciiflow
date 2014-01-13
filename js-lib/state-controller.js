@@ -46,19 +46,19 @@ DrawBox.prototype.draw = function() {
   var x2 = Math.max(this.startPosition.x, this.endPosition.x);
   var y2 = Math.max(this.startPosition.y, this.endPosition.y);
 
-  this.state.drawValue(new ascii.Vector(x1, y1), '+');
-  this.state.drawValue(new ascii.Vector(x1, y2), '+');
-  this.state.drawValue(new ascii.Vector(x2, y1), '+');
-  this.state.drawValue(new ascii.Vector(x2, y2), '+');
+  this.state.drawSpecial(new ascii.Vector(x1, y1));
+  this.state.drawSpecial(new ascii.Vector(x1, y2));
+  this.state.drawSpecial(new ascii.Vector(x2, y1));
+  this.state.drawSpecial(new ascii.Vector(x2, y2));
 
 
   for (var x = x1 + 1; x < x2; x++) {
-    this.state.drawValue(new ascii.Vector(x, y1), '\u2014');
-    this.state.drawValue(new ascii.Vector(x, y2), '\u2014');
+    this.state.drawSpecial(new ascii.Vector(x, y1));
+    this.state.drawSpecial(new ascii.Vector(x, y2));
   }
   for (var y = y1 + 1; y < y2; y++) {
-    this.state.drawValue(new ascii.Vector(x1, y), '|');
-    this.state.drawValue(new ascii.Vector(x2, y), '|');
+    this.state.drawSpecial(new ascii.Vector(x1, y));
+    this.state.drawSpecial(new ascii.Vector(x2, y));
   }
 };
 
@@ -87,10 +87,21 @@ DrawLine.prototype.end = function(position) {
   this.state.commitDraw();
 };
 
-/** Draws the currently dragged out line. */
+/** 
+ * Draws the currently dragged out line.
+ */
 DrawLine.prototype.draw = function() {
-  // TODO: Infer line direction.
-  var isClockwise = true;
+  var upStart = this.state.isSpecial(
+      this.startPosition.add(new ascii.Vector(0, -1)));
+  var downStart = this.state.isSpecial(
+      this.startPosition.add(new ascii.Vector(0, 1)));
+  var leftEnd = this.state.isSpecial(
+      this.endPosition.add(new ascii.Vector(-1, 0)));
+  var rightEnd = this.state.isSpecial(
+      this.endPosition.add(new ascii.Vector(1, 0)));
+
+  // Look at the start and end contexts to infer line orientation.
+  var isClockwise = (upStart && downStart) || (leftEnd && rightEnd);
 
   var hX1 = Math.min(this.startPosition.x, this.endPosition.x);
   var vY1 = Math.min(this.startPosition.y, this.endPosition.y);
@@ -101,34 +112,35 @@ DrawLine.prototype.draw = function() {
   var vX = isClockwise ? this.endPosition.x : this.startPosition.x;
 
   while (hX1++ < hX2) {
-    this.state.drawValue(new ascii.Vector(hX1, hY), '\u2014');
+    this.state.drawSpecial(new ascii.Vector(hX1, hY));
   }
   while (vY1++ < vY2) {
-    this.state.drawValue(new ascii.Vector(vX, vY1), '|');
+    this.state.drawSpecial(new ascii.Vector(vX, vY1));
   }
-  this.state.drawValue(new ascii.Vector(this.startPosition.x, this.startPosition.y), '+');
-  this.state.drawValue(new ascii.Vector(this.endPosition.x, this.endPosition.y), '+');
-  this.state.drawValue(new ascii.Vector(vX, hY), '+');
+  this.state.drawSpecial(new ascii.Vector(this.startPosition.x, this.startPosition.y));
+  this.state.drawSpecial(new ascii.Vector(this.endPosition.x, this.endPosition.y));
+  this.state.drawSpecial(new ascii.Vector(vX, hY));
 };
 
 /**
  * @constructor
  * @implements {DrawFunction}
  * @param {ascii.State} state
+ * @param {?string} value
  */
-function DrawFreeform(state) {
+function DrawFreeform(state, value) {
   this.state = state;
+  this.value = value;
 }
 
 DrawFreeform.prototype.start = function(position) {
-  this.state.drawValue(position, 'O');
+  this.state.setValue(position, this.value);
 };
 DrawFreeform.prototype.move = function(position) {
-  this.state.drawValue(position, 'O');
+  this.state.setValue(position, this.value);
 };
 
 DrawFreeform.prototype.end = function(position) {
-  this.state.commitDraw();
 };
 
 /**
@@ -151,7 +163,11 @@ ascii.StateController = function(state) {
   }.bind(this));
 
   $('#freeform-button').click(function(e) {
-    this.drawFunction = new DrawFreeform(state);
+    this.drawFunction = new DrawFreeform(state, 'O');
+  }.bind(this));
+
+  $('#erase-button').click(function(e) {
+    this.drawFunction = new DrawFreeform(state, null);
   }.bind(this));
 };
 

@@ -96,7 +96,7 @@ ascii.View.prototype.render = function() {
   this.context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
-      var cellValue = this.state.cells[i][j].getDrawValue();
+      var cellValue = this.state.getDrawValue(new ascii.Vector(i, j));
       if (cellValue != null) {
         context.fillText(cellValue,
             i * CHARACTER_PIXELS - this.offset.x + 3,

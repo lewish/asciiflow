@@ -1,6 +1,10 @@
 goog.provide('ascii.State');
 
 /** @const */ var MAX_GRID_SIZE = 1000;
+/** @const */ var SPECIAL_VALUE = '+';
+
+/** @const */ var SPECIAL_LINE_H = '\u2014';
+/** @const */ var SPECIAL_LINE_V = '|';
 
 /**
  * An individual cell within the diagram and it's current value.
@@ -51,22 +55,31 @@ ascii.State.prototype.getCell = function(vector) {
  * be used directly in many cases. Used drawValue instead.
  *
  * @param {ascii.Vector} position
- * @param {string} value
+ * @param {?string} value
  */
 ascii.State.prototype.setValue = function(position, value) {
   this.getCell(position).value = value;
 };
-
+    
 /**
  * Sets the cells scratch (uncommitted) value at the given position.
  *
  * @param {ascii.Vector} position
- * @param {string} value
+ * @param {?string} value
  */
 ascii.State.prototype.drawValue = function(position, value) {
   var cell = this.getCell(position);
   this.scratchCells.push(cell);
   cell.scratchValue = value;
+};
+
+/**
+ * Sets the cells scratch value to be the special value.
+ *
+ * @param {ascii.Vector} position
+ */
+ascii.State.prototype.drawSpecial = function(position) {
+  this.drawValue(position, SPECIAL_VALUE);
 };
 
 /**
@@ -77,6 +90,49 @@ ascii.State.prototype.clearDraw = function() {
     this.scratchCells[i].scratchValue = null;
   }
   this.scratchCells.length = 0;
+};
+
+/**
+ * Returns true if the cell at the given position is special.
+ *
+ * @param {ascii.Vector} position
+ * @return {boolean}
+ */
+ascii.State.prototype.isSpecial = function(position) {
+  var cell = this.getCell(position);
+  var value =  cell.scratchValue != null ? cell.scratchValue : cell.value;
+  return value == SPECIAL_VALUE;
+};
+
+/**
+ * Returns the draw value of a cell at the given position.
+ *
+ * @param {ascii.Vector} position
+ * @return {?string}
+ */
+ascii.State.prototype.getDrawValue = function(position) {
+  var cell = this.getCell(position);
+  var value =  cell.scratchValue != null ? cell.scratchValue : cell.value;
+  if (value != SPECIAL_VALUE) {
+    return value;
+  }
+
+  // Magic time.
+  var left = this.isSpecial(position.add(new ascii.Vector(-1, 0)));
+  var right = this.isSpecial(position.add(new ascii.Vector(1, 0)));
+  var up = this.isSpecial(position.add(new ascii.Vector(0, -1)));
+  var down = this.isSpecial(position.add(new ascii.Vector(0, 1)));
+  
+  if (left && right && !up && !down) {
+    return SPECIAL_LINE_H;
+  }
+  if (!left && !right && up && down) {
+    return SPECIAL_LINE_V;
+  }
+  if (left && right && up && down) {
+    return SPECIAL_LINE_H;
+  }
+  return SPECIAL_VALUE;
 };
 
 /**
