@@ -96,8 +96,16 @@ ascii.View.prototype.render = function() {
   this.context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
+      if (this.state.isSpecial(new ascii.Vector(i, j))) {
+        this.context.fillStyle = '#F5F5F5';
+        context.fillRect(
+            i * CHARACTER_PIXELS - this.offset.x,
+            (j - 1) * CHARACTER_PIXELS - this.offset.y,
+            CHARACTER_PIXELS, CHARACTER_PIXELS);
+      }
       var cellValue = this.state.getDrawValue(new ascii.Vector(i, j));
       if (cellValue != null) {
+        this.context.fillStyle = '#000000';
         context.fillText(cellValue,
             i * CHARACTER_PIXELS - this.offset.x + 3,
             j * CHARACTER_PIXELS - this.offset.y - 2);
