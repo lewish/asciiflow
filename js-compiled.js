@@ -11,7 +11,7 @@ c.prototype.length = function() {
 c.prototype.scale = function(a) {
   return new c(this.x * a, this.y * a);
 };
-function g(a) {
+function h(a) {
   this.state = a;
   this.canvas = document.getElementById("ascii-canvas");
   this.context = this.canvas.getContext("2d");
@@ -25,7 +25,7 @@ function k(a) {
   a.canvas.height = document.documentElement.clientHeight;
   a.d = !0;
 }
-g.prototype.animate = function() {
+h.prototype.animate = function() {
   this.d && (this.d = !1, l(this));
   var a = this;
   window.requestAnimationFrame(function() {
@@ -45,15 +45,16 @@ function l(a) {
   for (var e = d.x;e < f.x;e++) {
     b.moveTo(15 * e - a.offset.x, 0 - a.offset.y), b.lineTo(15 * e - a.offset.x, 15 * a.state.cells.length - a.offset.y);
   }
-  for (var h = d.y;h < f.y;h++) {
-    b.moveTo(0 - a.offset.x, 15 * h - a.offset.y), b.lineTo(15 * a.state.cells.length - a.offset.x, 15 * h - a.offset.y);
+  for (var g = d.y;g < f.y;g++) {
+    b.moveTo(0 - a.offset.x, 15 * g - a.offset.y), b.lineTo(15 * a.state.cells.length - a.offset.x, 15 * g - a.offset.y);
   }
   a.context.stroke();
   a.context.font = "15px Courier New";
   for (e = d.x;e < f.x;e++) {
-    for (h = d.y;h < f.y;h++) {
-      var v = a.state.l(new c(e, h));
-      null != v && b.fillText(v, 15 * e - a.offset.x + 3, 15 * h - a.offset.y - 2);
+    for (g = d.y;g < f.y;g++) {
+      p(a.state, new c(e, g)) && (a.context.fillStyle = "#F5F5F5", b.fillRect(15 * e - a.offset.x, 15 * (g - 1) - a.offset.y, 15, 15));
+      var v = a.state.l(new c(e, g));
+      null != v && (a.context.fillStyle = "#000000", b.fillText(v, 15 * e - a.offset.x + 3, 15 * g - a.offset.y - 2));
     }
   }
 }
@@ -63,61 +64,61 @@ function n(a, b) {
 function m(a) {
   return new c(Math.round((a.x - 7.5) / 15), Math.round((a.y + 7.5) / 15));
 }
-;function p(a) {
+;function q(a) {
   this.state = a;
   this.a = this.b = null;
 }
-p.prototype.start = function(a) {
+q.prototype.start = function(a) {
   this.a = this.b = a;
   this.i();
 };
-p.prototype.move = function(a) {
+q.prototype.move = function(a) {
   this.a = a;
-  q(this.state);
+  r(this.state);
   this.i();
 };
-p.prototype.end = function() {
-  r(this.state);
+q.prototype.end = function() {
+  s(this.state);
 };
-p.prototype.i = function() {
+q.prototype.i = function() {
   var a = Math.min(this.b.x, this.a.x), b = Math.min(this.b.y, this.a.y), d = Math.max(this.b.x, this.a.x), f = Math.max(this.b.y, this.a.y);
-  s(this.state, new c(a, b));
-  s(this.state, new c(a, f));
-  s(this.state, new c(d, b));
-  s(this.state, new c(d, f));
+  t(this.state, new c(a, b));
+  t(this.state, new c(a, f));
+  t(this.state, new c(d, b));
+  t(this.state, new c(d, f));
   for (var e = a + 1;e < d;e++) {
-    s(this.state, new c(e, b)), s(this.state, new c(e, f));
+    t(this.state, new c(e, b)), t(this.state, new c(e, f));
   }
   for (b += 1;b < f;b++) {
-    s(this.state, new c(a, b)), s(this.state, new c(d, b));
+    t(this.state, new c(a, b)), t(this.state, new c(d, b));
   }
 };
-function t(a) {
+function u(a) {
   this.state = a;
   this.a = this.b = null;
 }
-t.prototype.start = function(a) {
+u.prototype.start = function(a) {
   this.a = this.b = a;
   this.i();
 };
-t.prototype.move = function(a) {
+u.prototype.move = function(a) {
   this.a = a;
-  q(this.state);
+  r(this.state);
   this.i();
 };
-t.prototype.end = function() {
-  r(this.state);
+u.prototype.end = function() {
+  s(this.state);
 };
-t.prototype.i = function() {
-  for (var a = u(this.state, this.b.add(new c(0, -1))), b = u(this.state, this.b.add(new c(0, 1))), d = u(this.state, this.a.add(new c(-1, 0))), f = u(this.state, this.a.add(new c(1, 0))), e = a && b || d && f, a = Math.min(this.b.x, this.a.x), b = Math.min(this.b.y, this.a.y), d = Math.max(this.b.x, this.a.x), f = Math.max(this.b.y, this.a.y), h = e ? this.b.y : this.a.y, e = e ? this.a.x : this.b.x;a++ < d;) {
-    s(this.state, new c(a, h));
+u.prototype.i = function() {
+  for (var a = p(this.state, this.b.add(new c(0, -1))), b = p(this.state, this.b.add(new c(0, 1))), d = p(this.state, this.a.add(new c(-1, 0))), f = p(this.state, this.a.add(new c(1, 0))), e = a && b || d && f, a = Math.min(this.b.x, this.a.x), b = Math.min(this.b.y, this.a.y), d = Math.max(this.b.x, this.a.x), f = Math.max(this.b.y, this.a.y), g = e ? this.b.y : this.a.y, e = e ? this.a.x : this.b.x;a++ < d;) {
+    t(this.state, new c(a, g));
   }
   for (;b++ < f;) {
-    s(this.state, new c(e, b));
+    t(this.state, new c(e, b));
   }
-  s(this.state, new c(this.b.x, this.b.y));
-  s(this.state, new c(this.a.x, this.a.y));
-  s(this.state, new c(e, h));
+  t(this.state, new c(this.b.x, this.b.y));
+  t(this.state, new c(this.a.x, this.a.y));
+  t(this.state, new c(e, g));
 };
 function w(a, b) {
   this.state = a;
@@ -133,12 +134,12 @@ w.prototype.end = function() {
 };
 function y(a) {
   this.state = a;
-  this.g = new p(a);
+  this.g = new q(a);
   $("#box-button").click(function() {
-    this.g = new p(a);
+    this.g = new q(a);
   }.bind(this));
   $("#line-button").click(function() {
-    this.g = new t(a);
+    this.g = new u(a);
   }.bind(this));
   $("#freeform-button").click(function() {
     this.g = new w(a, "O");
@@ -223,18 +224,18 @@ function E() {
 function x(a, b) {
   return a.cells[b.x][b.y];
 }
-function s(a, b) {
+function t(a, b) {
   var d = x(a, b);
   a.e.push(d);
   d.c = "+";
 }
-function q(a) {
+function r(a) {
   for (var b in a.e) {
     a.e[b].c = null;
   }
   a.e.length = 0;
 }
-function u(a, b) {
+function p(a, b) {
   var d = x(a, b);
   return "+" == (null != d.c ? d.c : d.value);
 }
@@ -243,16 +244,16 @@ E.prototype.l = function(a) {
   if ("+" != b) {
     return b;
   }
-  var b = u(this, a.add(new c(-1, 0))), d = u(this, a.add(new c(1, 0))), f = u(this, a.add(new c(0, -1)));
-  a = u(this, a.add(new c(0, 1)));
+  var b = p(this, a.add(new c(-1, 0))), d = p(this, a.add(new c(1, 0))), f = p(this, a.add(new c(0, -1)));
+  a = p(this, a.add(new c(0, 1)));
   return b && d && !f && !a ? "\u2014" : !b && !d && f && a ? "|" : b && d && f && a ? "\u2014" : "+";
 };
-function r(a) {
+function s(a) {
   for (var b in a.e) {
     a.e[b].value = a.e[b].l(), a.e[b].c = null;
   }
 }
-;var F = new E, G = new g(F);
+;var F = new E, G = new h(F);
 new function(a, b) {
   this.view = a;
   this.state = b;
