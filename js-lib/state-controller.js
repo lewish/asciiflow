@@ -25,6 +25,30 @@ function drawLine(state, startPosition, endPosition, clockwise) {
   state.drawSpecial(new ascii.Vector(vX, hY));
 };
 
+/** 
+ * Clears a line but with some special cases.
+ * TODO: Refactor somewhere!
+ */
+function clearLine(state, startPosition, endPosition, clockwise) {
+  var hX1 = Math.min(startPosition.x, endPosition.x);
+  var vY1 = Math.min(startPosition.y, endPosition.y);
+  var hX2 = Math.max(startPosition.x, endPosition.x);
+  var vY2 = Math.max(startPosition.y, endPosition.y);
+
+  var hY = clockwise ? startPosition.y : endPosition.y;
+  var vX = clockwise ? endPosition.x : startPosition.x;
+
+  while (hX1++ < hX2) {
+    state.drawValue(new ascii.Vector(hX1, hY), ' ');
+  }
+  while (vY1++ < vY2) {
+    state.drawValue(new ascii.Vector(vX, vY1), ' ');
+  }
+  state.drawValue(startPosition, ' ');
+  state.drawValue(endPosition, ' ');
+  state.drawValue(new ascii.Vector(vX, hY), ' ');
+};
+
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
  * @interface
@@ -160,6 +184,14 @@ DrawMove.prototype.start = function(position) {
     }
   }
   this.ends = ends;
+
+  // Clear all the lines so we can draw them afresh.
+  for (var i in ends) {
+    clearLine(this.state, position, ends[i].position, ends[i].clockwise);
+  }
+  this.state.commitDraw();
+  // Redraw the new lines after we have cleared the existing ones.
+  this.move(position);
 };
 
 DrawMove.prototype.move = function(position) {
