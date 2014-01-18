@@ -248,7 +248,7 @@ ascii.StateController = function(state) {
   }.bind(this));
 
   $('#freeform-button').click(function(e) {
-    this.drawFunction = new DrawFreeform(state, 'O');
+    this.drawFunction = new DrawFreeform(state, '+');
   }.bind(this));
 
   $('#erase-button').click(function(e) {
