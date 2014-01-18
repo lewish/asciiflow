@@ -155,7 +155,10 @@ DrawMove.prototype.start = function(position) {
 
   var ends = [];
   for (var i in directions) {
-    var midPoint = this.followLine(position, directions[i]);
+    var midPoints = this.followLine(position, directions[i]);
+    for (var k in midPoints) {
+    var midPoint = midPoints[k];
+
     // Clockwise is a lie, it is true if we move vertically first.
     var clockwise = (directions[i].x != 0);
     // Ignore any directions that didn't go anywhere.
@@ -171,16 +174,19 @@ DrawMove.prototype.start = function(position) {
     }
     // Continue following lines from the midpoint.
     for (var j in directions) {
-      if (directions[i].add(directions[j]).length() == 0) {
-        // Don't go back on ourselves.
+      if (directions[i].add(directions[j]).length() == 0 ||
+        directions[i].add(directions[j]).length() == 2) {
+        // Don't go back on ourselves, or don't carry on in same direction.
         continue;
       }
-      var end = this.followLine(midPoint, directions[j]);
+      // On the second line we don't care about multiple junctions, just the first.
+      var endz = this.followLine(midPoint, directions[j]);
       // Ignore any directions that didn't go anywhere.
-      if (midPoint.equals(end)) {
+      if (endz.length == 0 || midPoint.equals(endz[0])) {
         continue;
       }
-      ends.push({position: end, clockwise: clockwise});
+      ends.push({position: endz[0], clockwise: clockwise});
+    }
     }
   }
   this.ends = ends;
@@ -207,16 +213,17 @@ DrawMove.prototype.end = function(position) {
 
 DrawMove.prototype.followLine = function(startPosition, direction) {
   var endPosition = startPosition.clone();
+  var junctions = [];
   while (true) {
     var nextEnd = endPosition.add(direction);
     if (!this.state.isSpecial(nextEnd)) {
-      return endPosition;
+      return junctions;
     }
     endPosition = nextEnd;
     var context = this.state.getContext(nextEnd);
     if (!(context.left && context.right && !context.up && !context.down) &&
         !(!context.left && !context.right && context.up && context.down)) {
-      return endPosition;
+      junctions.push(endPosition);
     }
   }
 };
