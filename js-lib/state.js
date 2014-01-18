@@ -22,6 +22,19 @@ ascii.Cell.prototype.getDrawValue = function() {
 };
 
 /**
+ * The context for a cell, i.e. the status of the cells around it.
+ *
+ * @param {boolean} left, right, up, down
+ * @constructor
+ */
+ascii.CellContext = function(left, right, up, down) {
+  /** @type {boolean} */ this.left = left;
+  /** @type {boolean} */ this.right = right;
+  /** @type {boolean} */ this.up = up;
+  /** @type {boolean} */ this.down = down;
+};
+
+/**
  * Holds the entire state of the diagram as a 2D array of cells.
  *
  * @constructor
@@ -118,21 +131,30 @@ ascii.State.prototype.getDrawValue = function(position) {
   }
 
   // Magic time.
+  var context = this.getContext(position);
+  
+  if (context.left && context.right && !context.up && !context.down) {
+    return SPECIAL_LINE_H;
+  }
+  if (!context.left && !context.right && context.up && context.down) {
+    return SPECIAL_LINE_V;
+  }
+  if (context.left && context.right && context.up && context.down) {
+    return SPECIAL_LINE_H;
+  }
+  return SPECIAL_VALUE;
+};
+
+/**
+ * @param {ascii.Vector} position
+ * @return {ascii.CellContext}
+ */
+ascii.State.prototype.getContext = function(position) {
   var left = this.isSpecial(position.add(new ascii.Vector(-1, 0)));
   var right = this.isSpecial(position.add(new ascii.Vector(1, 0)));
   var up = this.isSpecial(position.add(new ascii.Vector(0, -1)));
   var down = this.isSpecial(position.add(new ascii.Vector(0, 1)));
-  
-  if (left && right && !up && !down) {
-    return SPECIAL_LINE_H;
-  }
-  if (!left && !right && up && down) {
-    return SPECIAL_LINE_V;
-  }
-  if (left && right && up && down) {
-    return SPECIAL_LINE_H;
-  }
-  return SPECIAL_VALUE;
+  return new ascii.CellContext(left, right, up, down);
 };
 
 /**

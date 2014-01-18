@@ -37,6 +37,13 @@ ascii.Vector.prototype.add = function(other) {
   return new ascii.Vector(this.x + other.x, this.y + other.y);
 };
 
+/**
+ * @return {ascii.Vector}
+ */
+ascii.Vector.prototype.clone = function() {
+  return new ascii.Vector(this.x, this.y);
+};
+
 /** @return {number} */
 ascii.Vector.prototype.length = function() {
   return Math.sqrt(this.x * this.x + this.y * this.y);
