@@ -132,9 +132,8 @@ E.prototype.start = function(a) {
   this.state.getContext(a);
   var b = [new e(1, 0), new e(-1, 0), new e(0, 1), new e(0, -1)], c = [], f;
   for (f in b) {
-    var d = F(this, a, b[f]);
-    window.console.log(d);
-    for (var g in d) {
+    var d = F(this, a, b[f]), g;
+    for (g in d) {
       var h = d[g], p = 0 != b[f].x;
       if (!l(a, h)) {
         var k = this.state.getContext(h);
@@ -148,7 +147,6 @@ E.prototype.start = function(a) {
       }
     }
   }
-  window.console.log(c);
   this.j = c;
   for (f in c) {
     b = this.state;
@@ -200,7 +198,7 @@ function G(a) {
     this.c = new B(a);
   }.bind(this));
   $("#freeform-button").click(function() {
-    this.c = new C(a, "O");
+    this.c = new C(a, "+");
   }.bind(this));
   $("#erase-button").click(function() {
     this.c = new C(a, null);
