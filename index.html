@@ -13,18 +13,20 @@
   left: 0px;
   right: 0px;
   z-index: 100;
-  width: 320px;
+  width: 400px;
   text-align: center;
 }
 
 #dialog {
-  transition: height 1.5s;
-  height: 0px;
+  transition: height 0.3s;
   background: #DDD;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
-#dialog.expanded {
-  height: 400px;
+#dialog.hidden {
+  height: 0px;
+  display: none;
 }
 
 button {
@@ -32,6 +34,10 @@ button {
   height: 30px;
   text-align: center;
   cursor: pointer;
+  border-radius: 5px;
+  background: #DEF;
+  outline: 0 !important;
+  border: 0px;
 }
 
 button.active {
@@ -39,11 +45,17 @@ button.active {
 }
 
 #ascii-canvas {
-  position: absolute;
+  position: fixed;
   left: 0px;
   top: 0px;
   cursor: crosshair;
 };
+
+#export-area {
+  width: 100%;
+  height: 100px;
+}
+
 </style>
 </head>
 <body>
@@ -56,7 +68,9 @@ button.active {
     <button id="move-button">Resize</button>
     <button id="menu-button">Menu</button>
   </div>
-  <div id="dialog"></div>
+  <div id="dialog" class="hidden">
+    <textarea id="export-area"></textarea>
+  </div>
 </div>
 <canvas id="ascii-canvas"></canvas>
 <script src="jquery-1.9.1.min.js"></script>

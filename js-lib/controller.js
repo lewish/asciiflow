@@ -146,23 +146,36 @@ ascii.Controller.prototype.installBindings = function() {
   });
   // TODO: Handle pinch to zoom.
 
-  $('#box-button').click(function(e) {
+  $('#buttons > button').click(function(e) {
+    this.updateButtons(e.target.id);
+  }.bind(this));
+};
+
+/**
+ * Handles the buttons in the UI.
+ * @param {string} id The ID of the element clicked.
+ */
+ascii.Controller.prototype.updateButtons = function(id) {
+  $('#buttons > button').removeClass();
+  $('#dialog').addClass('hidden');
+  $('#' + id).addClass('active');
+  if (id == 'menu-button') {
+    $('#dialog').removeClass('hidden');
+  }
+  // Install the right draw tool based on button pressed.
+  if (id == 'box-button') {
     this.drawFunction = new ascii.DrawBox(this.state);
-  }.bind(this));
-
-  $('#line-button').click(function(e) {
+  }
+  if (id == 'line-button') {
     this.drawFunction = new ascii.DrawLine(this.state);
-  }.bind(this));
-
-  $('#freeform-button').click(function(e) {
+  }
+  if (id == 'freeform-button') {
     this.drawFunction = new ascii.DrawFreeform(this.state, '+');
-  }.bind(this));
-
-  $('#erase-button').click(function(e) {
+  }
+  if (id == 'erase-button') {
     this.drawFunction = new ascii.DrawFreeform(this.state, null);
-  }.bind(this));
-
-  $('#move-button').click(function(e) {
+  }
+  if (id == 'move-button') {
     this.drawFunction = new ascii.DrawMove(this.state);
-  }.bind(this));
+  }
 };
