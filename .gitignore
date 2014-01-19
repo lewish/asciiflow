@@ -3,3 +3,4 @@ closure-library/*
 .settings/*
 js-compiled.js
 *~
+_site/*

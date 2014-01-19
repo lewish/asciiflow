@@ -7,8 +7,8 @@ goog.require('ascii.StateController');
 goog.require('ascii.Vector');
 goog.require('ascii.View');
 
-/** @const */ var DRAG_LATENCY = 150; // Milliseconds.
-/** @const */ var DRAG_ACCURACY = 0.1; // Pixels.
+/** @const */ var DRAG_LATENCY = 130; // Milliseconds.
+/** @const */ var DRAG_ACCURACY = 3; // Pixels.
 
 /**
  * @constructor

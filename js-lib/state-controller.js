@@ -216,7 +216,7 @@ DrawMove.prototype.followLine = function(startPosition, direction) {
   var junctions = [];
   while (true) {
     var nextEnd = endPosition.add(direction);
-    if (!this.state.isSpecial(nextEnd)) {
+    if (!this.state.isSpecial(endPosition) || !this.state.isSpecial(nextEnd)) {
       return junctions;
     }
     endPosition = nextEnd;
