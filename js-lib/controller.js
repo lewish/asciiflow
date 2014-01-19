@@ -1,11 +1,6 @@
 /**
  * Handles user input events and modifies state.
- */
-
-/** @const */ var DRAG_LATENCY = 130; // Milliseconds.
-/** @const */ var DRAG_ACCURACY = 3; // Pixels.
-
-/**
+ *
  * @constructor
  * @param {ascii.View} view
  * @param {ascii.State} state
@@ -14,8 +9,8 @@ ascii.Controller = function(view, state) {
   /** @type {ascii.View} */ this.view = view;
   /** @type {ascii.State} */ this.state = state;
 
-  /** @type {ascii.StateController} */ this.stateController =
-      new ascii.StateController(state);
+  /** @type {ascii.DrawFunction} */ this.drawFunction =
+      new ascii.DrawBox(state);
 
   /** @type {ascii.Vector} */ this.dragOrigin;
   /** @type {ascii.Vector} */ this.pressVector;
@@ -35,7 +30,7 @@ ascii.Controller.prototype.handlePress = function(position) {
   // Check to see if a drag happened in the given allowed time.
   window.setTimeout(function() {
     if (this.dragOrigin == null && this.pressVector != null) {
-      this.stateController.handleDrawingPress(this.view.screenToCell(position));
+      this.drawFunction.start(this.view.screenToCell(position));
       this.view.dirty = true;
     }
     // TODO: Skip this if release happens before timeout.
@@ -62,7 +57,7 @@ ascii.Controller.prototype.handleMove = function(position) {
       (this.lastMoveCell == null ||
           !this.view.screenToCell(position)
           .equals(this.view.screenToCell(this.lastMoveCell)))) {
-    this.stateController.handleDrawingMove(this.view.screenToCell(position));
+    this.drawFunction.move(this.view.screenToCell(position));
     this.view.dirty = true;
     this.lastMoveCell = position;
   }
@@ -83,7 +78,7 @@ ascii.Controller.prototype.handleRelease = function(position) {
   // Drag wasn't initiated in time, treat this as a drawing event.
   if (this.dragOrigin == null &&
       ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
-    this.stateController.handleDrawingRelease(this.view.screenToCell(position));
+    this.drawFunction.end(this.view.screenToCell(position));
     this.view.dirty = true;
   }
   this.pressVector = null;
@@ -150,4 +145,24 @@ ascii.Controller.prototype.installBindings = function() {
          e.originalEvent.touches[0].pageY));
   });
   // TODO: Handle pinch to zoom.
+
+  $('#box-button').click(function(e) {
+    this.drawFunction = new ascii.DrawBox(this.state);
+  }.bind(this));
+
+  $('#line-button').click(function(e) {
+    this.drawFunction = new ascii.DrawLine(this.state);
+  }.bind(this));
+
+  $('#freeform-button').click(function(e) {
+    this.drawFunction = new ascii.DrawFreeform(this.state, '+');
+  }.bind(this));
+
+  $('#erase-button').click(function(e) {
+    this.drawFunction = new ascii.DrawFreeform(this.state, null);
+  }.bind(this));
+
+  $('#move-button').click(function(e) {
+    this.drawFunction = new ascii.DrawMove(this.state);
+  }.bind(this));
 };

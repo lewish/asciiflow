@@ -1,39 +1,6 @@
-/** @const */ var MAX_GRID_SIZE = 1000;
-/** @const */ var SPECIAL_VALUE = '+';
-
-/** @const */ var SPECIAL_LINE_H = '\u2014';
-/** @const */ var SPECIAL_LINE_V = '|';
-
 /**
- * An individual cell within the diagram and it's current value.
- *
- * @constructor
- */
-ascii.Cell = function() {
-  /** @type {?string} */ this.value = null;
-  /** @type {?string} */ this.scratchValue = null;
-};
-
-/** @return {?string} */
-ascii.Cell.prototype.getDrawValue = function() {
-  return (this.scratchValue != null ? this.scratchValue : this.value);
-};
-
-/**
- * The context for a cell, i.e. the status of the cells around it.
- *
- * @param {boolean} left, right, up, down
- * @constructor
- */
-ascii.CellContext = function(left, right, up, down) {
-  /** @type {boolean} */ this.left = left;
-  /** @type {boolean} */ this.right = right;
-  /** @type {boolean} */ this.up = up;
-  /** @type {boolean} */ this.down = down;
-};
-
-/**
- * Holds the entire state of the diagram as a 2D array of cells.
+ * Holds the entire state of the diagram as a 2D array of cells
+ * and provides methods to modify the current state.
  *
  * @constructor
  */
@@ -71,7 +38,7 @@ ascii.State.prototype.getCell = function(vector) {
 ascii.State.prototype.setValue = function(position, value) {
   this.getCell(position).value = value;
 };
-    
+
 /**
  * Sets the cells scratch (uncommitted) value at the given position.
  *
@@ -85,15 +52,6 @@ ascii.State.prototype.drawValue = function(position, value) {
 };
 
 /**
- * Sets the cells scratch value to be the special value.
- *
- * @param {ascii.Vector} position
- */
-ascii.State.prototype.drawSpecial = function(position) {
-  this.drawValue(position, SPECIAL_VALUE);
-};
-
-/**
  * Clears the current drawing scratchpad.
  */
 ascii.State.prototype.clearDraw = function() {
@@ -104,18 +62,6 @@ ascii.State.prototype.clearDraw = function() {
 };
 
 /**
- * Returns true if the cell at the given position is special.
- *
- * @param {ascii.Vector} position
- * @return {boolean}
- */
-ascii.State.prototype.isSpecial = function(position) {
-  var cell = this.getCell(position);
-  var value =  cell.scratchValue != null ? cell.scratchValue : cell.value;
-  return value == SPECIAL_VALUE;
-};
-
-/**
  * Returns the draw value of a cell at the given position.
  *
  * @param {ascii.Vector} position
@@ -123,14 +69,14 @@ ascii.State.prototype.isSpecial = function(position) {
  */
 ascii.State.prototype.getDrawValue = function(position) {
   var cell = this.getCell(position);
-  var value =  cell.scratchValue != null ? cell.scratchValue : cell.value;
+  var value = cell.scratchValue != null ? cell.scratchValue : cell.value;
   if (value != SPECIAL_VALUE) {
     return value;
   }
 
   // Magic time.
   var context = this.getContext(position);
-  
+
   if (context.left && context.right && !context.up && !context.down) {
     return SPECIAL_LINE_H;
   }
@@ -148,10 +94,10 @@ ascii.State.prototype.getDrawValue = function(position) {
  * @return {ascii.CellContext}
  */
 ascii.State.prototype.getContext = function(position) {
-  var left = this.isSpecial(position.add(new ascii.Vector(-1, 0)));
-  var right = this.isSpecial(position.add(new ascii.Vector(1, 0)));
-  var up = this.isSpecial(position.add(new ascii.Vector(0, -1)));
-  var down = this.isSpecial(position.add(new ascii.Vector(0, 1)));
+  var left = this.getCell(position.add(new ascii.Vector(-1, 0))).isSpecial();
+  var right = this.getCell(position.add(new ascii.Vector(1, 0))).isSpecial();
+  var up = this.getCell(position.add(new ascii.Vector(0, -1))).isSpecial();
+  var down = this.getCell(position.add(new ascii.Vector(0, 1))).isSpecial();
   return new ascii.CellContext(left, right, up, down);
 };
 
@@ -160,7 +106,7 @@ ascii.State.prototype.getContext = function(position) {
  */
 ascii.State.prototype.commitDraw = function() {
   for (var i in this.scratchCells) {
-    this.scratchCells[i].value = this.scratchCells[i].getDrawValue();
+    this.scratchCells[i].value = this.scratchCells[i].getRawValue();
     this.scratchCells[i].scratchValue = null;
   }
 };

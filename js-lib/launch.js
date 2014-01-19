@@ -1,8 +1,4 @@
 /**
- * Application main entry point.
- */
-
-/**
  * Runs the application.
  */
 ascii.launch = function() {

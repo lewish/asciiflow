@@ -1,7 +1,19 @@
-/** 
- * Draws a line.
+/**
+ * All drawing classes and functions.
  */
-function drawLine(state, startPosition, endPosition, clockwise) {
+
+/**
+ * Draws a line on the diagram state.
+ *
+ * @param {ascii.State} state
+ * @param {ascii.Vector} startPosition
+ * @param {ascii.Vector} endPosition
+ * @param {boolean} clockwise
+ * @param {string=} opt_value
+ */
+function drawLine(state, startPosition, endPosition, clockwise, opt_value) {
+  var value = opt_value || SPECIAL_VALUE;
+
   var hX1 = Math.min(startPosition.x, endPosition.x);
   var vY1 = Math.min(startPosition.y, endPosition.y);
   var hX2 = Math.max(startPosition.x, endPosition.x);
@@ -11,93 +23,70 @@ function drawLine(state, startPosition, endPosition, clockwise) {
   var vX = clockwise ? endPosition.x : startPosition.x;
 
   while (hX1++ < hX2) {
-    state.drawSpecial(new ascii.Vector(hX1, hY));
+    state.drawValue(new ascii.Vector(hX1, hY), value);
   }
   while (vY1++ < vY2) {
-    state.drawSpecial(new ascii.Vector(vX, vY1));
+    state.drawValue(new ascii.Vector(vX, vY1), value);
   }
-  state.drawSpecial(startPosition);
-  state.drawSpecial(endPosition);
-  state.drawSpecial(new ascii.Vector(vX, hY));
-};
-
-/** 
- * Clears a line but with some special cases.
- * TODO: Refactor somewhere!
- */
-function clearLine(state, startPosition, endPosition, clockwise) {
-  var hX1 = Math.min(startPosition.x, endPosition.x);
-  var vY1 = Math.min(startPosition.y, endPosition.y);
-  var hX2 = Math.max(startPosition.x, endPosition.x);
-  var vY2 = Math.max(startPosition.y, endPosition.y);
-
-  var hY = clockwise ? startPosition.y : endPosition.y;
-  var vX = clockwise ? endPosition.x : startPosition.x;
-
-  while (hX1++ < hX2) {
-    state.drawValue(new ascii.Vector(hX1, hY), ' ');
-  }
-  while (vY1++ < vY2) {
-    state.drawValue(new ascii.Vector(vX, vY1), ' ');
-  }
-  state.drawValue(startPosition, ' ');
-  state.drawValue(endPosition, ' ');
-  state.drawValue(new ascii.Vector(vX, hY), ' ');
-};
+  state.drawValue(startPosition, value);
+  state.drawValue(endPosition, value);
+  state.drawValue(new ascii.Vector(vX, hY), value);
+}
 
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
  * @interface
  */
-function DrawFunction() {}
+ascii.DrawFunction = function() {};
 /** Start of drawing. @param {ascii.Vector} position */
-DrawFunction.prototype.start = function(position) {};
+ascii.DrawFunction.prototype.start = function(position) {};
 /** Drawing move. @param {ascii.Vector} position */
-DrawFunction.prototype.move = function(position) {};
+ascii.DrawFunction.prototype.move = function(position) {};
 /** End of drawing. @param {ascii.Vector} position */
-DrawFunction.prototype.end = function(position) {};
+ascii.DrawFunction.prototype.end = function(position) {};
 
 /**
  * @constructor
- * @implements {DrawFunction}
+ * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
  */
-function DrawBox(state) {
+ascii.DrawBox = function(state) {
   this.state = state;
   /** @type {ascii.Vector} */ this.startPosition = null;
-}
+};
 
-DrawBox.prototype.start = function(position) {
+ascii.DrawBox.prototype.start = function(position) {
   this.startPosition = position;
 };
-DrawBox.prototype.move = function(position) {
+ascii.DrawBox.prototype.move = function(position) {
   this.endPosition = position;
   this.state.clearDraw();
   drawLine(this.state, this.startPosition, position, true);
   drawLine(this.state, this.startPosition, position, false);
 };
-DrawBox.prototype.end = function(position) {
+ascii.DrawBox.prototype.end = function(position) {
   this.state.commitDraw();
 };
 
 
 /**
  * @constructor
- * @implements {DrawFunction}
+ * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
  */
-function DrawLine(state) {
+ascii.DrawLine = function(state) {
   this.state = state;
   /** @type {ascii.Vector} */ this.startPosition = null;
-}
+};
 
-DrawLine.prototype.start = function(position) {
+ascii.DrawLine.prototype.start = function(position) {
   this.startPosition = position;
 };
-DrawLine.prototype.move = function(position) {
+ascii.DrawLine.prototype.move = function(position) {
   this.state.clearDraw();
 
   // Try to infer line orientation.
+  // TODO: Split the line into two lines if we can't satisfy both ends.
   var startContext = this.state.getContext(this.startPosition);
   var endContext = this.state.getContext(position);
   var clockwise = (startContext.up && startContext.down) ||
@@ -106,48 +95,48 @@ DrawLine.prototype.move = function(position) {
   drawLine(this.state, this.startPosition, position, clockwise);
 };
 
-DrawLine.prototype.end = function(position) {
+ascii.DrawLine.prototype.end = function(position) {
   this.state.commitDraw();
 };
 
 /**
  * @constructor
- * @implements {DrawFunction}
+ * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
  * @param {?string} value
  */
-function DrawFreeform(state, value) {
+ascii.DrawFreeform = function(state, value) {
   this.state = state;
   this.value = value;
-}
-
-DrawFreeform.prototype.start = function(position) {
-  this.state.setValue(position, this.value);
-};
-DrawFreeform.prototype.move = function(position) {
-  this.state.setValue(position, this.value);
 };
 
-DrawFreeform.prototype.end = function(position) {
+ascii.DrawFreeform.prototype.start = function(position) {
+  this.state.setValue(position, this.value);
+};
+ascii.DrawFreeform.prototype.move = function(position) {
+  this.state.setValue(position, this.value);
+};
+
+ascii.DrawFreeform.prototype.end = function(position) {
 };
 
 /**
  * @constructor
- * @implements {DrawFunction}
+ * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
  */
-function DrawMove(state) {
+ascii.DrawMove = function(state) {
   this.state = state;
   this.ends = null;
-}
+};
 
-DrawMove.prototype.start = function(position) {
+ascii.DrawMove.prototype.start = function(position) {
   var context = this.state.getContext(position);
   var directions = [
     new ascii.Vector(1, 0),
     new ascii.Vector(-1, 0),
     new ascii.Vector(0, 1),
-    new ascii.Vector(0, -1) ];
+    new ascii.Vector(0, -1)];
 
   var ends = [];
   for (var i in directions) {
@@ -175,7 +164,7 @@ DrawMove.prototype.start = function(position) {
         // Don't go back on ourselves, or don't carry on in same direction.
         continue;
       }
-      // On the second line we don't care about multiple junctions, just the first.
+      // On the second line we don't care about multiple junctions.
       var endz = this.followLine(midPoint, directions[j]);
       // Ignore any directions that didn't go anywhere.
       if (endz.length == 0 || midPoint.equals(endz[0])) {
@@ -189,30 +178,32 @@ DrawMove.prototype.start = function(position) {
 
   // Clear all the lines so we can draw them afresh.
   for (var i in ends) {
-    clearLine(this.state, position, ends[i].position, ends[i].clockwise);
+    drawLine(this.state, position, ends[i].position, ends[i].clockwise, ' ');
   }
   this.state.commitDraw();
   // Redraw the new lines after we have cleared the existing ones.
   this.move(position);
 };
 
-DrawMove.prototype.move = function(position) {
+ascii.DrawMove.prototype.move = function(position) {
   this.state.clearDraw();
   for (var i in this.ends) {
-    drawLine(this.state, position, this.ends[i].position, this.ends[i].clockwise);
+    drawLine(this.state, position, this.ends[i].position,
+        this.ends[i].clockwise);
   }
 };
 
-DrawMove.prototype.end = function(position) {
+ascii.DrawMove.prototype.end = function(position) {
   this.state.commitDraw();
 };
 
-DrawMove.prototype.followLine = function(startPosition, direction) {
+ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
   var endPosition = startPosition.clone();
   var junctions = [];
   while (true) {
     var nextEnd = endPosition.add(direction);
-    if (!this.state.isSpecial(endPosition) || !this.state.isSpecial(nextEnd)) {
+    if (!this.state.getCell(endPosition).isSpecial() ||
+        !this.state.getCell(nextEnd).isSpecial()) {
       return junctions;
     }
     endPosition = nextEnd;
@@ -224,58 +215,3 @@ DrawMove.prototype.followLine = function(startPosition, direction) {
   }
 };
 
-/**
- * Handles management of the diagram state. Input events are cleaned in the
- * parent controller and passed down to this class for dealing with drawing.
- *
- * @constructor
- * @param {ascii.State} state
- */
-ascii.StateController = function(state) {
-  /** @type {ascii.State} */ this.state = state;
-  /** @type {DrawFunction} */ this.drawFunction = new DrawBox(state);
-
-  $('#box-button').click(function(e) {
-    this.drawFunction = new DrawBox(state);
-  }.bind(this));
-
-  $('#line-button').click(function(e) {
-    this.drawFunction = new DrawLine(state);
-  }.bind(this));
-
-  $('#freeform-button').click(function(e) {
-    this.drawFunction = new DrawFreeform(state, '+');
-  }.bind(this));
-
-  $('#erase-button').click(function(e) {
-    this.drawFunction = new DrawFreeform(state, null);
-  }.bind(this));
-
-  $('#move-button').click(function(e) {
-    this.drawFunction = new DrawMove(state);
-  }.bind(this));
-};
-
-/**
- * Handles a press in the context of the drawing frame.
- * @param {ascii.Vector} position
- */
-ascii.StateController.prototype.handleDrawingPress = function(position) {
-  this.drawFunction.start(position);
-};
-
-/**
- * Handles a release in the context of the drawing frame.
- * @param {ascii.Vector} position
- */
-ascii.StateController.prototype.handleDrawingRelease = function(position) {
-  this.drawFunction.end(position);
-};
-
-/**
- * Handles a move in the context of the drawing frame.
- * @param {ascii.Vector} position
- */
-ascii.StateController.prototype.handleDrawingMove = function(position) {
-  this.drawFunction.move(position);
-};

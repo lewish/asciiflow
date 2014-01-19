@@ -1,6 +1,3 @@
-/** @const */ var CHARACTER_PIXELS = 15;
-/** @const */ var RENDER_PADDING = 70;
-
 /**
  * Handles view operations, state and management of the screen.
  *
@@ -92,7 +89,7 @@ ascii.View.prototype.render = function() {
   this.context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
-      if (this.state.isSpecial(new ascii.Vector(i, j))) {
+      if (this.state.getCell(new ascii.Vector(i, j)).isSpecial()) {
         this.context.fillStyle = '#F5F5F5';
         context.fillRect(
             i * CHARACTER_PIXELS - this.offset.x,
