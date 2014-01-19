@@ -1,7 +1,3 @@
-goog.provide('ascii.StateController');
-
-goog.require('ascii.Vector');
-
 /** 
  * Draws a line.
  */

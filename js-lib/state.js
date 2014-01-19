@@ -1,5 +1,3 @@
-goog.provide('ascii.State');
-
 /** @const */ var MAX_GRID_SIZE = 1000;
 /** @const */ var SPECIAL_VALUE = '+';
 

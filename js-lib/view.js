@@ -1,7 +1,3 @@
-goog.provide('ascii.View');
-
-goog.require('ascii.Vector');
-
 /** @const */ var CHARACTER_PIXELS = 15;
 /** @const */ var RENDER_PADDING = 70;
 

@@ -17,11 +17,25 @@
   text-align: center;
 }
 
+#dialog {
+  transition: height 1.5s;
+  height: 0px;
+  background: #DDD;
+}
+
+#dialog.expanded {
+  height: 400px;
+}
+
 button {
   width: 60px;
   height: 30px;
   text-align: center;
   cursor: pointer;
+}
+
+button.active {
+  font-weight: bold;
 }
 
 #ascii-canvas {
@@ -34,11 +48,15 @@ button {
 </head>
 <body>
 <div id="menu">
-  <button id="box-button">Box</button>
-  <button id="line-button">Line</button>
-  <button id="freeform-button">Draw</button>
-  <button id="erase-button">Erase</button>
-  <button id="move-button">Resize</button>
+  <div id="buttons">
+    <button id="box-button">Box</button>
+    <button id="line-button">Line</button>
+    <button id="freeform-button">Draw</button>
+    <button id="erase-button">Erase</button>
+    <button id="move-button">Resize</button>
+    <button id="menu-button">Menu</button>
+  </div>
+  <div id="dialog"></div>
 </div>
 <canvas id="ascii-canvas"></canvas>
 <script src="jquery-1.9.1.min.js"></script>

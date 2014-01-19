@@ -1,11 +1,6 @@
 /**
  * Handles user input events and modifies state.
  */
-goog.provide('ascii.Controller');
-
-goog.require('ascii.StateController');
-goog.require('ascii.Vector');
-goog.require('ascii.View');
 
 /** @const */ var DRAG_LATENCY = 130; // Milliseconds.
 /** @const */ var DRAG_ACCURACY = 3; // Pixels.

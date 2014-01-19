@@ -1,7 +1,6 @@
 /**
  * Common classes.
  */
-goog.provide('ascii.Vector');
 
 /**
  * @constructor

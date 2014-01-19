@@ -1,11 +1,6 @@
 /**
  * Application main entry point.
  */
-goog.provide('ascii.launch');
-
-goog.require('ascii.Controller');
-goog.require('ascii.State');
-goog.require('ascii.View');
 
 /**
  * Runs the application.
