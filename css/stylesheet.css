@@ -35,8 +35,9 @@ footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
-ol, ul {
+ol, ul, li {
   list-style: none;
+  list-style-type: none;
 }
 
 table {
@@ -95,6 +96,10 @@ h6 {
 
 p {
   margin: 10px 0 15px 0;
+}
+
+footer {
+  text-align: center;
 }
 
 footer p {

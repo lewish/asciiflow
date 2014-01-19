@@ -2,3 +2,4 @@ closure-library
 closure-library/*
 .settings/*
 *~
+_site/*
