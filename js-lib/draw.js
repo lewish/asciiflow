@@ -44,6 +44,11 @@ ascii.DrawFunction.prototype.start = function(position) {};
 ascii.DrawFunction.prototype.move = function(position) {};
 /** End of drawing. @param {ascii.Vector} position */
 ascii.DrawFunction.prototype.end = function(position) {};
+/** Cursor for given cell.
+ * @param {ascii.Vector} position
+ * @return {string} 
+ */
+ascii.DrawFunction.prototype.getCursor = function(position) {};
 
 /**
  * @constructor
@@ -67,7 +72,9 @@ ascii.DrawBox.prototype.move = function(position) {
 ascii.DrawBox.prototype.end = function(position) {
   this.state.commitDraw();
 };
-
+ascii.DrawBox.prototype.getCursor = function(position) {
+  return 'crosshair';
+};
 
 /**
  * @constructor
@@ -94,9 +101,11 @@ ascii.DrawLine.prototype.move = function(position) {
 
   drawLine(this.state, this.startPosition, position, clockwise);
 };
-
 ascii.DrawLine.prototype.end = function(position) {
   this.state.commitDraw();
+};
+ascii.DrawLine.prototype.getCursor = function(position) {
+  return 'crosshair';
 };
 
 /**
@@ -116,8 +125,10 @@ ascii.DrawFreeform.prototype.start = function(position) {
 ascii.DrawFreeform.prototype.move = function(position) {
   this.state.setValue(position, this.value);
 };
-
 ascii.DrawFreeform.prototype.end = function(position) {
+};
+ascii.DrawFreeform.prototype.getCursor = function(position) {
+  return 'crosshair';
 };
 
 /**
@@ -212,6 +223,14 @@ ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
         !(!context.left && !context.right && context.up && context.down)) {
       junctions.push(endPosition);
     }
+  }
+};
+
+ascii.DrawMove.prototype.getCursor = function(position) {
+  if (this.state.getCell(position).isSpecial()) {
+    return 'pointer';
+  } else {
+    return 'default';
   }
 };
 

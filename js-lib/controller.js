@@ -41,6 +41,10 @@ ascii.Controller.prototype.handlePress = function(position) {
  * @param {ascii.Vector} position
  */
 ascii.Controller.prototype.handleMove = function(position) {
+  // Update the cursor pointer, depending on the draw function.
+  this.view.canvas.style.cursor = this.drawFunction.getCursor(
+      this.view.screenToCell(position));
+
   // No clicks, so just ignore.
   if (this.pressVector == null) { return; }
 
@@ -156,12 +160,12 @@ ascii.Controller.prototype.installBindings = function() {
  * @param {string} id The ID of the element clicked.
  */
 ascii.Controller.prototype.updateButtons = function(id) {
-  $('#buttons > button').removeClass();
-  $('#dialog').addClass('hidden');
+  $('#buttons > button').removeClass('active');
+  $('.dialog').removeClass('visible');
+
   $('#' + id).addClass('active');
-  if (id == 'menu-button') {
-    $('#dialog').removeClass('hidden');
-  }
+  $('#' + id + '-dialog').addClass('visible');
+
   // Install the right draw tool based on button pressed.
   if (id == 'box-button') {
     this.drawFunction = new ascii.DrawBox(this.state);

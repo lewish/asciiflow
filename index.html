@@ -17,38 +17,41 @@
   text-align: center;
 }
 
-#dialog {
+.dialog {
   transition: height 0.3s;
-  background: #DDD;
   border-radius: 5px;
-  margin-top: 10px;
-}
+  margin: 10px;
+  border: 1px solid #444;
+  background: #D0E0FF;
 
-#dialog.hidden {
-  height: 0px;
   display: none;
 }
 
+.visible {
+  display: block !important;
+}
+
 button {
-  width: 60px;
+  width: 15%;
   height: 30px;
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
   background: #DEF;
   outline: 0 !important;
-  border: 0px;
+  border-width: 1px;
+  border-color: #DDD;
 }
 
 button.active {
-  font-weight: bold;
+  border-color: #444;
+  background: #D0E0FF;
 }
 
 #ascii-canvas {
   position: fixed;
   left: 0px;
   top: 0px;
-  cursor: crosshair;
 };
 
 #export-area {
@@ -61,15 +64,15 @@ button.active {
 <body>
 <div id="menu">
   <div id="buttons">
-    <button id="box-button">Box</button>
+    <button id="box-button" class="active">Box</button>
     <button id="line-button">Line</button>
     <button id="freeform-button">Draw</button>
     <button id="erase-button">Erase</button>
     <button id="move-button">Resize</button>
     <button id="menu-button">Menu</button>
   </div>
-  <div id="dialog" class="hidden">
-    <textarea id="export-area"></textarea>
+  <div id="menu-button-dialog" class="dialog">
+    <pre id="export-area">BLAH</pre>
   </div>
 </div>
 <canvas id="ascii-canvas"></canvas>
