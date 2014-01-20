@@ -14,23 +14,23 @@
 function drawLine(state, startPosition, endPosition, clockwise, opt_value) {
   var value = opt_value || SPECIAL_VALUE;
 
-  var hX1 = Math.min(startPosition.x, endPosition.x);
-  var vY1 = Math.min(startPosition.y, endPosition.y);
-  var hX2 = Math.max(startPosition.x, endPosition.x);
-  var vY2 = Math.max(startPosition.y, endPosition.y);
+  var startX = Math.min(startPosition.x, endPosition.x);
+  var startY = Math.min(startPosition.y, endPosition.y);
+  var endX = Math.max(startPosition.x, endPosition.x);
+  var endY = Math.max(startPosition.y, endPosition.y);
 
-  var hY = clockwise ? startPosition.y : endPosition.y;
-  var vX = clockwise ? endPosition.x : startPosition.x;
+  var midX = clockwise ? endPosition.x : startPosition.x;
+  var midY = clockwise ? startPosition.y : endPosition.y;
 
-  while (hX1++ < hX2) {
-    state.drawValue(new ascii.Vector(hX1, hY), value);
+  while (startX++ < endX) {
+    state.drawValue(new ascii.Vector(startX, midY), value);
   }
-  while (vY1++ < vY2) {
-    state.drawValue(new ascii.Vector(vX, vY1), value);
+  while (startY++ < endY) {
+    state.drawValue(new ascii.Vector(midX, startY), value);
   }
   state.drawValue(startPosition, value);
   state.drawValue(endPosition, value);
-  state.drawValue(new ascii.Vector(vX, hY), value);
+  state.drawValue(new ascii.Vector(midX, midY), value);
 }
 
 /**
@@ -120,14 +120,52 @@ ascii.DrawFreeform = function(state, value) {
 };
 
 ascii.DrawFreeform.prototype.start = function(position) {
-  this.state.setValue(position, this.value);
+  this.state.drawValue(position, this.value);
 };
 ascii.DrawFreeform.prototype.move = function(position) {
-  this.state.setValue(position, this.value);
+  this.state.drawValue(position, this.value);
 };
 ascii.DrawFreeform.prototype.end = function(position) {
+  this.state.commitDraw();
 };
 ascii.DrawFreeform.prototype.getCursor = function(position) {
+  return 'crosshair';
+};
+
+/**
+ * @constructor
+ * @implements {ascii.DrawFunction}
+ * @param {ascii.State} state
+ */
+ascii.DrawErase = function(state) {
+  this.state = state;
+  this.startPosition = null;
+  this.endPosition = null;
+};
+
+ascii.DrawErase.prototype.start = function(position) {
+  this.startPosition = position;
+  this.move(position);
+};
+ascii.DrawErase.prototype.move = function(position) {
+  this.state.clearDraw();
+  this.endPosition = position;
+
+  var startX = Math.min(this.startPosition.x, this.endPosition.x);
+  var startY = Math.min(this.startPosition.y, this.endPosition.y);
+  var endX = Math.max(this.startPosition.x, this.endPosition.x);
+  var endY = Math.max(this.startPosition.y, this.endPosition.y);
+
+  for (var i = startX; i < endX; i++) {
+    for (var j = startY; j < endY; j++) {
+      this.state.drawValue(new ascii.Vector(i, j), ' ');
+    }
+  }
+};
+ascii.DrawErase.prototype.end = function(position) {
+  this.state.commitDraw();
+};
+ascii.DrawErase.prototype.getCursor = function(position) {
   return 'crosshair';
 };
 

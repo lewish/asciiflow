@@ -89,8 +89,9 @@ ascii.View.prototype.render = function() {
   this.context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
-      if (this.state.getCell(new ascii.Vector(i, j)).isSpecial()) {
-        this.context.fillStyle = '#F5F5F5';
+      var cell = this.state.getCell(new ascii.Vector(i, j));
+      if (cell.hasScratch() || cell.isSpecial()) {
+        this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
         context.fillRect(
             i * CHARACTER_PIXELS - this.offset.x,
             (j - 1) * CHARACTER_PIXELS - this.offset.y,

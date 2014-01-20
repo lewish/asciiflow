@@ -92,6 +92,11 @@ ascii.Cell.prototype.isSpecial = function() {
   return this.getRawValue() == SPECIAL_VALUE;
 };
 
+/** @return {boolean} */
+ascii.Cell.prototype.hasScratch = function() {
+  return this.scratchValue != null;
+};
+
 /**
  * The context for a cell, i.e. the status of the cells around it.
  *

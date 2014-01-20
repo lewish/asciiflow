@@ -106,8 +106,13 @@ ascii.State.prototype.getContext = function(position) {
  */
 ascii.State.prototype.commitDraw = function() {
   for (var i in this.scratchCells) {
-    this.scratchCells[i].value = this.scratchCells[i].getRawValue();
+    var newValue = this.scratchCells[i].getRawValue();
+    // Cheeky little hack for making erase play nicely.
+    if (newValue == ' ') {
+      newValue = null;
+    }
     this.scratchCells[i].scratchValue = null;
+    this.scratchCells[i].value = newValue;
   }
 };
 

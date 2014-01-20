@@ -174,10 +174,10 @@ ascii.Controller.prototype.updateButtons = function(id) {
     this.drawFunction = new ascii.DrawLine(this.state);
   }
   if (id == 'freeform-button') {
-    this.drawFunction = new ascii.DrawFreeform(this.state, '+');
+    this.drawFunction = new ascii.DrawFreeform(this.state, SPECIAL_VALUE);
   }
   if (id == 'erase-button') {
-    this.drawFunction = new ascii.DrawFreeform(this.state, null);
+    this.drawFunction = new ascii.DrawErase(this.state);
   }
   if (id == 'move-button') {
     this.drawFunction = new ascii.DrawMove(this.state);
