@@ -49,6 +49,8 @@ ascii.DrawFunction.prototype.end = function(position) {};
  * @return {string} 
  */
 ascii.DrawFunction.prototype.getCursor = function(position) {};
+/** Handle the key with given value being pressed. @param {string} value */
+ascii.DrawFunction.prototype.handleKey = function(value) {};
 
 /**
  * @constructor
@@ -75,6 +77,7 @@ ascii.DrawBox.prototype.end = function(position) {
 ascii.DrawBox.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+ascii.DrawBox.prototype.handleKey = function(value) {};
 
 /**
  * @constructor
@@ -107,6 +110,7 @@ ascii.DrawLine.prototype.end = function(position) {
 ascii.DrawLine.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+ascii.DrawLine.prototype.handleKey = function(value) {};
 
 /**
  * @constructor
@@ -130,6 +134,58 @@ ascii.DrawFreeform.prototype.end = function(position) {
 };
 ascii.DrawFreeform.prototype.getCursor = function(position) {
   return 'crosshair';
+};
+ascii.DrawFreeform.prototype.handleKey = function(value) {};
+
+/**
+ * @constructor
+ * @implements {ascii.DrawFunction}
+ * @param {ascii.State} state
+ */
+ascii.DrawText = function(state) {
+  this.state = state;
+  this.startPosition = null;
+  this.currentPosition = null;
+};
+
+ascii.DrawText.prototype.start = function(position) {
+  this.startPosition = position;
+  this.currentPosition = position;
+  // Clean up any existing draws.
+  this.state.clearDraw();
+  // Effectively highlights the starting cell.
+  var currentValue = this.state.getCell(position).getRawValue();
+  this.state.drawValue(position, currentValue == null ? ' ' : currentValue);
+};
+ascii.DrawText.prototype.move = function(position) {};
+ascii.DrawText.prototype.end = function(position) {};
+ascii.DrawText.prototype.getCursor = function(position) {
+  return 'text';
+};
+ascii.DrawText.prototype.handleKey = function(value) {
+  if (this.currentPosition == null) {
+    return;
+  }
+
+  if (value == '\n') {
+    // Pressed return key, so clear this cell.
+    this.state.clearDraw();
+  } else {
+    // Draw the value and commit it.
+    this.state.drawValue(this.currentPosition, value);
+    this.state.commitDraw();
+  }
+
+  var nextPosition = this.currentPosition.add(new ascii.Vector(1, 0));
+  // Check for hitting edge of box or return character, then line wrap.
+  if (value == '\n' || this.state.getCell(nextPosition).isSpecial()) {
+    nextPosition = this.startPosition.add(new ascii.Vector(0, 1));
+    this.startPosition = nextPosition;
+  }
+  // Highlight the next cell.
+  this.currentPosition = nextPosition;
+  var nextValue = this.state.getCell(nextPosition).getRawValue();
+  this.state.drawValue(nextPosition, nextValue == null ? ' ' : nextValue);
 };
 
 /**
@@ -156,8 +212,8 @@ ascii.DrawErase.prototype.move = function(position) {
   var endX = Math.max(this.startPosition.x, this.endPosition.x);
   var endY = Math.max(this.startPosition.y, this.endPosition.y);
 
-  for (var i = startX; i < endX; i++) {
-    for (var j = startY; j < endY; j++) {
+  for (var i = startX; i <= endX; i++) {
+    for (var j = startY; j <= endY; j++) {
       this.state.drawValue(new ascii.Vector(i, j), ' ');
     }
   }
@@ -168,6 +224,7 @@ ascii.DrawErase.prototype.end = function(position) {
 ascii.DrawErase.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+ascii.DrawErase.prototype.handleKey = function(value) {};
 
 /**
  * @constructor
@@ -278,4 +335,6 @@ ascii.DrawMove.prototype.getCursor = function(position) {
     return 'default';
   }
 };
+
+ascii.DrawMove.prototype.handleKey = function(value) {};
 

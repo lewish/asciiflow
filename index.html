@@ -6,15 +6,10 @@
 <title>ASCIIFlow Infinity</title>
 <style>
 #menu {
-  margin-left: auto;
-  margin-right: auto;
   position: absolute;
-  top: 5px;
+  top: 95px;
   left: 0px;
-  right: 0px;
   z-index: 100;
-  width: 400px;
-  text-align: center;
 }
 
 .dialog {
@@ -32,19 +27,19 @@
 }
 
 button {
-  width: 15%;
+  display: block;
+  margin: 3px;
+  width: 60px;
   height: 30px;
   text-align: center;
   cursor: pointer;
-  border-radius: 5px;
-  background: #DEF;
+  background: #F8F8F8;
   outline: 0 !important;
   border-width: 1px;
-  border-color: #DDD;
+  border-color: #444;
 }
 
 button.active {
-  border-color: #444;
   background: #D0E0FF;
 }
 
@@ -59,9 +54,31 @@ button.active {
   height: 100px;
 }
 
+#logo {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+  background: #F8F8F8;
+  border-right: 1px solid #444;
+  border-bottom: 1px solid #444;
+}
+
+#logo pre {
+  margin: 0px;
+}
+
 </style>
 </head>
 <body>
+<div id="logo"><pre>
+    __   ____  ____  _  _    ____    _____ _        __
+   /  \ | ___|| ___||_||_|  / ___|| |  _  | \  __  / / 
+  / /\ \|_ \  | |    _  _  / /  | | | | | |\ \/  \/ / 
+ /  __  \_\ \ | |__ | || |/ __| | |_| |_| | \      / 
+/__/  \__\___||____||_||_|_/    |____|____|  \_/\_/ 
+
+</pre></div>
 <div id="menu">
   <div id="buttons">
     <button id="box-button" class="active">Box</button>
@@ -69,7 +86,9 @@ button.active {
     <button id="freeform-button">Draw</button>
     <button id="erase-button">Erase</button>
     <button id="move-button">Resize</button>
-    <button id="menu-button">Menu</button>
+    <button id="text-button">Text</button>
+    <!-- <button id="select-button">Select</button> -->
+    <!-- <button id="menu-button">Menu</button> -->
   </div>
   <div id="menu-button-dialog" class="dialog">
     <pre id="export-area">BLAH</pre>

@@ -153,6 +153,10 @@ ascii.Controller.prototype.installBindings = function() {
   $('#buttons > button').click(function(e) {
     this.updateButtons(e.target.id);
   }.bind(this));
+
+  $(window).keypress(function(e) {
+    this.handleKeyPress(e.keyCode);
+  }.bind(this));
 };
 
 /**
@@ -182,4 +186,22 @@ ascii.Controller.prototype.updateButtons = function(id) {
   if (id == 'move-button') {
     this.drawFunction = new ascii.DrawMove(this.state);
   }
+  if (id == 'text-button') {
+    this.drawFunction = new ascii.DrawText(this.state);
+  }
+};
+
+/**
+ * Handles key presses.
+ * @param {number} keyCode
+ */
+ascii.Controller.prototype.handleKeyPress = function(keyCode) {
+  // TODO: Handle undo, redo, and ctrl+c and ctrl+v.
+  var stringValue = String.fromCharCode(keyCode);
+  // Override some special characters so that can be handled in one place.
+  if (keyCode == 13) {
+    stringValue = '\n';
+  }
+  this.drawFunction.handleKey(stringValue);
+  this.view.dirty = true;
 };
