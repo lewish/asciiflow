@@ -246,6 +246,11 @@ ascii.DrawMove.prototype.end = function(position) {
   this.state.commitDraw();
 };
 
+/**
+ * Follows a line in a given direction from the startPosition.
+ * Returns a list of positions that were line 'junctions'. This is a bit of a
+ * loose definition, but basically means a point around which we resize things.
+ */
 ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
   var endPosition = startPosition.clone();
   var junctions = [];
@@ -257,6 +262,8 @@ ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
     }
     endPosition = nextEnd;
     var context = this.state.getContext(nextEnd);
+    // TODO: Would be nice to skip over 4 way junctions here, but need to avoid
+    // clearing them too if we decide to do that.
     if (!(context.left && context.right && !context.up && !context.down) &&
         !(!context.left && !context.right && context.up && context.down)) {
       junctions.push(endPosition);
