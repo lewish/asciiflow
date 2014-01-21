@@ -217,7 +217,7 @@ ascii.Controller.prototype.handleKeyDown = function(event) {
   if (event.ctrlKey || event.metaKey) {
     if (event.keyCode == 67) { specialKeyCode = KEY_COPY; }
     if (event.keyCode == 86) { specialKeyCode = KEY_PASTE; }
-    // if (event.keyCode == 90) { this.state.undo()  }
+    if (event.keyCode == 90) { this.state.undo(); this.view.dirty = true; }
     // if (event.keyCode == 89) { this.state.redo(); }
     if (event.keyCode == 88) { specialKeyCode = KEY_CUT; }
   }

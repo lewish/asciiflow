@@ -7,6 +7,8 @@ goog.provide('ascii');
 /** @const */ var MAX_GRID_SIZE = 1000;
 /** @const */ var SPECIAL_VALUE = '+';
 
+/** @const */ var MAX_UNDO = 50;
+
 /** @const */ var SPECIAL_LINE_H = '\u2014';
 /** @const */ var SPECIAL_LINE_V = '|';
 
@@ -130,3 +132,23 @@ ascii.CellContext = function(left, right, up, down) {
 ascii.CellContext.prototype.sum = function() {
   return this.left + this.right + this.up + this.down;
 };
+
+/**
+ * A pair of a vector and a string value. Used in history management.
+ * @constructor
+ * @struct
+ */
+ascii.MappedValue = function(position, value) {
+  this.position = position;
+  this.value = value;
+}
+
+/**
+ * A pair of a vector and a cell. Used in history management.
+ * @constructor
+ * @struct
+ */
+ascii.MappedCell = function(position, cell) {
+  this.position = position;
+  this.cell = cell;
+}

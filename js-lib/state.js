@@ -7,8 +7,11 @@
 ascii.State = function() {
   /** @type {Array.<Array.<ascii.Cell>>} */
   this.cells = new Array(MAX_GRID_SIZE);
-  /** @type {Array.<ascii.Cell>} */
+  /** @type {Array.<ascii.MappedCell>} */
   this.scratchCells = new Array();
+
+  /** @type {Array.<Array.<ascii.MappedValue>>} */
+  this.undoStates = new Array();
 
   for (var i = 0; i < this.cells.length; i++) {
     this.cells[i] = new Array(MAX_GRID_SIZE);
@@ -47,7 +50,7 @@ ascii.State.prototype.setValue = function(position, value) {
  */
 ascii.State.prototype.drawValue = function(position, value) {
   var cell = this.getCell(position);
-  this.scratchCells.push(cell);
+  this.scratchCells.push(new ascii.MappedCell(position, cell));
   cell.scratchValue = value;
 };
 
@@ -56,7 +59,7 @@ ascii.State.prototype.drawValue = function(position, value) {
  */
 ascii.State.prototype.clearDraw = function() {
   for (var i in this.scratchCells) {
-    this.scratchCells[i].scratchValue = null;
+    this.scratchCells[i].cell.scratchValue = null;
   }
   this.scratchCells.length = 0;
 };
@@ -103,16 +106,54 @@ ascii.State.prototype.getContext = function(position) {
 
 /**
  * Ends the current draw, commiting anything currently drawn the scratchpad.
+ * @param {boolean=} opt_skipSave
  */
-ascii.State.prototype.commitDraw = function() {
-  for (var i in this.scratchCells) {
-    var newValue = this.scratchCells[i].getRawValue();
+ascii.State.prototype.commitDraw = function(opt_skipSave) {
+  var oldValues = [];
+
+  // Dedupe the scratch values, or this causes havoc for history management.
+  var positions = this.scratchCells.map(function (value) {
+    return value.position.x.toString() + value.position.y.toString();
+  });
+  var scratchCellsUnique = this.scratchCells.filter(function (value, index, arr) {
+    return positions.indexOf(positions[index]) == index;
+  });
+
+  this.scratchCells.length = 0;
+
+  for (var i in scratchCellsUnique) {
+    var position = scratchCellsUnique[i].position;
+    var cell = scratchCellsUnique[i].cell;
+
+    // Push the effective old value unto the array.
+    oldValues.push(new ascii.MappedValue(position, cell.value != null ? cell.value : ' '));
+
+    var newValue = cell.getRawValue();
     // Cheeky little hack for making erase play nicely.
     if (newValue == ' ') {
       newValue = null;
     }
-    this.scratchCells[i].scratchValue = null;
-    this.scratchCells[i].value = newValue;
+    cell.scratchValue = null;
+    cell.value = newValue;
+  }
+
+  // If we have too many undo states, clear one out.
+  if(this.undoStates.length > MAX_UNDO) {
+    this.undoStates.shift();
+  }
+  // Don't save a new state if we are undoing an old one.
+  if (!opt_skipSave && oldValues.length > 0) {
+    this.undoStates.push(oldValues);
   }
 };
 
+
+ascii.State.prototype.undo = function() {
+  if (this.undoStates.length == 0) { return; }
+  var lastState = this.undoStates.pop();
+  for (var i in lastState) {
+    var mappedValue = lastState[i];
+    this.drawValue(mappedValue.position, mappedValue.value);
+  }
+  this.commitDraw(true);
+};
