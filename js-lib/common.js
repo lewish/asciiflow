@@ -16,6 +16,16 @@ goog.provide('ascii');
 /** @const */ var CHARACTER_PIXELS = 15;
 /** @const */ var RENDER_PADDING = 70;
 
+/** @const */ var KEY_RETURN = '<enter>';
+/** @const */ var KEY_BACKSPACE = '<backspace>';
+/** @const */ var KEY_COPY = '<copy>';
+/** @const */ var KEY_PASTE = '<paste>';
+/** @const */ var KEY_CUT = '<cut>';
+/** @const */ var KEY_UP = '<up>';
+/** @const */ var KEY_DOWN = '<down>';
+/** @const */ var KEY_LEFT = '<left>';
+/** @const */ var KEY_RIGHT = '<right>';
+
 /**
  * Stores a 2D vector.
  *

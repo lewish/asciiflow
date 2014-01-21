@@ -166,22 +166,44 @@ ascii.DrawText.prototype.handleKey = function(value) {
   if (this.currentPosition == null) {
     return;
   }
-
-  if (value == '\n') {
-    // Pressed return key, so clear this cell.
+  var nextPosition = this.currentPosition.add(new ascii.Vector(1, 0));
+  
+  if (value == KEY_RETURN || this.state.getCell(nextPosition).isSpecial()) {
+    // Pressed return key or hit box, so clear this cell and new line.
     this.state.clearDraw();
-  } else {
-    // Draw the value and commit it.
+    nextPosition = this.startPosition.add(new ascii.Vector(0, 1));
+    this.startPosition = nextPosition;
+  } 
+  if (value == KEY_BACKSPACE && this.startPosition.x <= nextPosition.x) {
+    // Pressed backspace key, so clear this cell and go back.
+    this.state.clearDraw();
+    nextPosition = this.currentPosition.add(new ascii.Vector(-1, 0));
+    this.state.drawValue(nextPosition, ' ');
+    this.state.commitDraw();
+  }
+  if (value == KEY_UP) { 
+    this.state.clearDraw();
+    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(0, -1))
+  }
+  if (value == KEY_LEFT) {
+    this.state.clearDraw();
+    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(-1, 0))
+  }
+  if (value == KEY_RIGHT) {
+    this.state.clearDraw();
+    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(1, 0))
+  }
+  if (value == KEY_DOWN) {
+    this.state.clearDraw();
+    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(0, 1))
+  }
+
+  if (value.length == 1) {
+    // The value is not a special character, so draw the value and commit it.
     this.state.drawValue(this.currentPosition, value);
     this.state.commitDraw();
   }
 
-  var nextPosition = this.currentPosition.add(new ascii.Vector(1, 0));
-  // Check for hitting edge of box or return character, then line wrap.
-  if (value == '\n' || this.state.getCell(nextPosition).isSpecial()) {
-    nextPosition = this.startPosition.add(new ascii.Vector(0, 1));
-    this.startPosition = nextPosition;
-  }
   // Highlight the next cell.
   this.currentPosition = nextPosition;
   var nextValue = this.state.getCell(nextPosition).getRawValue();

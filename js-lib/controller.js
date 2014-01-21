@@ -155,7 +155,11 @@ ascii.Controller.prototype.installBindings = function() {
   }.bind(this));
 
   $(window).keypress(function(e) {
-    this.handleKeyPress(e.keyCode);
+    this.handleKeyPress(e);
+  }.bind(this));
+
+  $(window).keydown(function(e) {
+    this.handleKeyDown(e);
   }.bind(this));
 };
 
@@ -193,15 +197,43 @@ ascii.Controller.prototype.updateButtons = function(id) {
 
 /**
  * Handles key presses.
- * @param {number} keyCode
+ * @param {Object} event
  */
-ascii.Controller.prototype.handleKeyPress = function(keyCode) {
-  // TODO: Handle undo, redo, and ctrl+c and ctrl+v.
-  var stringValue = String.fromCharCode(keyCode);
-  // Override some special characters so that can be handled in one place.
-  if (keyCode == 13) {
-    stringValue = '\n';
+ascii.Controller.prototype.handleKeyPress = function(event) {
+  if (!event.ctrlKey && !event.metaKey) {
+    this.drawFunction.handleKey(String.fromCharCode(event.keyCode));
+    this.view.dirty = true;
   }
-  this.drawFunction.handleKey(stringValue);
-  this.view.dirty = true;
 };
+
+/**
+ * Handles key down events.
+ * @param {Object} event
+ */
+ascii.Controller.prototype.handleKeyDown = function(event) {
+  // Override some special characters so that they can be handled in one place.
+  var specialKeyCode = null;
+
+  if (event.ctrlKey || event.metaKey) {
+    if (event.keyCode == 67) { specialKeyCode = KEY_COPY; }
+    if (event.keyCode == 86) { specialKeyCode = KEY_PASTE; }
+    // if (event.keyCode == 90) { this.state.undo()  }
+    // if (event.keyCode == 89) { this.state.redo(); }
+    if (event.keyCode == 88) { specialKeyCode = KEY_CUT; }
+  }
+
+  if (event.keyCode == 8) { specialKeyCode = KEY_BACKSPACE; }
+  if (event.keyCode == 13) { specialKeyCode = KEY_RETURN; }
+  if (event.keyCode == 38) { specialKeyCode = KEY_UP; }
+  if (event.keyCode == 40) { specialKeyCode = KEY_DOWN; }
+  if (event.keyCode == 37) { specialKeyCode = KEY_LEFT; }
+  if (event.keyCode == 39) { specialKeyCode = KEY_RIGHT; }
+
+  if (specialKeyCode != null) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.drawFunction.handleKey(specialKeyCode);
+    this.view.dirty = true;
+  }
+};
+
