@@ -150,8 +150,13 @@ ascii.Controller.prototype.installBindings = function() {
   });
   // TODO: Handle pinch to zoom.
 
-  $('#buttons > button').click(function(e) {
+  $('#buttons > button.tool').click(function(e) {
     this.updateButtons(e.target.id);
+  }.bind(this));
+
+  $('#undo-button').click(function(e) {
+    this.state.undo();
+    this.view.dirty = true;
   }.bind(this));
 
   $(window).keypress(function(e) {
@@ -168,7 +173,7 @@ ascii.Controller.prototype.installBindings = function() {
  * @param {string} id The ID of the element clicked.
  */
 ascii.Controller.prototype.updateButtons = function(id) {
-  $('#buttons > button').removeClass('active');
+  $('#buttons > button.tool').removeClass('active');
   $('.dialog').removeClass('visible');
 
   $('#' + id).addClass('active');
@@ -192,6 +197,9 @@ ascii.Controller.prototype.updateButtons = function(id) {
   }
   if (id == 'text-button') {
     this.drawFunction = new ascii.DrawText(this.state);
+  }
+  if (id == 'export-button') {
+    $('#export-area').val(this.state.outputText());
   }
 };
 
@@ -230,8 +238,8 @@ ascii.Controller.prototype.handleKeyDown = function(event) {
   if (event.keyCode == 39) { specialKeyCode = KEY_RIGHT; }
 
   if (specialKeyCode != null) {
-    event.preventDefault();
-    event.stopPropagation();
+    //event.preventDefault();
+    //event.stopPropagation();
     this.drawFunction.handleKey(specialKeyCode);
     this.view.dirty = true;
   }

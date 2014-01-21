@@ -147,13 +147,50 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
   }
 };
 
-
+/**
+ * Undoes the last committed state.
+ */
 ascii.State.prototype.undo = function() {
   if (this.undoStates.length == 0) { return; }
+
   var lastState = this.undoStates.pop();
   for (var i in lastState) {
     var mappedValue = lastState[i];
     this.drawValue(mappedValue.position, mappedValue.value);
   }
   this.commitDraw(true);
+};
+
+/**
+ * Outputs the entire contents of the diagram as text.
+ * @return {string}
+ */
+ascii.State.prototype.outputText = function() {
+  // Find the first/last cells in the diagram so we don't output everything.
+  var start = new ascii.Vector(Number.MAX_VALUE, Number.MAX_VALUE);
+  var end = new ascii.Vector(-1, -1);
+
+  for (var i = 0; i < this.cells.length; i++)  {
+    for (var j = 0; j < this.cells[i].length; j++) {
+      if (this.cells[i][j].getRawValue() != null) {
+        if (i < start.x) { start.x = i; }
+        if (j < start.y) { start.y = j; }
+        if (i > end.x) { end.x = i; }
+        if (j > end.y) { end.y = j; }
+      }
+    }
+  }
+  if (end.x < 0) { return '' };
+
+  var output = '';
+  for (var j = start.y; j <= end.y; j++) {
+    var line = '';
+    for (var i = start.x; i <= end.x; i++) {
+      var val = this.getDrawValue(new ascii.Vector(i, j));
+      line += (val == null ? ' ' : val);
+    }
+    // Trim end whitespace.
+    output += line.replace('\\s+$/g', '') + '\n';
+  }
+  return output;
 };

@@ -13,13 +13,16 @@
 }
 
 .dialog {
+  position: absolute;
+  top: 0px;
+  left: 70px;
+  width: 400px;
+  height: 300px;
   transition: height 0.3s;
-  border-radius: 5px;
-  margin: 10px;
-  border: 1px solid #444;
-  background: #D0E0FF;
-
+  margin-top: 3px;
+  background: #F8F8F8;
   display: none;
+  border: 1px solid #444;
 }
 
 .visible {
@@ -41,6 +44,13 @@ button {
 
 button.active {
   background: #D0E0FF;
+}
+
+#export-button {
+  background: #D8D8D8;
+}
+#export-button.active {
+  background: #C8C8C8;
 }
 
 #ascii-canvas {
@@ -68,6 +78,16 @@ button.active {
   margin: 0px;
 }
 
+#export-area {
+  width: 380px;
+  height: 280px;
+  overflow: hidden;
+  resize: none;
+  margin: 5px;
+  font-family: monospace;
+  white-space: pre;
+}
+
 </style>
 </head>
 <body>
@@ -81,17 +101,18 @@ button.active {
 </pre></div>
 <div id="menu">
   <div id="buttons">
-    <button id="box-button" class="active">Box</button>
-    <button id="line-button">Line</button>
-    <button id="freeform-button">Draw</button>
-    <button id="erase-button">Erase</button>
-    <button id="move-button">Resize</button>
-    <button id="text-button">Text</button>
+    <button id="export-button" class="tool">Export</button>
+    <button id="box-button" class="tool active">Box</button>
+    <button id="line-button" class="tool">Line</button>
+    <button id="freeform-button" class="tool">Draw</button>
+    <button id="erase-button" class="tool">Erase</button>
+    <button id="move-button" class="tool">Resize</button>
+    <button id="text-button" class="tool">Text</button>
+    <button id="undo-button">Undo</button>
     <!-- <button id="select-button">Select</button> -->
-    <!-- <button id="menu-button">Menu</button> -->
   </div>
-  <div id="menu-button-dialog" class="dialog">
-    <pre id="export-area">BLAH</pre>
+  <div id="export-button-dialog" class="dialog">
+    <textarea id="export-area"></textarea>
   </div>
 </div>
 <canvas id="ascii-canvas"></canvas>
