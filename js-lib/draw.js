@@ -135,7 +135,12 @@ ascii.DrawFreeform.prototype.end = function(position) {
 ascii.DrawFreeform.prototype.getCursor = function(position) {
   return 'crosshair';
 };
-ascii.DrawFreeform.prototype.handleKey = function(value) {};
+ascii.DrawFreeform.prototype.handleKey = function(value) {
+  if (value.length == 1) {
+    // The value is not a special character, so lets use it.
+    this.value = value;
+  }
+};
 
 /**
  * @constructor

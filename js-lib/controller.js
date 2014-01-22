@@ -160,7 +160,7 @@ ascii.Controller.prototype.installBindings = function() {
   }.bind(this));
 
   $('#import-submit-button').click(function(e) {
-    this.state.clearCanvas();
+    this.state.clear();
     this.state.fromText($('#import-area').val(),
         this.view.screenToCell(new ascii.Vector(
             this.view.canvas.width / 2,
@@ -210,6 +210,10 @@ ascii.Controller.prototype.updateButtons = function(id) {
   }
   if (id == 'export-button') {
     $('#export-area').val(this.state.outputText());
+  }
+  if (id == 'clear-button') {
+    this.state.clear();
+    this.view.dirty = true;
   }
 };
 

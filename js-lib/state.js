@@ -24,7 +24,7 @@ ascii.State = function() {
 /**
  * This clears the entire state, but is undoable.
  */
-ascii.State.prototype.clearCanvas = function() {
+ascii.State.prototype.clear = function() {
   for (var i = 0; i < this.cells.length; i++) {
     for (var j = 0; j < this.cells[i].length; j++) {
       var position = new ascii.Vector(i, j);

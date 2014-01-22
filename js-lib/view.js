@@ -154,8 +154,8 @@ ascii.View.prototype.frameToScreen = function(vector) {
  */
 ascii.View.prototype.frameToCell = function(vector) {
   return new ascii.Vector(
-    Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H),
-    Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V));
+    Math.min(Math.max(0, Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H)), MAX_GRID_SIZE),
+    Math.min(Math.max(0, Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V)), MAX_GRID_SIZE));
 };
 
 /**
