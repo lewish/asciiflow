@@ -69,19 +69,19 @@ ascii.View.prototype.render = function() {
   context.beginPath();
   for (var i = startOffset.x; i < endOffset.x; i++) {
     context.moveTo(
-        i * CHARACTER_PIXELS - this.offset.x,
+        i * CHAR_PIXELS_H - this.offset.x,
         0 - this.offset.y);
     context.lineTo(
-        i * CHARACTER_PIXELS - this.offset.x,
-        this.state.cells.length * CHARACTER_PIXELS - this.offset.y);
+        i * CHAR_PIXELS_H - this.offset.x,
+        this.state.cells.length * CHAR_PIXELS_V - this.offset.y);
   }
   for (var j = startOffset.y; j < endOffset.y; j++) {
     context.moveTo(
         0 - this.offset.x,
-        j * CHARACTER_PIXELS - this.offset.y);
+        j * CHAR_PIXELS_V - this.offset.y);
     context.lineTo(
-        this.state.cells.length * CHARACTER_PIXELS - this.offset.x,
-        j * CHARACTER_PIXELS - this.offset.y);
+        this.state.cells.length * CHAR_PIXELS_H - this.offset.x,
+        j * CHAR_PIXELS_V - this.offset.y);
   }
   this.context.stroke();
 
@@ -93,16 +93,16 @@ ascii.View.prototype.render = function() {
       if (cell.hasScratch() || cell.isSpecial()) {
         this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
         context.fillRect(
-            i * CHARACTER_PIXELS - this.offset.x,
-            (j - 1) * CHARACTER_PIXELS - this.offset.y,
-            CHARACTER_PIXELS, CHARACTER_PIXELS);
+            i * CHAR_PIXELS_H - this.offset.x,
+            (j - 1) * CHAR_PIXELS_V - this.offset.y,
+            CHAR_PIXELS_H, CHAR_PIXELS_V);
       }
       var cellValue = this.state.getDrawValue(new ascii.Vector(i, j));
       if (cellValue != null) {
         this.context.fillStyle = '#000000';
         context.fillText(cellValue,
-            i * CHARACTER_PIXELS - this.offset.x + 3,
-            j * CHARACTER_PIXELS - this.offset.y - 2);
+            i * CHAR_PIXELS_H - this.offset.x + 1,
+            j * CHAR_PIXELS_V - this.offset.y - 3);
       }
     }
   }
@@ -153,8 +153,8 @@ ascii.View.prototype.frameToScreen = function(vector) {
  */
 ascii.View.prototype.frameToCell = function(vector) {
   return new ascii.Vector(
-    Math.round((vector.x - CHARACTER_PIXELS / 2) / CHARACTER_PIXELS),
-    Math.round((vector.y + CHARACTER_PIXELS / 2) / CHARACTER_PIXELS));
+    Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H),
+    Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V));
 };
 
 /**

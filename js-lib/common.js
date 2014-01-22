@@ -15,7 +15,9 @@ goog.provide('ascii');
 /** @const */ var DRAG_LATENCY = 130; // Milliseconds.
 /** @const */ var DRAG_ACCURACY = 3; // Pixels.
 
-/** @const */ var CHARACTER_PIXELS = 15;
+/** @const */ var CHAR_PIXELS_H = 11;
+/** @const */ var CHAR_PIXELS_V = 15;
+
 /** @const */ var RENDER_PADDING = 70;
 
 /** @const */ var KEY_RETURN = '<enter>';
