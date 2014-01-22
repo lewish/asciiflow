@@ -29,7 +29,7 @@ function q(a) {
 function r(a, b, c, e) {
   this.left = a;
   this.right = b;
-  this.k = c;
+  this.l = c;
   this.f = e;
 }
 function s(a, b) {
@@ -47,9 +47,9 @@ function t(a, b) {
   this.zoom = 1;
   this.offset = new f(7500, 7500);
   this.b = !0;
-  w(this);
+  v(this);
 }
-function w(a) {
+function v(a) {
   a.canvas.width = document.documentElement.clientWidth;
   a.canvas.height = document.documentElement.clientHeight;
   a.b = !0;
@@ -72,21 +72,21 @@ function x(a) {
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
   for (var d = c.x;d < e.x;d++) {
-    b.moveTo(15 * d - a.offset.x, 0 - a.offset.y), b.lineTo(15 * d - a.offset.x, 15 * a.state.cells.length - a.offset.y);
+    b.moveTo(9 * d - a.offset.x, 0 - a.offset.y), b.lineTo(9 * d - a.offset.x, 17 * a.state.cells.length - a.offset.y);
   }
   for (var h = c.y;h < e.y;h++) {
-    b.moveTo(0 - a.offset.x, 15 * h - a.offset.y), b.lineTo(15 * a.state.cells.length - a.offset.x, 15 * h - a.offset.y);
+    b.moveTo(0 - a.offset.x, 17 * h - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * h - a.offset.y);
   }
   a.context.stroke();
   a.context.font = "15px Courier New";
   for (d = c.x;d < e.x;d++) {
     for (h = c.y;h < e.y;h++) {
       var g = A(a.state, new f(d, h));
-      if (null != g.e || q(g)) {
-        a.context.fillStyle = null != g.e ? "#DEF" : "#F5F5F5", b.fillRect(15 * d - a.offset.x, 15 * (h - 1) - a.offset.y, 15, 15);
+      if (q(g) || null != g.e && " " != n(g)) {
+        a.context.fillStyle = null != g.e ? "#DEF" : "#F5F5F5", b.fillRect(9 * d - a.offset.x, 17 * (h - 1) - a.offset.y, 9, 17);
       }
       g = B(a.state, new f(d, h));
-      null != g && (a.context.fillStyle = "#000000", b.fillText(g, 15 * d - a.offset.x + 3, 15 * h - a.offset.y - 2));
+      null != g && (a.context.fillStyle = "#000000", b.fillText(g, 9 * d - a.offset.x, 17 * h - a.offset.y - 3));
     }
   }
 }
@@ -94,20 +94,20 @@ function z(a, b) {
   return new f((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y);
 }
 function y(a) {
-  return new f(Math.round((a.x - 7.5) / 15), Math.round((a.y + 7.5) / 15));
+  return new f(Math.min(Math.max(1, Math.round((a.x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round((a.y + 8.5) / 17)), 598));
 }
 ;function C(a, b, c, e, d) {
   d = d || "+";
-  var h = Math.min(b.x, c.x), g = Math.min(b.y, c.y), m = Math.max(b.x, c.x), p = Math.max(b.y, c.y), v = e ? c.x : b.x;
+  var h = Math.min(b.x, c.x), g = Math.min(b.y, c.y), m = Math.max(b.x, c.x), p = Math.max(b.y, c.y), w = e ? c.x : b.x;
   for (e = e ? b.y : c.y;h++ < m;) {
     D(a, new f(h, e), d);
   }
   for (;g++ < p;) {
-    D(a, new f(v, g), d);
+    D(a, new f(w, g), d);
   }
   D(a, b, d);
   D(a, c, d);
-  D(a, new f(v, e), d);
+  D(a, new f(w, e), d);
 }
 function E(a) {
   this.state = a;
@@ -117,7 +117,7 @@ E.prototype.start = function(a) {
   this.a = a;
 };
 E.prototype.move = function(a) {
-  this.l = a;
+  this.m = a;
   F(this.state);
   C(this.state, this.a, a, !0);
   C(this.state, this.a, a, !1);
@@ -125,10 +125,10 @@ E.prototype.move = function(a) {
 E.prototype.end = function() {
   G(this.state);
 };
-E.prototype.m = function() {
+E.prototype.n = function() {
   return "crosshair";
 };
-E.prototype.h = function() {
+E.prototype.i = function() {
 };
 function H(a) {
   this.state = a;
@@ -140,15 +140,15 @@ H.prototype.start = function(a) {
 H.prototype.move = function(a) {
   F(this.state);
   var b = this.state.getContext(this.a), c = this.state.getContext(a);
-  C(this.state, this.a, a, b.k && b.f || c.left && c.right);
+  C(this.state, this.a, a, b.l && b.f || c.left && c.right);
 };
 H.prototype.end = function() {
   G(this.state);
 };
-H.prototype.m = function() {
+H.prototype.n = function() {
   return "crosshair";
 };
-H.prototype.h = function() {
+H.prototype.i = function() {
 };
 function I(a, b) {
   this.state = a;
@@ -163,10 +163,11 @@ I.prototype.move = function(a) {
 I.prototype.end = function() {
   G(this.state);
 };
-I.prototype.m = function() {
+I.prototype.n = function() {
   return "crosshair";
 };
-I.prototype.h = function() {
+I.prototype.i = function(a) {
+  1 == a.length && (this.value = a);
 };
 function J(a) {
   this.state = a;
@@ -182,10 +183,10 @@ J.prototype.move = function() {
 };
 J.prototype.end = function() {
 };
-J.prototype.m = function() {
+J.prototype.n = function() {
   return "text";
 };
-J.prototype.h = function(a) {
+J.prototype.i = function(a) {
   if (null != this.d) {
     var b = this.d.add(new f(1, 0));
     if ("<enter>" == a || q(A(this.state, b))) {
@@ -204,7 +205,7 @@ J.prototype.h = function(a) {
 };
 function K(a) {
   this.state = a;
-  this.l = this.a = null;
+  this.m = this.a = null;
 }
 K.prototype.start = function(a) {
   this.a = a;
@@ -212,28 +213,29 @@ K.prototype.start = function(a) {
 };
 K.prototype.move = function(a) {
   F(this.state);
-  this.l = a;
-  var b = Math.min(this.a.x, this.l.x);
-  a = Math.min(this.a.y, this.l.y);
-  for (var c = Math.max(this.a.x, this.l.x), e = Math.max(this.a.y, this.l.y);b <= c;b++) {
+  this.m = a;
+  var b = Math.min(this.a.x, this.m.x);
+  a = Math.min(this.a.y, this.m.y);
+  for (var c = Math.max(this.a.x, this.m.x), e = Math.max(this.a.y, this.m.y);b <= c;b++) {
     for (var d = a;d <= e;d++) {
-      D(this.state, new f(b, d), " ");
+      D(this.state, new f(b, d), "\u2009");
     }
   }
 };
 K.prototype.end = function() {
   G(this.state);
 };
-K.prototype.m = function() {
+K.prototype.n = function() {
   return "crosshair";
 };
-K.prototype.h = function() {
+K.prototype.i = function() {
 };
 function L(a) {
   this.state = a;
-  this.o = null;
+  this.h = this.a = null;
 }
 L.prototype.start = function(a) {
+  this.a = a;
   this.state.getContext(a);
   var b = [new f(1, 0), new f(-1, 0), new f(0, 1), new f(0, -1)], c = [], e;
   for (e in b) {
@@ -242,27 +244,26 @@ L.prototype.start = function(a) {
       var g = d[h], m = 0 != b[e].x;
       if (!k(a, g)) {
         var p = this.state.getContext(g);
-        if (1 == p.left + p.right + p.k + p.f) {
+        if (1 == p.left + p.right + p.l + p.f) {
           c.push({position:g, q:m});
         } else {
-          for (var v in b) {
-            0 != b[e].add(b[v]).length() && 2 != b[e].add(b[v]).length() && (p = M(this, g, b[v]), 0 == p.length || k(g, p[0]) || c.push({position:p[0], q:m}));
+          for (var w in b) {
+            0 != b[e].add(b[w]).length() && 2 != b[e].add(b[w]).length() && (p = M(this, g, b[w]), 0 == p.length || k(g, p[0]) || c.push({position:p[0], q:m}));
           }
         }
       }
     }
   }
-  this.o = c;
-  for (e in c) {
-    C(this.state, a, c[e].position, c[e].q, " ");
-  }
-  G(this.state);
+  this.h = c;
   this.move(a);
 };
 L.prototype.move = function(a) {
   F(this.state);
-  for (var b in this.o) {
-    C(this.state, a, this.o[b].position, this.o[b].q);
+  for (var b in this.h) {
+    C(this.state, this.a, this.h[b].position, this.h[b].q, " ");
+  }
+  for (b in this.h) {
+    C(this.state, a, this.h[b].position, this.h[b].q);
   }
 };
 L.prototype.end = function() {
@@ -277,32 +278,32 @@ function M(a, b, c) {
     }
     b = d;
     d = a.state.getContext(d);
-    d.left && d.right && !d.k && !d.f || !d.left && !d.right && d.k && d.f || e.push(b);
+    d.left && d.right && !d.l && !d.f || !d.left && !d.right && d.l && d.f || e.push(b);
   }
 }
-L.prototype.m = function(a) {
+L.prototype.n = function(a) {
   return q(A(this.state, a)) ? "pointer" : "default";
 };
-L.prototype.h = function() {
+L.prototype.i = function() {
 };
 function N(a, b) {
-  a.i = b;
+  a.j = b;
   a.p = $.now();
   window.setTimeout(function() {
-    null == this.g && null != this.i && (this.c.start(y(z(this.view, b))), this.view.b = !0);
+    null == this.g && null != this.j && (this.c.start(y(z(this.view, b))), this.view.b = !0);
   }.bind(a), 130);
 }
 function O(a, b) {
-  a.view.canvas.style.cursor = a.c.m(y(z(a.view, b)));
-  if (null != a.i && (null == a.g && 130 > $.now() - a.p && 3 < (new f(b.x - a.i.x, b.y - a.i.y)).length() && (a.g = a.view.offset), null == a.g && 130 <= $.now() - a.p && (null == a.r || !k(y(z(a.view, b)), y(z(a.view, a.r)))) && (a.c.move(y(z(a.view, b))), a.view.b = !0, a.r = b), null != a.g)) {
-    var c = a.view, e = a.g.add((new f(a.i.x - b.x, a.i.y - b.y)).scale(1 / a.view.zoom));
+  a.view.canvas.style.cursor = a.c.n(y(z(a.view, b)));
+  if (null != a.j && (null == a.g && 130 > $.now() - a.p && 3 < (new f(b.x - a.j.x, b.y - a.j.y)).length() && (a.g = a.view.offset), null == a.g && 130 <= $.now() - a.p && (null == a.r || !k(y(z(a.view, b)), y(z(a.view, a.r)))) && (a.c.move(y(z(a.view, b))), a.view.b = !0, a.r = b), null != a.g)) {
+    var c = a.view, e = a.g.add((new f(a.j.x - b.x, a.j.y - b.y)).scale(1 / a.view.zoom));
     c.offset = e;
     c.b = !0;
   }
 }
 function P(a, b) {
   null == a.g && 130 <= $.now() - a.p && (a.c.end(y(z(a.view, b))), a.view.b = !0);
-  a.i = null;
+  a.j = null;
   a.p = 0;
   a.g = null;
   a.r = null;
@@ -328,7 +329,7 @@ function Q(a) {
     O(a, new f(b.clientX, b.clientY));
   });
   $(window).resize(function() {
-    w(a.view);
+    v(a.view);
   });
   $(a.view.canvas).bind("touchstart", function(b) {
     b.preventDefault();
@@ -346,8 +347,8 @@ function Q(a) {
     a = a.target.id;
     $("#buttons > button.tool").removeClass("active");
     $(".dialog").removeClass("visible");
-    $("#" + a).addClass("active");
-    $("#" + a + "-dialog").addClass("visible");
+    $("#" + a).toggleClass("active");
+    $("#" + a + "-dialog").toggleClass("visible");
     "box-button" == a && (this.c = new E(this.state));
     "line-button" == a && (this.c = new H(this.state));
     "freeform-button" == a && (this.c = new I(this.state, "+"));
@@ -355,13 +356,25 @@ function Q(a) {
     "move-button" == a && (this.c = new L(this.state));
     "text-button" == a && (this.c = new J(this.state));
     "export-button" == a && $("#export-area").val(R(this.state));
+    "clear-button" == a && (this.state.clear(), this.view.b = !0);
   }.bind(a));
   $("#undo-button").click(function() {
     S(this.state);
     this.view.b = !0;
   }.bind(a));
+  $("#import-submit-button").click(function() {
+    this.state.clear();
+    for (var a = this.state, c = $("#import-area").val(), e = y(z(this.view, new f(this.view.canvas.width / 4, this.view.canvas.height / 4))), c = c.split("\n"), d = 0;d < c.length;d++) {
+      for (var h = c[d], g = 0;g < h.length;g++) {
+        D(a, (new f(g, d)).add(e), h.charAt(g));
+      }
+    }
+    G(a);
+    $("#import-area").val("");
+    this.view.b = !0;
+  }.bind(a));
   $(window).keypress(function(a) {
-    a.ctrlKey || a.metaKey || (this.c.h(String.fromCharCode(a.keyCode)), this.view.b = !0);
+    a.ctrlKey || a.metaKey || (this.c.i(String.fromCharCode(a.keyCode)), this.view.b = !0);
   }.bind(a));
   $(window).keydown(function(a) {
     var c = null;
@@ -374,33 +387,41 @@ function Q(a) {
     40 == a.keyCode && (c = "<down>");
     37 == a.keyCode && (c = "<left>");
     39 == a.keyCode && (c = "<right>");
-    null != c && (this.c.h(c), this.view.b = !0);
+    null != c && (this.c.i(c), this.view.b = !0);
   }.bind(a));
 }
 ;function T() {
-  this.cells = Array(1E3);
-  this.j = [];
-  this.n = [];
+  this.cells = Array(2E3);
+  this.k = [];
+  this.o = [];
   for (var a = 0;a < this.cells.length;a++) {
-    this.cells[a] = Array(1E3);
+    this.cells[a] = Array(600);
     for (var b = 0;b < this.cells[a].length;b++) {
       this.cells[a][b] = new l;
     }
   }
 }
+T.prototype.clear = function() {
+  for (var a = 0;a < this.cells.length;a++) {
+    for (var b = 0;b < this.cells[a].length;b++) {
+      null != n(this.cells[a][b]) && D(this, new f(a, b), "\u2009");
+    }
+  }
+  G(this);
+};
 function A(a, b) {
   return a.cells[b.x][b.y];
 }
 function D(a, b, c) {
   var e = A(a, b);
-  a.j.push(new t(b, e));
+  a.k.push(new t(b, e));
   e.e = c;
 }
 function F(a) {
-  for (var b in a.j) {
-    a.j[b].s.e = null;
+  for (var b in a.k) {
+    a.k[b].s.e = null;
   }
-  a.j.length = 0;
+  a.k.length = 0;
 }
 function B(a, b) {
   var c = A(a, b), c = null != c.e ? c.e : c.value;
@@ -408,7 +429,7 @@ function B(a, b) {
     return c;
   }
   c = a.getContext(b);
-  return c.left && c.right && !c.k && !c.f ? "\u2014" : !c.left && !c.right && c.k && c.f ? "|" : c.left && c.right && c.k && c.f ? "\u2014" : "+";
+  return c.left && c.right && !c.l && !c.f ? "\u2013" : !c.left && !c.right && c.l && c.f ? "|" : c.left && c.right && c.l && c.f ? "\u2013" : "+";
 }
 T.prototype.getContext = function(a) {
   var b = q(A(this, a.add(new f(-1, 0)))), c = q(A(this, a.add(new f(1, 0)))), e = q(A(this, a.add(new f(0, -1))));
@@ -416,26 +437,27 @@ T.prototype.getContext = function(a) {
   return new r(b, c, e, a);
 };
 function G(a, b) {
-  var c = [], e = a.j.map(function(a) {
+  var c = [], e = a.k.map(function(a) {
     return a.position.x.toString() + a.position.y.toString();
-  }), d = a.j.filter(function(a, b) {
+  }), d = a.k.filter(function(a, b) {
     return e.indexOf(e[b]) == b;
   });
-  a.j.length = 0;
+  a.k.length = 0;
   for (var h in d) {
     var g = d[h].s;
     c.push(new s(d[h].position, null != g.value ? g.value : " "));
     var m = n(g);
-    " " == m && (m = null);
+    if ("\u2009" == m || " " == m) {
+      m = null;
+    }
     g.e = null;
     g.value = m;
   }
-  50 < a.n.length && a.n.shift();
-  !b && 0 < c.length && a.n.push(c);
+  !b && 0 < c.length && (50 < a.o.length && a.o.shift(), a.o.push(c));
 }
 function S(a) {
-  if (0 != a.n.length) {
-    var b = a.n.pop(), c;
+  if (0 != a.o.length) {
+    var b = a.o.pop(), c;
     for (c in b) {
       var e = b[c];
       D(a, e.position, e.value);

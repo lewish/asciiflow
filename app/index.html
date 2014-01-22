@@ -46,10 +46,11 @@ button.active {
   background: #D0E0FF;
 }
 
-#export-button {
+button.file {
   background: #D8D8D8;
 }
-#export-button.active {
+
+button.file.active {
   background: #C8C8C8;
 }
 
@@ -57,11 +58,6 @@ button.active {
   position: fixed;
   left: 0px;
   top: 0px;
-};
-
-#export-area {
-  width: 100%;
-  height: 100px;
 }
 
 #logo {
@@ -78,7 +74,7 @@ button.active {
   margin: 0px;
 }
 
-#export-area {
+textarea {
   width: 380px;
   height: 280px;
   overflow: hidden;
@@ -101,7 +97,10 @@ button.active {
 </pre></div>
 <div id="menu">
   <div id="buttons">
-    <button id="export-button" class="tool">Export</button>
+    <button id="export-button" class="file tool">Export</button>
+    <button id="import-button" class="file tool">Import</button>
+    <button id="clear-button" class="file tool">Clear</button>
+
     <button id="box-button" class="tool active">Box</button>
     <button id="line-button" class="tool">Line</button>
     <button id="freeform-button" class="tool">Draw</button>
@@ -113,6 +112,10 @@ button.active {
   </div>
   <div id="export-button-dialog" class="dialog">
     <textarea id="export-area"></textarea>
+  </div>
+  <div id="import-button-dialog" class="dialog">
+    <textarea id="import-area"></textarea>
+    <button id="import-submit-button">Submit</button>
   </div>
 </div>
 <canvas id="ascii-canvas"></canvas>
