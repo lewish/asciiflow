@@ -102,7 +102,7 @@ ascii.View.prototype.render = function() {
       if (cellValue != null) {
         this.context.fillStyle = '#000000';
         context.fillText(cellValue,
-            i * CHAR_PIXELS_H - this.offset.x + 1,
+            i * CHAR_PIXELS_H - this.offset.x,
             j * CHAR_PIXELS_V - this.offset.y - 3);
       }
     }
@@ -153,9 +153,10 @@ ascii.View.prototype.frameToScreen = function(vector) {
  * @return {ascii.Vector}
  */
 ascii.View.prototype.frameToCell = function(vector) {
+  // We limit the edges in a bit, as most drawing needs a full context to work.
   return new ascii.Vector(
-    Math.min(Math.max(0, Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H)), MAX_GRID_SIZE),
-    Math.min(Math.max(0, Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V)), MAX_GRID_SIZE));
+    Math.min(Math.max(1, Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H)), MAX_GRID_WIDTH - 2),
+    Math.min(Math.max(1, Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V)), MAX_GRID_HEIGHT - 2));
 };
 
 /**

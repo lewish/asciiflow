@@ -6,7 +6,7 @@
  */
 ascii.State = function() {
   /** @type {Array.<Array.<ascii.Cell>>} */
-  this.cells = new Array(MAX_GRID_SIZE);
+  this.cells = new Array(MAX_GRID_WIDTH);
   /** @type {Array.<ascii.MappedCell>} */
   this.scratchCells = new Array();
 
@@ -14,7 +14,7 @@ ascii.State = function() {
   this.undoStates = new Array();
 
   for (var i = 0; i < this.cells.length; i++) {
-    this.cells[i] = new Array(MAX_GRID_SIZE);
+    this.cells[i] = new Array(MAX_GRID_HEIGHT);
     for (var j = 0; j < this.cells[i].length; j++) {
       this.cells[i][j] = new ascii.Cell();
     }
@@ -217,7 +217,14 @@ ascii.State.prototype.fromText = function(value, offset) {
   for (var j = 0; j < lines.length; j++) {
     var line = lines[j];
     for (var i = 0; i < line.length; i++) {
-      this.drawValue(new ascii.Vector(i, j).add(offset), line.charAt(i));
+      var char = line.charAt(i);
+      // Convert special output back to special chars.
+      // TODO: This is a horrible hack, need to handle multiple special chars
+      // correctly and preserve them through line drawing etc.
+      if (char == SPECIAL_LINE_H || char == SPECIAL_LINE_V) {
+        char = SPECIAL_VALUE;
+      }
+      this.drawValue(new ascii.Vector(i, j).add(offset), char);
     }
   }
   this.commitDraw();

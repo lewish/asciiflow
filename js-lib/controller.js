@@ -163,8 +163,8 @@ ascii.Controller.prototype.installBindings = function() {
     this.state.clear();
     this.state.fromText($('#import-area').val(),
         this.view.screenToCell(new ascii.Vector(
-            this.view.canvas.width / 2,
-            this.view.canvas.height / 3)));
+            this.view.canvas.width / 4,
+            this.view.canvas.height / 4)));
     $('#import-area').val('');
     this.view.dirty = true;
   }.bind(this));

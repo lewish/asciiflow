@@ -4,12 +4,14 @@
 
 goog.provide('ascii');
 
-/** @const */ var MAX_GRID_SIZE = 1000;
+/** @const */ var MAX_GRID_WIDTH = 2000;
+/** @const */ var MAX_GRID_HEIGHT = 600;
+
 /** @const */ var SPECIAL_VALUE = '+';
 
 /** @const */ var MAX_UNDO = 50;
 
-/** @const */ var SPECIAL_LINE_H = '\u2014';
+/** @const */ var SPECIAL_LINE_H = '\u2013';
 /** @const */ var SPECIAL_LINE_V = '|';
 
 /** @const */ var ERASE_CHAR = '\u2009';
@@ -17,8 +19,8 @@ goog.provide('ascii');
 /** @const */ var DRAG_LATENCY = 130; // Milliseconds.
 /** @const */ var DRAG_ACCURACY = 3; // Pixels.
 
-/** @const */ var CHAR_PIXELS_H = 11;
-/** @const */ var CHAR_PIXELS_V = 15;
+/** @const */ var CHAR_PIXELS_H = 9;
+/** @const */ var CHAR_PIXELS_V = 17;
 
 /** @const */ var RENDER_PADDING = 70;
 
