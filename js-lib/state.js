@@ -129,20 +129,19 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
     oldValues.push(new ascii.MappedValue(position, cell.value != null ? cell.value : ' '));
 
     var newValue = cell.getRawValue();
-    // Cheeky little hack for making erase play nicely.
-    if (newValue == ' ') {
+    if (newValue == ERASE_CHAR) {
       newValue = null;
     }
     cell.scratchValue = null;
     cell.value = newValue;
   }
 
-  // If we have too many undo states, clear one out.
-  if(this.undoStates.length > MAX_UNDO) {
-    this.undoStates.shift();
-  }
   // Don't save a new state if we are undoing an old one.
   if (!opt_skipSave && oldValues.length > 0) {
+    // If we have too many undo states, clear one out.
+    if(this.undoStates.length > MAX_UNDO) {
+      this.undoStates.shift();
+    }
     this.undoStates.push(oldValues);
   }
 };

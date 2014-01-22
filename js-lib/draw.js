@@ -236,7 +236,7 @@ ascii.DrawErase.prototype.move = function(position) {
 
   for (var i = startX; i <= endX; i++) {
     for (var j = startY; j <= endY; j++) {
-      this.state.drawValue(new ascii.Vector(i, j), ' ');
+      this.state.drawValue(new ascii.Vector(i, j), ERASE_CHAR);
     }
   }
 };
@@ -255,10 +255,12 @@ ascii.DrawErase.prototype.handleKey = function(value) {};
  */
 ascii.DrawMove = function(state) {
   this.state = state;
+  this.startPosition = null;
   this.ends = null;
 };
 
 ascii.DrawMove.prototype.start = function(position) {
+  this.startPosition = position;
   var context = this.state.getContext(position);
   var directions = [
     new ascii.Vector(1, 0),
@@ -303,18 +305,17 @@ ascii.DrawMove.prototype.start = function(position) {
     }
   }
   this.ends = ends;
-
-  // Clear all the lines so we can draw them afresh.
-  for (var i in ends) {
-    drawLine(this.state, position, ends[i].position, ends[i].clockwise, ' ');
-  }
-  this.state.commitDraw();
   // Redraw the new lines after we have cleared the existing ones.
   this.move(position);
 };
 
 ascii.DrawMove.prototype.move = function(position) {
   this.state.clearDraw();
+  // Clear all the lines so we can draw them afresh.
+  for (var i in this.ends) {
+    drawLine(this.state, this.startPosition, this.ends[i].position,
+        this.ends[i].clockwise, ' ');
+  }
   for (var i in this.ends) {
     drawLine(this.state, position, this.ends[i].position,
         this.ends[i].clockwise);

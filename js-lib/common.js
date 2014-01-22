@@ -12,6 +12,8 @@ goog.provide('ascii');
 /** @const */ var SPECIAL_LINE_H = '\u2014';
 /** @const */ var SPECIAL_LINE_V = '|';
 
+/** @const */ var ERASE_CHAR = '\u2009';
+
 /** @const */ var DRAG_LATENCY = 130; // Milliseconds.
 /** @const */ var DRAG_ACCURACY = 3; // Pixels.
 
@@ -109,6 +111,11 @@ ascii.Cell.prototype.isSpecial = function() {
 /** @return {boolean} */
 ascii.Cell.prototype.hasScratch = function() {
   return this.scratchValue != null;
+};
+
+/** @return {boolean} */
+ascii.Cell.prototype.isErase = function() {
+  return this.scratchValue == ERASE_CHAR;
 };
 
 /**

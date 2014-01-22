@@ -90,7 +90,8 @@ ascii.View.prototype.render = function() {
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
       var cell = this.state.getCell(new ascii.Vector(i, j));
-      if (cell.hasScratch() || cell.isSpecial()) {
+      // Highlight the cell if it is special (grey) or it is part of a visible edit (blue).
+      if (cell.isSpecial() || (cell.hasScratch() && cell.getRawValue() != ' ')) {
         this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
         context.fillRect(
             i * CHAR_PIXELS_H - this.offset.x,
