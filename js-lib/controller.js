@@ -159,6 +159,16 @@ ascii.Controller.prototype.installBindings = function() {
     this.view.dirty = true;
   }.bind(this));
 
+  $('#import-submit-button').click(function(e) {
+    this.state.clearCanvas();
+    this.state.fromText($('#import-area').val(),
+        this.view.screenToCell(new ascii.Vector(
+            this.view.canvas.width / 2,
+            this.view.canvas.height / 3)));
+    $('#import-area').val('');
+    this.view.dirty = true;
+  }.bind(this));
+
   $(window).keypress(function(e) {
     this.handleKeyPress(e);
   }.bind(this));
@@ -176,8 +186,8 @@ ascii.Controller.prototype.updateButtons = function(id) {
   $('#buttons > button.tool').removeClass('active');
   $('.dialog').removeClass('visible');
 
-  $('#' + id).addClass('active');
-  $('#' + id + '-dialog').addClass('visible');
+  $('#' + id).toggleClass('active');
+  $('#' + id + '-dialog').toggleClass('visible');
 
   // Install the right draw tool based on button pressed.
   if (id == 'box-button') {

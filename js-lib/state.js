@@ -22,6 +22,21 @@ ascii.State = function() {
 };
 
 /**
+ * This clears the entire state, but is undoable.
+ */
+ascii.State.prototype.clearCanvas = function() {
+  for (var i = 0; i < this.cells.length; i++) {
+    for (var j = 0; j < this.cells[i].length; j++) {
+      var position = new ascii.Vector(i, j);
+      if(this.cells[i][j].getRawValue() != null) {
+        this.drawValue(new ascii.Vector(i, j), ERASE_CHAR);
+      }
+    }
+  }
+  this.commitDraw();
+};
+
+/**
  * Returns the cell at the given coordinates.
  *
  * @param {ascii.Vector} vector
@@ -129,7 +144,7 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
     oldValues.push(new ascii.MappedValue(position, cell.value != null ? cell.value : ' '));
 
     var newValue = cell.getRawValue();
-    if (newValue == ERASE_CHAR) {
+    if (newValue == ERASE_CHAR || newValue == ' ') {
       newValue = null;
     }
     cell.scratchValue = null;
@@ -192,4 +207,18 @@ ascii.State.prototype.outputText = function() {
     output += line.replace('\\s+$/g', '') + '\n';
   }
   return output;
+};
+
+/**
+ * Loads the given text into the diagram starting at the given offset.
+ */
+ascii.State.prototype.fromText = function(value, offset) {
+  var lines = value.split('\n');
+  for (var j = 0; j < lines.length; j++) {
+    var line = lines[j];
+    for (var i = 0; i < line.length; i++) {
+      this.drawValue(new ascii.Vector(i, j).add(offset), line.charAt(i));
+    }
+  }
+  this.commitDraw();
 };
