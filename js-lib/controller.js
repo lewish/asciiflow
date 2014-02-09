@@ -222,7 +222,7 @@ ascii.Controller.prototype.updateButtons = function(id) {
  * @param {Object} event
  */
 ascii.Controller.prototype.handleKeyPress = function(event) {
-  if (!event.ctrlKey && !event.metaKey) {
+  if (!event.ctrlKey && !event.metaKey && event.keyCode != 13) {
     this.drawFunction.handleKey(String.fromCharCode(event.keyCode));
     this.view.dirty = true;
   }
