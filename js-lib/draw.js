@@ -22,25 +22,21 @@ function drawLine(state, startPosition, endPosition, clockwise, opt_value) {
   var midX = clockwise ? endPosition.x : startPosition.x;
   var midY = clockwise ? startPosition.y : endPosition.y;
 
-  // Need to store the context of the next cell before we modify the current one.
-  var context = state.getContext(new ascii.Vector(startX, midY));
-  while (startX < endX) {
+  while (startX++ < endX) {
     var position = new ascii.Vector(startX, midY);
-    // Don't erase 4 way junctions.
-    var draw = (value != ' ' || context.up + context.down != 2);
-    // Set the context for the next loop before we draw.
-    context = state.getContext(position.add(new ascii.Vector(1, 0)));
-    if (draw) { state.drawValueIncremental(position, value); }
-    startX++;
+    var context = state.getContext(new ascii.Vector(startX, midY));
+    // Don't erase any lines that we cross.
+    if (value != ' ' || context.up + context.down != 2) {
+      state.drawValueIncremental(position, value);
+    }
   }
-  context = state.getContext(new ascii.Vector(midX, startY));
   while (startY++ < endY) {
     var position = new ascii.Vector(midX, startY);
-    // Don't erase 4 way junctions.
-    var draw = (value != ' ' || context.left + context.right != 2);
-    // Set the context for the next loop before we draw.
-    context = state.getContext(position.add(new ascii.Vector(0, 1)));
-    if (draw) { state.drawValueIncremental(position, value); }
+    var context = state.getContext(new ascii.Vector(midX, startY));
+    // Don't erase any lines that we cross.
+    if (value != ' ' || context.left + context.right != 2) {
+      state.drawValueIncremental(position, value);
+    }
   }
 
   state.drawValue(startPosition, value);
@@ -175,7 +171,7 @@ ascii.DrawText.prototype.start = function(position) {
   this.state.clearDraw();
   // Effectively highlights the starting cell.
   var currentValue = this.state.getCell(position).getRawValue();
-  this.state.drawValue(position, currentValue == null ? ' ' : currentValue);
+  this.state.drawValue(position, currentValue == null ? ERASE_CHAR : currentValue);
 };
 ascii.DrawText.prototype.move = function(position) {};
 ascii.DrawText.prototype.end = function(position) {};
@@ -198,7 +194,10 @@ ascii.DrawText.prototype.handleKey = function(value) {
     // Pressed backspace key, so clear this cell and go back.
     this.state.clearDraw();
     nextPosition = this.currentPosition.add(new ascii.Vector(-1, 0));
-    this.state.drawValue(nextPosition, ' ');
+    if (nextPosition.x < this.startPosition.x) {
+      nextPosition.x = this.startPosition.x;
+    }
+    this.state.drawValue(nextPosition, ERASE_CHAR);
     this.state.commitDraw();
   }
   if (value == KEY_UP) { 
@@ -227,7 +226,7 @@ ascii.DrawText.prototype.handleKey = function(value) {
   // Highlight the next cell.
   this.currentPosition = nextPosition;
   var nextValue = this.state.getCell(nextPosition).getRawValue();
-  this.state.drawValue(nextPosition, nextValue == null ? ' ' : nextValue);
+  this.state.drawValue(nextPosition, nextValue == null ? ERASE_CHAR : nextValue);
 };
 
 /**
