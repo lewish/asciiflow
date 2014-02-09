@@ -2,7 +2,12 @@
  * Common classes and constants.
  */
 
-goog.provide('ascii');
+// Define namespace for closure compiler but don't make it a requirement.
+try {
+  goog.provide('ascii');
+} catch (e) {
+  window.ascii = {};
+}
 
 /** @const */ var MAX_GRID_WIDTH = 2000;
 /** @const */ var MAX_GRID_HEIGHT = 600;

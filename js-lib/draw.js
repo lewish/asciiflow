@@ -22,15 +22,30 @@ function drawLine(state, startPosition, endPosition, clockwise, opt_value) {
   var midX = clockwise ? endPosition.x : startPosition.x;
   var midY = clockwise ? startPosition.y : endPosition.y;
 
-  while (startX++ < endX) {
-    state.drawValue(new ascii.Vector(startX, midY), value);
+  // Need to store the context of the next cell before we modify the current one.
+  var context = state.getContext(new ascii.Vector(startX, midY));
+  while (startX < endX) {
+    var position = new ascii.Vector(startX, midY);
+    // Don't erase 4 way junctions.
+    var draw = (value != ' ' || context.up + context.down != 2);
+    // Set the context for the next loop before we draw.
+    context = state.getContext(position.add(new ascii.Vector(1, 0)));
+    if (draw) { state.drawValueIncremental(position, value); }
+    startX++;
   }
+  context = state.getContext(new ascii.Vector(midX, startY));
   while (startY++ < endY) {
-    state.drawValue(new ascii.Vector(midX, startY), value);
+    var position = new ascii.Vector(midX, startY);
+    // Don't erase 4 way junctions.
+    var draw = (value != ' ' || context.left + context.right != 2);
+    // Set the context for the next loop before we draw.
+    context = state.getContext(position.add(new ascii.Vector(0, 1)));
+    if (draw) { state.drawValueIncremental(position, value); }
   }
+
   state.drawValue(startPosition, value);
   state.drawValue(endPosition, value);
-  state.drawValue(new ascii.Vector(midX, midY), value);
+  state.drawValueIncremental(new ascii.Vector(midX, midY), value);
 }
 
 /**
@@ -277,36 +292,32 @@ ascii.DrawMove.prototype.start = function(position) {
   for (var i in directions) {
     var midPoints = this.followLine(position, directions[i]);
     for (var k in midPoints) {
-    var midPoint = midPoints[k];
+      var midPoint = midPoints[k];
 
-    // Clockwise is a lie, it is true if we move vertically first.
-    var clockwise = (directions[i].x != 0);
-    // Ignore any directions that didn't go anywhere.
-    if (position.equals(midPoint)) {
-      continue;
-    }
-    var midPointContext = this.state.getContext(midPoint);
-    // Special case, a straight line with no turns.
-    if ((midPointContext.left + midPointContext.right +
-        midPointContext.up + midPointContext.down) == 1) {
-      ends.push({position: midPoint, clockwise: clockwise});
-      continue;
-    }
-    // Continue following lines from the midpoint.
-    for (var j in directions) {
-      if (directions[i].add(directions[j]).length() == 0 ||
-        directions[i].add(directions[j]).length() == 2) {
-        // Don't go back on ourselves, or don't carry on in same direction.
+      // Clockwise is a lie, it is true if we move vertically first.
+      var clockwise = (directions[i].x != 0);
+
+      var midPointContext = this.state.getContext(midPoint);
+      // Special case, a straight line with no turns.
+      if (midPointContext.sum() == 1) {
+        ends.push({position: midPoint, clockwise: clockwise});
         continue;
       }
-      // On the second line we don't care about multiple junctions.
-      var endz = this.followLine(midPoint, directions[j]);
-      // Ignore any directions that didn't go anywhere.
-      if (endz.length == 0 || midPoint.equals(endz[0])) {
-        continue;
+      // Continue following lines from the midpoint.
+      for (var j in directions) {
+        if (directions[i].add(directions[j]).length() == 0 ||
+          directions[i].add(directions[j]).length() == 2) {
+          // Don't go back on ourselves, or don't carry on in same direction.
+          continue;
+        }
+        var secondEnds = this.followLine(midPoint, directions[j]);
+        // Ignore any directions that didn't go anywhere.
+        if (secondEnds.length == 0) {
+          continue;
+        }
+        // On the second line we don't care about multiple junctions, just the last.
+        ends.push({position: secondEnds[secondEnds.length - 1], clockwise: clockwise});
       }
-      ends.push({position: endz[0], clockwise: clockwise});
-    }
     }
   }
   this.ends = ends;
@@ -341,16 +352,18 @@ ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
   var junctions = [];
   while (true) {
     var nextEnd = endPosition.add(direction);
-    if (!this.state.getCell(endPosition).isSpecial() ||
-        !this.state.getCell(nextEnd).isSpecial()) {
+    if (!this.state.getCell(nextEnd).isSpecial()) {
+      // Junctions: Right angles and end T-Junctions.
+      if (!startPosition.equals(endPosition)) {
+        junctions.push(endPosition);
+      }
       return junctions;
     }
+
     endPosition = nextEnd;
-    var context = this.state.getContext(nextEnd);
-    // TODO: Would be nice to skip over 4 way junctions here, but need to avoid
-    // clearing them too if we decide to do that.
-    if (!(context.left && context.right && !context.up && !context.down) &&
-        !(!context.left && !context.right && context.up && context.down)) {
+    var context = this.state.getContext(endPosition);
+    // Junctions: Side T-Junctions.
+    if (context.sum() == 3) {
       junctions.push(endPosition);
     }
   }

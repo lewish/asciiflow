@@ -70,6 +70,19 @@ ascii.State.prototype.drawValue = function(position, value) {
 };
 
 /**
+ * Sets the cells scratch (uncommitted) value at the given position
+ * iff the value is different to what it already is.
+ *
+ * @param {ascii.Vector} position
+ * @param {?string} value
+ */
+ascii.State.prototype.drawValueIncremental = function(position, value) {
+  if (this.getCell(position).getRawValue() != value) {
+    this.drawValue(position, value);
+  }
+};
+
+/**
  * Clears the current drawing scratchpad.
  */
 ascii.State.prototype.clearDraw = function() {
