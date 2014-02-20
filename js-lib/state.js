@@ -125,10 +125,10 @@ ascii.State.prototype.getDrawValue = function(position) {
  * @return {ascii.CellContext}
  */
 ascii.State.prototype.getContext = function(position) {
-  var left = this.getCell(position.add(new ascii.Vector(-1, 0))).isSpecial();
-  var right = this.getCell(position.add(new ascii.Vector(1, 0))).isSpecial();
-  var up = this.getCell(position.add(new ascii.Vector(0, -1))).isSpecial();
-  var down = this.getCell(position.add(new ascii.Vector(0, 1))).isSpecial();
+  var left = this.getCell(position.add(DIR_LEFT)).isSpecial();
+  var right = this.getCell(position.add(DIR_RIGHT)).isSpecial();
+  var up = this.getCell(position.add(DIR_UP)).isSpecial();
+  var down = this.getCell(position.add(DIR_DOWN)).isSpecial();
   return new ascii.CellContext(left, right, up, down);
 };
 

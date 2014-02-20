@@ -5,8 +5,9 @@
 // Define namespace for closure compiler but don't make it a requirement.
 try {
   goog.provide('ascii');
+  throw 1;
 } catch (e) {
-  window.ascii = {};
+  window.ascii = window.ascii || {};
 }
 
 /** @const */ var MAX_GRID_WIDTH = 2000;
@@ -38,6 +39,11 @@ try {
 /** @const */ var KEY_DOWN = '<down>';
 /** @const */ var KEY_LEFT = '<left>';
 /** @const */ var KEY_RIGHT = '<right>';
+
+// http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+/** @const */ var TOUCH_ENABLED = 
+    'ontouchstart' in window ||
+    'onmsgesturechange' in window;
 
 /**
  * Stores a 2D vector.
@@ -94,6 +100,13 @@ ascii.Vector.prototype.length = function() {
 ascii.Vector.prototype.scale = function(scale) {
   return new ascii.Vector(this.x * scale, this.y * scale);
 };
+
+/** @const */ var DIR_LEFT = new ascii.Vector(-1, 0);
+/** @const */ var DIR_RIGHT = new ascii.Vector(1, 0);
+/** @const */ var DIR_UP = new ascii.Vector(0, -1);
+/** @const */ var DIR_DOWN = new ascii.Vector(0, 1);
+
+/** @const */ var DIRECTIONS = [ DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN ];
 
 /**
  * An individual cell within the diagram and it's current value.

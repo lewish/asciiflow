@@ -182,18 +182,18 @@ ascii.DrawText.prototype.handleKey = function(value) {
   if (this.currentPosition == null) {
     return;
   }
-  var nextPosition = this.currentPosition.add(new ascii.Vector(1, 0));
+  var nextPosition = this.currentPosition.add(DIR_RIGHT);
   
   if (value == KEY_RETURN || this.state.getCell(nextPosition).isSpecial()) {
     // Pressed return key or hit box, so clear this cell and new line.
     this.state.clearDraw();
-    nextPosition = this.startPosition.add(new ascii.Vector(0, 1));
+    nextPosition = this.startPosition.add(DIR_DOWN);
     this.startPosition = nextPosition;
   } 
   if (value == KEY_BACKSPACE && this.startPosition.x <= nextPosition.x) {
     // Pressed backspace key, so clear this cell and go back.
     this.state.clearDraw();
-    nextPosition = this.currentPosition.add(new ascii.Vector(-1, 0));
+    nextPosition = this.currentPosition.add(DIR_LEFT);
     if (nextPosition.x < this.startPosition.x) {
       nextPosition.x = this.startPosition.x;
     }
@@ -202,19 +202,19 @@ ascii.DrawText.prototype.handleKey = function(value) {
   }
   if (value == KEY_UP) { 
     this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(0, -1))
+    this.startPosition = nextPosition = this.currentPosition.add(DIR_UP);
   }
   if (value == KEY_LEFT) {
     this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(-1, 0))
+    this.startPosition = nextPosition = this.currentPosition.add(DIR_LEFT);
   }
   if (value == KEY_RIGHT) {
     this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(1, 0))
+    this.startPosition = nextPosition = this.currentPosition.add(DIR_RIGHT);
   }
   if (value == KEY_DOWN) {
     this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(new ascii.Vector(0, 1))
+    this.startPosition = nextPosition = this.currentPosition.add(DIR_DOWN);
   }
 
   if (value.length == 1) {
@@ -279,22 +279,25 @@ ascii.DrawMove = function(state) {
 };
 
 ascii.DrawMove.prototype.start = function(position) {
-  this.startPosition = position;
-  var context = this.state.getContext(position);
-  var directions = [
-    new ascii.Vector(1, 0),
-    new ascii.Vector(-1, 0),
-    new ascii.Vector(0, 1),
-    new ascii.Vector(0, -1)];
+  this.startPosition = TOUCH_ENABLED
+      ? this.snapToNearest(position)
+      : position;
+  this.ends = null;
+
+  // If this isn't a special cell then quit, or things get weird.
+  if (!this.state.getCell(this.startPosition).isSpecial()) {
+    return;
+  }
+  var context = this.state.getContext(this.startPosition);
 
   var ends = [];
-  for (var i in directions) {
-    var midPoints = this.followLine(position, directions[i]);
+  for (var i in DIRECTIONS) {
+    var midPoints = this.followLine(this.startPosition, DIRECTIONS[i]);
     for (var k in midPoints) {
       var midPoint = midPoints[k];
 
       // Clockwise is a lie, it is true if we move vertically first.
-      var clockwise = (directions[i].x != 0);
+      var clockwise = (DIRECTIONS[i].x != 0);
 
       var midPointContext = this.state.getContext(midPoint);
       // Special case, a straight line with no turns.
@@ -303,13 +306,13 @@ ascii.DrawMove.prototype.start = function(position) {
         continue;
       }
       // Continue following lines from the midpoint.
-      for (var j in directions) {
-        if (directions[i].add(directions[j]).length() == 0 ||
-          directions[i].add(directions[j]).length() == 2) {
+      for (var j in DIRECTIONS) {
+        if (DIRECTIONS[i].add(DIRECTIONS[j]).length() == 0 ||
+          DIRECTIONS[i].add(DIRECTIONS[j]).length() == 2) {
           // Don't go back on ourselves, or don't carry on in same direction.
           continue;
         }
-        var secondEnds = this.followLine(midPoint, directions[j]);
+        var secondEnds = this.followLine(midPoint, DIRECTIONS[j]);
         // Ignore any directions that didn't go anywhere.
         if (secondEnds.length == 0) {
           continue;
@@ -321,7 +324,7 @@ ascii.DrawMove.prototype.start = function(position) {
   }
   this.ends = ends;
   // Redraw the new lines after we have cleared the existing ones.
-  this.move(position);
+  this.move(this.startPosition);
 };
 
 ascii.DrawMove.prototype.move = function(position) {
@@ -367,6 +370,41 @@ ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
     }
   }
 };
+
+/**
+ * For a given position, finds the nearest cell that is of any interest to the
+ * move tool, e.g. a corner or a line. Will look up to 1 cell in each direction
+ * including diagonally.
+ * @return {ascii.Vector}
+ */
+ascii.DrawMove.prototype.snapToNearest = function(position) {
+  if (this.state.getCell(position).isSpecial()) {
+    return position;
+  }
+  var allDirections = DIRECTIONS.concat([
+    DIR_LEFT.add(DIR_UP),
+    DIR_LEFT.add(DIR_DOWN),
+    DIR_RIGHT.add(DIR_UP),
+    DIR_RIGHT.add(DIR_DOWN)]);
+
+  var bestDirection = null;
+  var bestContextSum = 0;
+  for (var i in allDirections) {
+    // Find the most connected cell, essentially.
+    var newPos = position.add(allDirections[i]);
+    var contextSum = this.state.getContext(newPos).sum();
+    if (this.state.getCell(newPos).isSpecial()
+      && contextSum > bestContextSum) {
+      bestDirection = allDirections[i];
+      bestContextSum = contextSum;
+    }
+  }
+  if (bestDirection == null) {
+    // Didn't find anything, so just return the current cell.
+    return position;
+  }
+  return position.add(bestDirection);
+}
 
 ascii.DrawMove.prototype.getCursor = function(position) {
   if (this.state.getCell(position).isSpecial()) {
