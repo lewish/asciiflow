@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
 <title>ASCIIFlow Infinity</title>
 <style>
 #menu {
-  position: fixed;
+  position: absolute;
   top: 95px;
   left: 0px;
   z-index: 100;
@@ -14,10 +15,12 @@
 
 .dialog {
   position: fixed;
-  top: 0px;
+  top: 95px;
   left: 70px;
-  width: 400px;
-  height: 300px;
+  right: 10px;
+  bottom: 10px;
+  max-width: 640px;
+  max-height: 480px;
   transition: height 0.3s;
   margin-top: 3px;
   background: #F8F8F8;
@@ -70,16 +73,31 @@ button.file.active {
   border-bottom: 1px solid #444;
 }
 
+/* Small screen overrides */
+@media(max-width: 700px) {
+  #logo {
+    display: none;
+  }
+  #menu {
+    top: 0px;
+  }
+  .dialog {
+    top: 0px;
+  }
+}
+
 #logo pre {
   margin: 0px;
 }
 
 textarea {
-  width: 380px;
-  height: 280px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   resize: none;
-  margin: 5px;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
   font-family: monospace;
   white-space: pre;
 }
