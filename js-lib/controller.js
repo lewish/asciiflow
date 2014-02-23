@@ -31,7 +31,6 @@ ascii.Controller.prototype.handlePress = function(position) {
   window.setTimeout(function() {
     if (this.dragOrigin == null && this.pressVector != null) {
       this.drawFunction.start(this.view.screenToCell(position));
-      this.view.dirty = true;
     }
     // TODO: Skip this if release happens before timeout.
   }.bind(this), DRAG_LATENCY);
@@ -62,7 +61,6 @@ ascii.Controller.prototype.handleMove = function(position) {
           !this.view.screenToCell(position)
           .equals(this.view.screenToCell(this.lastMoveCell)))) {
     this.drawFunction.move(this.view.screenToCell(position));
-    this.view.dirty = true;
     this.lastMoveCell = position;
   }
 
@@ -83,7 +81,6 @@ ascii.Controller.prototype.handleRelease = function(position) {
   if (this.dragOrigin == null &&
       ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
     this.drawFunction.end(this.view.screenToCell(position));
-    this.view.dirty = true;
   }
   this.pressVector = null;
   this.pressTimestamp = 0;
@@ -156,7 +153,6 @@ ascii.Controller.prototype.installBindings = function() {
 
   $('#undo-button').click(function(e) {
     this.state.undo();
-    this.view.dirty = true;
   }.bind(this));
 
   $('#import-submit-button').click(function(e) {
@@ -166,7 +162,6 @@ ascii.Controller.prototype.installBindings = function() {
             this.view.canvas.width / 4,
             this.view.canvas.height / 4)));
     $('#import-area').val('');
-    this.view.dirty = true;
   }.bind(this));
 
   $(window).keypress(function(e) {
@@ -213,7 +208,6 @@ ascii.Controller.prototype.updateButtons = function(id) {
   }
   if (id == 'clear-button') {
     this.state.clear();
-    this.view.dirty = true;
   }
 };
 
@@ -224,7 +218,6 @@ ascii.Controller.prototype.updateButtons = function(id) {
 ascii.Controller.prototype.handleKeyPress = function(event) {
   if (!event.ctrlKey && !event.metaKey && event.keyCode != 13) {
     this.drawFunction.handleKey(String.fromCharCode(event.keyCode));
-    this.view.dirty = true;
   }
 };
 
@@ -239,7 +232,7 @@ ascii.Controller.prototype.handleKeyDown = function(event) {
   if (event.ctrlKey || event.metaKey) {
     if (event.keyCode == 67) { specialKeyCode = KEY_COPY; }
     if (event.keyCode == 86) { specialKeyCode = KEY_PASTE; }
-    if (event.keyCode == 90) { this.state.undo(); this.view.dirty = true; }
+    if (event.keyCode == 90) { this.state.undo(); }
     // if (event.keyCode == 89) { this.state.redo(); }
     if (event.keyCode == 88) { specialKeyCode = KEY_CUT; }
   }
@@ -255,7 +248,6 @@ ascii.Controller.prototype.handleKeyDown = function(event) {
     //event.preventDefault();
     //event.stopPropagation();
     this.drawFunction.handleKey(specialKeyCode);
-    this.view.dirty = true;
   }
 };
 

@@ -9,6 +9,8 @@ ascii.State = function() {
   this.cells = new Array(MAX_GRID_WIDTH);
   /** @type {Array.<ascii.MappedCell>} */
   this.scratchCells = new Array();
+  /** @type {boolean} */
+  this.dirty = true;
 
   /** @type {Array.<Array.<ascii.MappedValue>>} */
   this.undoStates = new Array();
@@ -47,17 +49,6 @@ ascii.State.prototype.getCell = function(vector) {
 };
 
 /**
- * Sets the cells value at the given position. Probably shouldn't
- * be used directly in many cases. Used drawValue instead.
- *
- * @param {ascii.Vector} position
- * @param {?string} value
- */
-ascii.State.prototype.setValue = function(position, value) {
-  this.getCell(position).value = value;
-};
-
-/**
  * Sets the cells scratch (uncommitted) value at the given position.
  *
  * @param {ascii.Vector} position
@@ -67,6 +58,7 @@ ascii.State.prototype.drawValue = function(position, value) {
   var cell = this.getCell(position);
   this.scratchCells.push(new ascii.MappedCell(position, cell));
   cell.scratchValue = value;
+  this.dirty = true;
 };
 
 /**
@@ -172,6 +164,7 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
     }
     this.undoStates.push(oldValues);
   }
+  this.dirty = true;
 };
 
 /**

@@ -30,8 +30,9 @@ ascii.View.prototype.resizeCanvas = function() {
  * Starts the animation loop for the canvas. Should only be called once.
  */
 ascii.View.prototype.animate = function() {
-  if (this.dirty) {
+  if (this.dirty || this.state.dirty) {
     this.dirty = false;
+    this.state.dirty = false;
     this.render();
   }
   var view = this;
