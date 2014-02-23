@@ -53,8 +53,8 @@ ascii.DrawFunction = function() {};
 ascii.DrawFunction.prototype.start = function(position) {};
 /** Drawing move. @param {ascii.Vector} position */
 ascii.DrawFunction.prototype.move = function(position) {};
-/** End of drawing. @param {ascii.Vector} position */
-ascii.DrawFunction.prototype.end = function(position) {};
+/** End of drawing. */
+ascii.DrawFunction.prototype.end = function() {};
 /** Cursor for given cell.
  * @param {ascii.Vector} position
  * @return {string} 
@@ -82,7 +82,7 @@ ascii.DrawBox.prototype.move = function(position) {
   drawLine(this.state, this.startPosition, position, true);
   drawLine(this.state, this.startPosition, position, false);
 };
-ascii.DrawBox.prototype.end = function(position) {
+ascii.DrawBox.prototype.end = function() {
   this.state.commitDraw();
 };
 ascii.DrawBox.prototype.getCursor = function(position) {
@@ -115,7 +115,7 @@ ascii.DrawLine.prototype.move = function(position) {
 
   drawLine(this.state, this.startPosition, position, clockwise);
 };
-ascii.DrawLine.prototype.end = function(position) {
+ascii.DrawLine.prototype.end = function() {
   this.state.commitDraw();
 };
 ascii.DrawLine.prototype.getCursor = function(position) {
@@ -140,7 +140,7 @@ ascii.DrawFreeform.prototype.start = function(position) {
 ascii.DrawFreeform.prototype.move = function(position) {
   this.state.drawValue(position, this.value);
 };
-ascii.DrawFreeform.prototype.end = function(position) {
+ascii.DrawFreeform.prototype.end = function() {
   this.state.commitDraw();
 };
 ascii.DrawFreeform.prototype.getCursor = function(position) {
@@ -174,7 +174,7 @@ ascii.DrawText.prototype.start = function(position) {
   this.state.drawValue(position, currentValue == null ? ERASE_CHAR : currentValue);
 };
 ascii.DrawText.prototype.move = function(position) {};
-ascii.DrawText.prototype.end = function(position) {};
+ascii.DrawText.prototype.end = function() {};
 ascii.DrawText.prototype.getCursor = function(position) {
   return 'text';
 };
@@ -259,7 +259,7 @@ ascii.DrawErase.prototype.move = function(position) {
     }
   }
 };
-ascii.DrawErase.prototype.end = function(position) {
+ascii.DrawErase.prototype.end = function() {
   this.state.commitDraw();
 };
 ascii.DrawErase.prototype.getCursor = function(position) {
@@ -340,7 +340,7 @@ ascii.DrawMove.prototype.move = function(position) {
   }
 };
 
-ascii.DrawMove.prototype.end = function(position) {
+ascii.DrawMove.prototype.end = function() {
   this.state.commitDraw();
 };
 

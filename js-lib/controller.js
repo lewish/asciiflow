@@ -1,4 +1,14 @@
 /**
+ * Different modes of control.
+ * @const
+ */
+var Mode = {
+    NONE : 0,
+    DRAG : 1,
+    DRAW : 2
+}
+
+/**
  * Handles user input events and modifies state.
  *
  * @constructor
@@ -12,10 +22,9 @@ ascii.Controller = function(view, state) {
   /** @type {ascii.DrawFunction} */ this.drawFunction =
       new ascii.DrawBox(state);
 
+  /** @type {number} */ this.mode = Mode.NONE;
   /** @type {ascii.Vector} */ this.dragOrigin;
-  /** @type {ascii.Vector} */ this.pressVector;
-  /** @type {ascii.Vector} */ this.lastMoveCell;
-  /** @type {number} */ this.pressTimestamp;
+  /** @type {ascii.Vector} */ this.dragOriginCell;
 
   this.installBindings();
 };
@@ -23,68 +32,59 @@ ascii.Controller = function(view, state) {
 /**
  * @param {ascii.Vector} position
  */
-ascii.Controller.prototype.handlePress = function(position) {
-  this.pressVector = position;
-  this.pressTimestamp = $.now();
+ascii.Controller.prototype.startDraw = function(position) {
+  this.mode = Mode.DRAW;
+  this.drawFunction.start(this.view.screenToCell(position));
+}
 
-  // Check to see if a drag happened in the given allowed time.
-  window.setTimeout(function() {
-    if (this.dragOrigin == null && this.pressVector != null) {
-      this.drawFunction.start(this.view.screenToCell(position));
-    }
-    // TODO: Skip this if release happens before timeout.
-  }.bind(this), DRAG_LATENCY);
-};
+/**
+ * @param {ascii.Vector} position
+ */
+ascii.Controller.prototype.startDrag = function(position) {
+  this.mode = Mode.DRAG;
+  this.dragOrigin = position;
+  this.dragOriginCell = this.view.offset;
+}
 
 /**
  * @param {ascii.Vector} position
  */
 ascii.Controller.prototype.handleMove = function(position) {
-  // Update the cursor pointer, depending on the draw function.
-  this.view.canvas.style.cursor = this.drawFunction.getCursor(
-      this.view.screenToCell(position));
+  var moveCell = this.view.screenToCell(position);
 
-  // No clicks, so just ignore.
-  if (this.pressVector == null) { return; }
-
-  // Initiate a drag if we have moved enough, quickly enough.
-  if (this.dragOrigin == null &&
-      ($.now() - this.pressTimestamp) < DRAG_LATENCY &&
-      position.subtract(this.pressVector).length() > DRAG_ACCURACY) {
-      this.dragOrigin = this.view.offset;
+  // First move event, make sure we don't blow up here.
+  if (this.lastMoveCell == null) {
+    this.lastMoveCell = moveCell;
   }
 
-  // Not dragging, so pass the mouse move on, but remove duplicates.
-  if (this.dragOrigin == null &&
-      ($.now() - this.pressTimestamp) >= DRAG_LATENCY &&
-      (this.lastMoveCell == null ||
-          !this.view.screenToCell(position)
-          .equals(this.view.screenToCell(this.lastMoveCell)))) {
-    this.drawFunction.move(this.view.screenToCell(position));
-    this.lastMoveCell = position;
+  // Update the cursor pointer, depending on the draw function.
+  if (!moveCell.equals(this.lastMoveCell)) {
+    this.view.canvas.style.cursor = this.drawFunction.getCursor(moveCell);
+  }
+
+  // In drawing mode, so pass the mouse move on, but remove duplicates.
+  if (this.mode == Mode.DRAW && !moveCell.equals(this.lastMoveCell)) {
+    this.drawFunction.move(moveCell);
   }
 
   // Drag in progress, update the view origin.
-  if (this.dragOrigin != null) {
-    this.view.setOffset(this.dragOrigin.add(
-        this.pressVector
+  if (this.mode == Mode.DRAG) {
+    this.view.setOffset(this.dragOriginCell.add(
+        this.dragOrigin
             .subtract(position)
             .scale(1 / this.view.zoom)));
   }
+  this.lastMoveCell = moveCell;
 };
 
-/**
- * @param {ascii.Vector} position
- */
-ascii.Controller.prototype.handleRelease = function(position) {
-  // Drag wasn't initiated in time, treat this as a drawing event.
-  if (this.dragOrigin == null &&
-      ($.now() - this.pressTimestamp) >= DRAG_LATENCY) {
-    this.drawFunction.end(this.view.screenToCell(position));
+ascii.Controller.prototype.endAll = function() {
+  if (this.mode = Mode.DRAW) {
+    this.drawFunction.end();
   }
-  this.pressVector = null;
-  this.pressTimestamp = 0;
+  // Cleanup state.
+  this.mode = Mode.NONE;
   this.dragOrigin = null;
+  this.dragOriginCell = null;
   this.lastMoveCell = null;
 };
 
@@ -98,53 +98,13 @@ ascii.Controller.prototype.handleZoom = function(delta) {
 };
 
 /**
- * Installs input bindings for desktop devices.
+ * Installs input bindings for common use cases devices.
  */
 ascii.Controller.prototype.installBindings = function() {
   var controller = this;
 
-  $(this.view.canvas).bind('mousewheel', function(e) {
-      controller.handleZoom(e.originalEvent.wheelDelta);
-  });
-
-  $(this.view.canvas).mousedown(function(e) {
-      controller.handlePress(new ascii.Vector(e.clientX, e.clientY));
-  });
-
-  $(this.view.canvas).mouseup(function(e) {
-      controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
-  });
-
-  $(this.view.canvas).mouseleave(function(e) {
-      controller.handleRelease(new ascii.Vector(e.clientX, e.clientY));
-  });
-
-  $(this.view.canvas).mousemove(function(e) {
-      controller.handleMove(new ascii.Vector(e.clientX, e.clientY));
-  });
-
   $(window).resize(function(e) { controller.view.resizeCanvas() });
 
-  $(this.view.canvas).bind('touchstart', function(e) {
-      e.preventDefault();
-      controller.handlePress(new ascii.Vector(
-         e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY));
-  });
-
-  $(this.view.canvas).bind('touchend', function(e) {
-      e.preventDefault();
-      // TODO: This works for now as we don't use a touchend position anywhere.
-      //       Need to track last position from touchmove and use it here.
-      controller.handleRelease(new ascii.Vector(0, 0));
-  });
-
-  $(this.view.canvas).bind('touchmove', function(e) {
-      e.preventDefault();
-      controller.handleMove(new ascii.Vector(
-         e.originalEvent.touches[0].pageX,
-         e.originalEvent.touches[0].pageY));
-  });
   // TODO: Handle pinch to zoom.
 
   $('#buttons > button.tool').click(function(e) {
