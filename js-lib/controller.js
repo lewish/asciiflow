@@ -92,15 +92,6 @@ ascii.Controller.prototype.endAll = function() {
 };
 
 /**
- * @param {number} delta
- */
-ascii.Controller.prototype.handleZoom = function(delta) {
-  var newzoom = this.view.zoom * (delta > 0 ? 1.1 : 0.9);
-  newzoom = Math.max(Math.min(newzoom, 5), 0.2);
-  this.view.setZoom(newzoom);
-};
-
-/**
  * Installs input bindings for common use cases devices.
  */
 ascii.Controller.prototype.installBindings = function() {
