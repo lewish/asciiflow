@@ -30,7 +30,7 @@ ascii.State.prototype.clear = function() {
   for (var i = 0; i < this.cells.length; i++) {
     for (var j = 0; j < this.cells[i].length; j++) {
       var position = new ascii.Vector(i, j);
-      if(this.cells[i][j].getRawValue() != null) {
+      if (this.cells[i][j].getRawValue() != null) {
         this.drawValue(new ascii.Vector(i, j), ERASE_CHAR);
       }
     }
@@ -132,10 +132,11 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
   var oldValues = [];
 
   // Dedupe the scratch values, or this causes havoc for history management.
-  var positions = this.scratchCells.map(function (value) {
+  var positions = this.scratchCells.map(function(value) {
     return value.position.x.toString() + value.position.y.toString();
   });
-  var scratchCellsUnique = this.scratchCells.filter(function (value, index, arr) {
+  var scratchCellsUnique =
+      this.scratchCells.filter(function(value, index, arr) {
     return positions.indexOf(positions[index]) == index;
   });
 
@@ -146,7 +147,8 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
     var cell = scratchCellsUnique[i].cell;
 
     // Push the effective old value unto the array.
-    oldValues.push(new ascii.MappedValue(position, cell.value != null ? cell.value : ' '));
+    oldValues.push(new ascii.MappedValue(position,
+        cell.value != null ? cell.value : ' '));
 
     var newValue = cell.getRawValue();
     if (newValue == ERASE_CHAR || newValue == ' ') {
@@ -159,7 +161,7 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
   // Don't save a new state if we are undoing an old one.
   if (!opt_skipSave && oldValues.length > 0) {
     // If we have too many undo states, clear one out.
-    if(this.undoStates.length > MAX_UNDO) {
+    if (this.undoStates.length > MAX_UNDO) {
       this.undoStates.shift();
     }
     this.undoStates.push(oldValues);
@@ -190,7 +192,7 @@ ascii.State.prototype.outputText = function() {
   var start = new ascii.Vector(Number.MAX_VALUE, Number.MAX_VALUE);
   var end = new ascii.Vector(-1, -1);
 
-  for (var i = 0; i < this.cells.length; i++)  {
+  for (var i = 0; i < this.cells.length; i++) {
     for (var j = 0; j < this.cells[i].length; j++) {
       if (this.cells[i][j].getRawValue() != null) {
         if (i < start.x) { start.x = i; }
@@ -200,7 +202,7 @@ ascii.State.prototype.outputText = function() {
       }
     }
   }
-  if (end.x < 0) { return '' };
+  if (end.x < 0) { return '' }
 
   var output = '';
   for (var j = start.y; j <= end.y; j++) {
@@ -217,6 +219,8 @@ ascii.State.prototype.outputText = function() {
 
 /**
  * Loads the given text into the diagram starting at the given offset.
+ * @param {string} value
+ * @param {ascii.Vector} offset
  */
 ascii.State.prototype.fromText = function(value, offset) {
   var lines = value.split('\n');

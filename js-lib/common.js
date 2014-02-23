@@ -7,6 +7,7 @@ try {
   goog.provide('ascii');
   throw 1;
 } catch (e) {
+  /** type {Object} */
   window.ascii = window.ascii || {};
 }
 
@@ -41,7 +42,7 @@ try {
 /** @const */ var KEY_RIGHT = '<right>';
 
 // http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
-/** @const */ var TOUCH_ENABLED = 
+/** @const */ var TOUCH_ENABLED =
     'ontouchstart' in window ||
     'onmsgesturechange' in window;
 
@@ -106,7 +107,7 @@ ascii.Vector.prototype.scale = function(scale) {
 /** @const */ var DIR_UP = new ascii.Vector(0, -1);
 /** @const */ var DIR_DOWN = new ascii.Vector(0, 1);
 
-/** @const */ var DIRECTIONS = [ DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN ];
+/** @const */ var DIRECTIONS = [DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN];
 
 /**
  * An individual cell within the diagram and it's current value.
@@ -166,18 +167,22 @@ ascii.CellContext.prototype.sum = function() {
  * A pair of a vector and a string value. Used in history management.
  * @constructor
  * @struct
+ * @param {ascii.Vector} position
+ * @param {string} value
  */
 ascii.MappedValue = function(position, value) {
   this.position = position;
   this.value = value;
-}
+};
 
 /**
  * A pair of a vector and a cell. Used in history management.
  * @constructor
  * @struct
+ * @param {ascii.Vector} position
+ * @param {ascii.Cell} cell
  */
 ascii.MappedCell = function(position, cell) {
   this.position = position;
   this.cell = cell;
-}
+};

@@ -57,7 +57,7 @@ ascii.DrawFunction.prototype.move = function(position) {};
 ascii.DrawFunction.prototype.end = function() {};
 /** Cursor for given cell.
  * @param {ascii.Vector} position
- * @return {string} 
+ * @return {string}
  */
 ascii.DrawFunction.prototype.getCursor = function(position) {};
 /** Handle the key with given value being pressed. @param {string} value */
@@ -73,21 +73,30 @@ ascii.DrawBox = function(state) {
   /** @type {ascii.Vector} */ this.startPosition = null;
 };
 
+/** @inheritDoc */
 ascii.DrawBox.prototype.start = function(position) {
   this.startPosition = position;
 };
+
+/** @inheritDoc */
 ascii.DrawBox.prototype.move = function(position) {
   this.endPosition = position;
   this.state.clearDraw();
   drawLine(this.state, this.startPosition, position, true);
   drawLine(this.state, this.startPosition, position, false);
 };
+
+/** @inheritDoc */
 ascii.DrawBox.prototype.end = function() {
   this.state.commitDraw();
 };
+
+/** @inheritDoc */
 ascii.DrawBox.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+
+/** @inheritDoc */
 ascii.DrawBox.prototype.handleKey = function(value) {};
 
 /**
@@ -100,9 +109,12 @@ ascii.DrawLine = function(state) {
   /** @type {ascii.Vector} */ this.startPosition = null;
 };
 
+/** @inheritDoc */
 ascii.DrawLine.prototype.start = function(position) {
   this.startPosition = position;
 };
+
+/** @inheritDoc */
 ascii.DrawLine.prototype.move = function(position) {
   this.state.clearDraw();
 
@@ -115,12 +127,18 @@ ascii.DrawLine.prototype.move = function(position) {
 
   drawLine(this.state, this.startPosition, position, clockwise);
 };
+
+/** @inheritDoc */
 ascii.DrawLine.prototype.end = function() {
   this.state.commitDraw();
 };
+
+/** @inheritDoc */
 ascii.DrawLine.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+
+/** @inheritDoc */
 ascii.DrawLine.prototype.handleKey = function(value) {};
 
 /**
@@ -134,18 +152,27 @@ ascii.DrawFreeform = function(state, value) {
   this.value = value;
 };
 
+/** @inheritDoc */
 ascii.DrawFreeform.prototype.start = function(position) {
   this.state.drawValue(position, this.value);
 };
+
+/** @inheritDoc */
 ascii.DrawFreeform.prototype.move = function(position) {
   this.state.drawValue(position, this.value);
 };
+
+/** @inheritDoc */
 ascii.DrawFreeform.prototype.end = function() {
   this.state.commitDraw();
 };
+
+/** @inheritDoc */
 ascii.DrawFreeform.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+
+/** @inheritDoc */
 ascii.DrawFreeform.prototype.handleKey = function(value) {
   if (value.length == 1) {
     // The value is not a special character, so lets use it.
@@ -164,6 +191,7 @@ ascii.DrawText = function(state) {
   this.currentPosition = null;
 };
 
+/** @inheritDoc */
 ascii.DrawText.prototype.start = function(position) {
   this.startPosition = position;
   this.currentPosition = position;
@@ -171,25 +199,34 @@ ascii.DrawText.prototype.start = function(position) {
   this.state.clearDraw();
   // Effectively highlights the starting cell.
   var currentValue = this.state.getCell(position).getRawValue();
-  this.state.drawValue(position, currentValue == null ? ERASE_CHAR : currentValue);
+  this.state.drawValue(position,
+      currentValue == null ? ERASE_CHAR : currentValue);
 };
+
+/** @inheritDoc */
 ascii.DrawText.prototype.move = function(position) {};
+
+/** @inheritDoc */
 ascii.DrawText.prototype.end = function() {};
+
+/** @inheritDoc */
 ascii.DrawText.prototype.getCursor = function(position) {
   return 'text';
 };
+
+/** @inheritDoc */
 ascii.DrawText.prototype.handleKey = function(value) {
   if (this.currentPosition == null) {
     return;
   }
   var nextPosition = this.currentPosition.add(DIR_RIGHT);
-  
+
   if (value == KEY_RETURN || this.state.getCell(nextPosition).isSpecial()) {
     // Pressed return key or hit box, so clear this cell and new line.
     this.state.clearDraw();
     nextPosition = this.startPosition.add(DIR_DOWN);
     this.startPosition = nextPosition;
-  } 
+  }
   if (value == KEY_BACKSPACE && this.startPosition.x <= nextPosition.x) {
     // Pressed backspace key, so clear this cell and go back.
     this.state.clearDraw();
@@ -200,7 +237,7 @@ ascii.DrawText.prototype.handleKey = function(value) {
     this.state.drawValue(nextPosition, ERASE_CHAR);
     this.state.commitDraw();
   }
-  if (value == KEY_UP) { 
+  if (value == KEY_UP) {
     this.state.clearDraw();
     this.startPosition = nextPosition = this.currentPosition.add(DIR_UP);
   }
@@ -226,7 +263,8 @@ ascii.DrawText.prototype.handleKey = function(value) {
   // Highlight the next cell.
   this.currentPosition = nextPosition;
   var nextValue = this.state.getCell(nextPosition).getRawValue();
-  this.state.drawValue(nextPosition, nextValue == null ? ERASE_CHAR : nextValue);
+  this.state.drawValue(nextPosition,
+      nextValue == null ? ERASE_CHAR : nextValue);
 };
 
 /**
@@ -240,10 +278,13 @@ ascii.DrawErase = function(state) {
   this.endPosition = null;
 };
 
+/** @inheritDoc */
 ascii.DrawErase.prototype.start = function(position) {
   this.startPosition = position;
   this.move(position);
 };
+
+/** @inheritDoc */
 ascii.DrawErase.prototype.move = function(position) {
   this.state.clearDraw();
   this.endPosition = position;
@@ -259,12 +300,18 @@ ascii.DrawErase.prototype.move = function(position) {
     }
   }
 };
+
+/** @inheritDoc */
 ascii.DrawErase.prototype.end = function() {
   this.state.commitDraw();
 };
+
+/** @inheritDoc */
 ascii.DrawErase.prototype.getCursor = function(position) {
   return 'crosshair';
 };
+
+/** @inheritDoc */
 ascii.DrawErase.prototype.handleKey = function(value) {};
 
 /**
@@ -278,10 +325,10 @@ ascii.DrawMove = function(state) {
   this.ends = null;
 };
 
+/** @inheritDoc */
 ascii.DrawMove.prototype.start = function(position) {
-  this.startPosition = TOUCH_ENABLED
-      ? this.snapToNearest(position)
-      : position;
+  this.startPosition =
+      TOUCH_ENABLED ? this.snapToNearest(position) : position;
   this.ends = null;
 
   // If this isn't a special cell then quit, or things get weird.
@@ -317,8 +364,10 @@ ascii.DrawMove.prototype.start = function(position) {
         if (secondEnds.length == 0) {
           continue;
         }
-        // On the second line we don't care about multiple junctions, just the last.
-        ends.push({position: secondEnds[secondEnds.length - 1], clockwise: clockwise});
+        // On the second line we don't care about multiple
+        // junctions, just the last.
+        ends.push({position: secondEnds[secondEnds.length - 1],
+            clockwise: clockwise});
       }
     }
   }
@@ -327,6 +376,7 @@ ascii.DrawMove.prototype.start = function(position) {
   this.move(this.startPosition);
 };
 
+/** @inheritDoc */
 ascii.DrawMove.prototype.move = function(position) {
   this.state.clearDraw();
   // Clear all the lines so we can draw them afresh.
@@ -340,6 +390,7 @@ ascii.DrawMove.prototype.move = function(position) {
   }
 };
 
+/** @inheritDoc */
 ascii.DrawMove.prototype.end = function() {
   this.state.commitDraw();
 };
@@ -348,6 +399,9 @@ ascii.DrawMove.prototype.end = function() {
  * Follows a line in a given direction from the startPosition.
  * Returns a list of positions that were line 'junctions'. This is a bit of a
  * loose definition, but basically means a point around which we resize things.
+ * @param {ascii.Vector} startPosition
+ * @param {ascii.Vector} direction
+ * @return {Array.<ascii.Vector>}
  */
 ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
   var endPosition = startPosition.clone();
@@ -375,6 +429,7 @@ ascii.DrawMove.prototype.followLine = function(startPosition, direction) {
  * For a given position, finds the nearest cell that is of any interest to the
  * move tool, e.g. a corner or a line. Will look up to 1 cell in each direction
  * including diagonally.
+ * @param {ascii.Vector} position
  * @return {ascii.Vector}
  */
 ascii.DrawMove.prototype.snapToNearest = function(position) {
@@ -393,8 +448,8 @@ ascii.DrawMove.prototype.snapToNearest = function(position) {
     // Find the most connected cell, essentially.
     var newPos = position.add(allDirections[i]);
     var contextSum = this.state.getContext(newPos).sum();
-    if (this.state.getCell(newPos).isSpecial()
-      && contextSum > bestContextSum) {
+    if (this.state.getCell(newPos).isSpecial() &&
+        contextSum > bestContextSum) {
       bestDirection = allDirections[i];
       bestContextSum = contextSum;
     }
@@ -404,8 +459,9 @@ ascii.DrawMove.prototype.snapToNearest = function(position) {
     return position;
   }
   return position.add(bestDirection);
-}
+};
 
+/** @inheritDoc */
 ascii.DrawMove.prototype.getCursor = function(position) {
   if (this.state.getCell(position).isSpecial()) {
     return 'pointer';
@@ -414,5 +470,6 @@ ascii.DrawMove.prototype.getCursor = function(position) {
   }
 };
 
+/** @inheritDoc */
 ascii.DrawMove.prototype.handleKey = function(value) {};
 

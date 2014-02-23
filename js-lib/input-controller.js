@@ -9,20 +9,11 @@ ascii.DesktopController = function(controller) {
   /** @type {boolean} */ this.isDragging = false;
 
   this.installBindings();
-}
-
-/**
- * @param {ascii.Vector} position
- */
-ascii.DesktopController.prototype.handlePress = function(position, e) {
-  // Can drag by holding either the control or meta (Apple) key.
-  if (e.ctrlKey || e.metaKey) {
-    this.controller.startDrag(position);
-  } else {
-    this.controller.startDraw(position);
-  }
 };
 
+/**
+ * Installs input bindings associated with keyboard controls.
+ */
 ascii.DesktopController.prototype.installBindings = function() {
   var canvas = this.controller.view.canvas;
   $(canvas).bind('mousewheel', function(e) {
@@ -30,7 +21,12 @@ ascii.DesktopController.prototype.installBindings = function() {
   }.bind(this));
 
   $(canvas).mousedown(function(e) {
-      this.handlePress(new ascii.Vector(e.clientX, e.clientY), e);
+      // Can drag by holding either the control or meta (Apple) key.
+      if (e.ctrlKey || e.metaKey) {
+        this.controller.startDrag(new ascii.Vector(e.clientX, e.clientY));
+      } else {
+        this.controller.startDraw(new ascii.Vector(e.clientX, e.clientY));
+      }
   }.bind(this));
 
   // Pass these events through to the main controller.
@@ -61,7 +57,7 @@ ascii.TouchController = function(controller) {
   /** @type {boolean} */ this.dragStarted = false;
 
   this.installBindings();
-}
+};
 
 /**
  * @param {ascii.Vector} position
@@ -94,6 +90,9 @@ ascii.TouchController.prototype.handleMove = function(position) {
   this.controller.handleMove(position);
 };
 
+/**
+ * Installs input bindings associated with touch controls.
+ */
 ascii.TouchController.prototype.installBindings = function() {
   var canvas = this.controller.view.canvas;
 

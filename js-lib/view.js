@@ -91,8 +91,10 @@ ascii.View.prototype.render = function() {
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
       var cell = this.state.getCell(new ascii.Vector(i, j));
-      // Highlight the cell if it is special (grey) or it is part of a visible edit (blue).
-      if (cell.isSpecial() || (cell.hasScratch() && cell.getRawValue() != ' ')) {
+      // Highlight the cell if it is special (grey) or it is part
+      // of a visible edit (blue).
+      if (cell.isSpecial() ||
+          (cell.hasScratch() && cell.getRawValue() != ' ')) {
         this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
         context.fillRect(
             i * CHAR_PIXELS_H - this.offset.x,
@@ -156,8 +158,12 @@ ascii.View.prototype.frameToScreen = function(vector) {
 ascii.View.prototype.frameToCell = function(vector) {
   // We limit the edges in a bit, as most drawing needs a full context to work.
   return new ascii.Vector(
-    Math.min(Math.max(1, Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H)), MAX_GRID_WIDTH - 2),
-    Math.min(Math.max(1, Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V)), MAX_GRID_HEIGHT - 2));
+    Math.min(Math.max(1,
+        Math.round((vector.x - CHAR_PIXELS_H / 2) / CHAR_PIXELS_H)),
+        MAX_GRID_WIDTH - 2),
+    Math.min(Math.max(1,
+        Math.round((vector.y + CHAR_PIXELS_V / 2) / CHAR_PIXELS_V)),
+        MAX_GRID_HEIGHT - 2));
 };
 
 /**

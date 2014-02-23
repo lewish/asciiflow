@@ -3,10 +3,10 @@
  * @const
  */
 var Mode = {
-    NONE : 0,
-    DRAG : 1,
-    DRAW : 2
-}
+    NONE: 0,
+    DRAG: 1,
+    DRAW: 2
+};
 
 /**
  * Handles user input events and modifies state.
@@ -35,7 +35,7 @@ ascii.Controller = function(view, state) {
 ascii.Controller.prototype.startDraw = function(position) {
   this.mode = Mode.DRAW;
   this.drawFunction.start(this.view.screenToCell(position));
-}
+};
 
 /**
  * @param {ascii.Vector} position
@@ -44,7 +44,7 @@ ascii.Controller.prototype.startDrag = function(position) {
   this.mode = Mode.DRAG;
   this.dragOrigin = position;
   this.dragOriginCell = this.view.offset;
-}
+};
 
 /**
  * @param {ascii.Vector} position
@@ -77,6 +77,9 @@ ascii.Controller.prototype.handleMove = function(position) {
   this.lastMoveCell = moveCell;
 };
 
+/**
+ * Ends the current operation.
+ */
 ascii.Controller.prototype.endAll = function() {
   if (this.mode = Mode.DRAW) {
     this.drawFunction.end();
