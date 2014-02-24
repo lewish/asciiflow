@@ -101,12 +101,12 @@ ascii.Controller.prototype.installBindings = function() {
 
   // TODO: Handle pinch to zoom.
 
-  $('#buttons > button.tool').click(function(e) {
+  $('button.tool').click(function(e) {
     this.updateButtons(e.target.id);
   }.bind(this));
 
-  $('#undo-button').click(function(e) {
-    this.state.undo();
+  $('button.close-dialog-button').click(function(e) {
+    $('.dialog').removeClass('visible');
   }.bind(this));
 
   $('#import-submit-button').click(function(e) {
@@ -132,7 +132,7 @@ ascii.Controller.prototype.installBindings = function() {
  * @param {string} id The ID of the element clicked.
  */
 ascii.Controller.prototype.updateButtons = function(id) {
-  $('#buttons > button.tool').removeClass('active');
+  $('button.tool').removeClass('active');
   $('.dialog').removeClass('visible');
 
   $('#' + id).toggleClass('active');
@@ -162,6 +162,9 @@ ascii.Controller.prototype.updateButtons = function(id) {
   }
   if (id == 'clear-button') {
     this.state.clear();
+  }
+  if (id == 'undo-button') {
+    this.state.undo();
   }
 };
 
