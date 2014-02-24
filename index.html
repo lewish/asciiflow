@@ -6,26 +6,37 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <title>ASCIIFlow Infinity</title>
 <style>
-#menu {
-  position: absolute;
-  top: 95px;
-  left: 0px;
+
+* {
+  font-weight: bold;
+  font-size: 0.95em;
+}
+
+#draw-tools, #file-tools, #edit-tools {
+  display: inline-block;
+  position: relative;
+  float: left;
   z-index: 100;
 }
 
 .dialog {
   position: fixed;
-  top: 95px;
-  left: 70px;
-  right: 10px;
-  bottom: 10px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  margin: auto;
   max-width: 640px;
   max-height: 480px;
-  transition: height 0.3s;
-  margin-top: 3px;
-  background: #F8F8F8;
+  width: 80%;
+  height: 80%;
+  background: #B2CAFF;
+  border-width: 2px;
+  border-color: #777;
+  border-style: solid;
   display: none;
-  border: 1px solid #444;
+  z-index: 100;
+  padding: 5px;
 }
 
 .visible {
@@ -39,22 +50,31 @@ button {
   height: 30px;
   text-align: center;
   cursor: pointer;
-  background: #F8F8F8;
   outline: 0 !important;
-  border-width: 1px;
-  border-color: #444;
+  border-width: 2px;
+  border-color: #777;
+  border-style: solid;
 }
 
-button.active {
-  background: #D0E0FF;
+#draw-tools > button {
+  background: #B2CAFF;
 }
 
-button.file {
+#draw-tools > button.active {
+  background: #8BB5FF;
+}
+
+#file-tools > button {
   background: #D8D8D8;
 }
 
-button.file.active {
-  background: #C8C8C8;
+#edit-tools > button {
+  background: #FCB789;
+}
+
+.dialog > button {
+  margin-top: 6px;
+  display: inline-block;
 }
 
 #ascii-canvas {
@@ -73,21 +93,9 @@ button.file.active {
   border-bottom: 1px solid #444;
 }
 
-/* Small screen overrides */
-@media(max-width: 700px) {
-  #logo {
-    display: none;
-  }
-  #menu {
-    top: 0px;
-  }
-  .dialog {
-    top: 0px;
-  }
-}
-
 #logo pre {
   margin: 0px;
+  display: none;
 }
 
 textarea {
@@ -113,29 +121,35 @@ textarea {
 /__/  \__\___||____||_||_|_/    |____|____|  \_/\_/ 
 
 </pre></div>
-<div id="menu">
-  <div id="buttons">
-    <button id="export-button" class="file tool">Export</button>
-    <button id="import-button" class="file tool">Import</button>
-    <button id="clear-button" class="file tool">Clear</button>
 
-    <button id="box-button" class="tool active">Box</button>
-    <button id="line-button" class="tool">Line</button>
-    <button id="freeform-button" class="tool">Draw</button>
-    <button id="erase-button" class="tool">Erase</button>
-    <button id="move-button" class="tool">Resize</button>
-    <button id="text-button" class="tool">Text</button>
-    <button id="undo-button">Undo</button>
-    <!-- <button id="select-button">Select</button> -->
-  </div>
-  <div id="export-button-dialog" class="dialog">
-    <textarea id="export-area"></textarea>
-  </div>
-  <div id="import-button-dialog" class="dialog">
-    <textarea id="import-area"></textarea>
-    <button id="import-submit-button">Submit</button>
-  </div>
+<div id="draw-tools">
+  <button id="box-button" class="tool active">Box</button>
+  <button id="line-button" class="tool">Line</button>
+  <button id="freeform-button" class="tool">Draw</button>
+  <button id="erase-button" class="tool">Erase</button>
+  <button id="move-button" class="tool">Resize</button>
+  <button id="text-button" class="tool">Text</button>
+  <!-- <button id="select-button">Select</button> -->
 </div>
+<div id="file-tools">
+  <button id="export-button" class="tool">Export</button>
+  <button id="import-button" class="tool">Import</button>
+</div>
+<div id="edit-tools">
+  <button id="clear-button" class="tool">Clear</button>
+  <button id="undo-button" class="tool">Undo</button>
+</div>
+
+<div id="export-button-dialog" class="dialog">
+  <textarea id="export-area"></textarea>
+  <button class="close-dialog-button">Close</button>
+</div>
+<div id="import-button-dialog" class="dialog">
+  <textarea id="import-area"></textarea>
+  <button class="close-dialog-button">Close</button>
+  <button id="import-submit-button">Submit</button>
+</div>
+
 <canvas id="ascii-canvas"></canvas>
 <script src="jquery-1.9.1.min.js"></script>
 <script src="js-compiled.js"></script>
