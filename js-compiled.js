@@ -434,9 +434,9 @@ U.prototype.o = function() {
   $(window).resize(function() {
     y(a.view);
   });
-  $("#buttons > button.tool").click(function(a) {
+  $("button.tool").click(function(a) {
     a = a.target.id;
-    $("#buttons > button.tool").removeClass("active");
+    $("button.tool").removeClass("active");
     $(".dialog").removeClass("visible");
     $("#" + a).toggleClass("active");
     $("#" + a + "-dialog").toggleClass("visible");
@@ -448,9 +448,10 @@ U.prototype.o = function() {
     "text-button" == a && (this.c = new N(this.state));
     "export-button" == a && $("#export-area").val(ha(this.state));
     "clear-button" == a && this.state.clear();
+    "undo-button" == a && T(this.state);
   }.bind(this));
-  $("#undo-button").click(function() {
-    T(this.state);
+  $("button.close-dialog-button").click(function() {
+    $(".dialog").removeClass("visible");
   }.bind(this));
   $("#import-submit-button").click(function() {
     this.state.clear();
