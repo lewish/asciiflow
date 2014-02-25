@@ -85,9 +85,14 @@ ascii.View.prototype.render = function() {
         j * CHAR_PIXELS_V - this.offset.y);
   }
   this.context.stroke();
+  this.renderCellsAsText(context, startOffset, endOffset);
+  //TODO: Add flag to control line vs. text drawing of structures.
+  //this.renderCellsAsLines(context, startOffset, endOffset);
+};
 
+ascii.View.prototype.renderCellsAsText = function(context, startOffset, endOffset) {
   // Render cells.
-  this.context.font = '15px Courier New';
+  context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
     for (var j = startOffset.y; j < endOffset.y; j++) {
       var cell = this.state.getCell(new ascii.Vector(i, j));
@@ -110,6 +115,49 @@ ascii.View.prototype.render = function() {
       }
     }
   }
+}
+
+ascii.View.prototype.renderCellsAsLines = function(context, startOffset, endOffset) {
+  context.lineWidth = '1';
+  context.strokeStyle = '#000000';
+  context.beginPath();
+  for (var i = startOffset.x; i < endOffset.x; i++) {
+    var startY = false;
+    for (var j = startOffset.y; j < endOffset.y; j++) {
+      var cell = this.state.getCell(new ascii.Vector(i, j));
+      if (!cell.isSpecial() && startY) {
+        context.moveTo(
+            i * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
+            startY * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);
+        context.lineTo(
+            i * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
+            (j - 1) * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);
+        startY = false;
+      }
+      if (cell.isSpecial() && !startY) {
+        startY = j;
+      }
+    }
+  }
+  for (var j = startOffset.y; j < endOffset.y; j++) {
+    var startX = false;
+    for (var i = startOffset.x; i < endOffset.x; i++) {
+      var cell = this.state.getCell(new ascii.Vector(i, j));
+      if (!cell.isSpecial() && startX) {
+        context.moveTo(
+            startX * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
+            j * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);
+        context.lineTo(
+            (i -1) * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
+            j * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);
+        startX = false;
+      }
+      if (cell.isSpecial() && !startX) {
+        startX = i;
+      }
+    }
+  }
+  this.context.stroke();
 };
 
 /**
