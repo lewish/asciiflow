@@ -7,6 +7,7 @@ ascii.launch = function() {
     var controller = new ascii.Controller(view, state);
     var touchController = new ascii.TouchController(controller);
     var desktopController = new ascii.DesktopController(controller);
+    var driveController = new ascii.DriveController(state);
     view.animate();
 };
 

@@ -385,7 +385,7 @@ function T(a) {
     K(a, !0);
   }
 }
-function ha(a) {
+function U(a) {
   for (var b = new f(Number.MAX_VALUE, Number.MAX_VALUE), c = new f(-1, -1), e = 0;e < a.cells.length;e++) {
     for (var d = 0;d < a.cells[e].length;d++) {
       null != u(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
@@ -402,14 +402,14 @@ function ha(a) {
   }
   return h;
 }
-;function U(a, b) {
+;function V(a, b) {
   this.view = a;
   this.state = b;
   this.c = new G(b);
   this.mode = 0;
   this.o();
 }
-U.prototype.r = function(a) {
+V.prototype.r = function(a) {
   var b = z(this.view, a);
   null == this.p && (this.p = b);
   l(b, this.p) || (this.view.canvas.style.cursor = this.c.m(b));
@@ -422,14 +422,14 @@ U.prototype.r = function(a) {
   }
   this.p = b;
 };
-function V(a) {
+function W(a) {
   (a.mode = 2) && a.c.end();
   a.mode = 0;
   a.u = null;
   a.v = null;
   a.p = null;
 }
-U.prototype.o = function() {
+V.prototype.o = function() {
   var a = this;
   $(window).resize(function() {
     y(a.view);
@@ -446,7 +446,7 @@ U.prototype.o = function() {
     "erase-button" == a && (this.c = new P(this.state));
     "move-button" == a && (this.c = new Q(this.state));
     "text-button" == a && (this.c = new N(this.state));
-    "export-button" == a && $("#export-area").val(ha(this.state));
+    "export-button" == a && $("#export-area").val(U(this.state));
     "clear-button" == a && this.state.clear();
     "undo-button" == a && T(this.state);
   }.bind(this));
@@ -484,11 +484,37 @@ U.prototype.o = function() {
     null != c && this.c.h(c);
   }.bind(this));
 };
-function W(a) {
+function X(a) {
+  this.state = a;
+  this.file = null;
+  $("#save-button").click(function() {
+    this.save();
+  }.bind(this));
+}
+function ha(a) {
+  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
+    b && !b.error ? a(!0) : (window.alert(b.error), a(!1));
+  });
+}
+X.prototype.save = function() {
+  window.gapi.client.load("drive", "v2", function() {
+    ha(function(a) {
+      a && ia(this).execute(function(a) {
+        window.console.log(a);
+      });
+    }.bind(this));
+  }.bind(this));
+};
+function ia(a) {
+  a = U(a.state);
+  a = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:"Untitled ASCII Diagram", mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + a + "\r\n---------314159265358979323846--";
+  return window.gapi.client.request({path:"/upload/drive/v2/files", method:"POST", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:a});
+}
+;function ja(a) {
   this.b = a;
   this.o();
 }
-W.prototype.o = function() {
+ja.prototype.o = function() {
   var a = this.b.view.canvas;
   $(a).bind("mousewheel", function(a) {
     a = this.b.view.zoom * (0 < a.originalEvent.wheelDelta ? 1.1 : 0.9);
@@ -509,21 +535,21 @@ W.prototype.o = function() {
     }
   }.bind(this));
   $(a).mouseup(function() {
-    V(this.b);
+    W(this.b);
   }.bind(this));
   $(a).mouseleave(function() {
-    V(this.b);
+    W(this.b);
   }.bind(this));
   $(a).mousemove(function(a) {
     this.b.r(new f(a.clientX, a.clientY));
   }.bind(this));
 };
-function X(a) {
+function Y(a) {
   this.b = a;
   this.s = this.k = !1;
   this.o();
 }
-function ia(a, b) {
+function ka(a, b) {
   a.A = b;
   a.D = $.now();
   a.k = !1;
@@ -535,7 +561,7 @@ function ia(a, b) {
     }
   }.bind(a), 130);
 }
-X.prototype.r = function(a) {
+Y.prototype.r = function(a) {
   if (!this.k && 130 > $.now() - this.D && 3 < m(a, this.A).length()) {
     this.k = !0;
     var b = this.b;
@@ -545,21 +571,21 @@ X.prototype.r = function(a) {
   }
   this.b.r(a);
 };
-X.prototype.reset = function() {
+Y.prototype.reset = function() {
   this.s = this.k = !1;
   this.A = null;
 };
-X.prototype.o = function() {
+Y.prototype.o = function() {
   var a = this.b.view.canvas;
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      ia(this, new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      ka(this, new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
         var c = new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new f(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        V(this.b);
+        W(this.b);
         this.s = !0;
         this.k = !1;
         this.F = m(c, a).length();
@@ -582,11 +608,12 @@ X.prototype.o = function() {
   $(a).bind("touchend", function(a) {
     a.preventDefault();
     this.reset();
-    V(this.b);
+    W(this.b);
   }.bind(this));
 };
-var Y = new S, Z = new x(Y), ja = new U(Z, Y);
-new X(ja);
-new W(ja);
-Z.animate();
+var Z = new S, la = new x(Z), ma = new V(la, Z);
+new Y(ma);
+new ja(ma);
+new X(Z);
+la.animate();
 

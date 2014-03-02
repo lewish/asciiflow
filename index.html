@@ -134,6 +134,7 @@ textarea {
 <div id="file-tools">
   <button id="export-button" class="tool">Export</button>
   <button id="import-button" class="tool">Import</button>
+  <button id="save-button" class="tool">Save</button>
 </div>
 <div id="edit-tools">
   <button id="clear-button" class="tool">Clear</button>
@@ -149,8 +150,12 @@ textarea {
   <button class="close-dialog-button">Close</button>
   <button id="import-submit-button">Submit</button>
 </div>
-
+<div id="authorize-dialog" class="dialog">
+  <button id="authorize-button">Authorize</button>
+  <button class="close-dialog-button">Close</button>
+</div>
 <canvas id="ascii-canvas"></canvas>
+<script src="https://apis.google.com/js/client.js"></script>
 <script src="jquery-1.9.1.min.js"></script>
 <script src="js-compiled.js"></script>
 </body>
