@@ -492,29 +492,40 @@ function X(a) {
   }.bind(this));
 }
 function ha(a) {
-  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
-    b && !b.error ? a(!0) : (window.alert(b.error), a(!1));
+  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!0}, function(b) {
+    b && !b.error ? a(!0) : window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
+      a(b && !b.error);
+    });
   });
+}
+function ia(a, b) {
+  a.file = b;
+  $("#drive-filename").text(b.title);
+  $("#drive-filename").editable(function(a) {
+    this.file.title = a;
+    this.save();
+    $("#drive-filename").off();
+    return a;
+  }.bind(a), {type:"text", submit:"OK"});
 }
 X.prototype.save = function() {
   window.gapi.client.load("drive", "v2", function() {
     ha(function(a) {
-      a && ia(this).execute(function(a) {
-        window.console.log(a);
-      });
+      a && ja(this).execute(function(a) {
+        ia(this, a);
+      }.bind(this));
     }.bind(this));
   }.bind(this));
 };
-function ia(a) {
-  a = U(a.state);
-  a = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:"Untitled ASCII Diagram", mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + a + "\r\n---------314159265358979323846--";
-  return window.gapi.client.request({path:"/upload/drive/v2/files", method:"POST", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:a});
+function ja(a) {
+  var b = U(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
+  return window.gapi.client.request({path:"/upload/drive/v2/files" + (null == a.file ? "" : "/" + a.file.id), method:null == a.file ? "POST" : "PUT", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:b});
 }
-;function ja(a) {
+;function ka(a) {
   this.b = a;
   this.o();
 }
-ja.prototype.o = function() {
+ka.prototype.o = function() {
   var a = this.b.view.canvas;
   $(a).bind("mousewheel", function(a) {
     a = this.b.view.zoom * (0 < a.originalEvent.wheelDelta ? 1.1 : 0.9);
@@ -549,7 +560,7 @@ function Y(a) {
   this.s = this.k = !1;
   this.o();
 }
-function ka(a, b) {
+function la(a, b) {
   a.A = b;
   a.D = $.now();
   a.k = !1;
@@ -580,7 +591,7 @@ Y.prototype.o = function() {
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      ka(this, new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      la(this, new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
         var c = new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
@@ -611,9 +622,9 @@ Y.prototype.o = function() {
     W(this.b);
   }.bind(this));
 };
-var Z = new S, la = new x(Z), ma = new V(la, Z);
-new Y(ma);
-new ja(ma);
+var Z = new S, ma = new x(Z), na = new V(ma, Z);
+new Y(na);
+new ka(na);
 new X(Z);
-la.animate();
+ma.animate();
 

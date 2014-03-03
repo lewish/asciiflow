@@ -9,10 +9,11 @@
 
 * {
   font-weight: bold;
+  font-family: sans-serif;
   font-size: 0.95em;
 }
 
-#draw-tools, #file-tools, #edit-tools {
+#draw-tools, #file-tools, #edit-tools, #drive-tools {
   display: inline-block;
   position: relative;
   float: left;
@@ -93,6 +94,10 @@ button {
   border-bottom: 1px solid #444;
 }
 
+#drive-textarea {
+  margin: 9px;
+}
+
 #logo pre {
   margin: 0px;
   display: none;
@@ -135,10 +140,14 @@ textarea {
   <button id="export-button" class="tool">Export</button>
   <button id="import-button" class="tool">Import</button>
   <button id="save-button" class="tool">Save</button>
+  <button id="save-button" class="tool">Open</button>
 </div>
 <div id="edit-tools">
   <button id="clear-button" class="tool">Clear</button>
   <button id="undo-button" class="tool">Undo</button>
+</div>
+<div id="drive-tools">
+  <div id="drive-filename" class="edit"></div>
 </div>
 
 <div id="export-button-dialog" class="dialog">
@@ -150,13 +159,11 @@ textarea {
   <button class="close-dialog-button">Close</button>
   <button id="import-submit-button">Submit</button>
 </div>
-<div id="authorize-dialog" class="dialog">
-  <button id="authorize-button">Authorize</button>
-  <button class="close-dialog-button">Close</button>
-</div>
 <canvas id="ascii-canvas"></canvas>
+<script src="https://apis.google.com/js/api.js"></script>
 <script src="https://apis.google.com/js/client.js"></script>
 <script src="jquery-1.9.1.min.js"></script>
+<script src="jquery.jeditable.min.js"></script>
 <script src="js-compiled.js"></script>
 </body>
 </html>
