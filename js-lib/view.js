@@ -13,7 +13,8 @@ ascii.View = function(state) {
   /** @type {number} */ this.zoom = 1;
   /** @type {ascii.Vector} */ this.offset = new ascii.Vector(7500, 7500);
   /** @type {boolean} */ this.dirty = true;
-  /** @type {boolean} */ this.useLines = true;
+  // TODO: Should probably save this setting in a cookie or something.
+  /** @type {boolean} */ this.useLines = TOUCH_ENABLED;
 
   this.resizeCanvas();
 };
