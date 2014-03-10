@@ -13,7 +13,7 @@
   font-size: 0.95em;
 }
 
-#draw-tools, #file-tools, #edit-tools, #drive-tools {
+#draw-tools, #file-tools, #edit-tools, #drive-tools, .tooltip {
   display: inline-block;
   position: relative;
   float: left;
@@ -115,6 +115,17 @@ textarea {
   white-space: pre;
 }
 
+.tooltip {
+  display: none;
+}
+
+.tool:hover > .tooltip {
+  display: block;
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
+}
+
 </style>
 </head>
 <body>
@@ -128,12 +139,24 @@ textarea {
 </pre></div>
 
 <div id="draw-tools">
-  <button id="box-button" class="tool active">Box</button>
-  <button id="line-button" class="tool">Line</button>
-  <button id="freeform-button" class="tool">Draw</button>
-  <button id="erase-button" class="tool">Erase</button>
-  <button id="move-button" class="tool">Resize</button>
-  <button id="text-button" class="tool">Text</button>
+  <button id="box-button" class="tool active">Box
+    <div class="tooltip">Draw boxes. You can resize them later with the Resize tool.</div>
+  </button>
+  <button id="line-button" class="tool">Line
+    <div class="tooltip">Draw lines. Connect it to another line to change the orientation.</div>
+  </button>
+  <button id="freeform-button" class="tool">Draw
+    <div class="tooltip">Press a character on the keyboard, then drag to draw it.</div>
+  </button>
+  <button id="erase-button" class="tool">Erase
+    <div class="tooltip">Drag out an area to erase.</div>
+  </button>
+  <button id="move-button" class="tool">Resize
+    <div class="tooltip">Resize boxes and lines, just drag a line to change it.</div>
+  </button>
+  <button id="text-button" class="tool">Text
+    <div class="tooltip">Press where to start writing, and type the text you want.</div>
+  </button>
   <!-- <button id="select-button">Select</button> -->
 </div>
 <div id="file-tools">
