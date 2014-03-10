@@ -13,6 +13,7 @@ ascii.View = function(state) {
   /** @type {number} */ this.zoom = 1;
   /** @type {ascii.Vector} */ this.offset = new ascii.Vector(7500, 7500);
   /** @type {boolean} */ this.dirty = true;
+  /** @type {boolean} */ this.useLines = true;
 
   this.resizeCanvas();
 };
@@ -58,11 +59,15 @@ ascii.View.prototype.render = function() {
 
   // Only render grid lines and cells that are visible.
   var startOffset = this.screenToCell(new ascii.Vector(
-      -RENDER_PADDING,
-      -RENDER_PADDING));
+      0,
+      0))
+      .subtract(new ascii.Vector(
+      RENDER_PADDING_CELLS, RENDER_PADDING_CELLS));
   var endOffset = this.screenToCell(new ascii.Vector(
-      this.canvas.width + RENDER_PADDING,
-      this.canvas.height + RENDER_PADDING));
+      this.canvas.width,
+      this.canvas.height))
+      .add(new ascii.Vector(
+      RENDER_PADDING_CELLS, RENDER_PADDING_CELLS));
 
   // Render the grid.
   context.lineWidth = '1';
@@ -85,12 +90,13 @@ ascii.View.prototype.render = function() {
         j * CHAR_PIXELS_V - this.offset.y);
   }
   this.context.stroke();
-  this.renderCellsAsText(context, startOffset, endOffset);
-  //TODO: Add flag to control line vs. text drawing of structures.
-  //this.renderCellsAsLines(context, startOffset, endOffset);
+  this.renderText(context, startOffset, endOffset, !this.useLines);
+  if (this.useLines) {
+    this.renderCellsAsLines(context, startOffset, endOffset);
+  }
 };
 
-ascii.View.prototype.renderCellsAsText = function(context, startOffset, endOffset) {
+ascii.View.prototype.renderText = function(context, startOffset, endOffset, drawSpecials) {
   // Render cells.
   context.font = '15px Courier New';
   for (var i = startOffset.x; i < endOffset.x; i++) {
@@ -107,7 +113,7 @@ ascii.View.prototype.renderCellsAsText = function(context, startOffset, endOffse
             CHAR_PIXELS_H, CHAR_PIXELS_V);
       }
       var cellValue = this.state.getDrawValue(new ascii.Vector(i, j));
-      if (cellValue != null) {
+      if (cellValue != null && (!cell.isSpecial() || drawSpecials)) {
         this.context.fillStyle = '#000000';
         context.fillText(cellValue,
             i * CHAR_PIXELS_H - this.offset.x,
@@ -125,7 +131,7 @@ ascii.View.prototype.renderCellsAsLines = function(context, startOffset, endOffs
     var startY = false;
     for (var j = startOffset.y; j < endOffset.y; j++) {
       var cell = this.state.getCell(new ascii.Vector(i, j));
-      if (!cell.isSpecial() && startY) {
+      if ((!cell.isSpecial() || j == endOffset.y - 1) && startY) {
         context.moveTo(
             i * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
             startY * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);
@@ -143,7 +149,7 @@ ascii.View.prototype.renderCellsAsLines = function(context, startOffset, endOffs
     var startX = false;
     for (var i = startOffset.x; i < endOffset.x; i++) {
       var cell = this.state.getCell(new ascii.Vector(i, j));
-      if (!cell.isSpecial() && startX) {
+      if ((!cell.isSpecial() || i == endOffset.x - 1) && startX) {
         context.moveTo(
             startX * CHAR_PIXELS_H - this.offset.x + CHAR_PIXELS_H/2,
             j * CHAR_PIXELS_V - this.offset.y - CHAR_PIXELS_V/2);

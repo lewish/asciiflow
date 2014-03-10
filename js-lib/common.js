@@ -29,7 +29,7 @@ try {
 /** @const */ var CHAR_PIXELS_H = 9;
 /** @const */ var CHAR_PIXELS_V = 17;
 
-/** @const */ var RENDER_PADDING = 70;
+/** @const */ var RENDER_PADDING_CELLS = 3;
 
 /** @const */ var KEY_RETURN = '<enter>';
 /** @const */ var KEY_BACKSPACE = '<backspace>';

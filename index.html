@@ -119,12 +119,17 @@ textarea {
   display: none;
 }
 
+/* Horrible hack to stop touble tap events on mobile/tablet. */
+/* TODO: Enable tooltips on mobile without double tap .*/
+media(min-width:800px) {
 .tool:hover > .tooltip {
   display: block;
   position: fixed;
   bottom: 5px;
   left: 5px;
 }
+}
+
 
 </style>
 </head>
@@ -163,7 +168,8 @@ textarea {
   <button id="export-button" class="tool">Export</button>
   <button id="import-button" class="tool">Import</button>
   <button id="save-button" class="tool">Save</button>
-  <button id="save-button" class="tool">Open</button>
+  <!-- <button id="save-button" class="tool">Open</button> -->
+  <button id="options-button" class="tool">Mode</button>
 </div>
 <div id="edit-tools">
   <button id="clear-button" class="tool">Clear</button>
@@ -177,6 +183,12 @@ textarea {
   <textarea id="export-area"></textarea>
   <button class="close-dialog-button">Close</button>
 </div>
+
+<div id="options-button-dialog" class="dialog">
+  <button id="use-lines-button">Lines Mode</button>
+  <button id="use-ascii-button">ASCII Mode</button>
+</div>
+
 <div id="import-button-dialog" class="dialog">
   <textarea id="import-area"></textarea>
   <button class="close-dialog-button">Close</button>
