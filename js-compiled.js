@@ -1,274 +1,292 @@
 try {
   throw 1;
 } catch (aa) {
-  window.B = window.B || {};
+  window.C = window.C || {};
 }
-var ba = "ontouchstart" in window || "onmsgesturechange" in window;
-function f(a, b) {
+var f = "ontouchstart" in window || "onmsgesturechange" in window;
+function l(a, b) {
   this.x = a;
   this.y = b;
 }
-function l(a, b) {
+function m(a, b) {
   return null != b && a.x == b.x && a.y == b.y;
 }
-function m(a, b) {
-  return new f(a.x - b.x, a.y - b.y);
+function n(a, b) {
+  return new l(a.x - b.x, a.y - b.y);
 }
-f.prototype.add = function(a) {
-  return new f(this.x + a.x, this.y + a.y);
+l.prototype.add = function(a) {
+  return new l(this.x + a.x, this.y + a.y);
 };
-f.prototype.clone = function() {
-  return new f(this.x, this.y);
+l.prototype.clone = function() {
+  return new l(this.x, this.y);
 };
-f.prototype.length = function() {
+l.prototype.length = function() {
   return Math.sqrt(this.x * this.x + this.y * this.y);
 };
-f.prototype.scale = function(a) {
-  return new f(this.x * a, this.y * a);
+l.prototype.scale = function(a) {
+  return new l(this.x * a, this.y * a);
 };
-var n = new f(-1, 0), p = new f(1, 0), q = new f(0, -1), r = new f(0, 1), s = [n, p, q, r];
-function ca() {
+var p = new l(-1, 0), q = new l(1, 0), r = new l(0, -1), s = new l(0, 1), v = [p, q, r, s];
+function ba() {
   this.f = this.value = null;
 }
-function u(a) {
+function w(a) {
   return null != a.f ? a.f : a.value;
 }
-function v(a) {
-  return "+" == u(a);
+function x(a) {
+  return "+" == w(a);
 }
-function da(a, b, c, e) {
+function ca(a, b, c, e) {
   this.left = a;
   this.right = b;
   this.n = c;
   this.j = e;
 }
-function w(a) {
+function y(a) {
   return a.left + a.right + a.n + a.j;
 }
-function ea(a, b) {
+function da(a, b) {
   this.position = a;
   this.value = b;
 }
-function fa(a, b) {
+function ea(a, b) {
   this.position = a;
-  this.w = b;
+  this.A = b;
 }
-;function x(a) {
+;function z(a) {
   this.state = a;
   this.canvas = document.getElementById("ascii-canvas");
   this.context = this.canvas.getContext("2d");
   this.zoom = 1;
-  this.offset = new f(7500, 7500);
-  this.d = !0;
-  y(this);
+  this.offset = new l(7500, 7500);
+  this.c = !0;
+  this.s = f;
+  A(this);
 }
-function y(a) {
+function A(a) {
   a.canvas.width = document.documentElement.clientWidth;
   a.canvas.height = document.documentElement.clientHeight;
-  a.d = !0;
+  a.c = !0;
 }
-x.prototype.animate = function() {
-  if (this.d || this.state.d) {
-    this.d = !1, this.state.d = !1, ga(this);
+z.prototype.animate = function() {
+  if (this.c || this.state.c) {
+    this.c = !1, this.state.c = !1, fa(this);
   }
   var a = this;
   window.requestAnimationFrame(function() {
     a.animate();
   });
 };
-function ga(a) {
+function fa(a) {
   var b = a.context;
   b.setTransform(1, 0, 0, 1, 0, 0);
   b.clearRect(0, 0, a.canvas.width, a.canvas.height);
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
-  var c = z(a, new f(-70, -70)), e = z(a, new f(a.canvas.width + 70, a.canvas.height + 70));
+  var c = n(B(a, new l(0, 0)), new l(3, 3)), e = B(a, new l(a.canvas.width, a.canvas.height)).add(new l(3, 3));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
   for (var d = c.x;d < e.x;d++) {
     b.moveTo(9 * d - a.offset.x, 0 - a.offset.y), b.lineTo(9 * d - a.offset.x, 17 * a.state.cells.length - a.offset.y);
   }
-  for (var g = c.y;g < e.y;g++) {
-    b.moveTo(0 - a.offset.x, 17 * g - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * g - a.offset.y);
+  for (d = c.y;d < e.y;d++) {
+    b.moveTo(0 - a.offset.x, 17 * d - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * d - a.offset.y);
   }
   a.context.stroke();
-  a.context.font = "15px Courier New";
-  for (d = c.x;d < e.x;d++) {
-    for (g = c.y;g < e.y;g++) {
-      var h = A(a.state, new f(d, g));
-      if (v(h) || null != h.f && " " != u(h)) {
-        a.context.fillStyle = null != h.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * d - a.offset.x, 17 * (g - 1) - a.offset.y, 9, 17);
+  d = !a.s;
+  b.font = "15px Courier New";
+  for (var g = c.x;g < e.x;g++) {
+    for (var k = c.y;k < e.y;k++) {
+      var h = D(a.state, new l(g, k));
+      if (x(h) || null != h.f && " " != w(h)) {
+        a.context.fillStyle = null != h.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (k - 1) - a.offset.y, 9, 17);
       }
-      h = C(a.state, new f(d, g));
-      null != h && (a.context.fillStyle = "#000000", b.fillText(h, 9 * d - a.offset.x, 17 * g - a.offset.y - 3));
+      var t = E(a.state, new l(g, k));
+      null == t || x(h) && !d || (a.context.fillStyle = "#000000", b.fillText(t, 9 * g - a.offset.x, 17 * k - a.offset.y - 3));
     }
   }
+  if (a.s) {
+    b.lineWidth = "1";
+    b.strokeStyle = "#000000";
+    b.beginPath();
+    for (d = c.x;d < e.x;d++) {
+      for (h = !1, g = c.y;g < e.y;g++) {
+        k = D(a.state, new l(d, g)), x(k) && g != e.y - 1 || !h || (b.moveTo(9 * d - a.offset.x + 4.5, 17 * h - a.offset.y - 8.5), b.lineTo(9 * d - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), h = !1), x(k) && !h && (h = g);
+      }
+    }
+    for (g = c.y;g < e.y;g++) {
+      for (h = !1, d = c.x;d < e.x;d++) {
+        k = D(a.state, new l(d, g)), x(k) && d != e.x - 1 || !h || (b.moveTo(9 * h - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (d - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), h = !1), x(k) && !h && (h = d);
+      }
+    }
+    a.context.stroke();
+  }
 }
-function z(a, b) {
-  return new f(Math.min(Math.max(1, Math.round(((new f((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round(((new f((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).y + 8.5) / 17)), 598));
+function B(a, b) {
+  return new l(Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).y + 8.5) / 17)), 598));
 }
-;function D(a, b, c, e, d) {
+;function F(a, b, c, e, d) {
   d = d || "+";
-  var g = Math.min(b.x, c.x), h = Math.min(b.y, c.y), k = Math.max(b.x, c.x), J = Math.max(b.y, c.y), t = e ? c.x : b.x;
-  for (e = e ? b.y : c.y;g++ < k;) {
-    var O = new f(g, e), H = a.getContext(new f(g, e));
-    " " == d && 2 == H.n + H.j || E(a, O, d);
+  var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), t = Math.max(b.y, c.y), u = e ? c.x : b.x;
+  for (e = e ? b.y : c.y;g++ < h;) {
+    var O = new l(g, e), J = a.getContext(new l(g, e));
+    " " == d && 2 == J.n + J.j || G(a, O, d);
   }
-  for (;h++ < J;) {
-    O = new f(t, h), H = a.getContext(new f(t, h)), " " == d && 2 == H.left + H.right || E(a, O, d);
+  for (;k++ < t;) {
+    O = new l(u, k), J = a.getContext(new l(u, k)), " " == d && 2 == J.left + J.right || G(a, O, d);
   }
-  F(a, b, d);
-  F(a, c, d);
-  E(a, new f(t, e), d);
+  H(a, b, d);
+  H(a, c, d);
+  G(a, new l(u, e), d);
 }
-function G(a) {
+function I(a) {
   this.state = a;
   this.a = null;
 }
-G.prototype.start = function(a) {
+I.prototype.start = function(a) {
   this.a = a;
 };
-G.prototype.move = function(a) {
+I.prototype.move = function(a) {
   this.l = a;
-  I(this.state);
-  D(this.state, this.a, a, !0);
-  D(this.state, this.a, a, !1);
-};
-G.prototype.end = function() {
   K(this.state);
+  F(this.state, this.a, a, !0);
+  F(this.state, this.a, a, !1);
 };
-G.prototype.m = function() {
+I.prototype.end = function() {
+  L(this.state);
+};
+I.prototype.m = function() {
   return "crosshair";
 };
-G.prototype.h = function() {
+I.prototype.h = function() {
 };
-function L(a) {
+function M(a) {
   this.state = a;
   this.a = null;
-}
-L.prototype.start = function(a) {
-  this.a = a;
-};
-L.prototype.move = function(a) {
-  I(this.state);
-  var b = this.state.getContext(this.a), c = this.state.getContext(a);
-  D(this.state, this.a, a, b.n && b.j || c.left && c.right);
-};
-L.prototype.end = function() {
-  K(this.state);
-};
-L.prototype.m = function() {
-  return "crosshair";
-};
-L.prototype.h = function() {
-};
-function M(a, b) {
-  this.state = a;
-  this.value = b;
 }
 M.prototype.start = function(a) {
-  F(this.state, a, this.value);
+  this.a = a;
 };
 M.prototype.move = function(a) {
-  F(this.state, a, this.value);
+  K(this.state);
+  var b = this.state.getContext(this.a), c = this.state.getContext(a);
+  F(this.state, this.a, a, b.n && b.j || c.left && c.right);
 };
 M.prototype.end = function() {
-  K(this.state);
+  L(this.state);
 };
 M.prototype.m = function() {
   return "crosshair";
 };
-M.prototype.h = function(a) {
-  1 == a.length && (this.value = a);
+M.prototype.h = function() {
 };
-function N(a) {
+function N(a, b) {
   this.state = a;
-  this.e = this.a = null;
+  this.value = b;
 }
 N.prototype.start = function(a) {
-  this.e = this.a = a;
-  I(this.state);
-  var b = u(A(this.state, a));
-  F(this.state, a, null == b ? "\u2009" : b);
+  H(this.state, a, this.value);
 };
-N.prototype.move = function() {
+N.prototype.move = function(a) {
+  H(this.state, a, this.value);
 };
 N.prototype.end = function() {
+  L(this.state);
 };
 N.prototype.m = function() {
-  return "text";
+  return "crosshair";
 };
 N.prototype.h = function(a) {
-  if (null != this.e) {
-    var b = this.e.add(p);
-    if ("<enter>" == a || v(A(this.state, b))) {
-      I(this.state), this.a = b = this.a.add(r);
-    }
-    "<backspace>" == a && this.a.x <= b.x && (I(this.state), b = this.e.add(n), b.x < this.a.x && (b.x = this.a.x), F(this.state, b, "\u2009"), K(this.state));
-    "<up>" == a && (I(this.state), this.a = b = this.e.add(q));
-    "<left>" == a && (I(this.state), this.a = b = this.e.add(n));
-    "<right>" == a && (I(this.state), this.a = b = this.e.add(p));
-    "<down>" == a && (I(this.state), this.a = b = this.e.add(r));
-    1 == a.length && (F(this.state, this.e, a), K(this.state));
-    this.e = b;
-    a = u(A(this.state, b));
-    F(this.state, b, null == a ? "\u2009" : a);
-  }
+  1 == a.length && (this.value = a);
 };
 function P(a) {
   this.state = a;
-  this.l = this.a = null;
+  this.e = this.a = null;
 }
 P.prototype.start = function(a) {
+  this.e = this.a = a;
+  K(this.state);
+  var b = w(D(this.state, a));
+  H(this.state, a, null == b ? "\u2009" : b);
+};
+P.prototype.move = function() {
+};
+P.prototype.end = function() {
+};
+P.prototype.m = function() {
+  return "text";
+};
+P.prototype.h = function(a) {
+  if (null != this.e) {
+    var b = this.e.add(q);
+    if ("<enter>" == a || x(D(this.state, b))) {
+      K(this.state), this.a = b = this.a.add(s);
+    }
+    "<backspace>" == a && this.a.x <= b.x && (K(this.state), b = this.e.add(p), b.x < this.a.x && (b.x = this.a.x), H(this.state, b, "\u2009"), L(this.state));
+    "<up>" == a && (K(this.state), this.a = b = this.e.add(r));
+    "<left>" == a && (K(this.state), this.a = b = this.e.add(p));
+    "<right>" == a && (K(this.state), this.a = b = this.e.add(q));
+    "<down>" == a && (K(this.state), this.a = b = this.e.add(s));
+    1 == a.length && (H(this.state, this.e, a), L(this.state));
+    this.e = b;
+    a = w(D(this.state, b));
+    H(this.state, b, null == a ? "\u2009" : a);
+  }
+};
+function Q(a) {
+  this.state = a;
+  this.l = this.a = null;
+}
+Q.prototype.start = function(a) {
   this.a = a;
   this.move(a);
 };
-P.prototype.move = function(a) {
-  I(this.state);
+Q.prototype.move = function(a) {
+  K(this.state);
   this.l = a;
   var b = Math.min(this.a.x, this.l.x);
   a = Math.min(this.a.y, this.l.y);
   for (var c = Math.max(this.a.x, this.l.x), e = Math.max(this.a.y, this.l.y);b <= c;b++) {
     for (var d = a;d <= e;d++) {
-      F(this.state, new f(b, d), "\u2009");
+      H(this.state, new l(b, d), "\u2009");
     }
   }
 };
-P.prototype.end = function() {
-  K(this.state);
+Q.prototype.end = function() {
+  L(this.state);
 };
-P.prototype.m = function() {
+Q.prototype.m = function() {
   return "crosshair";
 };
-P.prototype.h = function() {
+Q.prototype.h = function() {
 };
-function Q(a) {
+function R(a) {
   this.state = a;
   this.g = this.a = null;
 }
-Q.prototype.start = function(a) {
-  if (ba && !v(A(this.state, a))) {
-    var b = s.concat([n.add(q), n.add(r), p.add(q), p.add(r)]), c = null, e = 0, d;
+R.prototype.start = function(a) {
+  if (f && !x(D(this.state, a))) {
+    var b = v.concat([p.add(r), p.add(s), q.add(r), q.add(s)]), c = null, e = 0, d;
     for (d in b) {
-      var g = a.add(b[d]), h = w(this.state.getContext(g));
-      v(A(this.state, g)) && h > e && (c = b[d], e = h);
+      var g = a.add(b[d]), k = y(this.state.getContext(g));
+      x(D(this.state, g)) && k > e && (c = b[d], e = k);
     }
     a = null == c ? a : a.add(c);
   }
   this.a = a;
   this.g = null;
-  if (v(A(this.state, this.a))) {
+  if (x(D(this.state, this.a))) {
     this.state.getContext(this.a);
     a = [];
-    for (var k in s) {
-      var b = R(this, this.a, s[k]), J;
-      for (J in b) {
-        if (c = b[J], e = 0 != s[k].x, 1 == w(this.state.getContext(c))) {
-          a.push({position:c, t:e});
+    for (var h in v) {
+      var b = S(this, this.a, v[h]), t;
+      for (t in b) {
+        if (c = b[t], e = 0 != v[h].x, 1 == y(this.state.getContext(c))) {
+          a.push({position:c, u:e});
         } else {
-          for (var t in s) {
-            0 != s[k].add(s[t]).length() && 2 != s[k].add(s[t]).length() && (d = R(this, c, s[t]), 0 != d.length && a.push({position:d[d.length - 1], t:e}));
+          for (var u in v) {
+            0 != v[h].add(v[u]).length() && 2 != v[h].add(v[u]).length() && (d = S(this, c, v[u]), 0 != d.length && a.push({position:d[d.length - 1], u:e}));
           }
         }
       }
@@ -277,85 +295,85 @@ Q.prototype.start = function(a) {
     this.move(this.a);
   }
 };
-Q.prototype.move = function(a) {
-  I(this.state);
+R.prototype.move = function(a) {
+  K(this.state);
   for (var b in this.g) {
-    D(this.state, this.a, this.g[b].position, this.g[b].t, " ");
+    F(this.state, this.a, this.g[b].position, this.g[b].u, " ");
   }
   for (b in this.g) {
-    D(this.state, a, this.g[b].position, this.g[b].t);
+    F(this.state, a, this.g[b].position, this.g[b].u);
   }
 };
-Q.prototype.end = function() {
-  K(this.state);
+R.prototype.end = function() {
+  L(this.state);
 };
-function R(a, b, c) {
+function S(a, b, c) {
   for (var e = b.clone(), d = [];;) {
     var g = e.add(c);
-    if (!v(A(a.state, g))) {
-      return l(b, e) || d.push(e), d;
+    if (!x(D(a.state, g))) {
+      return m(b, e) || d.push(e), d;
     }
     e = g;
-    3 == w(a.state.getContext(e)) && d.push(e);
+    3 == y(a.state.getContext(e)) && d.push(e);
   }
 }
-Q.prototype.m = function(a) {
-  return v(A(this.state, a)) ? "pointer" : "default";
+R.prototype.m = function(a) {
+  return x(D(this.state, a)) ? "pointer" : "default";
 };
-Q.prototype.h = function() {
+R.prototype.h = function() {
 };
-function S() {
+function T() {
   this.cells = Array(2E3);
   this.i = [];
-  this.d = !0;
+  this.c = !0;
   this.q = [];
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(600);
     for (var b = 0;b < this.cells[a].length;b++) {
-      this.cells[a][b] = new ca;
+      this.cells[a][b] = new ba;
     }
   }
 }
-S.prototype.clear = function() {
+T.prototype.clear = function() {
   for (var a = 0;a < this.cells.length;a++) {
     for (var b = 0;b < this.cells[a].length;b++) {
-      null != u(this.cells[a][b]) && F(this, new f(a, b), "\u2009");
+      null != w(this.cells[a][b]) && H(this, new l(a, b), "\u2009");
     }
   }
-  K(this);
+  L(this);
 };
-function A(a, b) {
+function D(a, b) {
   return a.cells[b.x][b.y];
 }
-function F(a, b, c) {
-  var e = A(a, b);
-  a.i.push(new fa(b, e));
+function H(a, b, c) {
+  var e = D(a, b);
+  a.i.push(new ea(b, e));
   e.f = c;
-  a.d = !0;
+  a.c = !0;
 }
-function E(a, b, c) {
-  u(A(a, b)) != c && F(a, b, c);
+function G(a, b, c) {
+  w(D(a, b)) != c && H(a, b, c);
 }
-function I(a) {
+function K(a) {
   for (var b in a.i) {
-    a.i[b].w.f = null;
+    a.i[b].A.f = null;
   }
   a.i.length = 0;
 }
-function C(a, b) {
-  var c = A(a, b), c = null != c.f ? c.f : c.value;
+function E(a, b) {
+  var c = D(a, b), c = null != c.f ? c.f : c.value;
   if ("+" != c) {
     return c;
   }
   c = a.getContext(b);
   return c.left && c.right && !c.n && !c.j ? "\u2013" : !c.left && !c.right && c.n && c.j ? "|" : c.left && c.right && c.n && c.j ? "\u2013" : "+";
 }
-S.prototype.getContext = function(a) {
-  var b = v(A(this, a.add(n))), c = v(A(this, a.add(p))), e = v(A(this, a.add(q)));
-  a = v(A(this, a.add(r)));
-  return new da(b, c, e, a);
+T.prototype.getContext = function(a) {
+  var b = x(D(this, a.add(p))), c = x(D(this, a.add(q))), e = x(D(this, a.add(r)));
+  a = x(D(this, a.add(s)));
+  return new ca(b, c, e, a);
 };
-function K(a, b) {
+function L(a, b) {
   var c = [], e = a.i.map(function(a) {
     return a.position.x.toString() + a.position.y.toString();
   }), d = a.i.filter(function(a, b) {
@@ -363,76 +381,76 @@ function K(a, b) {
   });
   a.i.length = 0;
   for (var g in d) {
-    var h = d[g].w;
-    c.push(new ea(d[g].position, null != h.value ? h.value : " "));
-    var k = u(h);
-    if ("\u2009" == k || " " == k) {
-      k = null;
+    var k = d[g].A;
+    c.push(new da(d[g].position, null != k.value ? k.value : " "));
+    var h = w(k);
+    if ("\u2009" == h || " " == h) {
+      h = null;
     }
-    h.f = null;
-    h.value = k;
+    k.f = null;
+    k.value = h;
   }
   !b && 0 < c.length && (50 < a.q.length && a.q.shift(), a.q.push(c));
-  a.d = !0;
+  a.c = !0;
 }
-function T(a) {
+function U(a) {
   if (0 != a.q.length) {
     var b = a.q.pop(), c;
     for (c in b) {
       var e = b[c];
-      F(a, e.position, e.value);
+      H(a, e.position, e.value);
     }
-    K(a, !0);
+    L(a, !0);
   }
 }
-function ha(a) {
-  for (var b = new f(Number.MAX_VALUE, Number.MAX_VALUE), c = new f(-1, -1), e = 0;e < a.cells.length;e++) {
+function V(a) {
+  for (var b = new l(Number.MAX_VALUE, Number.MAX_VALUE), c = new l(-1, -1), e = 0;e < a.cells.length;e++) {
     for (var d = 0;d < a.cells[e].length;d++) {
-      null != u(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
+      null != w(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
     }
   }
   if (0 > c.x) {
     return "";
   }
   for (var g = "", d = b.y;d <= c.y;d++) {
-    for (var h = "", e = b.x;e <= c.x;e++) {
-      var k = C(a, new f(e, d)), h = h + (null == k ? " " : k)
+    for (var k = "", e = b.x;e <= c.x;e++) {
+      var h = E(a, new l(e, d)), k = k + (null == h ? " " : h)
     }
-    g += h.replace("\\s+$/g", "") + "\n";
+    g += k.replace("\\s+$/g", "") + "\n";
   }
   return g;
 }
-;function U(a, b) {
+;function W(a, b) {
   this.view = a;
   this.state = b;
-  this.c = new G(b);
+  this.d = new I(b);
   this.mode = 0;
   this.o();
 }
-U.prototype.r = function(a) {
-  var b = z(this.view, a);
+W.prototype.r = function(a) {
+  var b = B(this.view, a);
   null == this.p && (this.p = b);
-  l(b, this.p) || (this.view.canvas.style.cursor = this.c.m(b));
-  2 != this.mode || l(b, this.p) || this.c.move(b);
+  m(b, this.p) || (this.view.canvas.style.cursor = this.d.m(b));
+  2 != this.mode || m(b, this.p) || this.d.move(b);
   if (1 == this.mode) {
     var c = this.view;
-    a = this.v.add(m(this.u, a).scale(1 / this.view.zoom));
+    a = this.w.add(n(this.v, a).scale(1 / this.view.zoom));
     c.offset = a;
-    c.d = !0;
+    c.c = !0;
   }
   this.p = b;
 };
-function V(a) {
-  (a.mode = 2) && a.c.end();
+function X(a) {
+  (a.mode = 2) && a.d.end();
   a.mode = 0;
-  a.u = null;
   a.v = null;
+  a.w = null;
   a.p = null;
 }
-U.prototype.o = function() {
+W.prototype.o = function() {
   var a = this;
   $(window).resize(function() {
-    y(a.view);
+    A(a.view);
   });
   $("button.tool").click(function(a) {
     a = a.target.id;
@@ -440,40 +458,50 @@ U.prototype.o = function() {
     $(".dialog").removeClass("visible");
     $("#" + a).toggleClass("active");
     $("#" + a + "-dialog").toggleClass("visible");
-    "box-button" == a && (this.c = new G(this.state));
-    "line-button" == a && (this.c = new L(this.state));
-    "freeform-button" == a && (this.c = new M(this.state, "+"));
-    "erase-button" == a && (this.c = new P(this.state));
-    "move-button" == a && (this.c = new Q(this.state));
-    "text-button" == a && (this.c = new N(this.state));
-    "export-button" == a && $("#export-area").val(ha(this.state));
+    "box-button" == a && (this.d = new I(this.state));
+    "line-button" == a && (this.d = new M(this.state));
+    "freeform-button" == a && (this.d = new N(this.state, "+"));
+    "erase-button" == a && (this.d = new Q(this.state));
+    "move-button" == a && (this.d = new R(this.state));
+    "text-button" == a && (this.d = new P(this.state));
+    "export-button" == a && $("#export-area").val(V(this.state));
     "clear-button" == a && this.state.clear();
-    "undo-button" == a && T(this.state);
+    "undo-button" == a && U(this.state);
   }.bind(this));
   $("button.close-dialog-button").click(function() {
     $(".dialog").removeClass("visible");
   }.bind(this));
   $("#import-submit-button").click(function() {
     this.state.clear();
-    for (var a = this.state, c = $("#import-area").val(), e = z(this.view, new f(this.view.canvas.width / 4, this.view.canvas.height / 4)), c = c.split("\n"), d = 0;d < c.length;d++) {
-      for (var g = c[d], h = 0;h < g.length;h++) {
-        var k = g.charAt(h);
-        if ("\u2013" == k || "|" == k) {
-          k = "+";
+    for (var a = this.state, c = $("#import-area").val(), e = B(this.view, new l(this.view.canvas.width / 4, this.view.canvas.height / 4)), c = c.split("\n"), d = 0;d < c.length;d++) {
+      for (var g = c[d], k = 0;k < g.length;k++) {
+        var h = g.charAt(k);
+        if ("\u2013" == h || "|" == h) {
+          h = "+";
         }
-        F(a, (new f(h, d)).add(e), k);
+        H(a, (new l(k, d)).add(e), h);
       }
     }
-    K(a);
+    L(a);
     $("#import-area").val("");
   }.bind(this));
+  $("#use-lines-button").click(function() {
+    $(".dialog").removeClass("visible");
+    this.view.s = !0;
+    this.view.c = !0;
+  }.bind(this));
+  $("#use-ascii-button").click(function() {
+    $(".dialog").removeClass("visible");
+    this.view.s = !1;
+    this.view.c = !1;
+  }.bind(this));
   $(window).keypress(function(a) {
-    a.ctrlKey || a.metaKey || 13 == a.keyCode || this.c.h(String.fromCharCode(a.keyCode));
+    a.ctrlKey || a.metaKey || 13 == a.keyCode || this.d.h(String.fromCharCode(a.keyCode));
   }.bind(this));
   $(window).keydown(function(a) {
     var c = null;
     if (a.ctrlKey || a.metaKey) {
-      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && T(this.state), 88 == a.keyCode && (c = "<cut>");
+      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && U(this.state), 88 == a.keyCode && (c = "<cut>");
     }
     8 == a.keyCode && (c = "<backspace>");
     13 == a.keyCode && (c = "<enter>");
@@ -481,112 +509,150 @@ U.prototype.o = function() {
     40 == a.keyCode && (c = "<down>");
     37 == a.keyCode && (c = "<left>");
     39 == a.keyCode && (c = "<right>");
-    null != c && this.c.h(c);
+    null != c && this.d.h(c);
   }.bind(this));
 };
-function W(a) {
+function ga(a) {
+  this.state = a;
+  this.file = null;
+  $("#save-button").click(function() {
+    this.save();
+  }.bind(this));
+}
+function ha(a) {
+  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!0}, function(b) {
+    b && !b.error ? a(!0) : window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
+      a(b && !b.error);
+    });
+  });
+}
+function ia(a, b) {
+  a.file = b;
+  $("#drive-filename").text(b.title);
+  $("#drive-filename").editable(function(a) {
+    this.file.title = a;
+    this.save();
+    $("#drive-filename").off();
+    return a;
+  }.bind(a), {type:"text", submit:"OK"});
+}
+ga.prototype.save = function() {
+  window.gapi.client.load("drive", "v2", function() {
+    ha(function(a) {
+      a && ja(this).execute(function(a) {
+        ia(this, a);
+      }.bind(this));
+    }.bind(this));
+  }.bind(this));
+};
+function ja(a) {
+  var b = V(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
+  return window.gapi.client.request({path:"/upload/drive/v2/files" + (null == a.file ? "" : "/" + a.file.id), method:null == a.file ? "POST" : "PUT", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:b});
+}
+;function ka(a) {
   this.b = a;
   this.o();
 }
-W.prototype.o = function() {
+ka.prototype.o = function() {
   var a = this.b.view.canvas;
   $(a).bind("mousewheel", function(a) {
     a = this.b.view.zoom * (0 < a.originalEvent.wheelDelta ? 1.1 : 0.9);
     a = Math.max(Math.min(a, 5), 0.2);
     var c = this.b.view;
     c.zoom = a;
-    c.d = !0;
+    c.c = !0;
   }.bind(this));
   $(a).mousedown(function(a) {
     if (a.ctrlKey || a.metaKey) {
       var c = this.b;
-      a = new f(a.clientX, a.clientY);
+      a = new l(a.clientX, a.clientY);
       c.mode = 1;
-      c.u = a;
-      c.v = c.view.offset;
+      c.v = a;
+      c.w = c.view.offset;
     } else {
-      c = this.b, a = new f(a.clientX, a.clientY), c.mode = 2, c.c.start(z(c.view, a));
+      c = this.b, a = new l(a.clientX, a.clientY), c.mode = 2, c.d.start(B(c.view, a));
     }
   }.bind(this));
   $(a).mouseup(function() {
-    V(this.b);
+    X(this.b);
   }.bind(this));
   $(a).mouseleave(function() {
-    V(this.b);
+    X(this.b);
   }.bind(this));
   $(a).mousemove(function(a) {
-    this.b.r(new f(a.clientX, a.clientY));
+    this.b.r(new l(a.clientX, a.clientY));
   }.bind(this));
 };
-function X(a) {
+function Y(a) {
   this.b = a;
-  this.s = this.k = !1;
+  this.t = this.k = !1;
   this.o();
 }
-function ia(a, b) {
-  a.A = b;
-  a.D = $.now();
+function la(a, b) {
+  a.B = b;
+  a.F = $.now();
   a.k = !1;
   window.setTimeout(function() {
-    if (!this.k && !this.s) {
+    if (!this.k && !this.t) {
       var a = this.b;
       a.mode = 2;
-      a.c.start(z(a.view, b));
+      a.d.start(B(a.view, b));
     }
   }.bind(a), 130);
 }
-X.prototype.r = function(a) {
-  if (!this.k && 130 > $.now() - this.D && 3 < m(a, this.A).length()) {
+Y.prototype.r = function(a) {
+  if (!this.k && 130 > $.now() - this.F && 3 < n(a, this.B).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;
-    b.u = a;
-    b.v = b.view.offset;
+    b.v = a;
+    b.w = b.view.offset;
   }
   this.b.r(a);
 };
-X.prototype.reset = function() {
-  this.s = this.k = !1;
-  this.A = null;
+Y.prototype.reset = function() {
+  this.t = this.k = !1;
+  this.B = null;
 };
-X.prototype.o = function() {
+Y.prototype.o = function() {
   var a = this.b.view.canvas;
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      ia(this, new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      la(this, new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
-        var c = new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
-        a = new f(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        V(this.b);
-        this.s = !0;
+        var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
+        a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
+        X(this.b);
+        this.t = !0;
         this.k = !1;
-        this.F = m(c, a).length();
-        this.C = this.b.view.zoom;
+        this.G = n(c, a).length();
+        this.D = this.b.view.zoom;
       }
     }
   }.bind(this));
   $(a).bind("touchmove", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      this.r(new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      this.r(new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
-        var c = new f(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
-        a = new f(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        this.s && (c = this.C * m(c, a).length() / this.F, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.d = !0);
+        var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
+        a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
+        this.t && (c = this.D * n(c, a).length() / this.G, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.c = !0);
       }
     }
   }.bind(this));
   $(a).bind("touchend", function(a) {
     a.preventDefault();
     this.reset();
-    V(this.b);
+    X(this.b);
   }.bind(this));
 };
-var Y = new S, Z = new x(Y), ja = new U(Z, Y);
-new X(ja);
-new W(ja);
-Z.animate();
+var Z = new T, ma = new z(Z), na = new W(ma, Z);
+new Y(na);
+new ka(na);
+new ga(Z);
+ma.animate();
 
