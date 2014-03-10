@@ -126,7 +126,7 @@ ascii.Controller.prototype.installBindings = function() {
   $('#use-ascii-button').click(function(e) {
    $('.dialog').removeClass('visible');
     this.view.useLines = false;
-    this.view.dirty = false;
+    this.view.dirty = true;
   }.bind(this));
 
   $(window).keypress(function(e) {
