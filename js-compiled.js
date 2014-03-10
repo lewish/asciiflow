@@ -493,7 +493,7 @@ W.prototype.o = function() {
   $("#use-ascii-button").click(function() {
     $(".dialog").removeClass("visible");
     this.view.s = !1;
-    this.view.c = !1;
+    this.view.c = !0;
   }.bind(this));
   $(window).keypress(function(a) {
     a.ctrlKey || a.metaKey || 13 == a.keyCode || this.d.h(String.fromCharCode(a.keyCode));
