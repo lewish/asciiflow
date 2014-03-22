@@ -137,8 +137,8 @@ textarea {
 }
 
 #logo-interstitial {
-  background-repeat: no-repeat;
-  background-position: center;
+  text-align: center;
+  vertical-align: middle;
   background-color: #FFF;
   z-index: 200;
   position: fixed;
@@ -146,6 +146,13 @@ textarea {
   height: 100%;
   transition: opacity 1.5s ease-in-out;
   background-size: 100%;
+  pointer-events: none;
+}
+
+#logo-interstitial > img {
+  display: inline;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .fade-out {
@@ -159,13 +166,14 @@ textarea {
 .move-image { background-image: url('images/move-icon.png'); }
 .text-image { background-image: url('images/text-icon.png'); }
 .info-image { background-image: url('images/info-icon.png'); }
-.logo-image { background-image: url('images/logo-full.png'); }
 
 </style>
 </head>
 <body>
 
-<div id="logo-interstitial" class="logo-image"></div>
+<div id="logo-interstitial">
+  <img src="images/logo-full.png"></img>
+</div>
 
 <div id="draw-tools">
   <button id="box-button" class="tool active box-image"></button>
@@ -219,6 +227,7 @@ textarea {
 
 <script>
 window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);
+window.setTimeout(function() { $('#logo-interstitial').visible(false); }, 3000);
 </script>
 
 </body>
