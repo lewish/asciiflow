@@ -136,6 +136,22 @@ textarea {
   white-space: pre;
 }
 
+#logo-interstitial {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #FFF;
+  z-index: 200;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1.5s ease-in-out;
+  background-size: 100%;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
 .box-image { background-image: url('images/box-icon.png'); }
 .line-image { background-image: url('images/line-icon.png'); }
 .freeform-image { background-image: url('images/freeform-icon.png'); }
@@ -143,10 +159,13 @@ textarea {
 .move-image { background-image: url('images/move-icon.png'); }
 .text-image { background-image: url('images/text-icon.png'); }
 .info-image { background-image: url('images/info-icon.png'); }
+.logo-image { background-image: url('images/logo-full.png'); }
 
 </style>
 </head>
 <body>
+
+<div id="logo-interstitial" class="logo-image"></div>
 
 <div id="draw-tools">
   <button id="box-button" class="tool active box-image"></button>
@@ -197,5 +216,10 @@ textarea {
 <script src="jquery-1.9.1.min.js"></script>
 <script src="jquery.jeditable.min.js"></script>
 <script src="js-compiled.js"></script>
+
+<script>
+window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);
+</script>
+
 </body>
 </html>
