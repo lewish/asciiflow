@@ -11,6 +11,7 @@
   font-weight: bold;
   font-family: sans-serif;
   font-size: 0.95em;
+  color: #777;
 }
 
 body {
@@ -36,6 +37,7 @@ body {
 }
 
 button {
+  vertical-align: top;
   display: inline-block;
   margin: 5px;
   width: 30px;
@@ -44,6 +46,20 @@ button {
   cursor: pointer;
   outline: 0 !important;
   background-size: 100% !important;
+}
+
+.info-icon {
+  width: 30px;
+  height: 30px;
+  background-size: 100% !important;
+  display: inline-block;
+}
+
+.info-description {
+  vertical-align: middle;
+  margin-left: 5px;
+  display: inline-block;
+  height: 30px;
 }
 
 /* Mobile overrides */
@@ -79,16 +95,11 @@ button {
 }
 
 #draw-tools > button, #file-tools > button {
-  background: transparent;
   border-width: 0px;
 }
 
 #draw-tools > button.active {
   /* TODO: Offset background images. */
-}
-
-#file-tools > button {
-  background: #D8D8D8;
 }
 
 .dialog > button {
@@ -103,7 +114,8 @@ button {
 }
 
 
-#drive-textarea {
+#drive-filename {
+  display: inline-block;
 }
 
 textarea {
@@ -118,34 +130,42 @@ textarea {
   white-space: pre;
 }
 
+.box-image { background-image: url('images/box-tool.png'); }
+.line-image { background-image: url('images/line-tool.png'); }
+.freeform-image { background-image: url('images/freeform-tool.png'); }
+.erase-image { background-image: url('images/erase-tool.png'); }
+.move-image { background-image: url('images/move-tool.png'); }
+.text-image { background-image: url('images/text-tool.png'); }
+.info-image { background-image: url('images/info-button.png'); }
+
 </style>
 </head>
 <body>
 
 <div id="draw-tools">
-  <button id="box-button" class="tool active" style="background-image: url('images/box-tool.png');">
+  <button id="box-button" class="tool active box-image">
   </button>
-  <button id="line-button" class="tool" style="background-image: url('images/line-tool.png');">
+  <button id="line-button" class="tool line-image">
   </button>
-  <button id="freeform-button" class="tool" style="background-image: url('images/freeform-tool.png');">
+  <button id="freeform-button" class="tool freeform-image">
   </button>
-  <button id="erase-button" class="tool" style="background-image: url('images/erase-tool.png');">
+  <button id="erase-button" class="tool erase-image">
   </button>
-  <button id="move-button" class="tool" style="background-image: url('images/move-tool.png');">
+  <button id="move-button" class="tool move-image">
   </button>
-  <button id="text-button" class="tool" style="background-image: url('images/text-tool.png');">
+  <button id="text-button" class="tool text-image">
   </button>
 </div>
 
 <div id="file-tools">
-  <div id="drive-filename" class="edit"></div>
+  <div id="drive-filename" class="edit">Untitled ASCII Diagram</div>
   <button id="export-button" class="tool">Ex</button>
   <button id="import-button" class="tool">Im</button>
   <button id="save-button" class="tool">Sa</button>
   <button id="clear-button" class="tool">Cl</button>
   <button id="undo-button" class="tool">Un</button>
   <button id="redo-button" class="tool">Re</button>
-  <button id="options-button" class="tool" style="background-image: url('images/info-button.png');"></button>
+  <button id="options-button" class="tool info-image"></button>
 </div>
 
 <div id="export-button-dialog" class="dialog">
@@ -154,15 +174,16 @@ textarea {
 </div>
 
 <div id="options-button-dialog" class="dialog">
-  <div class="tooltip">Draw boxes. You can resize them later with the Resize tool.</div>
-  <div class="tooltip">Draw lines. Connect it to another line to change the orientation.</div>
-  <div class="tooltip">Press a character on the keyboard, then drag to draw it.</div>
-  <div class="tooltip">Drag out an area to erase.</div>
-  <div class="tooltip">Resize boxes and lines, just drag a line to change it.</div>
-  <div class="tooltip">Press where to start writing, and type the text you want.</div>
+  <div class="info-icon box-image"></div><div class="info-description">Draw boxes. You can resize them later with the Resize tool.</div><br>
+  <div class="info-icon line-image"></div><div class="info-description">Draw lines. Connect it to another line to change the orientation.</div><br>
+  <div class="info-icon text-image"></div><div class="info-description">Press a character on the keyboard, then drag to draw it.</div><br>
+  <div class="info-icon erase-image"></div><div class="info-description">Drag out an area to erase.</div><br>
+  <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines, just drag a line to change it.</div><br>
+  <div class="info-icon text-image"></div><div class="info-description">Press where to start writing, and type the text you want.</div><br>
 
   <button id="use-lines-button">Lines Mode</button>
   <button id="use-ascii-button">ASCII Mode</button>
+  <button class="close-dialog-button">Close</button>
 </div>
 
 <div id="import-button-dialog" class="dialog">
