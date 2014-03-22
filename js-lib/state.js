@@ -14,6 +14,8 @@ ascii.State = function() {
 
   /** @type {Array.<Array.<ascii.MappedValue>>} */
   this.undoStates = new Array();
+  /** @type {Array.<Array.<ascii.MappedValue>>} */
+  this.redoStates = new Array();
 
   for (var i = 0; i < this.cells.length; i++) {
     this.cells[i] = new Array(MAX_GRID_HEIGHT);
@@ -126,9 +128,9 @@ ascii.State.prototype.getContext = function(position) {
 
 /**
  * Ends the current draw, commiting anything currently drawn the scratchpad.
- * @param {boolean=} opt_skipSave
+ * @param {boolean=} opt_undo
  */
-ascii.State.prototype.commitDraw = function(opt_skipSave) {
+ascii.State.prototype.commitDraw = function(opt_undo) {
   var oldValues = [];
 
   // Dedupe the scratch values, or this causes havoc for history management.
@@ -158,13 +160,13 @@ ascii.State.prototype.commitDraw = function(opt_skipSave) {
     cell.value = newValue;
   }
 
-  // Don't save a new state if we are undoing an old one.
-  if (!opt_skipSave && oldValues.length > 0) {
-    // If we have too many undo states, clear one out.
-    if (this.undoStates.length > MAX_UNDO) {
-      this.undoStates.shift();
+  var stateStack = opt_undo ? this.redoStates : this.undoStates;
+  if (oldValues.length > 0) {
+    // If we have too many states, clear one out.
+    if (stateStack.length > MAX_UNDO) {
+      stateStack.shift();
     }
-    this.undoStates.push(oldValues);
+    stateStack.push(oldValues);
   }
   this.dirty = true;
 };
@@ -181,6 +183,20 @@ ascii.State.prototype.undo = function() {
     this.drawValue(mappedValue.position, mappedValue.value);
   }
   this.commitDraw(true);
+};
+
+/**
+ * Redoes the last undone.
+ */
+ascii.State.prototype.redo = function() {
+  if (this.redoStates.length == 0) { return; }
+
+  var lastState = this.redoStates.pop();
+  for (var i in lastState) {
+    var mappedValue = lastState[i];
+    this.drawValue(mappedValue.position, mappedValue.value);
+  }
+  this.commitDraw();
 };
 
 /**

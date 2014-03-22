@@ -190,6 +190,9 @@ ascii.Controller.prototype.handleFileButton = function(id) {
   if (id == 'undo-button') {
     this.state.undo();
   }
+  if (id == 'redo-button') {
+    this.state.redo();
+  }
 };
 
 /**
