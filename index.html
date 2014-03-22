@@ -25,14 +25,14 @@ body {
   width: 100%;
   background-color: #FFF;
   z-index: 100;
-  box-shadow:0px 3px 3px #CCC;
+  box-shadow: 0px 3px 3px #CCC;
 }
 
 #file-tools {
   text-align: right;
   display: inline-block;
   position: fixed;
-  width: 100%;
+  right: 0px;
   z-index: 100;
 }
 
@@ -45,13 +45,15 @@ button {
   text-align: center;
   cursor: pointer;
   outline: 0 !important;
-  background-size: 100% !important;
+  background-size: 200% 100% !important;
+  background-color: #FFF;
 }
 
 .info-icon {
   width: 30px;
   height: 30px;
   background-size: 100% !important;
+  background-size: 200% 100% !important;
   display: inline-block;
 }
 
@@ -62,6 +64,11 @@ button {
   height: 30px;
 }
 
+
+#drive-filename {
+  display: inline-block;
+}
+
 /* Mobile overrides */
 @media(max-width:600px) {
   /* Move file tools to the bottom. */
@@ -69,6 +76,10 @@ button {
     bottom: 0px;
     background-color: #FFF;
     box-shadow:0px -3px 3px #CCC;
+    width: 100%;
+  }
+  #drive-filename {
+    display: block;
   }
 }
 
@@ -98,8 +109,8 @@ button {
   border-width: 0px;
 }
 
-#draw-tools > button.active {
-  /* TODO: Offset background images. */
+button.active, .info-icon {
+  background-position: right;
 }
 
 .dialog > button {
@@ -111,11 +122,6 @@ button {
   position: fixed;
   left: 0px;
   top: 0px;
-}
-
-
-#drive-filename {
-  display: inline-block;
 }
 
 textarea {
@@ -130,31 +136,25 @@ textarea {
   white-space: pre;
 }
 
-.box-image { background-image: url('images/box-tool.png'); }
-.line-image { background-image: url('images/line-tool.png'); }
-.freeform-image { background-image: url('images/freeform-tool.png'); }
-.erase-image { background-image: url('images/erase-tool.png'); }
-.move-image { background-image: url('images/move-tool.png'); }
-.text-image { background-image: url('images/text-tool.png'); }
-.info-image { background-image: url('images/info-button.png'); }
+.box-image { background-image: url('images/box-icon.png'); }
+.line-image { background-image: url('images/line-icon.png'); }
+.freeform-image { background-image: url('images/freeform-icon.png'); }
+.erase-image { background-image: url('images/erase-icon.png'); }
+.move-image { background-image: url('images/move-icon.png'); }
+.text-image { background-image: url('images/text-icon.png'); }
+.info-image { background-image: url('images/info-icon.png'); }
 
 </style>
 </head>
 <body>
 
 <div id="draw-tools">
-  <button id="box-button" class="tool active box-image">
-  </button>
-  <button id="line-button" class="tool line-image">
-  </button>
-  <button id="freeform-button" class="tool freeform-image">
-  </button>
-  <button id="erase-button" class="tool erase-image">
-  </button>
-  <button id="move-button" class="tool move-image">
-  </button>
-  <button id="text-button" class="tool text-image">
-  </button>
+  <button id="box-button" class="tool active box-image"></button>
+  <button id="line-button" class="tool line-image"></button>
+  <button id="freeform-button" class="tool freeform-image"></button>
+  <button id="erase-button" class="tool erase-image"></button>
+  <button id="move-button" class="tool move-image"></button>
+  <button id="text-button" class="tool text-image"></button>
 </div>
 
 <div id="file-tools">
@@ -169,7 +169,7 @@ textarea {
 </div>
 
 <div id="export-button-dialog" class="dialog">
-  <textarea id="export-area"></textarea>
+  <textarea readonly id="export-area"></textarea>
   <button class="close-dialog-button">Close</button>
 </div>
 

@@ -99,10 +99,12 @@ ascii.Controller.prototype.installBindings = function() {
 
   $(window).resize(function(e) { controller.view.resizeCanvas() });
 
-  // TODO: Handle pinch to zoom.
+  $('#draw-tools > button.tool').click(function(e) {
+    this.handleDrawButton(e.target.id);
+  }.bind(this));
 
-  $('button.tool').click(function(e) {
-    this.updateButtons(e.target.id);
+  $('#file-tools > button.tool').click(function(e) {
+    this.handleFileButton(e.target.id);
   }.bind(this));
 
   $('button.close-dialog-button').click(function(e) {
@@ -123,6 +125,7 @@ ascii.Controller.prototype.installBindings = function() {
     this.view.useLines = true;
     this.view.dirty = true;
   }.bind(this));
+
   $('#use-ascii-button').click(function(e) {
    $('.dialog').removeClass('visible');
     this.view.useLines = false;
@@ -142,12 +145,10 @@ ascii.Controller.prototype.installBindings = function() {
  * Handles the buttons in the UI.
  * @param {string} id The ID of the element clicked.
  */
-ascii.Controller.prototype.updateButtons = function(id) {
-  $('button.tool').removeClass('active');
-  $('.dialog').removeClass('visible');
-
+ascii.Controller.prototype.handleDrawButton = function(id) {
+  $('#draw-tools > button.tool').removeClass('active');
   $('#' + id).toggleClass('active');
-  $('#' + id + '-dialog').toggleClass('visible');
+  $('.dialog').removeClass('visible');
 
   // Install the right draw tool based on button pressed.
   if (id == 'box-button') {
@@ -168,8 +169,20 @@ ascii.Controller.prototype.updateButtons = function(id) {
   if (id == 'text-button') {
     this.drawFunction = new ascii.DrawText(this.state);
   }
+};
+
+/**
+ * Handles the buttons in the UI.
+ * @param {string} id The ID of the element clicked.
+ */
+ascii.Controller.prototype.handleFileButton = function(id) {
+  $('.dialog').removeClass('visible');
+  $('#' + id + '-dialog').toggleClass('visible');
+
   if (id == 'export-button') {
     $('#export-area').val(this.state.outputText());
+    $('#export-area').focus();
+    $('#export-area').select();
   }
   if (id == 'clear-button') {
     this.state.clear();
