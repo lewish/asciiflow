@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,8 +20,18 @@ public class AsciiflowApp extends Activity {
         webView = (WebView) findViewById(R.id.activity_main_webview);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setSupportMultipleWindows(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("http://lewish.github.io/asciiflow2/app");
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onCloseWindow(WebView window) {
+                webView.removeView(window);
+                super.onCloseWindow(window);
+            }
+        });
+        webView.loadUrl("http://lewish.github.io/asciiflow2/");
     }
 
 

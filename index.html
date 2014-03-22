@@ -13,11 +13,47 @@
   font-size: 0.95em;
 }
 
-#draw-tools, #file-tools, #edit-tools, #drive-tools, .tooltip {
+body {
+  margin: 0px;
+}
+
+#draw-tools {
+  text-align: center;
   display: inline-block;
-  position: relative;
-  float: left;
+  position: fixed;
+  width: 100%;
+  background-color: #FFF;
   z-index: 100;
+  box-shadow:0px 3px 3px #CCC;
+}
+
+#file-tools {
+  text-align: right;
+  display: inline-block;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+
+button {
+  display: inline-block;
+  margin: 5px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0 !important;
+  background-size: 100% !important;
+}
+
+/* Mobile overrides */
+@media(max-width:600px) {
+  /* Move file tools to the bottom. */
+  #file-tools {
+    bottom: 0px;
+    background-color: #FFF;
+    box-shadow:0px -3px 3px #CCC;
+  }
 }
 
 .dialog {
@@ -29,48 +65,30 @@
   margin: auto;
   max-width: 640px;
   max-height: 480px;
-  width: 80%;
-  height: 80%;
-  background: #B2CAFF;
-  border-width: 2px;
-  border-color: #777;
-  border-style: solid;
+  width: 90%;
+  height: 70%;
+  background: #FFF;
   display: none;
   z-index: 100;
   padding: 5px;
+  box-shadow:0px 0px 3px 3px #CCC;
 }
 
 .visible {
   display: block !important;
 }
 
-button {
-  display: block;
-  margin: 3px;
-  width: 60px;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
-  outline: 0 !important;
-  border-width: 2px;
-  border-color: #777;
-  border-style: solid;
-}
-
-#draw-tools > button {
-  background: #B2CAFF;
+#draw-tools > button, #file-tools > button {
+  background: transparent;
+  border-width: 0px;
 }
 
 #draw-tools > button.active {
-  background: #8BB5FF;
+  /* TODO: Offset background images. */
 }
 
 #file-tools > button {
   background: #D8D8D8;
-}
-
-#edit-tools > button {
-  background: #FCB789;
 }
 
 .dialog > button {
@@ -84,23 +102,8 @@ button {
   top: 0px;
 }
 
-#logo {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  z-index: 100;
-  background: #F8F8F8;
-  border-right: 1px solid #444;
-  border-bottom: 1px solid #444;
-}
 
 #drive-textarea {
-  margin: 9px;
-}
-
-#logo pre {
-  margin: 0px;
-  display: none;
 }
 
 textarea {
@@ -115,68 +118,34 @@ textarea {
   white-space: pre;
 }
 
-.tooltip {
-  display: none;
-}
-
-/* Horrible hack to stop touble tap events on mobile/tablet. */
-/* TODO: Enable tooltips on mobile without double tap .*/
-media(min-width:800px) {
-.tool:hover > .tooltip {
-  display: block;
-  position: fixed;
-  bottom: 5px;
-  left: 5px;
-}
-}
-
-
 </style>
 </head>
 <body>
-<div id="logo"><pre>
-    __   ____  ____  _  _    ____    _____ _        __
-   /  \ | ___|| ___||_||_|  / ___|| |  _  | \  __  / / 
-  / /\ \|_ \  | |    _  _  / /  | | | | | |\ \/  \/ / 
- /  __  \_\ \ | |__ | || |/ __| | |_| |_| | \      / 
-/__/  \__\___||____||_||_|_/    |____|____|  \_/\_/ 
-
-</pre></div>
 
 <div id="draw-tools">
-  <button id="box-button" class="tool active">Box
-    <div class="tooltip">Draw boxes. You can resize them later with the Resize tool.</div>
+  <button id="box-button" class="tool active" style="background-image: url('images/box-tool.png');">
   </button>
-  <button id="line-button" class="tool">Line
-    <div class="tooltip">Draw lines. Connect it to another line to change the orientation.</div>
+  <button id="line-button" class="tool" style="background-image: url('images/line-tool.png');">
   </button>
-  <button id="freeform-button" class="tool">Draw
-    <div class="tooltip">Press a character on the keyboard, then drag to draw it.</div>
+  <button id="freeform-button" class="tool" style="background-image: url('images/freeform-tool.png');">
   </button>
-  <button id="erase-button" class="tool">Erase
-    <div class="tooltip">Drag out an area to erase.</div>
+  <button id="erase-button" class="tool" style="background-image: url('images/erase-tool.png');">
   </button>
-  <button id="move-button" class="tool">Resize
-    <div class="tooltip">Resize boxes and lines, just drag a line to change it.</div>
+  <button id="move-button" class="tool" style="background-image: url('images/move-tool.png');">
   </button>
-  <button id="text-button" class="tool">Text
-    <div class="tooltip">Press where to start writing, and type the text you want.</div>
+  <button id="text-button" class="tool" style="background-image: url('images/text-tool.png');">
   </button>
-  <!-- <button id="select-button">Select</button> -->
 </div>
+
 <div id="file-tools">
-  <button id="export-button" class="tool">Export</button>
-  <button id="import-button" class="tool">Import</button>
-  <button id="save-button" class="tool">Save</button>
-  <!-- <button id="save-button" class="tool">Open</button> -->
-  <button id="options-button" class="tool">Mode</button>
-</div>
-<div id="edit-tools">
-  <button id="clear-button" class="tool">Clear</button>
-  <button id="undo-button" class="tool">Undo</button>
-</div>
-<div id="drive-tools">
   <div id="drive-filename" class="edit"></div>
+  <button id="export-button" class="tool">Ex</button>
+  <button id="import-button" class="tool">Im</button>
+  <button id="save-button" class="tool">Sa</button>
+  <button id="clear-button" class="tool">Cl</button>
+  <button id="undo-button" class="tool">Un</button>
+  <button id="redo-button" class="tool">Re</button>
+  <button id="options-button" class="tool" style="background-image: url('images/info-button.png');"></button>
 </div>
 
 <div id="export-button-dialog" class="dialog">
@@ -185,6 +154,13 @@ media(min-width:800px) {
 </div>
 
 <div id="options-button-dialog" class="dialog">
+  <div class="tooltip">Draw boxes. You can resize them later with the Resize tool.</div>
+  <div class="tooltip">Draw lines. Connect it to another line to change the orientation.</div>
+  <div class="tooltip">Press a character on the keyboard, then drag to draw it.</div>
+  <div class="tooltip">Drag out an area to erase.</div>
+  <div class="tooltip">Resize boxes and lines, just drag a line to change it.</div>
+  <div class="tooltip">Press where to start writing, and type the text you want.</div>
+
   <button id="use-lines-button">Lines Mode</button>
   <button id="use-ascii-button">ASCII Mode</button>
 </div>
