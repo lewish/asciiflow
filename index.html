@@ -11,13 +11,76 @@
   font-weight: bold;
   font-family: sans-serif;
   font-size: 0.95em;
+  color: #777;
 }
 
-#draw-tools, #file-tools, #edit-tools, #drive-tools, .tooltip {
+body {
+  margin: 0px;
+}
+
+#draw-tools {
+  text-align: center;
   display: inline-block;
-  position: relative;
-  float: left;
+  position: fixed;
+  width: 100%;
+  background-color: #FFF;
   z-index: 100;
+  box-shadow: 0px 3px 3px #CCC;
+}
+
+#file-tools {
+  text-align: right;
+  display: inline-block;
+  position: fixed;
+  right: 0px;
+  z-index: 100;
+}
+
+button {
+  vertical-align: top;
+  display: inline-block;
+  margin: 5px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0 !important;
+  background-size: 200% 100% !important;
+  background-color: #FFF;
+}
+
+.info-icon {
+  width: 30px;
+  height: 30px;
+  background-size: 100% !important;
+  background-size: 200% 100% !important;
+  display: inline-block;
+}
+
+.info-description {
+  vertical-align: middle;
+  margin-left: 5px;
+  display: inline-block;
+  height: 30px;
+}
+
+
+#drive-filename {
+  display: inline-block;
+}
+
+/* Mobile overrides */
+@media(max-width:600px) {
+  /* Move file tools to the bottom. */
+  #file-tools {
+    bottom: 0px;
+    background-color: #FFF;
+    box-shadow:0px -3px 3px #CCC;
+    width: 100%;
+  }
+  #drive-filename {
+    display: block;
+  }
 }
 
 .dialog {
@@ -29,48 +92,25 @@
   margin: auto;
   max-width: 640px;
   max-height: 480px;
-  width: 80%;
-  height: 80%;
-  background: #B2CAFF;
-  border-width: 2px;
-  border-color: #777;
-  border-style: solid;
+  width: 90%;
+  height: 70%;
+  background: #FFF;
   display: none;
   z-index: 100;
   padding: 5px;
+  box-shadow:0px 0px 3px 3px #CCC;
 }
 
 .visible {
   display: block !important;
 }
 
-button {
-  display: block;
-  margin: 3px;
-  width: 60px;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
-  outline: 0 !important;
-  border-width: 2px;
-  border-color: #777;
-  border-style: solid;
+#draw-tools > button, #file-tools > button {
+  border-width: 0px;
 }
 
-#draw-tools > button {
-  background: #B2CAFF;
-}
-
-#draw-tools > button.active {
-  background: #8BB5FF;
-}
-
-#file-tools > button {
-  background: #D8D8D8;
-}
-
-#edit-tools > button {
-  background: #FCB789;
+button.active, .info-icon {
+  background-position: right;
 }
 
 .dialog > button {
@@ -82,25 +122,6 @@ button {
   position: fixed;
   left: 0px;
   top: 0px;
-}
-
-#logo {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  z-index: 100;
-  background: #F8F8F8;
-  border-right: 1px solid #444;
-  border-bottom: 1px solid #444;
-}
-
-#drive-textarea {
-  margin: 9px;
-}
-
-#logo pre {
-  margin: 0px;
-  display: none;
 }
 
 textarea {
@@ -115,78 +136,54 @@ textarea {
   white-space: pre;
 }
 
-.tooltip {
-  display: none;
-}
-
-/* Horrible hack to stop touble tap events on mobile/tablet. */
-/* TODO: Enable tooltips on mobile without double tap .*/
-media(min-width:800px) {
-.tool:hover > .tooltip {
-  display: block;
-  position: fixed;
-  bottom: 5px;
-  left: 5px;
-}
-}
-
+.box-image { background-image: url('images/box-icon.png'); }
+.line-image { background-image: url('images/line-icon.png'); }
+.freeform-image { background-image: url('images/freeform-icon.png'); }
+.erase-image { background-image: url('images/erase-icon.png'); }
+.move-image { background-image: url('images/move-icon.png'); }
+.text-image { background-image: url('images/text-icon.png'); }
+.info-image { background-image: url('images/info-icon.png'); }
 
 </style>
 </head>
 <body>
-<div id="logo"><pre>
-    __   ____  ____  _  _    ____    _____ _        __
-   /  \ | ___|| ___||_||_|  / ___|| |  _  | \  __  / / 
-  / /\ \|_ \  | |    _  _  / /  | | | | | |\ \/  \/ / 
- /  __  \_\ \ | |__ | || |/ __| | |_| |_| | \      / 
-/__/  \__\___||____||_||_|_/    |____|____|  \_/\_/ 
-
-</pre></div>
 
 <div id="draw-tools">
-  <button id="box-button" class="tool active">Box
-    <div class="tooltip">Draw boxes. You can resize them later with the Resize tool.</div>
-  </button>
-  <button id="line-button" class="tool">Line
-    <div class="tooltip">Draw lines. Connect it to another line to change the orientation.</div>
-  </button>
-  <button id="freeform-button" class="tool">Draw
-    <div class="tooltip">Press a character on the keyboard, then drag to draw it.</div>
-  </button>
-  <button id="erase-button" class="tool">Erase
-    <div class="tooltip">Drag out an area to erase.</div>
-  </button>
-  <button id="move-button" class="tool">Resize
-    <div class="tooltip">Resize boxes and lines, just drag a line to change it.</div>
-  </button>
-  <button id="text-button" class="tool">Text
-    <div class="tooltip">Press where to start writing, and type the text you want.</div>
-  </button>
-  <!-- <button id="select-button">Select</button> -->
+  <button id="box-button" class="tool active box-image"></button>
+  <button id="line-button" class="tool line-image"></button>
+  <button id="freeform-button" class="tool freeform-image"></button>
+  <button id="erase-button" class="tool erase-image"></button>
+  <button id="move-button" class="tool move-image"></button>
+  <button id="text-button" class="tool text-image"></button>
 </div>
+
 <div id="file-tools">
-  <button id="export-button" class="tool">Export</button>
-  <button id="import-button" class="tool">Import</button>
-  <button id="save-button" class="tool">Save</button>
-  <!-- <button id="save-button" class="tool">Open</button> -->
-  <button id="options-button" class="tool">Mode</button>
-</div>
-<div id="edit-tools">
-  <button id="clear-button" class="tool">Clear</button>
-  <button id="undo-button" class="tool">Undo</button>
-</div>
-<div id="drive-tools">
-  <div id="drive-filename" class="edit"></div>
+  <div id="drive-filename" class="edit">Untitled ASCII Diagram</div>
+  <button id="export-button" class="tool">Ex</button>
+  <button id="import-button" class="tool">Im</button>
+  <button id="save-button" class="tool">Sa</button>
+  <button id="clear-button" class="tool">Cl</button>
+  <button id="undo-button" class="tool">Un</button>
+  <button id="redo-button" class="tool">Re</button>
+  <button id="options-button" class="tool info-image"></button>
 </div>
 
 <div id="export-button-dialog" class="dialog">
-  <textarea id="export-area"></textarea>
+  <textarea readonly id="export-area"></textarea>
   <button class="close-dialog-button">Close</button>
 </div>
 
 <div id="options-button-dialog" class="dialog">
+  <div class="info-icon box-image"></div><div class="info-description">Draw boxes. You can resize them later with the Resize tool.</div><br>
+  <div class="info-icon line-image"></div><div class="info-description">Draw lines. Connect it to another line to change the orientation.</div><br>
+  <div class="info-icon text-image"></div><div class="info-description">Press a character on the keyboard, then drag to draw it.</div><br>
+  <div class="info-icon erase-image"></div><div class="info-description">Drag out an area to erase.</div><br>
+  <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines, just drag a line to change it.</div><br>
+  <div class="info-icon text-image"></div><div class="info-description">Press where to start writing, and type the text you want.</div><br>
+
   <button id="use-lines-button">Lines Mode</button>
   <button id="use-ascii-button">ASCII Mode</button>
+  <button class="close-dialog-button">Close</button>
 </div>
 
 <div id="import-button-dialog" class="dialog">

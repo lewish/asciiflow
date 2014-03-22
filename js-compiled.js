@@ -452,19 +452,23 @@ W.prototype.o = function() {
   $(window).resize(function() {
     A(a.view);
   });
-  $("button.tool").click(function(a) {
+  $("#draw-tools > button.tool").click(function(a) {
     a = a.target.id;
-    $("button.tool").removeClass("active");
-    $(".dialog").removeClass("visible");
+    $("#draw-tools > button.tool").removeClass("active");
     $("#" + a).toggleClass("active");
-    $("#" + a + "-dialog").toggleClass("visible");
+    $(".dialog").removeClass("visible");
     "box-button" == a && (this.d = new I(this.state));
     "line-button" == a && (this.d = new M(this.state));
     "freeform-button" == a && (this.d = new N(this.state, "+"));
     "erase-button" == a && (this.d = new Q(this.state));
     "move-button" == a && (this.d = new R(this.state));
     "text-button" == a && (this.d = new P(this.state));
-    "export-button" == a && $("#export-area").val(V(this.state));
+  }.bind(this));
+  $("#file-tools > button.tool").click(function(a) {
+    a = a.target.id;
+    $(".dialog").removeClass("visible");
+    $("#" + a + "-dialog").toggleClass("visible");
+    "export-button" == a && ($("#export-area").val(V(this.state)), $("#export-area").focus(), $("#export-area").select());
     "clear-button" == a && this.state.clear();
     "undo-button" == a && U(this.state);
   }.bind(this));
