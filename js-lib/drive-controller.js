@@ -9,20 +9,20 @@ var DEVELOPER_KEY = 'AIzaSyBbKO_v9p-G9StQjYmtUYLP6Px4MkGions';
  * 
  * @constructor
  */
-ascii.DriveController = function(state) {
+ascii.DriveController = function(state, view) {
   /** @type {boolean} */
   this.driveEnabled = false;
   /** @type {ascii.State} */
   this.state = state;
+  /** @type {ascii.View} */
+  this.view = view;
   // This is a file resource, as defined by the Drive API.
   /** @type {Object} */
   this.file = null;
+  /** @type {string} */
+  this.cachedContent = '';
 
   this.tryInitialAuth();
-
-  $('#save-button').click(function(e) {
-      this.save();
-  }.bind(this));
 
   $('#drive-button').click(function() {
     if (!this.driveEnabled) {
@@ -33,6 +33,15 @@ ascii.DriveController = function(state) {
       this.loadDialog();
     }
   }.bind(this));
+
+  $('#drive-filename').click(function() {
+    var currentTitle = '' + $('#drive-filename').text();
+    var title = prompt('Enter new filename:', currentTitle);
+    this.file['title'] = title;
+    this.save();
+  }.bind(this));
+
+  this.loopSave();
 };
 
 /**
@@ -44,9 +53,11 @@ ascii.DriveController.prototype.checkAuth = function(immediate) {
       'scope': SCOPES,
       'immediate': immediate},
       function(result) {
-        if (result && !result.error) {
+        if (result && !result.error && !this.driveEnabled) {
           this.driveEnabled = true;
           $('#drive-button').addClass('active');
+          // We are authorized, so let's se if we can load from the URL hash.
+          this.loadFromHash();
         }
       }.bind(this));
 };
@@ -57,7 +68,7 @@ ascii.DriveController.prototype.tryInitialAuth = function() {
   } else {
     window.setTimeout(function() {
       this.tryInitialAuth();
-    }.bind(this), 2000);
+    }.bind(this), 500);
   }
 };
 
@@ -69,7 +80,7 @@ ascii.DriveController.prototype.waitForFullAuth = function() {
     } else {
       this.loadDialog();
     }
-  }.bind(this), 2000);
+  }.bind(this), 1000);
 };
 
 /**
@@ -78,17 +89,7 @@ ascii.DriveController.prototype.waitForFullAuth = function() {
 ascii.DriveController.prototype.handleFile = function(file) {
   this.file = file;
   $('#drive-filename').text(file['title']);
-  $('#drive-filename')['editable'](function(value, settings) {
-      this.file['title'] = value;
-      this.save();
-      // Remove the event handler.
-      $('#drive-filename').off();
-      return value;
-    }.bind(this),
-    { 
-      type    : 'text',
-      submit  : 'OK',
-    });
+  window.location.hash = file.id;
 };
 
 
@@ -97,20 +98,56 @@ ascii.DriveController.prototype.handleFile = function(file) {
  */
 ascii.DriveController.prototype.loadDialog = function() {
   $('#drive-dialog').addClass('visible');
+  this.save();
 };
+
+/**
+ * Repeatedly save the diagram if it is editable and loaded.
+ */
+ascii.DriveController.prototype.loopSave = function() {
+  var text = this.state.outputText();
+  if (text != this.cachedText && this.file && this.file['editable']) {
+    this.cachedText = text;
+    this.save();
+  }
+  window.setTimeout(function() {
+    this.loopSave();
+  }.bind(this), 5000);
+}
 
 /**
  * Saves the current diagram to drive.
  */
 ascii.DriveController.prototype.save = function() {
-  this.getSaveRequest().execute(function(result) {
+  var text = this.state.outputText();
+  $('#drive-save-state').text('Saving...');
+  this.getSaveRequest(text).execute(function(result) {
     this.handleFile(result);
+    $('#drive-save-state').text('Saved');
   }.bind(this));
 };
 
-ascii.DriveController.prototype.getSaveRequest = function() {
-  var text = this.state.outputText();
+ascii.DriveController.prototype.loadFromHash = function() {
+  if (window.location.hash.length > 1) {
+    var fileId = window.location.hash.substr(1, window.location.hash.length - 1);
+    this.getLoadRequest(fileId).execute(function(result) {
+      this.handleFile(result);
+      this.reloadFileContent();
+    }.bind(this));
+  }
+};
 
+ascii.DriveController.prototype.reloadFileContent = function() {
+  this.downloadFile(this.file['downloadUrl'], function(content) {
+    window.console.log(content);
+    this.state.clear();
+    this.state.fromText(content, this.view.screenToCell(new ascii.Vector(
+            this.view.canvas.width / 4,
+            this.view.canvas.height / 4)));
+  }.bind(this));
+};
+
+ascii.DriveController.prototype.getSaveRequest = function(text) {
   var boundary = '-------314159265358979323846';
   var delimiter = "\r\n--" + boundary + "\r\n";
   var close_delim = "\r\n--" + boundary + "--";
@@ -145,3 +182,28 @@ ascii.DriveController.prototype.getSaveRequest = function() {
       },
       'body': multipartRequestBody});
 };
+
+ascii.DriveController.prototype.getLoadRequest = function(fileId) {
+  return window['gapi']['client']['request']({
+      'path': '/drive/v2/files/' + fileId,
+      'method': 'GET'});
+};
+
+/**
+ * Download a file's content.
+ *
+ * @param {string} url
+ */
+ascii.DriveController.prototype.downloadFile = function(url, callback) {
+  var accessToken = window['gapi']['auth']['getToken']()['access_token'];
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+  xhr.onload = function() {
+    callback(xhr.responseText);
+  };
+  xhr.onerror = function() {
+    callback(null);
+  };
+  xhr.send();
+}
