@@ -204,6 +204,10 @@ ascii.DrawText.prototype.start = function(position) {
   this.state.commitDraw();
   $('#text-tool-input').val('');
   this.startPosition = position;
+
+  // Not working yet, needs fixing so that it can remove the underlying text completely.
+  //this.loadExistingText(position);
+
   // Effectively highlights the starting cell.
   var currentValue = this.state.getCell(this.startPosition).getRawValue();
   this.state.drawValue(this.startPosition,
@@ -242,6 +246,44 @@ ascii.DrawText.prototype.handleKey = function(value) {
     this.state.drawValue(this.endPosition.add(new ascii.Vector(x, y)), text[i]);
     x++;
   }
+};
+
+/**
+ * Loads any existing text if it is present.
+ * TODO: This is horrible, and does not quite work, fix it.
+ */
+ascii.DrawText.prototype.loadExistingText = function(position) {
+  var currentPosition = new ascii.Vector(position.x, position.y);
+  var cell = this.state.getCell(position);
+  var spacesCount = 0;
+  // Go back to find the start of the line.
+  while ((!cell.isSpecial() && cell.getRawValue() != null) || spacesCount < 1) {
+    if (cell.getRawValue() == null) {
+      spacesCount++;
+    } else if (!cell.isSpecial()) {
+      spacesCount = 0;
+    }
+    currentPosition.x--;
+    cell = this.state.getCell(currentPosition);
+  }
+  this.startPosition = currentPosition.add(new ascii.Vector(spacesCount + 1, 0));
+  var text = '';
+  spacesCount = 0;
+  currentPosition = this.startPosition.clone();
+  // Go forward to load the text.
+  while ((!cell.isSpecial() && cell.getRawValue() != null) || spacesCount < 1) {
+    cell = this.state.getCell(currentPosition);
+    if (cell.getRawValue() == null) {
+      spacesCount++;
+      text += ' ';
+    } else if (!cell.isSpecial()) {
+      spacesCount = 0;
+      text += cell.getRawValue();
+      this.state.drawValue(currentPosition, cell.getRawValue());
+    }
+    currentPosition.x++;
+  }
+  $('#text-tool-input').val(text.substr(0, text.length - 1));
 };
 
 /**
