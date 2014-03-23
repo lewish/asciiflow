@@ -102,7 +102,7 @@ ascii.DriveController.prototype.waitForFullAuth = function() {
 ascii.DriveController.prototype.handleFile = function(file) {
   this.file = file;
   $('#drive-filename').text(file['title']);
-  window.location.hash = file.id;
+  window.location.hash = file['id'];
 };
 
 
@@ -121,7 +121,7 @@ ascii.DriveController.prototype.loadDialog = function() {
 };
 
 ascii.DriveController.prototype.loadFileList = function() {
-  this.getListRequest().execute(function(result) {
+  this.safeExecute(this.getListRequest(), function(result) {
     $('#drive-file-list').children().remove();
     var items = result['items'];
     for (var i in items) {
@@ -131,6 +131,18 @@ ascii.DriveController.prototype.loadFileList = function() {
     }
   }.bind(this));
 }
+
+ascii.DriveController.prototype.safeExecute = function(request, callback) {
+  // Could make the API call, don't blow up tho (mobiles n stuff).
+  try {
+    request['execute'](function(result) {
+      if (!result['error']) {
+        callback(result);
+      }
+    });
+  } catch (e) {}
+};
+
 /**
  * Repeatedly save the diagram if it is editable and loaded.
  */
@@ -150,7 +162,7 @@ ascii.DriveController.prototype.loopSave = function() {
 ascii.DriveController.prototype.save = function() {
   var text = this.state.outputText();
   $('#drive-save-state').text('Saving...');
-  this.getSaveRequest(text).execute(function(result) {
+  this.safeExecute(this.getSaveRequest(text), function(result) {
     this.handleFile(result);
     $('#drive-save-state').text('Saved');
     this.cachedText = text;
@@ -161,7 +173,7 @@ ascii.DriveController.prototype.loadFromHash = function() {
   if (window.location.hash.length > 1) {
     $('#drive-save-state').text('Loading...');
     var fileId = window.location.hash.substr(1, window.location.hash.length - 1);
-    this.getLoadRequest(fileId).execute(function(result) {
+    this.safeExecute(this.getLoadRequest(fileId), function(result) {
       this.handleFile(result);
       this.reloadFileContent();
     }.bind(this));
