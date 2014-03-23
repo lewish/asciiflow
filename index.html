@@ -193,6 +193,7 @@ textarea {
 .move-image { background-image: url('images/move-icon.png'); }
 .text-image { background-image: url('images/text-icon.png'); }
 .info-image { background-image: url('images/info-icon.png'); }
+.drive-image { background-image: url('images/drive-icon.png'); }
 
 </style>
 </head>
@@ -212,10 +213,9 @@ textarea {
 </div>
 
 <div id="file-tools">
-  <div id="drive-filename" class="edit">Untitled ASCII Diagram</div>
+  <button id="drive-button" class="tool drive-image"></button>
   <button id="export-button" class="tool">Ex</button>
   <button id="import-button" class="tool">Im</button>
-  <button id="save-button" class="tool">Sa</button>
   <button id="clear-button" class="tool">Cl</button>
   <button id="undo-button" class="tool">Un</button>
   <button id="redo-button" class="tool">Re</button>
@@ -247,20 +247,24 @@ textarea {
   <button id="import-submit-button">Submit</button>
 </div>
 
+<!-- These dialogs are handled seperately. -->
+
 <div id="text-tool-widget">
   <textarea id="text-tool-input"></textarea>
   <button id="text-tool-close">Close</button>
+</div>
+
+<div id="drive-dialog" class="dialog">
+  <button class="close-dialog-button">Close</button>
 </div>
 
 <textarea id="freeform-tool-input"></textarea>
 
 <canvas id="ascii-canvas"></canvas>
 
-<script src="https://apis.google.com/js/api.js"></script>
-<script src="https://apis.google.com/js/client.js"></script>
 <script src="jquery-1.9.1.min.js"></script>
-<script src="jquery.jeditable.min.js"></script>
 <script src="js-compiled.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=window.gapiCallback"></script>
 
 <script>
 window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);

@@ -1,7 +1,7 @@
 try {
   throw 1;
 } catch (aa) {
-  window.C = window.C || {};
+  window.D = window.D || {};
 }
 var f = "ontouchstart" in window || "onmsgesturechange" in window;
 function l(a, b) {
@@ -51,7 +51,7 @@ function da(a, b) {
 }
 function ea(a, b) {
   this.position = a;
-  this.B = b;
+  this.C = b;
 }
 ;function z(a) {
   this.state = a;
@@ -98,7 +98,7 @@ function fa(a) {
   b.font = "15px Courier New";
   for (var g = c.x;g < e.x;g++) {
     for (var k = c.y;k < e.y;k++) {
-      var h = D(a.state, new l(g, k));
+      var h = C(a.state, new l(g, k));
       if (x(h) || null != h.f && " " != w(h)) {
         a.context.fillStyle = null != h.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (k - 1) - a.offset.y, 9, 17);
       }
@@ -112,12 +112,12 @@ function fa(a) {
     b.beginPath();
     for (d = c.x;d < e.x;d++) {
       for (h = !1, g = c.y;g < e.y;g++) {
-        k = D(a.state, new l(d, g)), x(k) && g != e.y - 1 || !h || (b.moveTo(9 * d - a.offset.x + 4.5, 17 * h - a.offset.y - 8.5), b.lineTo(9 * d - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), h = !1), x(k) && !h && (h = g);
+        k = C(a.state, new l(d, g)), x(k) && g != e.y - 1 || !h || (b.moveTo(9 * d - a.offset.x + 4.5, 17 * h - a.offset.y - 8.5), b.lineTo(9 * d - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), h = !1), x(k) && !h && (h = g);
       }
     }
     for (g = c.y;g < e.y;g++) {
       for (h = !1, d = c.x;d < e.x;d++) {
-        k = D(a.state, new l(d, g)), x(k) && d != e.x - 1 || !h || (b.moveTo(9 * h - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (d - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), h = !1), x(k) && !h && (h = d);
+        k = C(a.state, new l(d, g)), x(k) && d != e.x - 1 || !h || (b.moveTo(9 * h - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (d - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), h = !1), x(k) && !h && (h = d);
       }
     }
     a.context.stroke();
@@ -130,11 +130,11 @@ function B(a, b) {
   d = d || "+";
   var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), s = Math.max(b.y, c.y), t = e ? c.x : b.x;
   for (e = e ? b.y : c.y;g++ < h;) {
-    var P = new l(g, e), E = a.getContext(new l(g, e));
-    " " == d && 2 == E.m + E.j || H(a, P, d);
+    var Q = new l(g, e), E = a.getContext(new l(g, e));
+    " " == d && 2 == E.m + E.j || H(a, Q, d);
   }
   for (;k++ < s;) {
-    P = new l(t, k), E = a.getContext(new l(t, k)), " " == d && 2 == E.left + E.right || H(a, P, d);
+    Q = new l(t, k), E = a.getContext(new l(t, k)), " " == d && 2 == E.left + E.right || H(a, Q, d);
   }
   I(a, b, d);
   I(a, c, d);
@@ -214,7 +214,7 @@ O.prototype.start = function(a) {
   L(this.state);
   $("#text-tool-input").val("");
   this.a = a;
-  a = w(D(this.state, this.a));
+  a = w(C(this.state, this.a));
   I(this.state, this.a, null == a ? "\u2009" : a);
 };
 O.prototype.move = function() {
@@ -236,15 +236,15 @@ O.prototype.e = function() {
     "\n" == a[e] ? (c++, b = 0) : (I(this.state, this.g.add(new l(b, c)), a[e]), b++);
   }
 };
-function Q(a) {
+function P(a) {
   this.state = a;
   this.g = this.a = null;
 }
-Q.prototype.start = function(a) {
+P.prototype.start = function(a) {
   this.a = a;
   this.move(a);
 };
-Q.prototype.move = function(a) {
+P.prototype.move = function(a) {
   K(this.state);
   this.g = a;
   var b = Math.min(this.a.x, this.g.x);
@@ -255,30 +255,30 @@ Q.prototype.move = function(a) {
     }
   }
 };
-Q.prototype.end = function() {
+P.prototype.end = function() {
   L(this.state);
 };
-Q.prototype.l = function() {
+P.prototype.l = function() {
   return "crosshair";
 };
-Q.prototype.e = function() {
+P.prototype.e = function() {
 };
 function R(a) {
   this.state = a;
   this.h = this.a = null;
 }
 R.prototype.start = function(a) {
-  if (f && !x(D(this.state, a))) {
+  if (f && !x(C(this.state, a))) {
     var b = v.concat([p.add(r), p.add(u), q.add(r), q.add(u)]), c = null, e = 0, d;
     for (d in b) {
       var g = a.add(b[d]), k = y(this.state.getContext(g));
-      x(D(this.state, g)) && k > e && (c = b[d], e = k);
+      x(C(this.state, g)) && k > e && (c = b[d], e = k);
     }
     a = null == c ? a : a.add(c);
   }
   this.a = a;
   this.h = null;
-  if (x(D(this.state, this.a))) {
+  if (x(C(this.state, this.a))) {
     this.state.getContext(this.a);
     a = [];
     for (var h in v) {
@@ -312,7 +312,7 @@ R.prototype.end = function() {
 function S(a, b, c) {
   for (var e = b.clone(), d = [];;) {
     var g = e.add(c);
-    if (!x(D(a.state, g))) {
+    if (!x(C(a.state, g))) {
       return m(b, e) || d.push(e), d;
     }
     e = g;
@@ -320,7 +320,7 @@ function S(a, b, c) {
   }
 }
 R.prototype.l = function(a) {
-  return x(D(this.state, a)) ? "pointer" : "default";
+  return x(C(this.state, a)) ? "pointer" : "default";
 };
 R.prototype.e = function() {
 };
@@ -328,8 +328,8 @@ function T() {
   this.cells = Array(2E3);
   this.i = [];
   this.d = !0;
+  this.B = [];
   this.A = [];
-  this.w = [];
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(600);
     for (var b = 0;b < this.cells[a].length;b++) {
@@ -345,26 +345,26 @@ T.prototype.clear = function() {
   }
   L(this);
 };
-function D(a, b) {
+function C(a, b) {
   return a.cells[b.x][b.y];
 }
 function I(a, b, c) {
-  var e = D(a, b);
+  var e = C(a, b);
   a.i.push(new ea(b, e));
   e.f = c;
   a.d = !0;
 }
 function H(a, b, c) {
-  w(D(a, b)) != c && I(a, b, c);
+  w(C(a, b)) != c && I(a, b, c);
 }
 function K(a) {
   for (var b in a.i) {
-    a.i[b].B.f = null;
+    a.i[b].C.f = null;
   }
   a.i.length = 0;
 }
 function F(a, b) {
-  var c = D(a, b), c = null != c.f ? c.f : c.value;
+  var c = C(a, b), c = null != c.f ? c.f : c.value;
   if ("+" != c) {
     return c;
   }
@@ -372,8 +372,8 @@ function F(a, b) {
   return c.left && c.right && !c.m && !c.j ? "\u2013" : !c.left && !c.right && c.m && c.j ? "|" : c.left && c.right && c.m && c.j ? "\u2013" : "+";
 }
 T.prototype.getContext = function(a) {
-  var b = x(D(this, a.add(p))), c = x(D(this, a.add(q))), e = x(D(this, a.add(r)));
-  a = x(D(this, a.add(u)));
+  var b = x(C(this, a.add(p))), c = x(C(this, a.add(q))), e = x(C(this, a.add(r)));
+  a = x(C(this, a.add(u)));
   return new ca(b, c, e, a);
 };
 function L(a, b) {
@@ -384,7 +384,7 @@ function L(a, b) {
   });
   a.i.length = 0;
   for (var g in d) {
-    var k = d[g].B;
+    var k = d[g].C;
     c.push(new da(d[g].position, null != k.value ? k.value : " "));
     var h = w(k);
     if ("\u2009" == h || " " == h) {
@@ -393,13 +393,13 @@ function L(a, b) {
     k.f = null;
     k.value = h;
   }
-  d = b ? a.w : a.A;
+  d = b ? a.A : a.B;
   0 < c.length && (50 < d.length && d.shift(), d.push(c));
   a.d = !0;
 }
 function U(a) {
-  if (0 != a.A.length) {
-    var b = a.A.pop(), c;
+  if (0 != a.B.length) {
+    var b = a.B.pop(), c;
     for (c in b) {
       var e = b[c];
       I(a, e.position, e.value);
@@ -407,9 +407,9 @@ function U(a) {
     L(a, !0);
   }
 }
-function V(a) {
-  if (0 != a.w.length) {
-    var b = a.w.pop(), c;
+function ga(a) {
+  if (0 != a.A.length) {
+    var b = a.A.pop(), c;
     for (c in b) {
       var e = b[c];
       I(a, e.position, e.value);
@@ -417,7 +417,7 @@ function V(a) {
     L(a);
   }
 }
-function ga(a) {
+function ha(a) {
   for (var b = new l(Number.MAX_VALUE, Number.MAX_VALUE), c = new l(-1, -1), e = 0;e < a.cells.length;e++) {
     for (var d = 0;d < a.cells[e].length;d++) {
       null != w(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
@@ -434,14 +434,14 @@ function ga(a) {
   }
   return g;
 }
-;function W(a, b) {
+;function V(a, b) {
   this.view = a;
   this.state = b;
   this.c = new J(b);
   this.mode = 0;
   this.n();
 }
-W.prototype.p = function(a) {
+V.prototype.p = function(a) {
   var b = B(this.view, a);
   null == this.o && (this.o = b);
   m(b, this.o) || (this.view.canvas.style.cursor = this.c.l(b));
@@ -454,14 +454,14 @@ W.prototype.p = function(a) {
   }
   this.o = b;
 };
-function X(a) {
+function W(a) {
   2 == a.mode && a.c.end();
   a.mode = 0;
   a.t = null;
   a.u = null;
   a.o = null;
 }
-W.prototype.n = function() {
+V.prototype.n = function() {
   var a = this;
   $(window).resize(function() {
     A(a.view);
@@ -475,7 +475,7 @@ W.prototype.n = function() {
     "box-button" == a && (this.c = new J(this.state));
     "line-button" == a && (this.c = new M(this.state));
     "freeform-button" == a && (this.c = new N(this.state, "+"));
-    "erase-button" == a && (this.c = new Q(this.state));
+    "erase-button" == a && (this.c = new P(this.state));
     "move-button" == a && (this.c = new R(this.state));
     "text-button" == a && (this.c = new O(this.state));
     L(this.state);
@@ -485,10 +485,10 @@ W.prototype.n = function() {
     a = a.target.id;
     $(".dialog").removeClass("visible");
     $("#" + a + "-dialog").toggleClass("visible");
-    "export-button" == a && ($("#export-area").val(ga(this.state)), $("#export-area").focus(), $("#export-area").select());
+    "export-button" == a && ($("#export-area").val(ha(this.state)), $("#export-area").focus(), $("#export-area").select());
     "clear-button" == a && this.state.clear();
     "undo-button" == a && U(this.state);
-    "redo-button" == a && V(this.state);
+    "redo-button" == a && ga(this.state);
   }.bind(this));
   $("button.close-dialog-button").click(function() {
     $(".dialog").removeClass("visible");
@@ -525,7 +525,7 @@ W.prototype.n = function() {
   $(window).keydown(function(a) {
     var c = null;
     if (a.ctrlKey || a.metaKey) {
-      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && U(this.state), 89 == a.keyCode && V(this.state), 88 == a.keyCode && (c = "<cut>");
+      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && U(this.state), 89 == a.keyCode && ga(this.state), 88 == a.keyCode && (c = "<cut>");
     }
     8 == a.keyCode && (c = "<backspace>");
     13 == a.keyCode && (c = "<enter>");
@@ -546,21 +546,34 @@ W.prototype.n = function() {
     L(this.state);
   }.bind(this));
 };
-function ha(a) {
+function ia(a) {
+  this.v = !1;
   this.state = a;
   this.file = null;
+  ja(this);
   $("#save-button").click(function() {
     this.save();
   }.bind(this));
+  $("#drive-button").click(function() {
+    this.v || (X(!1), ka(this));
+  }.bind(this));
 }
-function ia(a) {
-  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!0}, function(b) {
-    b && !b.error ? a(!0) : window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
-      a(b && !b.error);
-    });
+function X(a) {
+  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:a}, function(a) {
+    a && !a.error && (this.v = !0, $("#drive-button").addClass("active"));
   });
 }
-function ja(a, b) {
+function ja(a) {
+  window.gapi && window.gapi.auth && window.gapi.auth.authorize ? X(!0) : window.setTimeout(function() {
+    ja(this);
+  }.bind(a), 2E3);
+}
+function ka(a) {
+  window.setTimeout(function() {
+    this.v || (X(!0), ka(this));
+  }.bind(a), 2E3);
+}
+function la(a, b) {
   a.file = b;
   $("#drive-filename").text(b.title);
   $("#drive-filename").editable(function(a) {
@@ -570,24 +583,24 @@ function ja(a, b) {
     return a;
   }.bind(a), {type:"text", submit:"OK"});
 }
-ha.prototype.save = function() {
+ia.prototype.save = function() {
   window.gapi.client.load("drive", "v2", function() {
-    ia(function(a) {
-      a && ka(this).execute(function(a) {
-        ja(this, a);
+    X(function(a) {
+      a && ma(this).execute(function(a) {
+        la(this, a);
       }.bind(this));
     }.bind(this));
   }.bind(this));
 };
-function ka(a) {
-  var b = ga(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
+function ma(a) {
+  var b = ha(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
   return window.gapi.client.request({path:"/upload/drive/v2/files" + (null == a.file ? "" : "/" + a.file.id), method:null == a.file ? "POST" : "PUT", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:b});
 }
-;function la(a) {
+;function na(a) {
   this.b = a;
   this.n();
 }
-la.prototype.n = function() {
+na.prototype.n = function() {
   var a = this.b.view.canvas;
   $(a).bind("mousewheel", function(a) {
     a = this.b.view.zoom * (0 < a.originalEvent.wheelDelta ? 1.1 : 0.9);
@@ -608,10 +621,10 @@ la.prototype.n = function() {
     }
   }.bind(this));
   $(a).mouseup(function() {
-    X(this.b);
+    W(this.b);
   }.bind(this));
   $(a).mouseleave(function() {
-    X(this.b);
+    W(this.b);
   }.bind(this));
   $(a).mousemove(function(a) {
     this.b.p(new l(a.clientX, a.clientY));
@@ -622,12 +635,12 @@ function Y(a) {
   this.r = this.k = !1;
   this.n();
 }
-function ma(a, b) {
-  a.v = b;
-  a.F = $.now();
+function oa(a, b) {
+  a.w = b;
+  a.G = $.now();
   a.k = !1;
   window.setTimeout(function() {
-    if (!this.k && !this.r && null != this.v) {
+    if (!this.k && !this.r && null != this.w) {
       var a = this.b;
       a.mode = 2;
       a.c.start(B(a.view, b));
@@ -635,7 +648,7 @@ function ma(a, b) {
   }.bind(a), 130);
 }
 Y.prototype.p = function(a) {
-  if (!this.k && 130 > $.now() - this.F && 3 < n(a, this.v).length()) {
+  if (!this.k && 130 > $.now() - this.G && 3 < n(a, this.w).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;
@@ -646,23 +659,23 @@ Y.prototype.p = function(a) {
 };
 Y.prototype.reset = function() {
   this.r = this.k = !1;
-  this.v = null;
+  this.w = null;
 };
 Y.prototype.n = function() {
   var a = this.b.view.canvas;
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      ma(this, new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      oa(this, new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
         var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        X(this.b);
+        W(this.b);
         this.r = !0;
         this.k = !1;
-        this.G = n(c, a).length();
-        this.D = this.b.view.zoom;
+        this.H = n(c, a).length();
+        this.F = this.b.view.zoom;
       }
     }
   }.bind(this));
@@ -674,19 +687,19 @@ Y.prototype.n = function() {
       if (1 < a.originalEvent.touches.length) {
         var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        this.r && (c = this.D * n(c, a).length() / this.G, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.d = !0);
+        this.r && (c = this.F * n(c, a).length() / this.H, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.d = !0);
       }
     }
   }.bind(this));
   $(a).bind("touchend", function(a) {
     a.preventDefault();
     this.reset();
-    X(this.b);
+    W(this.b);
   }.bind(this));
 };
-var Z = new T, na = new z(Z), oa = new W(na, Z);
-new Y(oa);
-new la(oa);
-new ha(Z);
-na.animate();
+var Z = new T, pa = new z(Z), qa = new V(pa, Z);
+new Y(qa);
+new na(qa);
+new ia(Z);
+pa.animate();
 

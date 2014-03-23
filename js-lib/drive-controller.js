@@ -10,38 +10,66 @@ var DEVELOPER_KEY = 'AIzaSyBbKO_v9p-G9StQjYmtUYLP6Px4MkGions';
  * @constructor
  */
 ascii.DriveController = function(state) {
+  /** @type {boolean} */
+  this.driveEnabled = false;
   /** @type {ascii.State} */
   this.state = state;
   // This is a file resource, as defined by the Drive API.
   /** @type {Object} */
   this.file = null;
 
+  this.tryInitialAuth();
+
   $('#save-button').click(function(e) {
       this.save();
+  }.bind(this));
+
+  $('#drive-button').click(function() {
+    if (!this.driveEnabled) {
+      // Haven't been able to immediately auth yet, so try full auth.
+      this.checkAuth(false);
+      this.waitForFullAuth();
+    } else {
+      this.loadDialog();
+    }
   }.bind(this));
 };
 
 /**
  * Check if the current user has authorized the application.
  */
-ascii.DriveController.prototype.checkAuth = function(callback) {
+ascii.DriveController.prototype.checkAuth = function(immediate) {
   window['gapi']['auth']['authorize']({
       'client_id': CLIENT_ID,
       'scope': SCOPES,
-      'immediate': true},
+      'immediate': immediate},
       function(result) {
         if (result && !result.error) {
-          callback(true);
-        } else {
-          window['gapi']['auth']['authorize']({
-              'client_id': CLIENT_ID,
-              'scope': SCOPES,
-              'immediate': false},
-              function(result) {
-                callback(result && !result.error);
-              });
+          this.driveEnabled = true;
+          $('#drive-button').addClass('active');
         }
-      });
+      }.bind(this));
+};
+
+ascii.DriveController.prototype.tryInitialAuth = function() {
+  if (window['gapi'] && window['gapi']['auth'] && window['gapi']['auth']['authorize']) {
+    this.checkAuth(true);
+  } else {
+    window.setTimeout(function() {
+      this.tryInitialAuth();
+    }.bind(this), 2000);
+  }
+};
+
+ascii.DriveController.prototype.waitForFullAuth = function() {
+  window.setTimeout(function() {
+    if (!this.driveEnabled) {
+      this.checkAuth(true);
+      this.waitForFullAuth();
+    } else {
+      this.loadDialog();
+    }
+  }.bind(this), 2000);
 };
 
 /**
@@ -65,36 +93,18 @@ ascii.DriveController.prototype.handleFile = function(file) {
 
 
 /**
- * Loads the picker.
- * TODO: Implement this...
+ * Loads the drive dialog.
  */
-ascii.DriveController.prototype.load = function() {
-/*
-  window['gapi']['client']['load']('picker',
-     {'callback': function() {
-    var picker = new window['google']['picker']['PickerBuilder']().
-              addView(google.picker.ViewId.PHOTOS).
-              setOAuthToken(oauthToken).
-              setDeveloperKey(developerKey).
-              setCallback(pickerCallback).
-              build();
-          picker.setVisible(true);
-}});
-*/
+ascii.DriveController.prototype.loadDialog = function() {
+  $('#drive-dialog').addClass('visible');
 };
 
 /**
  * Saves the current diagram to drive.
  */
 ascii.DriveController.prototype.save = function() {
-  window['gapi']['client']['load']('drive', 'v2', function() {
-      this.checkAuth(function(authed) {
-          if (authed) {
-            this.getSaveRequest().execute(function(result) {
-                this.handleFile(result);
-            }.bind(this));
-          }
-      }.bind(this))
+  this.getSaveRequest().execute(function(result) {
+    this.handleFile(result);
   }.bind(this));
 };
 
