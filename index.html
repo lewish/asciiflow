@@ -16,8 +16,22 @@
   color: #777;
 }
 
+a {
+  color: #FF9E20;
+}
+
 body {
   margin: 0px;
+}
+
+button {
+  cursor: pointer;
+}
+
+#drive-file-list li {
+  list-style: none;
+  font-size: 15px;
+  margin: 5px;
 }
 
 #draw-tools {
@@ -45,7 +59,6 @@ body {
   width: 30px;
   height: 30px;
   text-align: center;
-  cursor: pointer;
   outline: 0 !important;
   background-size: 200% 100% !important;
   background-color: #FFF;
@@ -182,6 +195,21 @@ textarea {
   box-shadow: 0px 0px 3px 3px #CCC;
 }
 
+#drive-save-state {
+  display: inline-block;
+  font-size: 15px;
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+#drive-filename {
+  font-size: 30px;
+  border: gray 1px solid;
+  padding: 5px;
+  background: #EEE;
+  cursor: pointer;
+}
+
 .fade-out {
   opacity: 0;
 }
@@ -213,10 +241,10 @@ textarea {
 </div>
 
 <div id="file-tools">
+  <div id="drive-save-state">Unsaved</div>
   <button id="drive-button" class="tool drive-image"></button>
   <button id="export-button" class="tool">Ex</button>
   <button id="import-button" class="tool">Im</button>
-  <button id="clear-button" class="tool">Cl</button>
   <button id="undo-button" class="tool">Un</button>
   <button id="redo-button" class="tool">Re</button>
   <button id="options-button" class="tool info-image"></button>
@@ -255,6 +283,11 @@ textarea {
 </div>
 
 <div id="drive-dialog" class="dialog">
+  <div id="drive-filename">Untitled ASCII Diagram</div>
+  <div style="margin: 5px;">Edit file permissions in <a href="http://drive.google.com/" target="_blank">Google Drive</a>.</div>
+  <br>
+  <div id="drive-file-list"></div>
+  <button id="drive-new-file-button">New Drawing</button>
   <button class="close-dialog-button">Close</button>
 </div>
 
