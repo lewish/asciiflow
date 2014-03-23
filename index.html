@@ -24,6 +24,16 @@ body {
   margin: 0px;
 }
 
+button {
+  cursor: pointer;
+}
+
+#drive-file-list li {
+  list-style: none;
+  font-size: 15px;
+  margin: 5px;
+}
+
 #draw-tools {
   text-align: center;
   display: inline-block;
@@ -49,7 +59,6 @@ body {
   width: 30px;
   height: 30px;
   text-align: center;
-  cursor: pointer;
   outline: 0 !important;
   background-size: 200% 100% !important;
   background-color: #FFF;
@@ -275,7 +284,10 @@ textarea {
 
 <div id="drive-dialog" class="dialog">
   <div id="drive-filename">Untitled ASCII Diagram</div>
-  <div style="margin: 5px;">Edit file permissions in <a href="http://drive.google.com/">Google Drive</a>.</div>
+  <div style="margin: 5px;">Edit file permissions in <a href="http://drive.google.com/" target="_blank">Google Drive</a>.</div>
+  <br>
+  <div id="drive-file-list"></div>
+  <button id="drive-new-file-button">New Drawing</button>
   <button class="close-dialog-button">Close</button>
 </div>
 

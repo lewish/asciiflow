@@ -39,9 +39,22 @@ ascii.DriveController = function(state, view) {
     var title = prompt('Enter new filename:', currentTitle);
     this.file['title'] = title;
     this.save();
+    this.loadFileList();
   }.bind(this));
 
   this.loopSave();
+
+  $(window).bind('hashchange', function() {
+    this.loadFromHash();
+  }.bind(this));
+
+  $('#drive-new-file-button').click(function() {
+    this.file = null;
+    this.state.clear();
+    window.location.hash = '';
+    this.save();
+    $('#drive-dialog').removeClass('visible');
+  }.bind(this));
 };
 
 /**
@@ -98,16 +111,32 @@ ascii.DriveController.prototype.handleFile = function(file) {
  */
 ascii.DriveController.prototype.loadDialog = function() {
   $('#drive-dialog').addClass('visible');
-  this.save();
+
+  var text = this.state.outputText();
+  // Don't save diagram if empty, just get's annoying.
+  if (text.length > 5 && text != this.cachedText) {
+    this.save();
+  }
+  this.loadFileList();
 };
 
+ascii.DriveController.prototype.loadFileList = function() {
+  this.getListRequest().execute(function(result) {
+    $('#drive-file-list').children().remove();
+    var items = result['items'];
+    for (var i in items) {
+      var entry = document.createElement('li');
+      entry.innerHTML = '<a href="#' + items[i]['id'] + '">' + items[i]['title'] + '</a>';
+      $('#drive-file-list').append(entry);
+    }
+  }.bind(this));
+}
 /**
  * Repeatedly save the diagram if it is editable and loaded.
  */
 ascii.DriveController.prototype.loopSave = function() {
   var text = this.state.outputText();
   if (text != this.cachedText && this.file && this.file['editable']) {
-    this.cachedText = text;
     this.save();
   }
   window.setTimeout(function() {
@@ -124,6 +153,7 @@ ascii.DriveController.prototype.save = function() {
   this.getSaveRequest(text).execute(function(result) {
     this.handleFile(result);
     $('#drive-save-state').text('Saved');
+    this.cachedText = text;
   }.bind(this));
 };
 
@@ -145,6 +175,7 @@ ascii.DriveController.prototype.reloadFileContent = function() {
     this.state.fromText(content, this.view.screenToCell(new ascii.Vector(
             this.view.canvas.width / 2,
             this.view.canvas.height / 2)));
+    this.cachedText = this.state.outputText();
   }.bind(this));
 };
 
@@ -187,6 +218,13 @@ ascii.DriveController.prototype.getSaveRequest = function(text) {
 ascii.DriveController.prototype.getLoadRequest = function(fileId) {
   return window['gapi']['client']['request']({
       'path': '/drive/v2/files/' + fileId,
+      'method': 'GET'});
+};
+
+ascii.DriveController.prototype.getListRequest = function() {
+  return window['gapi']['client']['request']({
+      'path': '/drive/v2/files',
+      'params' : { 'q': 'mimeType = \'text/plain\' and trashed = false' },
       'method': 'GET'});
 };
 
