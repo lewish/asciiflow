@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
 <meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="shortcut icon" sizes="196x196" href="images/favicon.png">
 <title>ASCIIFlow Infinity</title>
 <style>
 
@@ -155,6 +157,20 @@ textarea {
   max-height: 100%;
 }
 
+#text-tool-widget {
+  display: none;
+  z-index: 100;
+  position: fixed;
+  top: 60px;
+  left: 0px;
+  right: 0px;
+  width: 300px;
+  height: 80px;
+  margin: auto;
+  text-align: center;
+  box-shadow: 0px 0px 3px 3px #CCC;
+}
+
 .fade-out {
   opacity: 0;
 }
@@ -218,7 +234,14 @@ textarea {
   <button class="close-dialog-button">Close</button>
   <button id="import-submit-button">Submit</button>
 </div>
+
+<div id="text-tool-widget">
+  <textarea id="text-tool-input"></textarea>
+  <button id="text-tool-close">Close</button>
+</div>
+
 <canvas id="ascii-canvas"></canvas>
+
 <script src="https://apis.google.com/js/api.js"></script>
 <script src="https://apis.google.com/js/client.js"></script>
 <script src="jquery-1.9.1.min.js"></script>
@@ -227,7 +250,7 @@ textarea {
 
 <script>
 window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);
-window.setTimeout(function() { $('#logo-interstitial').visible(false); }, 3000);
+window.setTimeout(function() { $('#logo-interstitial').hide(); }, 3000);
 </script>
 
 </body>

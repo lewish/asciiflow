@@ -26,7 +26,7 @@ l.prototype.length = function() {
 l.prototype.scale = function(a) {
   return new l(this.x * a, this.y * a);
 };
-var p = new l(-1, 0), q = new l(1, 0), r = new l(0, -1), s = new l(0, 1), v = [p, q, r, s];
+var p = new l(-1, 0), q = new l(1, 0), r = new l(0, -1), u = new l(0, 1), v = [p, q, r, u];
 function ba() {
   this.f = this.value = null;
 }
@@ -39,11 +39,11 @@ function x(a) {
 function ca(a, b, c, e) {
   this.left = a;
   this.right = b;
-  this.n = c;
+  this.m = c;
   this.j = e;
 }
 function y(a) {
-  return a.left + a.right + a.n + a.j;
+  return a.left + a.right + a.m + a.j;
 }
 function da(a, b) {
   this.position = a;
@@ -59,18 +59,18 @@ function ea(a, b) {
   this.context = this.canvas.getContext("2d");
   this.zoom = 1;
   this.offset = new l(7500, 7500);
-  this.c = !0;
-  this.s = f;
+  this.d = !0;
+  this.q = f;
   A(this);
 }
 function A(a) {
   a.canvas.width = document.documentElement.clientWidth;
   a.canvas.height = document.documentElement.clientHeight;
-  a.c = !0;
+  a.d = !0;
 }
 z.prototype.animate = function() {
-  if (this.c || this.state.c) {
-    this.c = !1, this.state.c = !1, fa(this);
+  if (this.d || this.state.d) {
+    this.d = !1, this.state.d = !1, fa(this);
   }
   var a = this;
   window.requestAnimationFrame(function() {
@@ -94,7 +94,7 @@ function fa(a) {
     b.moveTo(0 - a.offset.x, 17 * d - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * d - a.offset.y);
   }
   a.context.stroke();
-  d = !a.s;
+  d = !a.q;
   b.font = "15px Courier New";
   for (var g = c.x;g < e.x;g++) {
     for (var k = c.y;k < e.y;k++) {
@@ -102,11 +102,11 @@ function fa(a) {
       if (x(h) || null != h.f && " " != w(h)) {
         a.context.fillStyle = null != h.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (k - 1) - a.offset.y, 9, 17);
       }
-      var t = E(a.state, new l(g, k));
-      null == t || x(h) && !d || (a.context.fillStyle = "#000000", b.fillText(t, 9 * g - a.offset.x, 17 * k - a.offset.y - 3));
+      var s = F(a.state, new l(g, k));
+      null == s || x(h) && !d || (a.context.fillStyle = "#000000", b.fillText(s, 9 * g - a.offset.x, 17 * k - a.offset.y - 3));
     }
   }
-  if (a.s) {
+  if (a.q) {
     b.lineWidth = "1";
     b.strokeStyle = "#000000";
     b.beginPath();
@@ -126,40 +126,40 @@ function fa(a) {
 function B(a, b) {
   return new l(Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).y + 8.5) / 17)), 598));
 }
-;function F(a, b, c, e, d) {
+;function G(a, b, c, e, d) {
   d = d || "+";
-  var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), t = Math.max(b.y, c.y), u = e ? c.x : b.x;
+  var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), s = Math.max(b.y, c.y), t = e ? c.x : b.x;
   for (e = e ? b.y : c.y;g++ < h;) {
-    var O = new l(g, e), J = a.getContext(new l(g, e));
-    " " == d && 2 == J.n + J.j || G(a, O, d);
+    var O = new l(g, e), E = a.getContext(new l(g, e));
+    " " == d && 2 == E.m + E.j || H(a, O, d);
   }
-  for (;k++ < t;) {
-    O = new l(u, k), J = a.getContext(new l(u, k)), " " == d && 2 == J.left + J.right || G(a, O, d);
+  for (;k++ < s;) {
+    O = new l(t, k), E = a.getContext(new l(t, k)), " " == d && 2 == E.left + E.right || H(a, O, d);
   }
-  H(a, b, d);
-  H(a, c, d);
-  G(a, new l(u, e), d);
+  I(a, b, d);
+  I(a, c, d);
+  H(a, new l(t, e), d);
 }
-function I(a) {
+function J(a) {
   this.state = a;
   this.a = null;
 }
-I.prototype.start = function(a) {
+J.prototype.start = function(a) {
   this.a = a;
 };
-I.prototype.move = function(a) {
-  this.l = a;
+J.prototype.move = function(a) {
+  this.g = a;
   K(this.state);
-  F(this.state, this.a, a, !0);
-  F(this.state, this.a, a, !1);
+  G(this.state, this.a, a, !0);
+  G(this.state, this.a, a, !1);
 };
-I.prototype.end = function() {
+J.prototype.end = function() {
   L(this.state);
 };
-I.prototype.m = function() {
+J.prototype.l = function() {
   return "crosshair";
 };
-I.prototype.h = function() {
+J.prototype.e = function() {
 };
 function M(a) {
   this.state = a;
@@ -171,72 +171,68 @@ M.prototype.start = function(a) {
 M.prototype.move = function(a) {
   K(this.state);
   var b = this.state.getContext(this.a), c = this.state.getContext(a);
-  F(this.state, this.a, a, b.n && b.j || c.left && c.right);
+  G(this.state, this.a, a, b.m && b.j || c.left && c.right);
 };
 M.prototype.end = function() {
   L(this.state);
 };
-M.prototype.m = function() {
+M.prototype.l = function() {
   return "crosshair";
 };
-M.prototype.h = function() {
+M.prototype.e = function() {
 };
 function N(a, b) {
   this.state = a;
   this.value = b;
 }
 N.prototype.start = function(a) {
-  H(this.state, a, this.value);
+  I(this.state, a, this.value);
 };
 N.prototype.move = function(a) {
-  H(this.state, a, this.value);
+  I(this.state, a, this.value);
 };
 N.prototype.end = function() {
   L(this.state);
 };
-N.prototype.m = function() {
+N.prototype.l = function() {
   return "crosshair";
 };
-N.prototype.h = function(a) {
+N.prototype.e = function(a) {
   1 == a.length && (this.value = a);
 };
 function P(a) {
   this.state = a;
-  this.e = this.a = null;
+  this.a = null;
 }
 P.prototype.start = function(a) {
-  this.e = this.a = a;
-  K(this.state);
-  var b = w(D(this.state, a));
-  H(this.state, a, null == b ? "\u2009" : b);
+  L(this.state);
+  $("#text-tool-input").val("");
+  this.a = a;
+  a = w(D(this.state, this.a));
+  I(this.state, this.a, null == a ? "\u2009" : a);
 };
 P.prototype.move = function() {
 };
 P.prototype.end = function() {
+  null != this.a && (this.g = this.a, this.a = null, $("#text-tool-widget").hide(0, function() {
+    $("#text-tool-widget").show(0, function() {
+      $("#text-tool-input").focus();
+    });
+  }));
 };
-P.prototype.m = function() {
-  return "text";
+P.prototype.l = function() {
+  return "pointer";
 };
-P.prototype.h = function(a) {
-  if (null != this.e) {
-    var b = this.e.add(q);
-    if ("<enter>" == a || x(D(this.state, b))) {
-      K(this.state), this.a = b = this.a.add(s);
-    }
-    "<backspace>" == a && this.a.x <= b.x && (K(this.state), b = this.e.add(p), b.x < this.a.x && (b.x = this.a.x), H(this.state, b, "\u2009"), L(this.state));
-    "<up>" == a && (K(this.state), this.a = b = this.e.add(r));
-    "<left>" == a && (K(this.state), this.a = b = this.e.add(p));
-    "<right>" == a && (K(this.state), this.a = b = this.e.add(q));
-    "<down>" == a && (K(this.state), this.a = b = this.e.add(s));
-    1 == a.length && (H(this.state, this.e, a), L(this.state));
-    this.e = b;
-    a = w(D(this.state, b));
-    H(this.state, b, null == a ? "\u2009" : a);
+P.prototype.e = function() {
+  var a = $("#text-tool-input").val();
+  K(this.state);
+  for (var b = 0, c = 0, e = 0;e < a.length;e++) {
+    "\n" == a[e] ? (c++, b = 0) : (I(this.state, this.g.add(new l(b, c)), a[e]), b++);
   }
 };
 function Q(a) {
   this.state = a;
-  this.l = this.a = null;
+  this.g = this.a = null;
 }
 Q.prototype.start = function(a) {
   this.a = a;
@@ -244,30 +240,30 @@ Q.prototype.start = function(a) {
 };
 Q.prototype.move = function(a) {
   K(this.state);
-  this.l = a;
-  var b = Math.min(this.a.x, this.l.x);
-  a = Math.min(this.a.y, this.l.y);
-  for (var c = Math.max(this.a.x, this.l.x), e = Math.max(this.a.y, this.l.y);b <= c;b++) {
+  this.g = a;
+  var b = Math.min(this.a.x, this.g.x);
+  a = Math.min(this.a.y, this.g.y);
+  for (var c = Math.max(this.a.x, this.g.x), e = Math.max(this.a.y, this.g.y);b <= c;b++) {
     for (var d = a;d <= e;d++) {
-      H(this.state, new l(b, d), "\u2009");
+      I(this.state, new l(b, d), "\u2009");
     }
   }
 };
 Q.prototype.end = function() {
   L(this.state);
 };
-Q.prototype.m = function() {
+Q.prototype.l = function() {
   return "crosshair";
 };
-Q.prototype.h = function() {
+Q.prototype.e = function() {
 };
 function R(a) {
   this.state = a;
-  this.g = this.a = null;
+  this.h = this.a = null;
 }
 R.prototype.start = function(a) {
   if (f && !x(D(this.state, a))) {
-    var b = v.concat([p.add(r), p.add(s), q.add(r), q.add(s)]), c = null, e = 0, d;
+    var b = v.concat([p.add(r), p.add(u), q.add(r), q.add(u)]), c = null, e = 0, d;
     for (d in b) {
       var g = a.add(b[d]), k = y(this.state.getContext(g));
       x(D(this.state, g)) && k > e && (c = b[d], e = k);
@@ -275,33 +271,33 @@ R.prototype.start = function(a) {
     a = null == c ? a : a.add(c);
   }
   this.a = a;
-  this.g = null;
+  this.h = null;
   if (x(D(this.state, this.a))) {
     this.state.getContext(this.a);
     a = [];
     for (var h in v) {
-      var b = S(this, this.a, v[h]), t;
-      for (t in b) {
-        if (c = b[t], e = 0 != v[h].x, 1 == y(this.state.getContext(c))) {
-          a.push({position:c, u:e});
+      var b = S(this, this.a, v[h]), s;
+      for (s in b) {
+        if (c = b[s], e = 0 != v[h].x, 1 == y(this.state.getContext(c))) {
+          a.push({position:c, s:e});
         } else {
-          for (var u in v) {
-            0 != v[h].add(v[u]).length() && 2 != v[h].add(v[u]).length() && (d = S(this, c, v[u]), 0 != d.length && a.push({position:d[d.length - 1], u:e}));
+          for (var t in v) {
+            0 != v[h].add(v[t]).length() && 2 != v[h].add(v[t]).length() && (d = S(this, c, v[t]), 0 != d.length && a.push({position:d[d.length - 1], s:e}));
           }
         }
       }
     }
-    this.g = a;
+    this.h = a;
     this.move(this.a);
   }
 };
 R.prototype.move = function(a) {
   K(this.state);
-  for (var b in this.g) {
-    F(this.state, this.a, this.g[b].position, this.g[b].u, " ");
+  for (var b in this.h) {
+    G(this.state, this.a, this.h[b].position, this.h[b].s, " ");
   }
-  for (b in this.g) {
-    F(this.state, a, this.g[b].position, this.g[b].u);
+  for (b in this.h) {
+    G(this.state, a, this.h[b].position, this.h[b].s);
   }
 };
 R.prototype.end = function() {
@@ -317,16 +313,17 @@ function S(a, b, c) {
     3 == y(a.state.getContext(e)) && d.push(e);
   }
 }
-R.prototype.m = function(a) {
+R.prototype.l = function(a) {
   return x(D(this.state, a)) ? "pointer" : "default";
 };
-R.prototype.h = function() {
+R.prototype.e = function() {
 };
 function T() {
   this.cells = Array(2E3);
   this.i = [];
-  this.c = !0;
-  this.q = [];
+  this.d = !0;
+  this.w = [];
+  this.v = [];
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(600);
     for (var b = 0;b < this.cells[a].length;b++) {
@@ -337,7 +334,7 @@ function T() {
 T.prototype.clear = function() {
   for (var a = 0;a < this.cells.length;a++) {
     for (var b = 0;b < this.cells[a].length;b++) {
-      null != w(this.cells[a][b]) && H(this, new l(a, b), "\u2009");
+      null != w(this.cells[a][b]) && I(this, new l(a, b), "\u2009");
     }
   }
   L(this);
@@ -345,14 +342,14 @@ T.prototype.clear = function() {
 function D(a, b) {
   return a.cells[b.x][b.y];
 }
-function H(a, b, c) {
+function I(a, b, c) {
   var e = D(a, b);
   a.i.push(new ea(b, e));
   e.f = c;
-  a.c = !0;
+  a.d = !0;
 }
-function G(a, b, c) {
-  w(D(a, b)) != c && H(a, b, c);
+function H(a, b, c) {
+  w(D(a, b)) != c && I(a, b, c);
 }
 function K(a) {
   for (var b in a.i) {
@@ -360,17 +357,17 @@ function K(a) {
   }
   a.i.length = 0;
 }
-function E(a, b) {
+function F(a, b) {
   var c = D(a, b), c = null != c.f ? c.f : c.value;
   if ("+" != c) {
     return c;
   }
   c = a.getContext(b);
-  return c.left && c.right && !c.n && !c.j ? "\u2013" : !c.left && !c.right && c.n && c.j ? "|" : c.left && c.right && c.n && c.j ? "\u2013" : "+";
+  return c.left && c.right && !c.m && !c.j ? "\u2013" : !c.left && !c.right && c.m && c.j ? "|" : c.left && c.right && c.m && c.j ? "\u2013" : "+";
 }
 T.prototype.getContext = function(a) {
   var b = x(D(this, a.add(p))), c = x(D(this, a.add(q))), e = x(D(this, a.add(r)));
-  a = x(D(this, a.add(s)));
+  a = x(D(this, a.add(u)));
   return new ca(b, c, e, a);
 };
 function L(a, b) {
@@ -390,20 +387,31 @@ function L(a, b) {
     k.f = null;
     k.value = h;
   }
-  !b && 0 < c.length && (50 < a.q.length && a.q.shift(), a.q.push(c));
-  a.c = !0;
+  d = b ? a.v : a.w;
+  0 < c.length && (50 < d.length && d.shift(), d.push(c));
+  a.d = !0;
 }
 function U(a) {
-  if (0 != a.q.length) {
-    var b = a.q.pop(), c;
+  if (0 != a.w.length) {
+    var b = a.w.pop(), c;
     for (c in b) {
       var e = b[c];
-      H(a, e.position, e.value);
+      I(a, e.position, e.value);
     }
     L(a, !0);
   }
 }
 function V(a) {
+  if (0 != a.v.length) {
+    var b = a.v.pop(), c;
+    for (c in b) {
+      var e = b[c];
+      I(a, e.position, e.value);
+    }
+    L(a);
+  }
+}
+function ga(a) {
   for (var b = new l(Number.MAX_VALUE, Number.MAX_VALUE), c = new l(-1, -1), e = 0;e < a.cells.length;e++) {
     for (var d = 0;d < a.cells[e].length;d++) {
       null != w(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
@@ -414,7 +422,7 @@ function V(a) {
   }
   for (var g = "", d = b.y;d <= c.y;d++) {
     for (var k = "", e = b.x;e <= c.x;e++) {
-      var h = E(a, new l(e, d)), k = k + (null == h ? " " : h)
+      var h = F(a, new l(e, d)), k = k + (null == h ? " " : h)
     }
     g += k.replace("\\s+$/g", "") + "\n";
   }
@@ -423,31 +431,31 @@ function V(a) {
 ;function W(a, b) {
   this.view = a;
   this.state = b;
-  this.d = new I(b);
+  this.c = new J(b);
   this.mode = 0;
-  this.o();
+  this.n();
 }
-W.prototype.r = function(a) {
+W.prototype.p = function(a) {
   var b = B(this.view, a);
-  null == this.p && (this.p = b);
-  m(b, this.p) || (this.view.canvas.style.cursor = this.d.m(b));
-  2 != this.mode || m(b, this.p) || this.d.move(b);
+  null == this.o && (this.o = b);
+  m(b, this.o) || (this.view.canvas.style.cursor = this.c.l(b));
+  2 != this.mode || m(b, this.o) || this.c.move(b);
   if (1 == this.mode) {
     var c = this.view;
-    a = this.w.add(n(this.v, a).scale(1 / this.view.zoom));
+    a = this.u.add(n(this.t, a).scale(1 / this.view.zoom));
     c.offset = a;
-    c.c = !0;
+    c.d = !0;
   }
-  this.p = b;
+  this.o = b;
 };
 function X(a) {
-  (a.mode = 2) && a.d.end();
+  (a.mode = 2) && a.c.end();
   a.mode = 0;
-  a.v = null;
-  a.w = null;
-  a.p = null;
+  a.t = null;
+  a.u = null;
+  a.o = null;
 }
-W.prototype.o = function() {
+W.prototype.n = function() {
   var a = this;
   $(window).resize(function() {
     A(a.view);
@@ -457,20 +465,22 @@ W.prototype.o = function() {
     $("#draw-tools > button.tool").removeClass("active");
     $("#" + a).toggleClass("active");
     $(".dialog").removeClass("visible");
-    "box-button" == a && (this.d = new I(this.state));
-    "line-button" == a && (this.d = new M(this.state));
-    "freeform-button" == a && (this.d = new N(this.state, "+"));
-    "erase-button" == a && (this.d = new Q(this.state));
-    "move-button" == a && (this.d = new R(this.state));
-    "text-button" == a && (this.d = new P(this.state));
+    "box-button" == a && (this.c = new J(this.state));
+    "line-button" == a && (this.c = new M(this.state));
+    "freeform-button" == a && (this.c = new N(this.state, "+"));
+    "erase-button" == a && (this.c = new Q(this.state));
+    "move-button" == a && (this.c = new R(this.state));
+    "text-button" == a && (this.c = new P(this.state));
+    this.view.canvas.focus();
   }.bind(this));
   $("#file-tools > button.tool").click(function(a) {
     a = a.target.id;
     $(".dialog").removeClass("visible");
     $("#" + a + "-dialog").toggleClass("visible");
-    "export-button" == a && ($("#export-area").val(V(this.state)), $("#export-area").focus(), $("#export-area").select());
+    "export-button" == a && ($("#export-area").val(ga(this.state)), $("#export-area").focus(), $("#export-area").select());
     "clear-button" == a && this.state.clear();
     "undo-button" == a && U(this.state);
+    "redo-button" == a && V(this.state);
   }.bind(this));
   $("button.close-dialog-button").click(function() {
     $(".dialog").removeClass("visible");
@@ -483,7 +493,7 @@ W.prototype.o = function() {
         if ("\u2013" == h || "|" == h) {
           h = "+";
         }
-        H(a, (new l(k, d)).add(e), h);
+        I(a, (new l(k, d)).add(e), h);
       }
     }
     L(a);
@@ -491,21 +501,23 @@ W.prototype.o = function() {
   }.bind(this));
   $("#use-lines-button").click(function() {
     $(".dialog").removeClass("visible");
-    this.view.s = !0;
-    this.view.c = !0;
+    var a = this.view;
+    a.q = !0;
+    a.d = !0;
   }.bind(this));
   $("#use-ascii-button").click(function() {
     $(".dialog").removeClass("visible");
-    this.view.s = !1;
-    this.view.c = !0;
+    var a = this.view;
+    a.q = !1;
+    a.d = !0;
   }.bind(this));
   $(window).keypress(function(a) {
-    a.ctrlKey || a.metaKey || 13 == a.keyCode || this.d.h(String.fromCharCode(a.keyCode));
+    a.ctrlKey || a.metaKey || 13 == a.keyCode || this.c.e(String.fromCharCode(a.keyCode));
   }.bind(this));
   $(window).keydown(function(a) {
     var c = null;
     if (a.ctrlKey || a.metaKey) {
-      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && U(this.state), 88 == a.keyCode && (c = "<cut>");
+      67 == a.keyCode && (c = "<copy>"), 86 == a.keyCode && (c = "<paste>"), 90 == a.keyCode && U(this.state), 89 == a.keyCode && V(this.state), 88 == a.keyCode && (c = "<cut>");
     }
     8 == a.keyCode && (c = "<backspace>");
     13 == a.keyCode && (c = "<enter>");
@@ -513,24 +525,34 @@ W.prototype.o = function() {
     40 == a.keyCode && (c = "<down>");
     37 == a.keyCode && (c = "<left>");
     39 == a.keyCode && (c = "<right>");
-    null != c && this.d.h(c);
+    null != c && this.c.e(c);
+  }.bind(this));
+  $("#text-tool-input").keyup(function() {
+    this.c.e("");
+  }.bind(this));
+  $("#text-tool-input").change(function() {
+    this.c.e("");
+  }.bind(this));
+  $("#text-tool-close").click(function() {
+    $("#text-tool-widget").hide();
+    L(this.state);
   }.bind(this));
 };
-function ga(a) {
+function ha(a) {
   this.state = a;
   this.file = null;
   $("#save-button").click(function() {
     this.save();
   }.bind(this));
 }
-function ha(a) {
+function ia(a) {
   window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!0}, function(b) {
     b && !b.error ? a(!0) : window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:!1}, function(b) {
       a(b && !b.error);
     });
   });
 }
-function ia(a, b) {
+function ja(a, b) {
   a.file = b;
   $("#drive-filename").text(b.title);
   $("#drive-filename").editable(function(a) {
@@ -540,41 +562,41 @@ function ia(a, b) {
     return a;
   }.bind(a), {type:"text", submit:"OK"});
 }
-ga.prototype.save = function() {
+ha.prototype.save = function() {
   window.gapi.client.load("drive", "v2", function() {
-    ha(function(a) {
-      a && ja(this).execute(function(a) {
-        ia(this, a);
+    ia(function(a) {
+      a && ka(this).execute(function(a) {
+        ja(this, a);
       }.bind(this));
     }.bind(this));
   }.bind(this));
 };
-function ja(a) {
-  var b = V(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
+function ka(a) {
+  var b = ga(a.state), b = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:null == a.file ? "Untitled ASCII Diagram" : a.file.title, mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
   return window.gapi.client.request({path:"/upload/drive/v2/files" + (null == a.file ? "" : "/" + a.file.id), method:null == a.file ? "POST" : "PUT", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:b});
 }
-;function ka(a) {
+;function la(a) {
   this.b = a;
-  this.o();
+  this.n();
 }
-ka.prototype.o = function() {
+la.prototype.n = function() {
   var a = this.b.view.canvas;
   $(a).bind("mousewheel", function(a) {
     a = this.b.view.zoom * (0 < a.originalEvent.wheelDelta ? 1.1 : 0.9);
     a = Math.max(Math.min(a, 5), 0.2);
     var c = this.b.view;
     c.zoom = a;
-    c.c = !0;
+    c.d = !0;
   }.bind(this));
   $(a).mousedown(function(a) {
     if (a.ctrlKey || a.metaKey) {
       var c = this.b;
       a = new l(a.clientX, a.clientY);
       c.mode = 1;
-      c.v = a;
-      c.w = c.view.offset;
+      c.t = a;
+      c.u = c.view.offset;
     } else {
-      c = this.b, a = new l(a.clientX, a.clientY), c.mode = 2, c.d.start(B(c.view, a));
+      c = this.b, a = new l(a.clientX, a.clientY), c.mode = 2, c.c.start(B(c.view, a));
     }
   }.bind(this));
   $(a).mouseup(function() {
@@ -584,52 +606,52 @@ ka.prototype.o = function() {
     X(this.b);
   }.bind(this));
   $(a).mousemove(function(a) {
-    this.b.r(new l(a.clientX, a.clientY));
+    this.b.p(new l(a.clientX, a.clientY));
   }.bind(this));
 };
 function Y(a) {
   this.b = a;
-  this.t = this.k = !1;
-  this.o();
+  this.r = this.k = !1;
+  this.n();
 }
-function la(a, b) {
+function ma(a, b) {
   a.B = b;
   a.F = $.now();
   a.k = !1;
   window.setTimeout(function() {
-    if (!this.k && !this.t) {
+    if (!this.k && !this.r) {
       var a = this.b;
       a.mode = 2;
-      a.d.start(B(a.view, b));
+      a.c.start(B(a.view, b));
     }
   }.bind(a), 130);
 }
-Y.prototype.r = function(a) {
+Y.prototype.p = function(a) {
   if (!this.k && 130 > $.now() - this.F && 3 < n(a, this.B).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;
-    b.v = a;
-    b.w = b.view.offset;
+    b.t = a;
+    b.u = b.view.offset;
   }
-  this.b.r(a);
+  this.b.p(a);
 };
 Y.prototype.reset = function() {
-  this.t = this.k = !1;
+  this.r = this.k = !1;
   this.B = null;
 };
-Y.prototype.o = function() {
+Y.prototype.n = function() {
   var a = this.b.view.canvas;
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      la(this, new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      ma(this, new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
         var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
         X(this.b);
-        this.t = !0;
+        this.r = !0;
         this.k = !1;
         this.G = n(c, a).length();
         this.D = this.b.view.zoom;
@@ -639,12 +661,12 @@ Y.prototype.o = function() {
   $(a).bind("touchmove", function(a) {
     a.preventDefault();
     if (1 == a.originalEvent.touches.length) {
-      this.r(new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
+      this.p(new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY));
     } else {
       if (1 < a.originalEvent.touches.length) {
         var c = new l(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new l(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        this.t && (c = this.D * n(c, a).length() / this.G, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.c = !0);
+        this.r && (c = this.D * n(c, a).length() / this.G, c = Math.max(Math.min(c, 5), 0.5), a = this.b.view, a.zoom = c, a.d = !0);
       }
     }
   }.bind(this));
@@ -654,9 +676,9 @@ Y.prototype.o = function() {
     X(this.b);
   }.bind(this));
 };
-var Z = new T, ma = new z(Z), na = new W(ma, Z);
-new Y(na);
-new ka(na);
-new ga(Z);
-ma.animate();
+var Z = new T, na = new z(Z), oa = new W(na, Z);
+new Y(oa);
+new la(oa);
+new ha(Z);
+na.animate();
 
