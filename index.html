@@ -38,7 +38,7 @@ body {
   z-index: 100;
 }
 
-button {
+#draw-tools > button, #file-tools > button {
   vertical-align: top;
   display: inline-block;
   margin: 5px;
@@ -120,6 +120,17 @@ button.active, .info-icon {
   display: inline-block;
 }
 
+.close-dialog-button, #import-submit-button, #text-tool-close {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  margin: 5px;
+}
+
+#import-submit-button {
+  margin-right: 70px;
+}
+
 #ascii-canvas {
   position: fixed;
   left: 0px;
@@ -182,6 +193,7 @@ textarea {
 .move-image { background-image: url('images/move-icon.png'); }
 .text-image { background-image: url('images/text-icon.png'); }
 .info-image { background-image: url('images/info-icon.png'); }
+.drive-image { background-image: url('images/drive-icon.png'); }
 
 </style>
 </head>
@@ -201,10 +213,9 @@ textarea {
 </div>
 
 <div id="file-tools">
-  <div id="drive-filename" class="edit">Untitled ASCII Diagram</div>
+  <button id="drive-button" class="tool drive-image"></button>
   <button id="export-button" class="tool">Ex</button>
   <button id="import-button" class="tool">Im</button>
-  <button id="save-button" class="tool">Sa</button>
   <button id="clear-button" class="tool">Cl</button>
   <button id="undo-button" class="tool">Un</button>
   <button id="redo-button" class="tool">Re</button>
@@ -223,9 +234,10 @@ textarea {
   <div class="info-icon erase-image"></div><div class="info-description">Drag out an area to erase.</div><br>
   <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines, just drag a line to change it.</div><br>
   <div class="info-icon text-image"></div><div class="info-description">Press where to start writing, and type the text you want.</div><br>
+  <p> To move around the screen, hold CTRL on desktop and drag. On mobile, drag quickly to move and press and hold to start drawing.</p>
 
   <button id="use-lines-button">Lines Mode</button>
-  <button id="use-ascii-button">ASCII Mode</button>
+  <button id="use-ascii-button">ASCII Mode</button><br>
   <button class="close-dialog-button">Close</button>
 </div>
 
@@ -235,18 +247,24 @@ textarea {
   <button id="import-submit-button">Submit</button>
 </div>
 
+<!-- These dialogs are handled seperately. -->
+
 <div id="text-tool-widget">
   <textarea id="text-tool-input"></textarea>
   <button id="text-tool-close">Close</button>
 </div>
 
+<div id="drive-dialog" class="dialog">
+  <button class="close-dialog-button">Close</button>
+</div>
+
+<textarea id="freeform-tool-input"></textarea>
+
 <canvas id="ascii-canvas"></canvas>
 
-<script src="https://apis.google.com/js/api.js"></script>
-<script src="https://apis.google.com/js/client.js"></script>
 <script src="jquery-1.9.1.min.js"></script>
-<script src="jquery.jeditable.min.js"></script>
 <script src="js-compiled.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=window.gapiCallback"></script>
 
 <script>
 window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);
