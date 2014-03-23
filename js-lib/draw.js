@@ -150,6 +150,10 @@ ascii.DrawLine.prototype.handleKey = function(value) {};
 ascii.DrawFreeform = function(state, value) {
   this.state = state;
   this.value = value;
+  if (TOUCH_ENABLED) {
+    $('#freeform-tool-input').val('');
+    $('#freeform-tool-input').hide(0, function() {$('#freeform-tool-input').show(0, function() {$('#freeform-tool-input').focus();});});
+  }
 };
 
 /** @inheritDoc */
@@ -174,6 +178,11 @@ ascii.DrawFreeform.prototype.getCursor = function(position) {
 
 /** @inheritDoc */
 ascii.DrawFreeform.prototype.handleKey = function(value) {
+  if (TOUCH_ENABLED) {
+    this.value = $('#freeform-tool-input').val().substr(0, 1);
+    $('#freeform-tool-input').blur();
+    $('#freeform-tool-input').hide(0);
+  }
   if (value.length == 1) {
     // The value is not a special character, so lets use it.
     this.value = value;

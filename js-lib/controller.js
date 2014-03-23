@@ -140,10 +140,10 @@ ascii.Controller.prototype.installBindings = function() {
   }.bind(this));
 
   // Bit of a hack, just triggers the text tool to get a new value.
-  $('#text-tool-input').keyup(function(){
+  $('#text-tool-input, #freeform-tool-input').keyup(function(){
       this.drawFunction.handleKey('');
   }.bind(this));
-  $('#text-tool-input').change(function(){
+  $('#text-tool-input, #freeform-tool-input').change(function(){
       this.drawFunction.handleKey('');
   }.bind(this));
   $('#text-tool-close').click(function(){

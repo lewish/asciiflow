@@ -130,11 +130,11 @@ function B(a, b) {
   d = d || "+";
   var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), s = Math.max(b.y, c.y), t = e ? c.x : b.x;
   for (e = e ? b.y : c.y;g++ < h;) {
-    var O = new l(g, e), E = a.getContext(new l(g, e));
-    " " == d && 2 == E.m + E.j || H(a, O, d);
+    var P = new l(g, e), E = a.getContext(new l(g, e));
+    " " == d && 2 == E.m + E.j || H(a, P, d);
   }
   for (;k++ < s;) {
-    O = new l(t, k), E = a.getContext(new l(t, k)), " " == d && 2 == E.left + E.right || H(a, O, d);
+    P = new l(t, k), E = a.getContext(new l(t, k)), " " == d && 2 == E.left + E.right || H(a, P, d);
   }
   I(a, b, d);
   I(a, c, d);
@@ -184,6 +184,11 @@ M.prototype.e = function() {
 function N(a, b) {
   this.state = a;
   this.value = b;
+  f && ($("#freeform-tool-input").val(""), $("#freeform-tool-input").hide(0, function() {
+    $("#freeform-tool-input").show(0, function() {
+      $("#freeform-tool-input").focus();
+    });
+  }));
 }
 N.prototype.start = function(a) {
   I(this.state, a, this.value);
@@ -198,32 +203,33 @@ N.prototype.l = function() {
   return "crosshair";
 };
 N.prototype.e = function(a) {
+  f && (this.value = $("#freeform-tool-input").val().substr(0, 1), $("#freeform-tool-input").blur(), $("#freeform-tool-input").hide(0));
   1 == a.length && (this.value = a);
 };
-function P(a) {
+function O(a) {
   this.state = a;
   this.a = null;
 }
-P.prototype.start = function(a) {
+O.prototype.start = function(a) {
   L(this.state);
   $("#text-tool-input").val("");
   this.a = a;
   a = w(D(this.state, this.a));
   I(this.state, this.a, null == a ? "\u2009" : a);
 };
-P.prototype.move = function() {
+O.prototype.move = function() {
 };
-P.prototype.end = function() {
+O.prototype.end = function() {
   null != this.a && (this.g = this.a, this.a = null, $("#text-tool-widget").hide(0, function() {
     $("#text-tool-widget").show(0, function() {
       $("#text-tool-input").focus();
     });
   }));
 };
-P.prototype.l = function() {
+O.prototype.l = function() {
   return "pointer";
 };
-P.prototype.e = function() {
+O.prototype.e = function() {
   var a = $("#text-tool-input").val();
   K(this.state);
   for (var b = 0, c = 0, e = 0;e < a.length;e++) {
@@ -471,7 +477,7 @@ W.prototype.n = function() {
     "freeform-button" == a && (this.c = new N(this.state, "+"));
     "erase-button" == a && (this.c = new Q(this.state));
     "move-button" == a && (this.c = new R(this.state));
-    "text-button" == a && (this.c = new P(this.state));
+    "text-button" == a && (this.c = new O(this.state));
     L(this.state);
     this.view.canvas.focus();
   }.bind(this));
@@ -529,10 +535,10 @@ W.prototype.n = function() {
     39 == a.keyCode && (c = "<right>");
     null != c && this.c.e(c);
   }.bind(this));
-  $("#text-tool-input").keyup(function() {
+  $("#text-tool-input, #freeform-tool-input").keyup(function() {
     this.c.e("");
   }.bind(this));
-  $("#text-tool-input").change(function() {
+  $("#text-tool-input, #freeform-tool-input").change(function() {
     this.c.e("");
   }.bind(this));
   $("#text-tool-close").click(function() {
