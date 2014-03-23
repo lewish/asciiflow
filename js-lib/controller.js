@@ -100,6 +100,7 @@ ascii.Controller.prototype.installBindings = function() {
   $(window).resize(function(e) { controller.view.resizeCanvas() });
 
   $('#draw-tools > button.tool').click(function(e) {
+    $('#text-tool-widget').hide(0);
     this.handleDrawButton(e.target.id);
   }.bind(this));
 
@@ -179,6 +180,7 @@ ascii.Controller.prototype.handleDrawButton = function(id) {
   if (id == 'text-button') {
     this.drawFunction = new ascii.DrawText(this.state, this.view);
   }
+  this.state.commitDraw();
   this.view.canvas.focus();
 };
 

@@ -461,6 +461,7 @@ W.prototype.n = function() {
     A(a.view);
   });
   $("#draw-tools > button.tool").click(function(a) {
+    $("#text-tool-widget").hide(0);
     a = a.target.id;
     $("#draw-tools > button.tool").removeClass("active");
     $("#" + a).toggleClass("active");
@@ -471,6 +472,7 @@ W.prototype.n = function() {
     "erase-button" == a && (this.c = new Q(this.state));
     "move-button" == a && (this.c = new R(this.state));
     "text-button" == a && (this.c = new P(this.state));
+    L(this.state);
     this.view.canvas.focus();
   }.bind(this));
   $("#file-tools > button.tool").click(function(a) {
