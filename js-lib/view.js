@@ -184,6 +184,14 @@ ascii.View.prototype.setOffset = function(offset) {
 };
 
 /**
+ * @param {boolean} useLines
+ */
+ascii.View.prototype.setUseLines = function(useLines) {
+  this.useLines = useLines;
+  this.dirty = true;
+};
+
+/**
  * Given a screen coordinate, find the frame coordinates.
  * @param {ascii.Vector} vector
  * @return {ascii.Vector}
@@ -222,6 +230,17 @@ ascii.View.prototype.frameToCell = function(vector) {
 };
 
 /**
+ * Given a cell coordinate, return the frame coordinates.
+ * @param {ascii.Vector} vector
+ * @return {ascii.Vector}
+ */
+ascii.View.prototype.cellToFrame = function(vector) {
+  return new ascii.Vector(
+      Math.round(vector.x * CHAR_PIXELS_H),
+      Math.round(vector.y * CHAR_PIXELS_V));
+};
+
+/**
  * Given a screen coordinate, return the indices for the nearest cell.
  * @param {ascii.Vector} vector
  * @return {ascii.Vector}
@@ -230,5 +249,11 @@ ascii.View.prototype.screenToCell = function(vector) {
   return this.frameToCell(this.screenToFrame(vector));
 };
 
-
-
+/**
+ * Given a cell coordinate, return the on screen coordinates.
+ * @param {ascii.Vector} vector
+ * @return {ascii.Vector}
+ */
+ascii.View.prototype.cellToScreen = function(vector) {
+  return this.frameToScreen(this.cellToFrame(vector));
+};

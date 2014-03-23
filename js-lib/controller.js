@@ -122,14 +122,12 @@ ascii.Controller.prototype.installBindings = function() {
 
   $('#use-lines-button').click(function(e) {
    $('.dialog').removeClass('visible');
-    this.view.useLines = true;
-    this.view.dirty = true;
+    this.view.setUseLines(true);
   }.bind(this));
 
   $('#use-ascii-button').click(function(e) {
    $('.dialog').removeClass('visible');
-    this.view.useLines = false;
-    this.view.dirty = true;
+    this.view.setUseLines(false);
   }.bind(this));
 
   $(window).keypress(function(e) {
@@ -138,6 +136,18 @@ ascii.Controller.prototype.installBindings = function() {
 
   $(window).keydown(function(e) {
     this.handleKeyDown(e);
+  }.bind(this));
+
+  // Bit of a hack, just triggers the text tool to get a new value.
+  $('#text-tool-input').keyup(function(){
+      this.drawFunction.handleKey('');
+  }.bind(this));
+  $('#text-tool-input').change(function(){
+      this.drawFunction.handleKey('');
+  }.bind(this));
+  $('#text-tool-close').click(function(){
+    $('#text-tool-widget').hide();
+    this.state.commitDraw();
   }.bind(this));
 };
 
@@ -167,8 +177,9 @@ ascii.Controller.prototype.handleDrawButton = function(id) {
     this.drawFunction = new ascii.DrawMove(this.state);
   }
   if (id == 'text-button') {
-    this.drawFunction = new ascii.DrawText(this.state);
+    this.drawFunction = new ascii.DrawText(this.state, this.view);
   }
+  this.view.canvas.focus();
 };
 
 /**
@@ -217,7 +228,7 @@ ascii.Controller.prototype.handleKeyDown = function(event) {
     if (event.keyCode == 67) { specialKeyCode = KEY_COPY; }
     if (event.keyCode == 86) { specialKeyCode = KEY_PASTE; }
     if (event.keyCode == 90) { this.state.undo(); }
-    // if (event.keyCode == 89) { this.state.redo(); }
+    if (event.keyCode == 89) { this.state.redo(); }
     if (event.keyCode == 88) { specialKeyCode = KEY_CUT; }
   }
 

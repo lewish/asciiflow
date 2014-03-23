@@ -185,21 +185,19 @@ ascii.DrawFreeform.prototype.handleKey = function(value) {
  * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
  */
-ascii.DrawText = function(state) {
+ascii.DrawText = function(state, view) {
   this.state = state;
   this.startPosition = null;
-  this.currentPosition = null;
 };
 
 /** @inheritDoc */
 ascii.DrawText.prototype.start = function(position) {
+  this.state.commitDraw();
+  $('#text-tool-input').val('');
   this.startPosition = position;
-  this.currentPosition = position;
-  // Clean up any existing draws.
-  this.state.clearDraw();
   // Effectively highlights the starting cell.
-  var currentValue = this.state.getCell(position).getRawValue();
-  this.state.drawValue(position,
+  var currentValue = this.state.getCell(this.startPosition).getRawValue();
+  this.state.drawValue(this.startPosition,
       currentValue == null ? ERASE_CHAR : currentValue);
 };
 
@@ -207,64 +205,34 @@ ascii.DrawText.prototype.start = function(position) {
 ascii.DrawText.prototype.move = function(position) {};
 
 /** @inheritDoc */
-ascii.DrawText.prototype.end = function() {};
+ascii.DrawText.prototype.end = function() {
+  if (this.startPosition != null) {
+    this.endPosition = this.startPosition;
+    this.startPosition = null;
+    // Valid end click/press, show the textbox and focus it.
+    $('#text-tool-widget').hide(0, function() {$('#text-tool-widget').show(0, function() {$('#text-tool-input').focus();});});
+  }
+};
 
 /** @inheritDoc */
 ascii.DrawText.prototype.getCursor = function(position) {
-  return 'text';
+  return 'pointer';
 };
 
 /** @inheritDoc */
 ascii.DrawText.prototype.handleKey = function(value) {
-  if (this.currentPosition == null) {
-    return;
-  }
-  var nextPosition = this.currentPosition.add(DIR_RIGHT);
-
-  if (value == KEY_RETURN || this.state.getCell(nextPosition).isSpecial()) {
-    // Pressed return key or hit box, so clear this cell and new line.
-    this.state.clearDraw();
-    nextPosition = this.startPosition.add(DIR_DOWN);
-    this.startPosition = nextPosition;
-  }
-  if (value == KEY_BACKSPACE && this.startPosition.x <= nextPosition.x) {
-    // Pressed backspace key, so clear this cell and go back.
-    this.state.clearDraw();
-    nextPosition = this.currentPosition.add(DIR_LEFT);
-    if (nextPosition.x < this.startPosition.x) {
-      nextPosition.x = this.startPosition.x;
+  var text = $('#text-tool-input').val();
+  this.state.clearDraw();
+  var x = 0, y = 0;
+  for(var i = 0; i < text.length; i++) {
+    if (text[i] == '\n') {
+      y++;
+      x = 0;
+      continue;
     }
-    this.state.drawValue(nextPosition, ERASE_CHAR);
-    this.state.commitDraw();
+    this.state.drawValue(this.endPosition.add(new ascii.Vector(x, y)), text[i]);
+    x++;
   }
-  if (value == KEY_UP) {
-    this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(DIR_UP);
-  }
-  if (value == KEY_LEFT) {
-    this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(DIR_LEFT);
-  }
-  if (value == KEY_RIGHT) {
-    this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(DIR_RIGHT);
-  }
-  if (value == KEY_DOWN) {
-    this.state.clearDraw();
-    this.startPosition = nextPosition = this.currentPosition.add(DIR_DOWN);
-  }
-
-  if (value.length == 1) {
-    // The value is not a special character, so draw the value and commit it.
-    this.state.drawValue(this.currentPosition, value);
-    this.state.commitDraw();
-  }
-
-  // Highlight the next cell.
-  this.currentPosition = nextPosition;
-  var nextValue = this.state.getCell(nextPosition).getRawValue();
-  this.state.drawValue(nextPosition,
-      nextValue == null ? ERASE_CHAR : nextValue);
 };
 
 /**
