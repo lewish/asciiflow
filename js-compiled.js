@@ -51,7 +51,7 @@ function da(a, b) {
 }
 function ea(a, b) {
   this.position = a;
-  this.A = b;
+  this.B = b;
 }
 ;function z(a) {
   this.state = a;
@@ -328,8 +328,8 @@ function T() {
   this.cells = Array(2E3);
   this.i = [];
   this.d = !0;
+  this.A = [];
   this.w = [];
-  this.v = [];
   for (var a = 0;a < this.cells.length;a++) {
     this.cells[a] = Array(600);
     for (var b = 0;b < this.cells[a].length;b++) {
@@ -359,7 +359,7 @@ function H(a, b, c) {
 }
 function K(a) {
   for (var b in a.i) {
-    a.i[b].A.f = null;
+    a.i[b].B.f = null;
   }
   a.i.length = 0;
 }
@@ -384,7 +384,7 @@ function L(a, b) {
   });
   a.i.length = 0;
   for (var g in d) {
-    var k = d[g].A;
+    var k = d[g].B;
     c.push(new da(d[g].position, null != k.value ? k.value : " "));
     var h = w(k);
     if ("\u2009" == h || " " == h) {
@@ -393,13 +393,13 @@ function L(a, b) {
     k.f = null;
     k.value = h;
   }
-  d = b ? a.v : a.w;
+  d = b ? a.w : a.A;
   0 < c.length && (50 < d.length && d.shift(), d.push(c));
   a.d = !0;
 }
 function U(a) {
-  if (0 != a.w.length) {
-    var b = a.w.pop(), c;
+  if (0 != a.A.length) {
+    var b = a.A.pop(), c;
     for (c in b) {
       var e = b[c];
       I(a, e.position, e.value);
@@ -408,8 +408,8 @@ function U(a) {
   }
 }
 function V(a) {
-  if (0 != a.v.length) {
-    var b = a.v.pop(), c;
+  if (0 != a.w.length) {
+    var b = a.w.pop(), c;
     for (c in b) {
       var e = b[c];
       I(a, e.position, e.value);
@@ -455,7 +455,7 @@ W.prototype.p = function(a) {
   this.o = b;
 };
 function X(a) {
-  (a.mode = 2) && a.c.end();
+  2 == a.mode && a.c.end();
   a.mode = 0;
   a.t = null;
   a.u = null;
@@ -623,11 +623,11 @@ function Y(a) {
   this.n();
 }
 function ma(a, b) {
-  a.B = b;
+  a.v = b;
   a.F = $.now();
   a.k = !1;
   window.setTimeout(function() {
-    if (!this.k && !this.r) {
+    if (!this.k && !this.r && null != this.v) {
       var a = this.b;
       a.mode = 2;
       a.c.start(B(a.view, b));
@@ -635,7 +635,7 @@ function ma(a, b) {
   }.bind(a), 130);
 }
 Y.prototype.p = function(a) {
-  if (!this.k && 130 > $.now() - this.F && 3 < n(a, this.B).length()) {
+  if (!this.k && 130 > $.now() - this.F && 3 < n(a, this.v).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;
@@ -646,7 +646,7 @@ Y.prototype.p = function(a) {
 };
 Y.prototype.reset = function() {
   this.r = this.k = !1;
-  this.B = null;
+  this.v = null;
 };
 Y.prototype.n = function() {
   var a = this.b.view.canvas;

@@ -81,7 +81,7 @@ ascii.Controller.prototype.handleMove = function(position) {
  * Ends the current operation.
  */
 ascii.Controller.prototype.endAll = function() {
-  if (this.mode = Mode.DRAW) {
+  if (this.mode == Mode.DRAW) {
     this.drawFunction.end();
   }
   // Cleanup state.

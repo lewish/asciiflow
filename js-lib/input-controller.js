@@ -81,9 +81,9 @@ ascii.TouchController.prototype.handlePress = function(position) {
   this.pressTimestamp = $.now();
   this.dragStarted = false;
 
-  // If a drag didn't start, then handle it as a draw.
+  // If a drag or zoom didn't start and if we didn't release already, then handle it as a draw.
   window.setTimeout(function() {
-    if (!this.dragStarted && !this.zoomStarted) {
+    if (!this.dragStarted && !this.zoomStarted && this.pressVector != null) {
       this.controller.startDraw(position);
     }
   }.bind(this), DRAG_LATENCY);
