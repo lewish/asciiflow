@@ -129,6 +129,7 @@ ascii.DriveController.prototype.save = function() {
 
 ascii.DriveController.prototype.loadFromHash = function() {
   if (window.location.hash.length > 1) {
+    $('#drive-save-state').text('Loading...');
     var fileId = window.location.hash.substr(1, window.location.hash.length - 1);
     this.getLoadRequest(fileId).execute(function(result) {
       this.handleFile(result);
@@ -139,11 +140,11 @@ ascii.DriveController.prototype.loadFromHash = function() {
 
 ascii.DriveController.prototype.reloadFileContent = function() {
   this.downloadFile(this.file['downloadUrl'], function(content) {
-    window.console.log(content);
+    $('#drive-save-state').text('Loaded');
     this.state.clear();
     this.state.fromText(content, this.view.screenToCell(new ascii.Vector(
-            this.view.canvas.width / 4,
-            this.view.canvas.height / 4)));
+            this.view.canvas.width / 2,
+            this.view.canvas.height / 2)));
   }.bind(this));
 };
 

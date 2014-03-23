@@ -36,11 +36,11 @@ function w(a) {
 function x(a) {
   return "+" == w(a);
 }
-function ca(a, b, c, d) {
+function ca(a, b, c, e) {
   this.left = a;
   this.right = b;
   this.m = c;
-  this.j = d;
+  this.j = e;
 }
 function y(a) {
   return a.left + a.right + a.m + a.j;
@@ -83,41 +83,41 @@ function fa(a) {
   b.clearRect(0, 0, a.canvas.width, a.canvas.height);
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
-  var c = n(B(a, new l(0, 0)), new l(3, 3)), d = B(a, new l(a.canvas.width, a.canvas.height)).add(new l(3, 3));
+  var c = n(B(a, new l(0, 0)), new l(3, 3)), e = B(a, new l(a.canvas.width, a.canvas.height)).add(new l(3, 3));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
-  for (var e = c.x;e < d.x;e++) {
-    b.moveTo(9 * e - a.offset.x, 0 - a.offset.y), b.lineTo(9 * e - a.offset.x, 17 * a.state.cells.length - a.offset.y);
+  for (var d = c.x;d < e.x;d++) {
+    b.moveTo(9 * d - a.offset.x, 0 - a.offset.y), b.lineTo(9 * d - a.offset.x, 17 * a.state.cells.length - a.offset.y);
   }
-  for (e = c.y;e < d.y;e++) {
-    b.moveTo(0 - a.offset.x, 17 * e - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * e - a.offset.y);
+  for (d = c.y;d < e.y;d++) {
+    b.moveTo(0 - a.offset.x, 17 * d - a.offset.y), b.lineTo(9 * a.state.cells.length - a.offset.x, 17 * d - a.offset.y);
   }
   a.context.stroke();
-  e = !a.r;
+  d = !a.r;
   b.font = "15px Courier New";
-  for (var g = c.x;g < d.x;g++) {
-    for (var h = c.y;h < d.y;h++) {
-      var k = C(a.state, new l(g, h));
-      if (x(k) || null != k.f && " " != w(k)) {
-        a.context.fillStyle = null != k.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (h - 1) - a.offset.y, 9, 17);
+  for (var g = c.x;g < e.x;g++) {
+    for (var k = c.y;k < e.y;k++) {
+      var h = C(a.state, new l(g, k));
+      if (x(h) || null != h.f && " " != w(h)) {
+        a.context.fillStyle = null != h.f ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (k - 1) - a.offset.y, 9, 17);
       }
-      var t = F(a.state, new l(g, h));
-      null == t || x(k) && !e || (a.context.fillStyle = "#000000", b.fillText(t, 9 * g - a.offset.x, 17 * h - a.offset.y - 3));
+      var t = F(a.state, new l(g, k));
+      null == t || x(h) && !d || (a.context.fillStyle = "#000000", b.fillText(t, 9 * g - a.offset.x, 17 * k - a.offset.y - 3));
     }
   }
   if (a.r) {
     b.lineWidth = "1";
     b.strokeStyle = "#000000";
     b.beginPath();
-    for (e = c.x;e < d.x;e++) {
-      for (k = !1, g = c.y;g < d.y;g++) {
-        h = C(a.state, new l(e, g)), x(h) && g != d.y - 1 || !k || (b.moveTo(9 * e - a.offset.x + 4.5, 17 * k - a.offset.y - 8.5), b.lineTo(9 * e - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), k = !1), x(h) && !k && (k = g);
+    for (d = c.x;d < e.x;d++) {
+      for (h = !1, g = c.y;g < e.y;g++) {
+        k = C(a.state, new l(d, g)), x(k) && g != e.y - 1 || !h || (b.moveTo(9 * d - a.offset.x + 4.5, 17 * h - a.offset.y - 8.5), b.lineTo(9 * d - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), h = !1), x(k) && !h && (h = g);
       }
     }
-    for (g = c.y;g < d.y;g++) {
-      for (k = !1, e = c.x;e < d.x;e++) {
-        h = C(a.state, new l(e, g)), x(h) && e != d.x - 1 || !k || (b.moveTo(9 * k - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (e - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), k = !1), x(h) && !k && (k = e);
+    for (g = c.y;g < e.y;g++) {
+      for (h = !1, d = c.x;d < e.x;d++) {
+        k = C(a.state, new l(d, g)), x(k) && d != e.x - 1 || !h || (b.moveTo(9 * h - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (d - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), h = !1), x(k) && !h && (h = d);
       }
     }
     a.context.stroke();
@@ -126,19 +126,19 @@ function fa(a) {
 function B(a, b) {
   return new l(Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round(((new l((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).y + 8.5) / 17)), 598));
 }
-;function G(a, b, c, d, e) {
-  e = e || "+";
-  var g = Math.min(b.x, c.x), h = Math.min(b.y, c.y), k = Math.max(b.x, c.x), t = Math.max(b.y, c.y), u = d ? c.x : b.x;
-  for (d = d ? b.y : c.y;g++ < k;) {
-    var P = new l(g, d), E = a.getContext(new l(g, d));
-    " " == e && 2 == E.m + E.j || H(a, P, e);
+;function G(a, b, c, e, d) {
+  d = d || "+";
+  var g = Math.min(b.x, c.x), k = Math.min(b.y, c.y), h = Math.max(b.x, c.x), t = Math.max(b.y, c.y), u = e ? c.x : b.x;
+  for (e = e ? b.y : c.y;g++ < h;) {
+    var P = new l(g, e), E = a.getContext(new l(g, e));
+    " " == d && 2 == E.m + E.j || H(a, P, d);
   }
-  for (;h++ < t;) {
-    P = new l(u, h), E = a.getContext(new l(u, h)), " " == e && 2 == E.left + E.right || H(a, P, e);
+  for (;k++ < t;) {
+    P = new l(u, k), E = a.getContext(new l(u, k)), " " == d && 2 == E.left + E.right || H(a, P, d);
   }
-  I(a, b, e);
-  I(a, c, e);
-  H(a, new l(u, d), e);
+  I(a, b, d);
+  I(a, c, d);
+  H(a, new l(u, e), d);
 }
 function J(a) {
   this.state = a;
@@ -232,8 +232,8 @@ O.prototype.l = function() {
 O.prototype.e = function() {
   var a = $("#text-tool-input").val();
   K(this.state);
-  for (var b = 0, c = 0, d = 0;d < a.length;d++) {
-    "\n" == a[d] ? (c++, b = 0) : (I(this.state, this.g.add(new l(b, c)), a[d]), b++);
+  for (var b = 0, c = 0, e = 0;e < a.length;e++) {
+    "\n" == a[e] ? (c++, b = 0) : (I(this.state, this.g.add(new l(b, c)), a[e]), b++);
   }
 };
 function Q(a) {
@@ -249,9 +249,9 @@ Q.prototype.move = function(a) {
   this.g = a;
   var b = Math.min(this.a.x, this.g.x);
   a = Math.min(this.a.y, this.g.y);
-  for (var c = Math.max(this.a.x, this.g.x), d = Math.max(this.a.y, this.g.y);b <= c;b++) {
-    for (var e = a;e <= d;e++) {
-      I(this.state, new l(b, e), "\u2009");
+  for (var c = Math.max(this.a.x, this.g.x), e = Math.max(this.a.y, this.g.y);b <= c;b++) {
+    for (var d = a;d <= e;d++) {
+      I(this.state, new l(b, d), "\u2009");
     }
   }
 };
@@ -269,10 +269,10 @@ function R(a) {
 }
 R.prototype.start = function(a) {
   if (f && !x(C(this.state, a))) {
-    var b = v.concat([p.add(r), p.add(s), q.add(r), q.add(s)]), c = null, d = 0, e;
-    for (e in b) {
-      var g = a.add(b[e]), h = y(this.state.getContext(g));
-      x(C(this.state, g)) && h > d && (c = b[e], d = h);
+    var b = v.concat([p.add(r), p.add(s), q.add(r), q.add(s)]), c = null, e = 0, d;
+    for (d in b) {
+      var g = a.add(b[d]), k = y(this.state.getContext(g));
+      x(C(this.state, g)) && k > e && (c = b[d], e = k);
     }
     a = null == c ? a : a.add(c);
   }
@@ -281,14 +281,14 @@ R.prototype.start = function(a) {
   if (x(C(this.state, this.a))) {
     this.state.getContext(this.a);
     a = [];
-    for (var k in v) {
-      var b = ga(this, this.a, v[k]), t;
+    for (var h in v) {
+      var b = ga(this, this.a, v[h]), t;
       for (t in b) {
-        if (c = b[t], d = 0 != v[k].x, 1 == y(this.state.getContext(c))) {
-          a.push({position:c, t:d});
+        if (c = b[t], e = 0 != v[h].x, 1 == y(this.state.getContext(c))) {
+          a.push({position:c, t:e});
         } else {
           for (var u in v) {
-            0 != v[k].add(v[u]).length() && 2 != v[k].add(v[u]).length() && (e = ga(this, c, v[u]), 0 != e.length && a.push({position:e[e.length - 1], t:d}));
+            0 != v[h].add(v[u]).length() && 2 != v[h].add(v[u]).length() && (d = ga(this, c, v[u]), 0 != d.length && a.push({position:d[d.length - 1], t:e}));
           }
         }
       }
@@ -310,13 +310,13 @@ R.prototype.end = function() {
   L(this.state);
 };
 function ga(a, b, c) {
-  for (var d = b.clone(), e = [];;) {
-    var g = d.add(c);
+  for (var e = b.clone(), d = [];;) {
+    var g = e.add(c);
     if (!x(C(a.state, g))) {
-      return m(b, d) || e.push(d), e;
+      return m(b, e) || d.push(e), d;
     }
-    d = g;
-    3 == y(a.state.getContext(d)) && e.push(d);
+    e = g;
+    3 == y(a.state.getContext(e)) && d.push(e);
   }
 }
 R.prototype.l = function(a) {
@@ -349,9 +349,9 @@ function C(a, b) {
   return a.cells[b.x][b.y];
 }
 function I(a, b, c) {
-  var d = C(a, b);
-  a.i.push(new ea(b, d));
-  d.f = c;
+  var e = C(a, b);
+  a.i.push(new ea(b, e));
+  e.f = c;
   a.d = !0;
 }
 function H(a, b, c) {
@@ -372,37 +372,37 @@ function F(a, b) {
   return c.left && c.right && !c.m && !c.j ? "\u2013" : !c.left && !c.right && c.m && c.j ? "|" : c.left && c.right && c.m && c.j ? "\u2013" : "+";
 }
 S.prototype.getContext = function(a) {
-  var b = x(C(this, a.add(p))), c = x(C(this, a.add(q))), d = x(C(this, a.add(r)));
+  var b = x(C(this, a.add(p))), c = x(C(this, a.add(q))), e = x(C(this, a.add(r)));
   a = x(C(this, a.add(s)));
-  return new ca(b, c, d, a);
+  return new ca(b, c, e, a);
 };
 function L(a, b) {
-  var c = [], d = a.i.map(function(a) {
+  var c = [], e = a.i.map(function(a) {
     return a.position.x.toString() + a.position.y.toString();
-  }), e = a.i.filter(function(a, b) {
-    return d.indexOf(d[b]) == b;
+  }), d = a.i.filter(function(a, b) {
+    return e.indexOf(e[b]) == b;
   });
   a.i.length = 0;
-  for (var g in e) {
-    var h = e[g].C;
-    c.push(new da(e[g].position, null != h.value ? h.value : " "));
-    var k = w(h);
-    if ("\u2009" == k || " " == k) {
-      k = null;
+  for (var g in d) {
+    var k = d[g].C;
+    c.push(new da(d[g].position, null != k.value ? k.value : " "));
+    var h = w(k);
+    if ("\u2009" == h || " " == h) {
+      h = null;
     }
-    h.f = null;
-    h.value = k;
+    k.f = null;
+    k.value = h;
   }
-  e = b ? a.A : a.B;
-  0 < c.length && (50 < e.length && e.shift(), e.push(c));
+  d = b ? a.A : a.B;
+  0 < c.length && (50 < d.length && d.shift(), d.push(c));
   a.d = !0;
 }
 function ha(a) {
   if (0 != a.B.length) {
     var b = a.B.pop(), c;
     for (c in b) {
-      var d = b[c];
-      I(a, d.position, d.value);
+      var e = b[c];
+      I(a, e.position, e.value);
     }
     L(a, !0);
   }
@@ -411,38 +411,41 @@ function ia(a) {
   if (0 != a.A.length) {
     var b = a.A.pop(), c;
     for (c in b) {
-      var d = b[c];
-      I(a, d.position, d.value);
+      var e = b[c];
+      I(a, e.position, e.value);
     }
     L(a);
   }
 }
 function T(a) {
-  for (var b = new l(Number.MAX_VALUE, Number.MAX_VALUE), c = new l(-1, -1), d = 0;d < a.cells.length;d++) {
-    for (var e = 0;e < a.cells[d].length;e++) {
-      null != w(a.cells[d][e]) && (d < b.x && (b.x = d), e < b.y && (b.y = e), d > c.x && (c.x = d), e > c.y && (c.y = e));
+  for (var b = new l(Number.MAX_VALUE, Number.MAX_VALUE), c = new l(-1, -1), e = 0;e < a.cells.length;e++) {
+    for (var d = 0;d < a.cells[e].length;d++) {
+      null != w(a.cells[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
     }
   }
   if (0 > c.x) {
     return "";
   }
-  for (var g = "", e = b.y;e <= c.y;e++) {
-    for (var h = "", d = b.x;d <= c.x;d++) {
-      var k = F(a, new l(d, e)), h = h + (null == k ? " " : k)
+  for (var g = "", d = b.y;d <= c.y;d++) {
+    for (var k = "", e = b.x;e <= c.x;e++) {
+      var h = F(a, new l(e, d)), k = k + (null == h ? " " : h)
     }
-    g += h.replace("\\s+$/g", "") + "\n";
+    g += k.replace("\\s+$/g", "") + "\n";
   }
   return g;
 }
 function ja(a, b, c) {
   b = b.split("\n");
-  for (var d = 0;d < b.length;d++) {
-    for (var e = b[d], g = 0;g < e.length;g++) {
-      var h = e.charAt(g);
+  for (var e = new l(0, Math.round(b.length / 2)), d = 0;d < b.length;d++) {
+    e.x = Math.max(e.x, Math.round(b[d].length / 2));
+  }
+  for (d = 0;d < b.length;d++) {
+    for (var g = b[d], k = 0;k < g.length;k++) {
+      var h = g.charAt(k);
       if ("\u2013" == h || "|" == h) {
         h = "+";
       }
-      I(a, (new l(g, d)).add(c), h);
+      I(a, n((new l(k, d)).add(c), e), h);
     }
   }
   L(a);
@@ -508,7 +511,7 @@ U.prototype.n = function() {
   }.bind(this));
   $("#import-submit-button").click(function() {
     this.state.clear();
-    ja(this.state, $("#import-area").val(), B(this.view, new l(this.view.canvas.width / 4, this.view.canvas.height / 4)));
+    ja(this.state, $("#import-area").val(), B(this.view, new l(this.view.canvas.width / 2, this.view.canvas.height / 2)));
     $("#import-area").val("");
   }.bind(this));
   $("#use-lines-button").click(function() {
@@ -606,16 +609,16 @@ ka.prototype.save = function() {
   }.bind(this));
 };
 function pa(a) {
-  1 < window.location.hash.length && window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}).execute(function(a) {
+  1 < window.location.hash.length && ($("#drive-save-state").text("Loading..."), window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}).execute(function(a) {
     qa(this, a);
     sa(this);
-  }.bind(a));
+  }.bind(a)));
 }
 function sa(a) {
   ta(a.file.downloadUrl, function(a) {
-    window.console.log(a);
+    $("#drive-save-state").text("Loaded");
     this.state.clear();
-    ja(this.state, a, B(this.view, new l(this.view.canvas.width / 4, this.view.canvas.height / 4)));
+    ja(this.state, a, B(this.view, new l(this.view.canvas.width / 2, this.view.canvas.height / 2)));
   }.bind(a));
 }
 function ra(a, b) {
@@ -623,16 +626,16 @@ function ra(a, b) {
   return window.gapi.client.request({path:"/upload/drive/v2/files" + (null == a.file ? "" : "/" + a.file.id), method:null == a.file ? "POST" : "PUT", params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:c});
 }
 function ta(a, b) {
-  var c = window.gapi.auth.getToken().access_token, d = new XMLHttpRequest;
-  d.open("GET", a);
-  d.setRequestHeader("Authorization", "Bearer " + c);
-  d.onload = function() {
-    b(d.responseText);
+  var c = window.gapi.auth.getToken().access_token, e = new XMLHttpRequest;
+  e.open("GET", a);
+  e.setRequestHeader("Authorization", "Bearer " + c);
+  e.onload = function() {
+    b(e.responseText);
   };
-  d.onerror = function() {
+  e.onerror = function() {
     b(null);
   };
-  d.send();
+  e.send();
 }
 ;function ua(a) {
   this.b = a;

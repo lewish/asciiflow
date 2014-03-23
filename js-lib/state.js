@@ -234,12 +234,16 @@ ascii.State.prototype.outputText = function() {
 };
 
 /**
- * Loads the given text into the diagram starting at the given offset.
+ * Loads the given text into the diagram starting at the given offset (centered).
  * @param {string} value
  * @param {ascii.Vector} offset
  */
 ascii.State.prototype.fromText = function(value, offset) {
   var lines = value.split('\n');
+  var middle = new ascii.Vector(0, Math.round(lines.length / 2));
+  for (var j = 0; j < lines.length; j++) {
+    middle.x = Math.max(middle.x, Math.round(lines[j].length / 2));
+  }
   for (var j = 0; j < lines.length; j++) {
     var line = lines[j];
     for (var i = 0; i < line.length; i++) {
@@ -250,7 +254,7 @@ ascii.State.prototype.fromText = function(value, offset) {
       if (char == SPECIAL_LINE_H || char == SPECIAL_LINE_V) {
         char = SPECIAL_VALUE;
       }
-      this.drawValue(new ascii.Vector(i, j).add(offset), char);
+      this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
     }
   }
   this.commitDraw();
