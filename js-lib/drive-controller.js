@@ -70,7 +70,8 @@ ascii.DriveController.prototype.checkAuth = function(immediate) {
           this.driveEnabled = true;
           $('#drive-button').addClass('active');
           // We are authorized, so let's se if we can load from the URL hash.
-          this.loadFromHash();
+          // This seems to fail if we do it too early.
+          window.setTimeout(function() { this.loadFromHash(); }.bind(this), 500);
         }
       }.bind(this));
 };

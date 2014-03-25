@@ -60,7 +60,7 @@ function ea(a, b) {
   this.zoom = 1;
   this.offset = new l(7500, 7500);
   this.d = !0;
-  this.s = f;
+  this.s = !1;
   A(this);
 }
 function A(a) {
@@ -490,7 +490,7 @@ T.prototype.n = function() {
     $(".dialog").removeClass("visible");
     "box-button" == a && (this.c = new I(this.state));
     "line-button" == a && (this.c = new L(this.state));
-    "freeform-button" == a && (this.c = new M(this.state, "+"));
+    "freeform-button" == a && (this.c = new M(this.state, "X"));
     "erase-button" == a && (this.c = new O(this.state));
     "move-button" == a && (this.c = new P(this.state));
     "text-button" == a && (this.c = new N(this.state));
@@ -583,7 +583,9 @@ function la(a, b) {
 }
 function V(a, b) {
   window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:b}, function(a) {
-    !a || a.error || this.p || (this.p = !0, $("#drive-button").addClass("active"), ra(this));
+    !a || a.error || this.p || (this.p = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
+      ra(this);
+    }.bind(this), 500));
   }.bind(a));
 }
 function ma(a) {
