@@ -58,9 +58,9 @@ function ea(a, b) {
   this.canvas = document.getElementById("ascii-canvas");
   this.context = this.canvas.getContext("2d");
   this.zoom = 1;
-  this.offset = new l(7500, 7500);
+  this.offset = new l(9E3, 5100);
   this.d = !0;
-  this.s = f;
+  this.s = !1;
   A(this);
 }
 function A(a) {
@@ -84,6 +84,10 @@ function fa(a) {
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
   var c = n(B(a, new l(0, 0)), new l(3, 3)), d = B(a, new l(a.canvas.width, a.canvas.height)).add(new l(3, 3));
+  c.x = Math.max(0, Math.min(c.x, 2E3));
+  d.x = Math.max(0, Math.min(d.x, 2E3));
+  c.y = Math.max(0, Math.min(c.y, 600));
+  d.y = Math.max(0, Math.min(d.y, 600));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
@@ -490,7 +494,7 @@ T.prototype.n = function() {
     $(".dialog").removeClass("visible");
     "box-button" == a && (this.c = new I(this.state));
     "line-button" == a && (this.c = new L(this.state));
-    "freeform-button" == a && (this.c = new M(this.state, "+"));
+    "freeform-button" == a && (this.c = new M(this.state, "X"));
     "erase-button" == a && (this.c = new O(this.state));
     "move-button" == a && (this.c = new P(this.state));
     "text-button" == a && (this.c = new N(this.state));
@@ -583,7 +587,9 @@ function la(a, b) {
 }
 function V(a, b) {
   window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:b}, function(a) {
-    !a || a.error || this.p || (this.p = !0, $("#drive-button").addClass("active"), ra(this));
+    !a || a.error || this.p || (this.p = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
+      ra(this);
+    }.bind(this), 500));
   }.bind(a));
 }
 function ma(a) {
