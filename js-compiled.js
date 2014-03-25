@@ -619,7 +619,14 @@ function pa(a) {
     a = a.items;
     for (var c in a) {
       var d = document.createElement("li");
-      d.innerHTML = '<a href="#' + a[c].id + '">' + a[c].title + "</a>";
+      d.id = "drive-file-list-item";
+      var e = document.createElement("a");
+      d.appendChild(e);
+      e.href = "#" + a[c].id;
+      $(e).click(function() {
+        $("#drive-dialog").removeClass("visible");
+      });
+      e.innerHTML = a[c].title;
       $("#drive-file-list").append(d);
     }
   }.bind(a));

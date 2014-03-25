@@ -127,7 +127,12 @@ ascii.DriveController.prototype.loadFileList = function() {
     var items = result['items'];
     for (var i in items) {
       var entry = document.createElement('li');
-      entry.innerHTML = '<a href="#' + items[i]['id'] + '">' + items[i]['title'] + '</a>';
+      entry.id = "drive-file-list-item";
+      var title = document.createElement('a');
+      entry.appendChild(title);
+      title.href = '#' + items[i]['id'];
+      $(title).click(function() { $('#drive-dialog').removeClass('visible'); });
+      title.innerHTML = items[i]['title'];
       $('#drive-file-list').append(entry);
     }
   }.bind(this));
