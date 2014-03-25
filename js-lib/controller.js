@@ -169,7 +169,7 @@ ascii.Controller.prototype.handleDrawButton = function(id) {
     this.drawFunction = new ascii.DrawLine(this.state);
   }
   if (id == 'freeform-button') {
-    this.drawFunction = new ascii.DrawFreeform(this.state, SPECIAL_VALUE);
+    this.drawFunction = new ascii.DrawFreeform(this.state, "X");
   }
   if (id == 'erase-button') {
     this.drawFunction = new ascii.DrawErase(this.state);

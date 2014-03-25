@@ -14,7 +14,7 @@ ascii.View = function(state) {
   /** @type {ascii.Vector} */ this.offset = new ascii.Vector(7500, 7500);
   /** @type {boolean} */ this.dirty = true;
   // TODO: Should probably save this setting in a cookie or something.
-  /** @type {boolean} */ this.useLines = TOUCH_ENABLED;
+  /** @type {boolean} */ this.useLines = false;
 
   this.resizeCanvas();
 };
