@@ -618,9 +618,7 @@ function pa(a) {
     $("#drive-file-list").children().remove();
     a = a.items;
     for (var c in a) {
-      var d = document.createElement("li");
-      d.id = "drive-file-list-item";
-      var e = document.createElement("a");
+      var d = document.createElement("li"), e = document.createElement("a");
       d.appendChild(e);
       e.href = "#" + a[c].id;
       $(e).click(function() {
