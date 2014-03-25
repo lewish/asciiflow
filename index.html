@@ -13,7 +13,7 @@
   font-weight: bold;
   font-family: sans-serif;
   font-size: 0.95em;
-  color: #777;
+  color: #666;
 }
 
 a {
@@ -35,67 +35,137 @@ button {
 }
 
 #draw-tools {
-  text-align: center;
+  text-align: left;
+  padding-left: 120px;
   display: inline-block;
   position: fixed;
   width: 100%;
   background-color: #FFF;
   z-index: 100;
-  box-shadow: 0px 3px 3px #CCC;
+  -webkit-box-shadow: 0px 1px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
+          box-shadow: 0px 1px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
+}
+
+#logo-bar {
+  position: fixed;
+  left: 0px;
+  z-index: 101;
+  margin: 8px;
 }
 
 #file-tools {
   text-align: right;
   display: inline-block;
   position: fixed;
-  right: 0px;
+  right: 2px;
   z-index: 100;
 }
 
 #draw-tools > button, #file-tools > button {
+  font-size: 12px;
   vertical-align: top;
   display: inline-block;
-  margin: 5px;
-  width: 30px;
-  height: 30px;
+  margin: 8px 8px;
+  width: 24px;
+  height: 24px;
   text-align: center;
+  cursor: pointer;
   outline: 0 !important;
   background-size: 200% 100% !important;
   background-color: #FFF;
 }
 
-.info-icon {
+#file-tools > button.info-image {
+  margin-left: 30px;
+}
+
+.info-icon, .info-icon-file {
   width: 30px;
   height: 30px;
+  margin: 0 0 5px -4px;
   background-size: 100% !important;
   background-size: 200% 100% !important;
   display: inline-block;
 }
 
 .info-description {
-  vertical-align: middle;
-  margin-left: 5px;
+  vertical-align: text-bottom;    
+  margin-left: 10px;
   display: inline-block;
   height: 30px;
+  width: 64%;
+  text-align: left;
 }
 
+.info-description br {
+  display: none;
+}
+
+.dialog span {
+  color: #AAA;
+}
 
 #drive-filename {
   display: inline-block;
 }
 
+#drive-save-state {
+  display: inline-block;
+  line-height: 40px;
+  margin-right: 10px;
+  color: #bbb;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+#drive-filename {
+  font-size: 30px;
+  border: gray 1px solid;
+  padding: 5px;
+  background: #EEE;
+  cursor: pointer;
+}
+
 /* Mobile overrides */
-@media(max-width:600px) {
+@media(max-width:780px) {
+#logo-bar {
+  margin: 10px;
+}
+
+#draw-tools > button, #file-tools > button {
+  margin: 10px 4px;
+}
+
+#draw-tools {
+  text-align: center;
+  padding-left: 0px;
+}
+  
   /* Move file tools to the bottom. */
-  #file-tools {
+#file-tools {
+  left: 0px;
+  padding-left: 9px;
     bottom: 0px;
     background-color: #FFF;
-    box-shadow:0px -3px 3px #CCC;
     width: 100%;
-  }
-  #drive-filename {
-    display: block;
-  }
+  text-align: left;
+  -webkit-box-shadow: 0px -1px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
+          box-shadow: 0px -1px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
+}
+
+#drive-save-state {
+  line-height: 44px;
+  margin-right: 6px;
+}
+
+#options-button {
+  position: fixed;
+  right: 6px;
+}
+
+#drive-filename {
+  display: block;
+}
 }
 
 .dialog {
@@ -105,15 +175,17 @@ button {
   top: 0px;
   bottom: 0px;
   margin: auto;
+  width: 85%;
+  height: 89%;
   max-width: 640px;
-  max-height: 480px;
-  width: 90%;
-  height: 70%;
+  max-height: 380px;
   background: #FFF;
   display: none;
   z-index: 100;
-  padding: 5px;
-  box-shadow:0px 0px 3px 3px #CCC;
+  padding: 20px;
+  text-align: center;
+  -webkit-box-shadow: 0px 0px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
+          box-shadow: 0px 0px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
 }
 
 .visible {
@@ -137,11 +209,68 @@ button.active, .info-icon {
   position: absolute;
   right: 0px;
   bottom: 0px;
-  margin: 5px;
+  margin: 7px;
+  border: 0;
+  -webkit-appearance: none;
+  background-color: transparent;
+}
+
+@media(max-width:500px) {
+#logo-bar {
+  display: none;
+}
+.info-description {
+  vertical-align: top;
+  width: 84%;
+}
+.dialog, .dialog p {
+  font-size: 0.90em !important;
+}
+.dialog {
+  padding: 10px;
+  max-height: 410px;
+}
+.info-icon, .info-icon-file {
+  margin: 0 0 10px -4px;
+}
+
+.info-description br {
+  display: block;
+}
+
+.close-dialog-button, #import-submit-button, #text-tool-close {
+  margin: 10px 3px;
+}
+
+}
+
+#options-logo {
+  margin: 10px 0 0;
+}
+
+#options-scroll {
+  overflow-y: scroll;
+  height: 91%;
+  -webkit-overflow-scrolling: touch;
+}
+
+#options-scroll p {
+  margin: 10px 0 15px;
+}
+
+.dialog-button-bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 8%;
+  min-height: 34px;
+  background-color: #DDD;
+  text-align: right;
 }
 
 #import-submit-button {
-  margin-right: 70px;
+  margin-right: 80px;
 }
 
 #ascii-canvas {
@@ -152,7 +281,9 @@ button.active, .info-icon {
 
 textarea {
   width: 100%;
-  height: 100%;
+  height: 91%;
+  font-size: 1.2em;
+  font-weight: normal;
   overflow: hidden;
   resize: none;
   margin: 0px;
@@ -170,7 +301,7 @@ textarea {
   position: fixed;
   width: 100%;
   height: 100%;
-  transition: opacity 1.5s ease-in-out;
+/*  transition: opacity 1.5s ease-in-out; */
   background-size: 100%;
   pointer-events: none;
 }
@@ -179,6 +310,12 @@ textarea {
   display: inline;
   max-width: 100%;
   max-height: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 #text-tool-widget {
@@ -195,41 +332,156 @@ textarea {
   box-shadow: 0px 0px 3px 3px #CCC;
 }
 
-#drive-save-state {
-  display: inline-block;
-  font-size: 15px;
-  margin-top: 10px;
-  margin-right: 5px;
-}
-
-#drive-filename {
-  font-size: 30px;
-  border: gray 1px solid;
-  padding: 5px;
-  background: #EEE;
-  cursor: pointer;
-}
-
 .fade-out {
   opacity: 0;
 }
 
-.box-image { background-image: url('images/box-icon.png'); }
-.line-image { background-image: url('images/line-icon.png'); }
-.freeform-image { background-image: url('images/freeform-icon.png'); }
-.erase-image { background-image: url('images/erase-icon.png'); }
-.move-image { background-image: url('images/move-icon.png'); }
-.text-image { background-image: url('images/text-icon.png'); }
-.info-image { background-image: url('images/info-icon.png'); }
-.drive-image { background-image: url('images/drive-icon.png'); }
+.box-image { background-image: url('images/box-icon.gif'); }
+.line-image { background-image: url('images/line-icon.gif'); }
+.freeform-image { background-image: url('images/freeform-icon.gif'); }
+.erase-image { background-image: url('images/erase-icon.gif'); }
+.move-image { background-image: url('images/move-icon.gif'); }
+.text-image { background-image: url('images/text-icon.gif'); }
+
+.drive-image { background-image: url('images/drive-icon.gif'); }
+.export-image { background-image: url('images/export-icon.gif'); }
+.import-image { background-image: url('images/import-icon.gif'); }
+.clear-image { background-image: url('images/clear-icon.gif'); }
+.undo-image { background-image: url('images/undo-icon.gif'); }
+.redo-image { background-image: url('images/redo-icon.gif'); }
+
+.info-image { background-image: url('images/info-icon.gif'); }
+
+/* New intro animation */
+
+.animated {
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@-webkit-keyframes bounceOut {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(.9);
+    transform: scale(.9);
+  }
+
+  12.5% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  73% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  83% {
+    -webkit-transform: scale(.95);
+    transform: scale(.95);
+  }
+
+  92% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  100% {
+    -webkit-transform: scale(.3);
+    transform: scale(.3);
+  }
+}
+
+@keyframes bounceOut {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(.9);
+    -ms-transform: scale(.9);
+    transform: scale(.9);
+  }
+
+  12.5% {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+
+  73% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+
+  83% {
+    -webkit-transform: scale(.95);
+    -ms-transform: scale(.95);
+    transform: scale(.95);
+  }
+
+  92% {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  100% {
+    -webkit-transform: scale(.3);
+    -ms-transform: scale(.3);
+    transform: scale(.3);
+  }
+}
+
+.bounceOut {
+  -webkit-animation-name: bounceOut;
+  animation-name: bounceOut;
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeOut {
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
 
 </style>
 </head>
 <body>
 
-<div id="logo-interstitial">
-  <img src="images/logo-full.png"></img>
+<div id="logo-interstitial" class="animated fadeOut">
+  <img src="images/logo-full.gif" class="animated bounceOut" />
 </div>
+
+<img id="logo-bar" src="images/logo-bar.gif" width="88" height="24" />
 
 <div id="draw-tools">
   <button id="box-button" class="tool active box-image"></button>
@@ -243,36 +495,59 @@ textarea {
 <div id="file-tools">
   <div id="drive-save-state">Unsaved</div>
   <button id="drive-button" class="tool drive-image"></button>
-  <button id="export-button" class="tool">Ex</button>
-  <button id="import-button" class="tool">Im</button>
-  <button id="undo-button" class="tool">Un</button>
-  <button id="redo-button" class="tool">Re</button>
+  <button id="export-button" class="tool export-image"></button>
+  <button id="import-button" class="tool import-image"></button>
+  <button id="clear-button" class="tool clear-image"></button>
+  <button id="undo-button" class="tool undo-image"></button>
+  <button id="redo-button" class="tool redo-image"></button>
   <button id="options-button" class="tool info-image"></button>
 </div>
 
+
 <div id="export-button-dialog" class="dialog">
-  <textarea readonly id="export-area"></textarea>
-  <button class="close-dialog-button">Close</button>
+    <textarea readonly id="export-area"></textarea>
+    <div class="dialog-button-bar">
+        <button class="close-dialog-button">Close</button>
+  </div>
 </div>
 
 <div id="options-button-dialog" class="dialog">
-  <div class="info-icon box-image"></div><div class="info-description">Draw boxes. You can resize them later with the Resize tool.</div><br>
-  <div class="info-icon line-image"></div><div class="info-description">Draw lines. Connect it to another line to change the orientation.</div><br>
-  <div class="info-icon text-image"></div><div class="info-description">Press a character on the keyboard, then drag to draw it.</div><br>
-  <div class="info-icon erase-image"></div><div class="info-description">Drag out an area to erase.</div><br>
-  <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines, just drag a line to change it.</div><br>
-  <div class="info-icon text-image"></div><div class="info-description">Press where to start writing, and type the text you want.</div><br>
-  <p> To move around the screen, hold CTRL on desktop and drag. On mobile, drag quickly to move and press and hold to start drawing.</p>
-
-  <button id="use-lines-button">Lines Mode</button>
-  <button id="use-ascii-button">ASCII Mode</button><br>
-  <button class="close-dialog-button">Close</button>
+  <div id="options-scroll">
+      <img id="options-logo" src="images/logo-options.gif" width="176" height="48" />
+        
+        <p>Moving around.<br>
+        Desktop: <span>Hold CTRL and drag the screen.</span><br>
+        Mobile: <span>Drag quickly to move. Press and hold to start drawing. Pinch to zoom in/out.</span></p>
+        <div class="info-icon box-image"></div><div class="info-description">Draw boxes. <span>You can resize them later with the Resize tool.</span></div><br>
+        <div class="info-icon line-image"></div><div class="info-description">Draw lines. <span>Connect it to another line to change the orientation.</span></div><br>
+        <div class="info-icon freeform-image"></div><div class="info-description">Draw freehand. <span>Press a character on the keyboard and draw with it.</span></div><br>
+        <div class="info-icon erase-image"></div><div class="info-description">Erase. <span>Drag out an area to remove its contents from the canvas.</span></div><br>
+        <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines. <span>Drag a line to change it's size/shape.</span></div><br>
+        <div class="info-icon text-image"></div><div class="info-description">Type text. <span>Click and type where you'd like to add text to the canvas.</span></div><br>
+        <br>
+        <div class="info-icon-file drive-image"></div><div class="info-description">Save. <span>Connect to Google Drive to save your work automatically.</span></div><br>
+        <div class="info-icon-file export-image"></div><div class="info-description">Export. <span>Copy your work to use it outside of ASCIIFlow.</span></div><br>
+        <div class="info-icon-file import-image"></div><div class="info-description">Import. <span>Paste ASCII/text to import it onto the canvas.</span></div><br>
+        <div class="info-icon-file clear-image"></div><div class="info-description">Clear. <span>Remove the entire contents from the canvas. Can be undone.</span></div><br>
+        <div class="info-icon-file undo-image"></div><div class="info-description">Undo. <br><span>Made a mistake? Undo!</span></div><br>
+        <div class="info-icon-file redo-image"></div><div class="info-description">Redo. <br><span>Too many Undo's? Redo!</span></div><br>
+        <br>
+        <button id="use-lines-button">Lines Mode</button>
+        <button id="use-ascii-button">ASCII Mode</button><br>
+        <br>
+        <br>
+    </div>
+    <div class="dialog-button-bar">
+        <button class="close-dialog-button">Close</button>
+    </div>
 </div>
 
 <div id="import-button-dialog" class="dialog">
   <textarea id="import-area"></textarea>
-  <button class="close-dialog-button">Close</button>
-  <button id="import-submit-button">Submit</button>
+    <div class="dialog-button-bar">
+        <button class="close-dialog-button">Close</button>
+        <button id="import-submit-button">Import</button>
+  </div>  
 </div>
 
 <!-- These dialogs are handled seperately. -->
@@ -288,7 +563,9 @@ textarea {
   <br>
   <div id="drive-file-list"></div>
   <button id="drive-new-file-button">New Drawing</button>
-  <button class="close-dialog-button">Close</button>
+  <div class="dialog-button-bar">
+    <button class="close-dialog-button">Close</button>
+  </div>
 </div>
 
 <textarea id="freeform-tool-input"></textarea>
@@ -300,7 +577,6 @@ textarea {
 <script src="https://apis.google.com/js/client.js?onload=window.gapiCallback"></script>
 
 <script>
-window.setTimeout(function() { $('#logo-interstitial').addClass('fade-out'); }, 1000);
 window.setTimeout(function() { $('#logo-interstitial').hide(); }, 3000);
 </script>
 
