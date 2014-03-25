@@ -58,7 +58,7 @@ function ea(a, b) {
   this.canvas = document.getElementById("ascii-canvas");
   this.context = this.canvas.getContext("2d");
   this.zoom = 1;
-  this.offset = new l(7500, 7500);
+  this.offset = new l(9E3, 5100);
   this.d = !0;
   this.s = !1;
   A(this);
@@ -84,6 +84,10 @@ function fa(a) {
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
   var c = n(B(a, new l(0, 0)), new l(3, 3)), d = B(a, new l(a.canvas.width, a.canvas.height)).add(new l(3, 3));
+  c.x = Math.max(0, Math.min(c.x, 2E3));
+  d.x = Math.max(0, Math.min(d.x, 2E3));
+  c.y = Math.max(0, Math.min(c.y, 600));
+  d.y = Math.max(0, Math.min(d.y, 600));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();

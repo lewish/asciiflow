@@ -11,7 +11,10 @@ ascii.View = function(state) {
   /** @type {Object} */ this.context = this.canvas.getContext('2d');
 
   /** @type {number} */ this.zoom = 1;
-  /** @type {ascii.Vector} */ this.offset = new ascii.Vector(7500, 7500);
+  /** @type {ascii.Vector} */ this.offset = new ascii.Vector(
+      MAX_GRID_WIDTH * CHAR_PIXELS_H / 2,
+      MAX_GRID_HEIGHT * CHAR_PIXELS_V / 2);
+
   /** @type {boolean} */ this.dirty = true;
   // TODO: Should probably save this setting in a cookie or something.
   /** @type {boolean} */ this.useLines = false;
@@ -69,6 +72,11 @@ ascii.View.prototype.render = function() {
       this.canvas.height))
       .add(new ascii.Vector(
       RENDER_PADDING_CELLS, RENDER_PADDING_CELLS));
+
+  startOffset.x = Math.max(0, Math.min(startOffset.x, MAX_GRID_WIDTH));
+  endOffset.x = Math.max(0, Math.min(endOffset.x, MAX_GRID_WIDTH));
+  startOffset.y = Math.max(0, Math.min(startOffset.y, MAX_GRID_HEIGHT));
+  endOffset.y = Math.max(0, Math.min(endOffset.y, MAX_GRID_HEIGHT));
 
   // Render the grid.
   context.lineWidth = '1';
