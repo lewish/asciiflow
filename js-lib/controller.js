@@ -192,9 +192,13 @@ ascii.Controller.prototype.handleFileButton = function(id) {
   $('.dialog').removeClass('visible');
   $('#' + id + '-dialog').toggleClass('visible');
 
+  if (id == 'import-button') {
+    $('#import-area').val('');
+    $('#import-area').focus();
+  }
+
   if (id == 'export-button') {
     $('#export-area').val(this.state.outputText());
-    $('#export-area').focus();
     $('#export-area').select();
   }
   if (id == 'clear-button') {

@@ -501,7 +501,8 @@ T.prototype.n = function() {
     a = a.target.id;
     $(".dialog").removeClass("visible");
     $("#" + a + "-dialog").toggleClass("visible");
-    "export-button" == a && ($("#export-area").val(S(this.state)), $("#export-area").focus(), $("#export-area").select());
+    "import-button" == a && ($("#import-area").val(""), $("#import-area").focus());
+    "export-button" == a && ($("#export-area").val(S(this.state)), $("#export-area").select());
     "clear-button" == a && this.state.clear();
     "undo-button" == a && ia(this.state);
     "redo-button" == a && ja(this.state);
