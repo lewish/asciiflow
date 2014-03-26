@@ -731,10 +731,10 @@ function xa(a, b) {
       a.mode = 2;
       a.c.start(B(a.view, b));
     }
-  }.bind(a), 130);
+  }.bind(a), 150);
 }
 X.prototype.r = function(a) {
-  if (!this.k && 130 > $.now() - this.I && 3 < n(a, this.B).length()) {
+  if (!this.k && 150 > $.now() - this.I && 6 < n(a, this.B).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;

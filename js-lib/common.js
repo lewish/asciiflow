@@ -23,8 +23,8 @@ try {
 
 /** @const */ var ERASE_CHAR = '\u2009';
 
-/** @const */ var DRAG_LATENCY = 130; // Milliseconds.
-/** @const */ var DRAG_ACCURACY = 3; // Pixels.
+/** @const */ var DRAG_LATENCY = 150; // Milliseconds.
+/** @const */ var DRAG_ACCURACY = 6; // Pixels.
 
 /** @const */ var CHAR_PIXELS_H = 9;
 /** @const */ var CHAR_PIXELS_V = 17;
