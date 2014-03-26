@@ -119,15 +119,16 @@ ascii.Controller.prototype.installBindings = function() {
             this.view.canvas.width / 2,
             this.view.canvas.height / 2)));
     $('#import-area').val('');
+    $('.dialog').removeClass('visible');
   }.bind(this));
 
   $('#use-lines-button').click(function(e) {
-   $('.dialog').removeClass('visible');
+    $('.dialog').removeClass('visible');
     this.view.setUseLines(true);
   }.bind(this));
 
   $('#use-ascii-button').click(function(e) {
-   $('.dialog').removeClass('visible');
+    $('.dialog').removeClass('visible');
     this.view.setUseLines(false);
   }.bind(this));
 

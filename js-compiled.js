@@ -518,6 +518,7 @@ T.prototype.n = function() {
     this.state.clear();
     ka(this.state, $("#import-area").val(), B(this.view, new l(this.view.canvas.width / 2, this.view.canvas.height / 2)));
     $("#import-area").val("");
+    $(".dialog").removeClass("visible");
   }.bind(this));
   $("#use-lines-button").click(function() {
     $(".dialog").removeClass("visible");
