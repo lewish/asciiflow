@@ -518,6 +518,7 @@ T.prototype.n = function() {
     this.state.clear();
     ka(this.state, $("#import-area").val(), B(this.view, new l(this.view.canvas.width / 2, this.view.canvas.height / 2)));
     $("#import-area").val("");
+    $(".dialog").removeClass("visible");
   }.bind(this));
   $("#use-lines-button").click(function() {
     $(".dialog").removeClass("visible");
@@ -731,10 +732,10 @@ function xa(a, b) {
       a.mode = 2;
       a.c.start(B(a.view, b));
     }
-  }.bind(a), 130);
+  }.bind(a), 150);
 }
 X.prototype.r = function(a) {
-  if (!this.k && 130 > $.now() - this.I && 3 < n(a, this.B).length()) {
+  if (!this.k && 150 > $.now() - this.I && 6 < n(a, this.B).length()) {
     this.k = !0;
     var b = this.b;
     b.mode = 1;

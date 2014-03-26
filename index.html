@@ -514,7 +514,9 @@ textarea {
 <div id="options-button-dialog" class="dialog">
   <div id="options-scroll">
       <img id="options-logo" src="images/logo-options.gif" width="176" height="48" />
-        
+        <br>
+        <button id="use-lines-button">Lines Mode</button>
+        <button id="use-ascii-button">ASCII Mode</button><br>
         <p>Moving around.<br>
         Desktop: <span>Hold CTRL and drag the screen.</span><br>
         Mobile: <span>Drag quickly to move. Press and hold to start drawing. Pinch to zoom in/out.</span></p>
@@ -532,8 +534,9 @@ textarea {
         <div class="info-icon-file undo-image"></div><div class="info-description">Undo. <br><span>Made a mistake? Undo!</span></div><br>
         <div class="info-icon-file redo-image"></div><div class="info-description">Redo. <br><span>Too many Undo's? Redo!</span></div><br>
         <br>
-        <button id="use-lines-button">Lines Mode</button>
-        <button id="use-ascii-button">ASCII Mode</button><br>
+
+
+        Developed by <a href="https://plus.google.com/+LewisHemens/about">Lewis</a>, Designed by <a href="mailto:info@samirvine.co.uk">Sam</a> and <a href="mailto:ryangilbanks@gmail.com">Ryan</a>.
         <br>
         <br>
     </div>
@@ -561,12 +564,13 @@ textarea {
 
 <div id="drive-dialog" class="dialog">
   <div id="drive-filename">Untitled ASCII Diagram</div>
-  <div style="margin: 5px;">Edit file permissions in <a href="http://drive.google.com/" target="_blank">Google Drive</a>.</div>
+  <div style="margin: 5px;">Edit permissions and manage files in <a href="http://drive.google.com/" target="_blank">Google Drive</a>.</div>
+  <br>
+  <button id="drive-new-file-button">New Drawing</button>
   <br>
   <div id="drive-file-list">
     <!-- filled with li's -->
   </div>
-  <button id="drive-new-file-button">New Drawing</button>
   <div class="dialog-button-bar">
     <button class="close-dialog-button">Close</button>
   </div>
@@ -589,6 +593,17 @@ if (width > 750) {
 }
 </script>
 <script type="text/javascript" src="//code.tinypass.com/tpl/d1/tpm.js"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49427709-1', 'asciiflow.com');
+  ga('send', 'pageview');
+
+</script>
 
 <script>
 window.setTimeout(function() { $('#logo-interstitial').hide(); }, 3000);
