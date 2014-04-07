@@ -102,6 +102,35 @@ ascii.Vector.prototype.scale = function(scale) {
   return new ascii.Vector(this.x * scale, this.y * scale);
 };
 
+/**
+ * Represents a box with normalized position vectors.
+ *
+ * @constructor
+ * @param {ascii.Vector} a
+ * @param {ascii.Vector} b
+ */
+ascii.Box = function(a, b) {
+  /** type {Number} */ this.startX = Math.min(a.x, b.x);
+  /** type {Number} */ this.startY = Math.min(a.y, b.y);
+  /** type {Number} */ this.endX = Math.max(a.x, b.x);
+  /** type {Number} */ this.endY = Math.max(a.y, b.y);
+};
+
+/** @return {ascii.Vector} */
+ascii.Box.prototype.topLeft = function() {
+  return new ascii.Vector(this.startX, this.startY);
+};
+
+/** @return {ascii.Vector} */
+ascii.Box.prototype.bottomRight = function() {
+  return new ascii.Vector(this.endX, this.endY);
+};
+
+/** @return {boolean} */
+ascii.Box.prototype.contains = function(position) {
+  return position.x >= this.startX && position.x <= this.endX && position.y >= this.startY && position.y <= this.endY;
+};
+
 /** @const */ var DIR_LEFT = new ascii.Vector(-1, 0);
 /** @const */ var DIR_RIGHT = new ascii.Vector(1, 0);
 /** @const */ var DIR_UP = new ascii.Vector(0, -1);
@@ -168,7 +197,7 @@ ascii.CellContext.prototype.sum = function() {
  * @constructor
  * @struct
  * @param {ascii.Vector} position
- * @param {string} value
+ * @param {string|null} value
  */
 ascii.MappedValue = function(position, value) {
   this.position = position;

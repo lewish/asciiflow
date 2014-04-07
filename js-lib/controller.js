@@ -118,6 +118,7 @@ ascii.Controller.prototype.installBindings = function() {
         this.view.screenToCell(new ascii.Vector(
             this.view.canvas.width / 2,
             this.view.canvas.height / 2)));
+    this.state.commitDraw();
     $('#import-area').val('');
     $('.dialog').removeClass('visible');
   }.bind(this));
@@ -180,6 +181,9 @@ ascii.Controller.prototype.handleDrawButton = function(id) {
   }
   if (id == 'text-button') {
     this.drawFunction = new ascii.DrawText(this.state, this.view);
+  }
+  if (id == 'select-button') {
+    this.drawFunction = new ascii.DrawSelect(this.state);
   }
   this.state.commitDraw();
   this.view.canvas.focus();

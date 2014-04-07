@@ -201,24 +201,30 @@ ascii.State.prototype.redo = function() {
 
 /**
  * Outputs the entire contents of the diagram as text.
+ * @param {ascii.Box=} opt_box
  * @return {string}
  */
-ascii.State.prototype.outputText = function() {
+ascii.State.prototype.outputText = function(opt_box) {
   // Find the first/last cells in the diagram so we don't output everything.
   var start = new ascii.Vector(Number.MAX_VALUE, Number.MAX_VALUE);
   var end = new ascii.Vector(-1, -1);
 
-  for (var i = 0; i < this.cells.length; i++) {
-    for (var j = 0; j < this.cells[i].length; j++) {
-      if (this.cells[i][j].getRawValue() != null) {
-        if (i < start.x) { start.x = i; }
-        if (j < start.y) { start.y = j; }
-        if (i > end.x) { end.x = i; }
-        if (j > end.y) { end.y = j; }
+  if (!opt_box) {
+    for (var i = 0; i < this.cells.length; i++) {
+      for (var j = 0; j < this.cells[i].length; j++) {
+        if (this.cells[i][j].getRawValue() != null) {
+          if (i < start.x) { start.x = i; }
+          if (j < start.y) { start.y = j; }
+          if (i > end.x) { end.x = i; }
+          if (j > end.y) { end.y = j; }
+        }
       }
     }
+    if (end.x < 0) { return '' }
+  } else {
+    start = opt_box.topLeft();
+    end = opt_box.bottomRight();
   }
-  if (end.x < 0) { return '' }
 
   var output = '';
   for (var j = start.y; j <= end.y; j++) {
@@ -257,5 +263,4 @@ ascii.State.prototype.fromText = function(value, offset) {
       this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
     }
   }
-  this.commitDraw();
 };

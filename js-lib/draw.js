@@ -14,10 +14,11 @@
 function drawLine(state, startPosition, endPosition, clockwise, opt_value) {
   var value = opt_value || SPECIAL_VALUE;
 
-  var startX = Math.min(startPosition.x, endPosition.x);
-  var startY = Math.min(startPosition.y, endPosition.y);
-  var endX = Math.max(startPosition.x, endPosition.x);
-  var endY = Math.max(startPosition.y, endPosition.y);
+  var box = new ascii.Box(startPosition, endPosition);
+  var startX = box.startX;
+  var startY = box.startY;
+  var endX = box.endX;
+  var endY = box.endY;
 
   var midX = clockwise ? endPosition.x : startPosition.x;
   var midY = clockwise ? startPosition.y : endPosition.y;
@@ -491,4 +492,121 @@ ascii.DrawMove.prototype.getCursor = function(position) {
 
 /** @inheritDoc */
 ascii.DrawMove.prototype.handleKey = function(value) {};
+
+/**
+ * @constructor
+ * @implements {ascii.DrawFunction}
+ * @param {ascii.State} state
+ */
+ascii.DrawSelect = function(state) {
+  this.state = state;
+  /** @type {ascii.Vector} */
+  this.startPosition = null;
+  /** @type {ascii.Vector} */
+  this.endPosition = null;
+  /** @type {ascii.Vector} */
+  this.dragStart = null;
+  /** @type {ascii.Vector} */
+  this.dragEnd = null;
+
+  /** @type {boolean} */
+  this.finished = true;
+
+  /** @type {Array.<ascii.MappedValue>} */
+  this.selectedCells = null;
+};
+
+/** @inheritDoc */
+ascii.DrawSelect.prototype.start = function(position) {
+  // Must be dragging.
+  if (this.startPosition != null &&
+      this.endPosition != null &&
+      new ascii.Box(this.startPosition, this.endPosition).contains(position)) {
+    this.dragStart = position;
+
+    var nonEmptyCells = this.state.scratchCells.filter(function(value) {
+      var rawValue = value.cell.getRawValue();
+      return value.cell.getRawValue() != null && value.cell.getRawValue() != ERASE_CHAR;
+    });
+    this.selectedCells = nonEmptyCells.map(function(value) {
+      return new ascii.MappedValue(value.position, value.cell.getRawValue());
+    });
+
+    var eraser = new ascii.DrawErase(this.state);
+    eraser.start(this.startPosition);
+    eraser.move(this.endPosition);
+    eraser.end();
+    // Hack! Erase adds an undo state, just get rid of it.
+    this.state.undoStates.pop();
+
+    this.dragMove(position);
+
+  } else {
+    this.startPosition = position;
+    this.endPosition = null;
+    this.finished = false;
+    this.move(position);
+  }
+};
+
+/** @inheritDoc */
+ascii.DrawSelect.prototype.move = function(position) {
+  this.endPosition = position;
+
+  if (this.dragStart != null) {
+    this.dragMove(position);
+  }
+
+  if (this.finished == true) {
+    return;
+  }
+
+  this.state.clearDraw();
+
+  var box = new ascii.Box(this.startPosition, position);
+
+  for (var i = box.startX; i <= box.endX; i++) {
+    for (var j = box.startY; j <= box.endY; j++) {
+      var current = new ascii.Vector(i, j);
+      // Effectively highlights the starting cell.
+      var currentValue = this.state.getCell(current).getRawValue();
+      this.state.drawValue(current,
+          currentValue == null ? ERASE_CHAR : currentValue);
+    }
+  }
+};
+
+ascii.DrawSelect.prototype.dragMove = function(position) {
+  this.dragEnd = position;
+  this.state.clearDraw();
+  var diff = this.dragStart.subtract(this.dragEnd);
+  for (var i in this.selectedCells) {
+    this.state.drawValue(this.selectedCells[i].position.subtract(diff), this.selectedCells[i].value);
+  }
+};
+
+/** @inheritDoc */
+ascii.DrawSelect.prototype.end = function() {
+  if (this.dragStart != null) {
+    this.state.commitDraw();
+    this.startPosition = null;
+    this.endPosition = null;
+  }
+  this.dragStart = null;
+  this.dragEnd = null;
+  this.finished = true;
+};
+
+/** @inheritDoc */
+ascii.DrawSelect.prototype.getCursor = function(position) {
+  if (this.startPosition != null &&
+      this.endPosition != null &&
+      new ascii.Box(this.startPosition, this.endPosition).contains(position)) {
+    return 'pointer';
+  }
+  return 'default';
+};
+
+/** @inheritDoc */
+ascii.DrawSelect.prototype.handleKey = function(value) {};
 
