@@ -370,11 +370,13 @@ ascii.DrawMove.prototype.start = function(position) {
 
       // Clockwise is a lie, it is true if we move vertically first.
       var clockwise = (DIRECTIONS[i].x != 0);
+      var startIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(position).getRawValue()) != -1;
+      var midPointIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(midPoint).getRawValue()) != -1;
 
       var midPointContext = this.state.getContext(midPoint);
       // Special case, a straight line with no turns.
       if (midPointContext.sum() == 1) {
-        ends.push({position: midPoint, clockwise: clockwise});
+        ends.push({position: midPoint, clockwise: clockwise, startIsAlt: startIsAlt, endIsAlt: midPointIsAlt});
         continue;
       }
       // Continue following lines from the midpoint.
@@ -389,10 +391,12 @@ ascii.DrawMove.prototype.start = function(position) {
         if (secondEnds.length == 0) {
           continue;
         }
+        var secondEnd = secondEnds[0];
+        var endIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(secondEnd).getRawValue()) != -1;
         // On the second line we don't care about multiple
         // junctions, just the last.
-        ends.push({position: secondEnds[secondEnds.length - 1],
-            clockwise: clockwise});
+        ends.push({position: secondEnd,
+            clockwise: clockwise, startIsAlt: startIsAlt, midPointIsAlt: midPointIsAlt, endIsAlt: endIsAlt});
       }
     }
   }
@@ -412,6 +416,20 @@ ascii.DrawMove.prototype.move = function(position) {
   for (var i in this.ends) {
     drawLine(this.state, position, this.ends[i].position,
         this.ends[i].clockwise);
+  }
+  for (var i in this.ends) {
+    // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
+    if (this.ends[i].startIsAlt) {
+      this.state.drawValue(position, ALT_SPECIAL_VALUE);
+    }
+    if (this.ends[i].endIsAlt) {
+      this.state.drawValue(this.ends[i].position, ALT_SPECIAL_VALUE);
+    }
+    if (this.ends[i].midPointIsAlt) {
+      var midX = this.ends[i].clockwise ? this.ends[i].position.x : position.x;
+      var midY = this.ends[i].clockwise ? position.y : this.ends[i].position.y;
+      this.state.drawValue(new ascii.Vector(midX, midY), ALT_SPECIAL_VALUE);
+    }
   }
 };
 
