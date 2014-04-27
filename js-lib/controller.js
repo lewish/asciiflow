@@ -168,7 +168,10 @@ ascii.Controller.prototype.handleDrawButton = function(id) {
     this.drawFunction = new ascii.DrawBox(this.state);
   }
   if (id == 'line-button') {
-    this.drawFunction = new ascii.DrawLine(this.state);
+    this.drawFunction = new ascii.DrawLine(this.state, false);
+  }
+  if (id == 'arrow-button') {
+    this.drawFunction = new ascii.DrawLine(this.state, true);
   }
   if (id == 'freeform-button') {
     this.drawFunction = new ascii.DrawFreeform(this.state, "X");

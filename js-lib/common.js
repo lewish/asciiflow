@@ -15,10 +15,18 @@ try {
 /** @const */ var MAX_GRID_HEIGHT = 600;
 
 /** @const */ var SPECIAL_VALUE = '+';
+/** @const */ var ALT_SPECIAL_VALUE = '^';
+/** @const */ var SPECIAL_ARROW_LEFT = '<';
+/** @const */ var SPECIAL_ARROW_UP = '^';
+/** @const */ var SPECIAL_ARROW_RIGHT = '>';
+/** @const */ var SPECIAL_ARROW_DOWN = 'v';
+/** @const */ var SPECIAL_VALUES = ['+', '\u2012', '\u2013'];
+/** @const */ var ALT_SPECIAL_VALUES = ['>', '<', '^', 'v'];
+/** @const */ var ALL_SPECIAL_VALUES = SPECIAL_VALUES.concat(ALT_SPECIAL_VALUES);
 
 /** @const */ var MAX_UNDO = 50;
 
-/** @const */ var SPECIAL_LINE_H = '\u2013';
+/** @const */ var SPECIAL_LINE_H = '\u2012';
 /** @const */ var SPECIAL_LINE_V = '|';
 
 /** @const */ var ERASE_CHAR = '\u2009';
@@ -155,7 +163,7 @@ ascii.Cell.prototype.getRawValue = function() {
 
 /** @return {boolean} */
 ascii.Cell.prototype.isSpecial = function() {
-  return this.getRawValue() == SPECIAL_VALUE;
+  return ALL_SPECIAL_VALUES.indexOf(this.getRawValue()) != -1;
 };
 
 /** @return {boolean} */

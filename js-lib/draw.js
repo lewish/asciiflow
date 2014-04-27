@@ -104,9 +104,11 @@ ascii.DrawBox.prototype.handleKey = function(value) {};
  * @constructor
  * @implements {ascii.DrawFunction}
  * @param {ascii.State} state
+ * @param {boolean} isArrow
  */
-ascii.DrawLine = function(state) {
+ascii.DrawLine = function(state, isArrow) {
   this.state = state;
+  this.isArrow = isArrow;
   /** @type {ascii.Vector} */ this.startPosition = null;
 };
 
@@ -127,6 +129,9 @@ ascii.DrawLine.prototype.move = function(position) {
       (endContext.left && endContext.right);
 
   drawLine(this.state, this.startPosition, position, clockwise);
+  if (this.isArrow) {
+    this.state.drawValue(position, ALT_SPECIAL_VALUE);
+  }
 };
 
 /** @inheritDoc */

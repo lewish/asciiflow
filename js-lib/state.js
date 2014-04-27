@@ -95,7 +95,7 @@ ascii.State.prototype.clearDraw = function() {
 ascii.State.prototype.getDrawValue = function(position) {
   var cell = this.getCell(position);
   var value = cell.scratchValue != null ? cell.scratchValue : cell.value;
-  if (value != SPECIAL_VALUE) {
+  if (value != SPECIAL_VALUE && value != ALT_SPECIAL_VALUE) {
     return value;
   }
 
@@ -108,10 +108,41 @@ ascii.State.prototype.getDrawValue = function(position) {
   if (!context.left && !context.right && context.up && context.down) {
     return SPECIAL_LINE_V;
   }
-  if (context.left && context.right && context.up && context.down) {
+  if (context.sum() == 4) {
     return SPECIAL_LINE_H;
   }
-  return SPECIAL_VALUE;
+  if (value == SPECIAL_VALUE && context.sum() == 3) {
+    return SPECIAL_VALUE;
+  }
+  if (value == ALT_SPECIAL_VALUE && context.sum() == 3) {
+    if (!context.left) {
+      return SPECIAL_ARROW_LEFT;
+    }
+    if (!context.up) {
+      return SPECIAL_ARROW_UP;
+    }
+    if (!context.down) {
+      return SPECIAL_ARROW_DOWN;
+    }
+    if (!context.right) {
+      return SPECIAL_ARROW_RIGHT;
+    }
+  }
+  if (value == ALT_SPECIAL_VALUE && context.sum() == 1) {
+    if (context.left) {
+      return SPECIAL_ARROW_RIGHT;
+    }
+    if (context.up) {
+      return SPECIAL_ARROW_DOWN;
+    }
+    if (context.down) {
+      return SPECIAL_ARROW_UP;
+    }
+    if (context.right) {
+      return SPECIAL_ARROW_LEFT;
+    }
+  }
+  return value;
 };
 
 /**
@@ -257,8 +288,11 @@ ascii.State.prototype.fromText = function(value, offset) {
       // Convert special output back to special chars.
       // TODO: This is a horrible hack, need to handle multiple special chars
       // correctly and preserve them through line drawing etc.
-      if (char == SPECIAL_LINE_H || char == SPECIAL_LINE_V) {
+      if (SPECIAL_VALUES.indexOf(char)  != -1) {
         char = SPECIAL_VALUE;
+      }
+      if (ALT_SPECIAL_VALUES.indexOf(char) != -1) {
+        char = ALT_SPECIAL_VALUE;
       }
       this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
     }
