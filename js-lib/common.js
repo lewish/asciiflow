@@ -20,7 +20,7 @@ try {
 /** @const */ var SPECIAL_ARROW_UP = '^';
 /** @const */ var SPECIAL_ARROW_RIGHT = '>';
 /** @const */ var SPECIAL_ARROW_DOWN = 'v';
-/** @const */ var SPECIAL_VALUES = ['+', '\u2012', '\u2013', '-'];
+/** @const */ var SPECIAL_VALUES = ['+', '\u2012', '\u2013', '-', '|'];
 /** @const */ var ALT_SPECIAL_VALUES = ['>', '<', '^', 'v'];
 /** @const */ var ALL_SPECIAL_VALUES = SPECIAL_VALUES.concat(ALT_SPECIAL_VALUES);
 
@@ -190,6 +190,10 @@ ascii.CellContext = function(left, right, up, down) {
   /** @type {boolean} */ this.right = right;
   /** @type {boolean} */ this.up = up;
   /** @type {boolean} */ this.down = down;
+  /** @type {boolean} */ this.leftup = false;
+  /** @type {boolean} */ this.rightup = false;
+  /** @type {boolean} */ this.leftdown = false;
+  /** @type {boolean} */ this.rightdown = false;
 };
 
 /**
@@ -198,6 +202,14 @@ ascii.CellContext = function(left, right, up, down) {
  */
 ascii.CellContext.prototype.sum = function() {
   return this.left + this.right + this.up + this.down;
+};
+
+/**
+ * Returns the total number of surrounding special cells.
+ * @return {number}
+ */
+ascii.CellContext.prototype.extendedSum = function() {
+  return this.left + this.right + this.up + this.down + this.leftup + this.leftdown + this.rightup + this.rightdown;
 };
 
 /**

@@ -95,7 +95,9 @@ ascii.State.prototype.clearDraw = function() {
 ascii.State.prototype.getDrawValue = function(position) {
   var cell = this.getCell(position);
   var value = cell.scratchValue != null ? cell.scratchValue : cell.value;
-  if (value != SPECIAL_VALUE && value != ALT_SPECIAL_VALUE) {
+  var isSpecial = SPECIAL_VALUES.indexOf(value) != -1;
+  var isAltSpecial = ALT_SPECIAL_VALUES.indexOf(value) != -1;
+  if (!isSpecial && !isAltSpecial) {
     return value;
   }
 
@@ -111,10 +113,7 @@ ascii.State.prototype.getDrawValue = function(position) {
   if (context.sum() == 4) {
     return SPECIAL_LINE_H;
   }
-  if (value == SPECIAL_VALUE && context.sum() == 3) {
-    return SPECIAL_VALUE;
-  }
-  if (value == ALT_SPECIAL_VALUE && context.sum() == 3) {
+  if (isAltSpecial && context.sum() == 3) {
     if (!context.left) {
       return SPECIAL_ARROW_LEFT;
     }
@@ -128,7 +127,24 @@ ascii.State.prototype.getDrawValue = function(position) {
       return SPECIAL_ARROW_RIGHT;
     }
   }
-  if (value == ALT_SPECIAL_VALUE && context.sum() == 1) {
+  if ((isSpecial || isAltSpecial) && context.sum() == 3) {
+    this.extendContext(position, context);
+    if (!context.right && context.leftup && context.leftdown) {
+      return SPECIAL_LINE_V;
+    }
+    if (!context.left && context.rightup && context.rightdown) {
+      return SPECIAL_LINE_V;
+    }
+    if (!context.down && context.leftup && context.rightup) {
+      return SPECIAL_LINE_H;
+    }
+    if (!context.up && context.rightdown && context.leftdown) {
+      return SPECIAL_LINE_H;
+    }
+    return SPECIAL_VALUE;
+  }
+
+  if (isAltSpecial && context.sum() == 1) {
     if (context.left) {
       return SPECIAL_ARROW_RIGHT;
     }
@@ -142,7 +158,7 @@ ascii.State.prototype.getDrawValue = function(position) {
       return SPECIAL_ARROW_LEFT;
     }
   }
-  return value;
+  return SPECIAL_VALUE;
 };
 
 /**
@@ -155,6 +171,17 @@ ascii.State.prototype.getContext = function(position) {
   var up = this.getCell(position.add(DIR_UP)).isSpecial();
   var down = this.getCell(position.add(DIR_DOWN)).isSpecial();
   return new ascii.CellContext(left, right, up, down);
+};
+
+/**
+ * @param {ascii.Vector} position
+ * @param {ascii.CellContext} context
+ */
+ascii.State.prototype.extendContext = function(position, context) {
+  context.leftup = this.getCell(position.add(DIR_LEFT).add(DIR_UP)).isSpecial();
+  context.rightup = this.getCell(position.add(DIR_RIGHT).add(DIR_UP)).isSpecial();
+  context.leftdown = this.getCell(position.add(DIR_LEFT).add(DIR_DOWN)).isSpecial();
+  context.rightdown = this.getCell(position.add(DIR_RIGHT).add(DIR_DOWN)).isSpecial();
 };
 
 /**
@@ -186,6 +213,10 @@ ascii.State.prototype.commitDraw = function(opt_undo) {
     var newValue = cell.getRawValue();
     if (newValue == ERASE_CHAR || newValue == ' ') {
       newValue = null;
+    }
+    // Let's store the actual drawed value, so behaviour matches what the user sees.
+    if (cell.isSpecial()) {
+      newValue = this.getDrawValue(position);
     }
     cell.scratchValue = null;
     cell.value = newValue;
