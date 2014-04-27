@@ -192,6 +192,7 @@ ascii.DriveController.prototype.reloadFileContent = function() {
     this.state.fromText(content, this.view.screenToCell(new ascii.Vector(
             this.view.canvas.width / 2,
             this.view.canvas.height / 2)));
+    this.state.commitDraw();
     this.cachedText = this.state.outputText();
   }.bind(this));
 };

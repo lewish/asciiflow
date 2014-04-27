@@ -808,6 +808,7 @@ function Ea(a) {
     $("#drive-save-state").text("Loaded");
     this.state.clear();
     ua(this.state, a, E(this.view, new p(this.view.canvas.width / 2, this.view.canvas.height / 2)));
+    N(this.state);
     this.D = R(this.state);
   }.bind(a));
 }
