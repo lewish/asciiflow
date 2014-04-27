@@ -4,7 +4,7 @@ try {
 } catch (aa) {
   window.O = window.O || {};
 }
-var g = ["+", "\u2012", "\u2013"], m = [">", "<", "^", "v"], ba = g.concat(m), n = "ontouchstart" in window || "onmsgesturechange" in window;
+var g = ["+", "\u2012", "\u2013", "-"], m = [">", "<", "^", "v"], ba = g.concat(m), n = "ontouchstart" in window || "onmsgesturechange" in window;
 function p(a, b) {
   this.x = a;
   this.y = b;
@@ -461,13 +461,13 @@ function ja(a, b) {
   }
   var d = a.getContext(b);
   if (d.left && d.right && !d.l && !d.j) {
-    return "\u2012";
+    return "-";
   }
   if (!d.left && !d.right && d.l && d.j) {
     return "|";
   }
   if (4 == E(d)) {
-    return "\u2012";
+    return "-";
   }
   if ("+" == c && 3 == E(d)) {
     return "+";
