@@ -158,7 +158,7 @@ ascii.State.prototype.getDrawValue = function(position) {
       return SPECIAL_ARROW_LEFT;
     }
   }
-  return SPECIAL_VALUE;
+  return value;
 };
 
 /**
