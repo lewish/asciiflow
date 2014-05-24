@@ -612,8 +612,14 @@ if (width > 750) {
 
 </script>
 
+<link rel="stylesheet" type="text/css" href="addtohomescreen.css">
+<script src="addtohomescreen.min.js"></script>
+
 <script>
 window.setTimeout(function() { $('#logo-interstitial').hide(); }, 3000);
+addToHomescreen({
+   startDelay: 6
+});
 </script>
 
 </body>
