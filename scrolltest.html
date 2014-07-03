@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>
+      Supertag test
+    </title>
+  <script src="http://asciiflow.com/jquery-1.9.1.min.js"></script>
+  <script>
+
+window.expandAd = function() {
+  var tag = $('.faketag')[0];
+  if (!tag) return;
+  tag.setAttribute('class', '');
+  var originalHeight = window.getComputedStyle(tag).height;
+  var yOffset = tag.offsetTop;
+  var yScreenCenter = window.pageYOffset + window.innerHeight / 3;
+
+  tag.style.width = '100%';
+  $(tag).animate({
+    height: "100px"
+  }, 500, function() {});
+  tag.style['background-color'] = '#AAA';
+
+  var afterHeight = window.getComputedStyle(tag).height;
+  window.console.log(yOffset + "," + yScreenCenter);
+  if (yScreenCenter > yOffset) {
+      var originalMargin = parseInt($('body').css('margin-top'));
+      var newMargin = (originalMargin - 100) + 'px';
+      window.console.log(newMargin);
+      $('body').animate({
+        'margin-top': newMargin
+      }, 500, function() {
+         $('body').css('margin-top', originalMargin + 'px');
+        window.scrollBy(0, 100);
+      });
+  }
+  window.setTimeout(window.expandAd, 2000);
+};
+
+window.setTimeout(window.expandAd, 2000);
+  </script>
+  </head>
+  <body>
+    <div style="width:100%; max-width:800px; margin-left:auto; margin-right:auto; background-color: rgb(0, 143, 255);">
+    <h1> Header </h1>
+    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas non vulputate tortor. Nunc ornare erat mi, a varius ligula lacinia sit amet. Pellentesque aliquam sed neque vel scelerisque. Aenean blandit erat tincidunt, ornare neque sed, mattis metus. Sed eros tortor, vulputate non odio ac, aliquam laoreet tellus. Mauris vitae dui ullamcorper, sodales erat non, rhoncus justo. In hac habitasse platea dictumst. Duis dictum vehicula sodales. Praesent ipsum ante, ultricies ac sem facilisis, pellentesque accumsan odio. Nam venenatis, lacus quis ultricies facilisis, nulla odio porttitor mi, eget consequat urna odio ac magna. Sed auctor libero arcu, sed lobortis lacus dictum ut. Quisque a nibh nec risus consequat posuere. In facilisis tincidunt nulla non eleifend. Mauris rhoncus sit amet massa sit amet mollis. Sed et quam eget neque facilisis imperdiet tempor a dui. Curabitur velit elit, malesuada lobortis ullamcorper non, gravida id nulla.
+
+  <div class="faketag"></div>
+Morbi lectus est, laoreet non massa id, sagittis sodales nibh. Etiam pharetra auctor tempor. Maecenas lacinia euismod velit vitae accumsan. Sed vitae suscipit quam. Aliquam non dolor non sapien consequat iaculis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla adipiscing mauris in leo sollicitudin porttitor. Phasellus quis fringilla erat, quis faucibus sapien. Suspendisse gravida sed mi non iaculis.
+
+  <div class="faketag"></div>
+Sed sodales tortor et pharetra tempus. Donec aliquam felis ut hendrerit feugiat. Nunc accumsan leo vitae facilisis venenatis. Proin nec lacus in velit vulputate pharetra sed quis massa. Pellentesque cursus, lectus non ornare ornare, purus odio egestas quam, sit amet accumsan sem est vitae elit. Vestibulum et tempor justo. Donec quis urna ultricies, consectetur orci non, porttitor enim. Pellentesque mattis tempor lacus, non accumsan magna ullamcorper sit amet.
+
+Maecenas a dictum diam. Aenean eleifend cursus lacus at interdum. Nulla pellentesque rhoncus molestie. Nunc molestie tortor urna, id molestie felis cursus quis. Etiam vitae lorem vestibulum, tempus elit eget, tincidunt enim. Curabitur purus nibh, eleifend non dapibus ut, tempus sed enim. Aenean est massa, mattis id turpis vel, volutpat dignissim orci. Donec ultrices eros eu metus sodales, at eleifend lorem accumsan. Nam eleifend ante sit amet congue euismod. Maecenas vulputate, diam vitae blandit ullamcorper, elit dui porttitor mauris, vitae imperdiet mauris orci ut sem. Nam varius, magna ut commodo fermentum, velit nisi aliquet mi, sit amet condimentum nunc lacus nec mauris.
+  <div class="faketag"></div>
+In ac mauris id risus tincidunt vestibulum sed quis elit. Aenean metus diam, tincidunt non congue a, faucibus suscipit sem. Donec id nibh tellus. Donec sed turpis est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed bibendum eros non tellus volutpat, vitae consectetur magna convallis. Quisque sit amet ante sed nunc imperdiet lobortis. Aenean volutpat nunc id erat sodales suscipit.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eros justo, elementum a lacinia vel, interdum cursus orci. In nisi dui, lacinia sed metus quis, venenatis condimentum sapien. Aliquam vulputate libero sed elit laoreet, nec adipiscing orci ultricies. Nunc faucibus, libero a adipiscing ornare, eros magna tempor odio, nec bibendum erat enim ac lacus. Vivamus scelerisque vehicula sem non dictum. Proin quis placerat erat. Maecenas tempus laoreet mollis. Curabitur risus erat, consectetur eget accumsan eget, mollis in lacus. Vestibulum cursus enim quis neque tristique placerat. Aenean sed mi consequat leo ultricies euismod vel sit amet sapien.
+  <div class="faketag"></div>
+Nam vehicula nunc augue, ut pharetra diam tincidunt ac. Morbi et feugiat mauris, nec porta turpis. Suspendisse placerat, augue posuere aliquam condimentum, lacus felis tincidunt ipsum, eu faucibus neque enim nec felis. Nulla facilisi. Quisque ac euismod mi, ac tincidunt turpis. Phasellus auctor, sem semper euismod aliquet, arcu nisi ornare metus, ut tristique libero nisl vitae purus. Nullam vitae risus sodales, convallis odio ac, ullamcorper metus. Maecenas eleifend scelerisque risus, et pulvinar leo mollis id. Mauris ut sapien libero. Suspendisse ac lectus ut lorem malesuada iaculis et in ipsum. Donec tincidunt et nunc ac venenatis.
+
+Nulla eleifend non dolor ut ornare. Proin laoreet ipsum ac euismod tincidunt. Donec dolor odio, pulvinar nec dui at, tempor euismod justo. Ut ultrices dictum ligula quis dignissim. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi sed porta orci. Integer vitae nisl in diam ullamcorper convallis in in eros. Ut tempor odio turpis, ac iaculis diam hendrerit ut. Quisque malesuada felis elit, a volutpat massa vestibulum ac. Sed a ligula congue, adipiscing orci in, porta elit. Sed et lobortis sem. Praesent imperdiet lorem mi, vitae tempus lectus egestas ut. Aenean nibh tortor, lobortis sit amet nulla id, consectetur bibendum tellus. Nulla interdum tellus vel pharetra consectetur. In faucibus in est vitae luctus.
+  <div class="faketag"></div>
+Vestibulum aliquam nulla quis dignissim lacinia. Ut iaculis tincidunt libero, quis fringilla nibh hendrerit et. Fusce viverra sem id augue consequat suscipit id semper orci. Sed egestas, nisi a luctus cursus, eros elit mattis dui, non aliquet leo metus id eros. Aenean et fringilla sapien. Fusce velit nunc, tempor vitae mi at, fermentum molestie orci. Vivamus vel elementum nisi. Proin facilisis dui odio, nec molestie mauris varius ac. Etiam neque ligula, vestibulum vel consectetur consequat, euismod at enim. Aenean vitae semper nibh. Nam eu felis in mauris pretium adipiscing quis sit amet magna. Nam auctor dolor a sapien hendrerit, non lacinia turpis commodo. Cras sed lorem nibh. Mauris egestas, justo eu fermentum sodales, nunc erat mattis sapien, eu imperdiet lectus lacus id massa. Duis ligula metus, rutrum nec est congue, mollis malesuada lectus. Fusce condimentum suscipit erat.
+
+Duis pharetra erat at metus aliquet, quis elementum eros imperdiet. Aenean neque sapien, placerat vel sagittis eu, tempor vitae odio. Aliquam enim justo, varius at sapien ultrices, vulputate aliquet justo. Curabitur lectus dolor, pharetra et pharetra nec, posuere vel urna. Nam purus diam, vestibulum in odio semper, accumsan faucibus ante. Aliquam sollicitudin nulla ac nulla porttitor ultrices. Aenean rhoncus ipsum ante, non lacinia odio mattis at. Nulla facilisi. Vestibulum dui felis, dapibus et ligula vel, pulvinar varius mi. </p>
+    <div id="test-ad-slot"></div>
+    <p> Some more content </p>
+    </div>
+  </body>
+</html>
+
