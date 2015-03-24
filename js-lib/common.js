@@ -167,6 +167,11 @@ ascii.Cell.prototype.isSpecial = function() {
 };
 
 /** @return {boolean} */
+ascii.Cell.prototype.isEmpty = function() {
+  return this.value == null && this.scratchValue == null;
+};
+
+/** @return {boolean} */
 ascii.Cell.prototype.hasScratch = function() {
   return this.scratchValue != null;
 };

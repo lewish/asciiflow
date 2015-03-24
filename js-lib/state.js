@@ -101,13 +101,15 @@ ascii.State.prototype.getDrawValue = function(position) {
     return value;
   }
 
-  // Magic time.
+  // Because the underlying state only stores actual cell values and there is
+  // no underlying representation of shapes, we do a lot of crazy logic here
+  // to make diagrams display as expected.
   var context = this.getContext(position);
 
-  if (context.left && context.right && !context.up && !context.down) {
+  if (isSpecial && context.left && context.right && !context.up && !context.down) {
     return SPECIAL_LINE_H;
   }
-  if (!context.left && !context.right && context.up && context.down) {
+  if (isSpecial && !context.left && !context.right && context.up && context.down) {
     return SPECIAL_LINE_V;
   }
   if (context.sum() == 4) {
@@ -139,6 +141,16 @@ ascii.State.prototype.getDrawValue = function(position) {
       return SPECIAL_LINE_H;
     }
     if (!context.up && context.rightdown && context.leftdown) {
+      return SPECIAL_LINE_H;
+    }
+    var leftupempty = this.getCell(position.add(DIR_LEFT).add(DIR_UP)).isEmpty();
+    var rightupempty = this.getCell(position.add(DIR_RIGHT).add(DIR_UP)).isEmpty();
+    if (context.up && context.left && context.right && (!leftupempty || !rightupempty)) {
+      return SPECIAL_LINE_H;
+    }
+    var leftdownempty = this.getCell(position.add(DIR_LEFT).add(DIR_DOWN)).isEmpty();
+    var rightdownempty = this.getCell(position.add(DIR_RIGHT).add(DIR_DOWN)).isEmpty();
+    if (context.down && context.left && context.right && (!leftdownempty || !rightdownempty)) {
       return SPECIAL_LINE_H;
     }
     return SPECIAL_VALUE;

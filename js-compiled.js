@@ -1,4 +1,4 @@
-var g;
+var f;
 try {
   throw 1;
 } catch (aa) {
@@ -39,25 +39,28 @@ function ca(a) {
 t.prototype.contains = function(a) {
   return a.x >= this.w && a.x <= this.I && a.y >= this.A && a.y <= this.J;
 };
-var v = new p(-1, 0), w = new p(1, 0), x = new p(0, -1), y = new p(0, 1), A = [v, w, x, y];
+var v = new p(-1, 0), w = new p(1, 0), x = new p(0, -1), y = new p(0, 1), z = [v, w, x, y];
 function da() {
   this.h = this.value = null;
 }
-function B(a) {
+function A(a) {
   return null != a.h ? a.h : a.value;
 }
+function B(a) {
+  return-1 != ba.indexOf(A(a));
+}
 function C(a) {
-  return-1 != ba.indexOf(B(a));
+  return null == a.value && null == a.h;
 }
 function ea(a, b, c, d) {
   this.left = a;
   this.right = b;
-  this.k = c;
+  this.j = c;
   this.i = d;
   this.P = this.L = this.Q = this.M = !1;
 }
-function D(a) {
-  return a.left + a.right + a.k + a.i;
+function E(a) {
+  return a.left + a.right + a.j + a.i;
 }
 function fa(a, b) {
   this.position = a;
@@ -97,7 +100,7 @@ function ja(a) {
   b.clearRect(0, 0, a.canvas.width, a.canvas.height);
   b.scale(a.zoom, a.zoom);
   b.translate(a.canvas.width / 2 / a.zoom, a.canvas.height / 2 / a.zoom);
-  var c = r(E(a, new p(0, 0)), new p(3, 3)), d = E(a, new p(a.canvas.width, a.canvas.height)).add(new p(3, 3));
+  var c = r(F(a, new p(0, 0)), new p(3, 3)), d = F(a, new p(a.canvas.width, a.canvas.height)).add(new p(3, 3));
   c.x = Math.max(0, Math.min(c.x, 2E3));
   d.x = Math.max(0, Math.min(d.x, 2E3));
   c.y = Math.max(0, Math.min(c.y, 600));
@@ -114,14 +117,14 @@ function ja(a) {
   a.context.stroke();
   e = !a.B;
   b.font = "15px Courier New";
-  for (var f = c.x;f < d.x;f++) {
+  for (var g = c.x;g < d.x;g++) {
     for (var l = c.y;l < d.y;l++) {
-      var k = F(a.state, new p(f, l));
-      if (C(k) || null != k.h && " " != B(k)) {
-        a.context.fillStyle = null != k.h ? "#DEF" : "#F5F5F5", b.fillRect(9 * f - a.offset.x, 17 * (l - 1) - a.offset.y, 9, 17);
+      var k = G(a.state, new p(g, l));
+      if (B(k) || null != k.h && " " != A(k)) {
+        a.context.fillStyle = null != k.h ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (l - 1) - a.offset.y, 9, 17);
       }
-      var s = G(a.state, new p(f, l));
-      null == s || C(k) && !e || (a.context.fillStyle = "#000000", b.fillText(s, 9 * f - a.offset.x, 17 * l - a.offset.y - 3));
+      var s = I(a.state, new p(g, l));
+      null == s || B(k) && !e || (a.context.fillStyle = "#000000", b.fillText(s, 9 * g - a.offset.x, 17 * l - a.offset.y - 3));
     }
   }
   if (a.B) {
@@ -129,79 +132,79 @@ function ja(a) {
     b.strokeStyle = "#000000";
     b.beginPath();
     for (e = c.x;e < d.x;e++) {
-      for (k = !1, f = c.y;f < d.y;f++) {
-        l = F(a.state, new p(e, f)), C(l) && f != d.y - 1 || !k || (b.moveTo(9 * e - a.offset.x + 4.5, 17 * k - a.offset.y - 8.5), b.lineTo(9 * e - a.offset.x + 4.5, 17 * (f - 1) - a.offset.y - 8.5), k = !1), C(l) && !k && (k = f);
+      for (k = !1, g = c.y;g < d.y;g++) {
+        l = G(a.state, new p(e, g)), B(l) && g != d.y - 1 || !k || (b.moveTo(9 * e - a.offset.x + 4.5, 17 * k - a.offset.y - 8.5), b.lineTo(9 * e - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), k = !1), B(l) && !k && (k = g);
       }
     }
-    for (f = c.y;f < d.y;f++) {
+    for (g = c.y;g < d.y;g++) {
       for (k = !1, e = c.x;e < d.x;e++) {
-        l = F(a.state, new p(e, f)), C(l) && e != d.x - 1 || !k || (b.moveTo(9 * k - a.offset.x + 4.5, 17 * f - a.offset.y - 8.5), b.lineTo(9 * (e - 1) - a.offset.x + 4.5, 17 * f - a.offset.y - 8.5), k = !1), C(l) && !k && (k = e);
+        l = G(a.state, new p(e, g)), B(l) && e != d.x - 1 || !k || (b.moveTo(9 * k - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (e - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), k = !1), B(l) && !k && (k = e);
       }
     }
     a.context.stroke();
   }
 }
-function E(a, b) {
+function F(a, b) {
   return new p(Math.min(Math.max(1, Math.round(((new p((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).x - 4.5) / 9)), 1998), Math.min(Math.max(1, Math.round(((new p((b.x - a.canvas.width / 2) / a.zoom + a.offset.x, (b.y - a.canvas.height / 2) / a.zoom + a.offset.y)).y + 8.5) / 17)), 598));
 }
-;function I(a, b, c, d, e) {
+;function J(a, b, c, d, e) {
   e = e || "+";
-  var f = new t(b, c), l = f.w, k = f.A, s = f.I, f = f.J, z = d ? c.x : b.x;
+  var g = new t(b, c), l = g.w, k = g.A, s = g.I, g = g.J, D = d ? c.x : b.x;
   for (d = d ? b.y : c.y;l++ < s;) {
     var u = new p(l, d), H = a.getContext(new p(l, d));
-    " " == e && 2 == H.k + H.i || J(a, u, e);
+    " " == e && 2 == H.j + H.i || K(a, u, e);
   }
-  for (;k++ < f;) {
-    u = new p(z, k), H = a.getContext(new p(z, k)), " " == e && 2 == H.left + H.right || J(a, u, e);
+  for (;k++ < g;) {
+    u = new p(D, k), H = a.getContext(new p(D, k)), " " == e && 2 == H.left + H.right || K(a, u, e);
   }
-  K(a, b, e);
-  K(a, c, e);
-  J(a, new p(z, d), e);
+  L(a, b, e);
+  L(a, c, e);
+  K(a, new p(D, d), e);
 }
-function L(a) {
+function M(a) {
   this.state = a;
   this.a = null;
 }
-g = L.prototype;
-g.start = function(a) {
+f = M.prototype;
+f.start = function(a) {
   this.a = a;
 };
-g.move = function(a) {
+f.move = function(a) {
   this.b = a;
-  M(this.state);
-  I(this.state, this.a, a, !0);
-  I(this.state, this.a, a, !1);
-};
-g.end = function() {
   N(this.state);
+  J(this.state, this.a, a, !0);
+  J(this.state, this.a, a, !1);
 };
-g.l = function() {
+f.end = function() {
+  O(this.state);
+};
+f.l = function() {
   return "crosshair";
 };
-g.g = function() {
+f.g = function() {
 };
-function O(a, b) {
+function P(a, b) {
   this.state = a;
   this.V = b;
   this.a = null;
 }
-g = O.prototype;
-g.start = function(a) {
+f = P.prototype;
+f.start = function(a) {
   this.a = a;
 };
-g.move = function(a) {
-  M(this.state);
-  var b = this.state.getContext(this.a), c = this.state.getContext(a);
-  I(this.state, this.a, a, b.k && b.i || c.left && c.right);
-  this.V && K(this.state, a, "^");
-};
-g.end = function() {
+f.move = function(a) {
   N(this.state);
+  var b = this.state.getContext(this.a), c = this.state.getContext(a);
+  J(this.state, this.a, a, b.j && b.i || c.left && c.right);
+  this.V && L(this.state, a, "^");
 };
-g.l = function() {
+f.end = function() {
+  O(this.state);
+};
+f.l = function() {
   return "crosshair";
 };
-g.g = function() {
+f.g = function() {
 };
 function ka(a, b) {
   this.state = a;
@@ -212,20 +215,20 @@ function ka(a, b) {
     });
   }));
 }
-g = ka.prototype;
-g.start = function(a) {
-  K(this.state, a, this.value);
+f = ka.prototype;
+f.start = function(a) {
+  L(this.state, a, this.value);
 };
-g.move = function(a) {
-  K(this.state, a, this.value);
+f.move = function(a) {
+  L(this.state, a, this.value);
 };
-g.end = function() {
-  N(this.state);
+f.end = function() {
+  O(this.state);
 };
-g.l = function() {
+f.l = function() {
   return "crosshair";
 };
-g.g = function(a) {
+f.g = function(a) {
   n && (this.value = $("#freeform-tool-input").val().substr(0, 1), $("#freeform-tool-input").blur(), $("#freeform-tool-input").hide(0));
   1 == a.length && (this.value = a);
 };
@@ -233,77 +236,77 @@ function la(a) {
   this.state = a;
   this.a = null;
 }
-g = la.prototype;
-g.start = function(a) {
-  N(this.state);
+f = la.prototype;
+f.start = function(a) {
+  O(this.state);
   $("#text-tool-input").val("");
   this.a = a;
-  a = B(F(this.state, this.a));
-  K(this.state, this.a, null == a ? "\u2009" : a);
+  a = A(G(this.state, this.a));
+  L(this.state, this.a, null == a ? "\u2009" : a);
 };
-g.move = function() {
+f.move = function() {
 };
-g.end = function() {
+f.end = function() {
   null != this.a && (this.b = this.a, this.a = null, $("#text-tool-widget").hide(0, function() {
     $("#text-tool-widget").show(0, function() {
       $("#text-tool-input").focus();
     });
   }));
 };
-g.l = function() {
+f.l = function() {
   return "pointer";
 };
-g.g = function() {
+f.g = function() {
   var a = $("#text-tool-input").val();
-  M(this.state);
+  N(this.state);
   for (var b = 0, c = 0, d = 0;d < a.length;d++) {
-    "\n" == a[d] ? (c++, b = 0) : (K(this.state, this.b.add(new p(b, c)), a[d]), b++);
+    "\n" == a[d] ? (c++, b = 0) : (L(this.state, this.b.add(new p(b, c)), a[d]), b++);
   }
 };
-function P(a) {
+function Q(a) {
   this.state = a;
   this.b = this.a = null;
 }
-g = P.prototype;
-g.start = function(a) {
+f = Q.prototype;
+f.start = function(a) {
   this.a = a;
   this.move(a);
 };
-g.move = function(a) {
-  M(this.state);
+f.move = function(a) {
+  N(this.state);
   this.b = a;
   var b = Math.min(this.a.x, this.b.x);
   a = Math.min(this.a.y, this.b.y);
   for (var c = Math.max(this.a.x, this.b.x), d = Math.max(this.a.y, this.b.y);b <= c;b++) {
     for (var e = a;e <= d;e++) {
-      K(this.state, new p(b, e), "\u2009");
+      L(this.state, new p(b, e), "\u2009");
     }
   }
 };
-g.end = function() {
-  N(this.state);
+f.end = function() {
+  O(this.state);
 };
-g.l = function() {
+f.l = function() {
   return "crosshair";
 };
-g.g = function() {
+f.g = function() {
 };
 function ma(a) {
   this.state = a;
   this.e = this.a = null;
 }
-g = ma.prototype;
-g.start = function(a) {
+f = ma.prototype;
+f.start = function(a) {
   var b;
   if (n) {
-    if (C(F(this.state, a))) {
+    if (B(G(this.state, a))) {
       b = a;
     } else {
-      b = A.concat([v.add(x), v.add(y), w.add(x), w.add(y)]);
+      b = z.concat([v.add(x), v.add(y), w.add(x), w.add(y)]);
       var c = null, d = 0, e;
       for (e in b) {
-        var f = a.add(b[e]), l = D(this.state.getContext(f));
-        C(F(this.state, f)) && l > d && (c = b[e], d = l);
+        var g = a.add(b[e]), l = E(this.state.getContext(g));
+        B(G(this.state, g)) && l > d && (c = b[e], d = l);
       }
       b = null == c ? a : a.add(c);
     }
@@ -312,19 +315,19 @@ g.start = function(a) {
   }
   this.a = b;
   this.e = null;
-  if (C(F(this.state, this.a))) {
+  if (B(G(this.state, this.a))) {
     this.state.getContext(this.a);
     b = [];
-    for (var k in A) {
-      var c = na(this, this.a, A[k]), s;
+    for (var k in z) {
+      var c = na(this, this.a, z[k]), s;
       for (s in c) {
-        if (d = c[s], e = 0 != A[k].x, f = -1 != m.indexOf(B(F(this.state, a))), l = -1 != m.indexOf(B(F(this.state, d))), 1 == D(this.state.getContext(d))) {
-          b.push({position:d, o:e, T:f, S:l});
+        if (d = c[s], e = 0 != z[k].x, g = -1 != m.indexOf(A(G(this.state, a))), l = -1 != m.indexOf(A(G(this.state, d))), 1 == E(this.state.getContext(d))) {
+          b.push({position:d, o:e, T:g, S:l});
         } else {
-          for (var z in A) {
-            if (0 != A[k].add(A[z]).length() && 2 != A[k].add(A[z]).length()) {
-              var u = na(this, d, A[z]);
-              0 != u.length && (u = u[0], b.push({position:u, o:e, T:f, W:l, S:-1 != m.indexOf(B(F(this.state, u)))}));
+          for (var D in z) {
+            if (0 != z[k].add(z[D]).length() && 2 != z[k].add(z[D]).length()) {
+              var u = na(this, d, z[D]);
+              0 != u.length && (u = u[0], b.push({position:u, o:e, T:g, W:l, S:-1 != m.indexOf(A(G(this.state, u)))}));
             }
           }
         }
@@ -334,35 +337,35 @@ g.start = function(a) {
     this.move(this.a);
   }
 };
-g.move = function(a) {
-  M(this.state);
+f.move = function(a) {
+  N(this.state);
   for (var b in this.e) {
-    I(this.state, this.a, this.e[b].position, this.e[b].o, " ");
+    J(this.state, this.a, this.e[b].position, this.e[b].o, " ");
   }
   for (b in this.e) {
-    I(this.state, a, this.e[b].position, this.e[b].o);
+    J(this.state, a, this.e[b].position, this.e[b].o);
   }
   for (b in this.e) {
-    this.e[b].T && K(this.state, a, "^"), this.e[b].S && K(this.state, this.e[b].position, "^"), this.e[b].W && K(this.state, new p(this.e[b].o ? this.e[b].position.x : a.x, this.e[b].o ? a.y : this.e[b].position.y), "^");
+    this.e[b].T && L(this.state, a, "^"), this.e[b].S && L(this.state, this.e[b].position, "^"), this.e[b].W && L(this.state, new p(this.e[b].o ? this.e[b].position.x : a.x, this.e[b].o ? a.y : this.e[b].position.y), "^");
   }
 };
-g.end = function() {
-  N(this.state);
+f.end = function() {
+  O(this.state);
 };
 function na(a, b, c) {
   for (var d = b.clone(), e = [];;) {
-    var f = d.add(c);
-    if (!C(F(a.state, f))) {
+    var g = d.add(c);
+    if (!B(G(a.state, g))) {
       return q(b, d) || e.push(d), e;
     }
-    d = f;
-    3 == D(a.state.getContext(d)) && e.push(d);
+    d = g;
+    3 == E(a.state.getContext(d)) && e.push(d);
   }
 }
-g.l = function(a) {
-  return C(F(this.state, a)) ? "pointer" : "default";
+f.l = function(a) {
+  return B(G(this.state, a)) ? "pointer" : "default";
 };
-g.g = function() {
+f.g = function() {
 };
 function oa(a) {
   this.state = a;
@@ -370,30 +373,30 @@ function oa(a) {
   this.K = !0;
   this.v = null;
 }
-g = oa.prototype;
-g.start = function(a) {
+f = oa.prototype;
+f.start = function(a) {
   null != this.a && null != this.b && (new t(this.a, this.b)).contains(a) ? (this.p = a, pa(this), qa(this, a)) : (this.a = a, this.b = null, this.K = !1, this.move(a));
 };
 function pa(a) {
-  var b = a.state.j.filter(function(a) {
-    return null != B(a.n) && "\u2009" != B(a.n);
+  var b = a.state.k.filter(function(a) {
+    return null != A(a.n) && "\u2009" != A(a.n);
   }), c = ca(new t(a.a, a.b));
   a.v = b.map(function(a) {
-    return new fa(r(a.position, c), B(a.n));
+    return new fa(r(a.position, c), A(a.n));
   });
 }
-g.move = function(a) {
+f.move = function(a) {
   if (null != this.p) {
     qa(this, a);
   } else {
     if (!0 != this.K) {
       this.b = a;
-      M(this.state);
+      N(this.state);
       a = new t(this.a, a);
       for (var b = a.w;b <= a.I;b++) {
         for (var c = a.A;c <= a.J;c++) {
-          var d = new p(b, c), e = B(F(this.state, d));
-          K(this.state, d, null == e ? "\u2009" : e);
+          var d = new p(b, c), e = A(G(this.state, d));
+          L(this.state, d, null == e ? "\u2009" : e);
         }
       }
     }
@@ -401,8 +404,8 @@ g.move = function(a) {
 };
 function qa(a, b) {
   a.F = b;
-  M(a.state);
-  var c = new P(a.state);
+  N(a.state);
+  var c = new Q(a.state);
   c.start(a.a);
   c.move(a.b);
   c = r(a.F, a.p).add(ca(new t(a.a, a.b)));
@@ -410,29 +413,29 @@ function qa(a, b) {
 }
 function ra(a, b) {
   for (var c in a.v) {
-    K(a.state, a.v[c].position.add(b), a.v[c].value);
+    L(a.state, a.v[c].position.add(b), a.v[c].value);
   }
 }
-g.end = function() {
-  null != this.p && (N(this.state), this.b = this.a = null);
+f.end = function() {
+  null != this.p && (O(this.state), this.b = this.a = null);
   this.F = this.p = null;
   this.K = !0;
 };
-g.l = function(a) {
+f.l = function(a) {
   return null != this.a && null != this.b && (new t(this.a, this.b)).contains(a) ? "pointer" : "default";
 };
-g.g = function(a) {
+f.g = function(a) {
   if (null != this.a && null != this.b && ("<copy>" != a && "<cut>" != a || pa(this), "<cut>" == a)) {
-    var b = new P(this.state);
+    var b = new Q(this.state);
     b.start(this.a);
     b.move(this.b);
-    N(this.state);
+    O(this.state);
   }
-  "<paste>" == a && (ra(this, this.a), N(this.state));
+  "<paste>" == a && (ra(this, this.a), O(this.state));
 };
-function Q() {
+function R() {
   this.cells = Array(2E3);
-  this.j = [];
+  this.k = [];
   this.f = !0;
   this.R = [];
   this.O = [];
@@ -443,100 +446,117 @@ function Q() {
     }
   }
 }
-Q.prototype.clear = function() {
+R.prototype.clear = function() {
   for (var a = 0;a < this.cells.length;a++) {
     for (var b = 0;b < this.cells[a].length;b++) {
-      null != B(this.cells[a][b]) && K(this, new p(a, b), "\u2009");
+      null != A(this.cells[a][b]) && L(this, new p(a, b), "\u2009");
     }
   }
-  N(this);
+  O(this);
 };
-function F(a, b) {
+function G(a, b) {
   return a.cells[b.x][b.y];
 }
-function K(a, b, c) {
-  var d = F(a, b);
-  a.j.push(new ga(b, d));
+function L(a, b, c) {
+  var d = G(a, b);
+  a.k.push(new ga(b, d));
   d.h = c;
   a.f = !0;
 }
-function J(a, b, c) {
-  B(F(a, b)) != c && K(a, b, c);
+function K(a, b, c) {
+  A(G(a, b)) != c && L(a, b, c);
 }
-function M(a) {
-  for (var b in a.j) {
-    a.j[b].n.h = null;
+function N(a) {
+  for (var b in a.k) {
+    a.k[b].n.h = null;
   }
-  a.j.length = 0;
+  a.k.length = 0;
 }
-function G(a, b) {
-  var c = F(a, b), c = null != c.h ? c.h : c.value, d = -1 != h.indexOf(c), e = -1 != m.indexOf(c);
-  if (!d && !e) {
-    return c;
+function I(a, b) {
+  var c = G(a, b), d = null != c.h ? c.h : c.value, e = -1 != h.indexOf(d), g = -1 != m.indexOf(d);
+  if (!e && !g) {
+    return d;
   }
-  var f = a.getContext(b);
-  if (f.left && f.right && !f.k && !f.i) {
+  c = a.getContext(b);
+  if (e && c.left && c.right && !c.j && !c.i) {
     return "-";
   }
-  if (!f.left && !f.right && f.k && f.i) {
+  if (e && !c.left && !c.right && c.j && c.i) {
     return "|";
   }
-  if (4 == D(f)) {
+  if (4 == E(c)) {
     return "-";
   }
-  if (e && 3 == D(f)) {
-    if (!f.left) {
+  if (g && 3 == E(c)) {
+    if (!c.left) {
       return "<";
     }
-    if (!f.k) {
+    if (!c.j) {
       return "^";
     }
-    if (!f.i) {
+    if (!c.i) {
       return "v";
     }
-    if (!f.right) {
+    if (!c.right) {
       return ">";
     }
   }
-  if ((d || e) && 3 == D(f)) {
-    return f.M = C(F(a, b.add(v).add(x))), f.Q = C(F(a, b.add(w).add(x))), f.L = C(F(a, b.add(v).add(y))), f.P = C(F(a, b.add(w).add(y))), !f.right && f.M && f.L || !f.left && f.Q && f.P ? "|" : !f.i && f.M && f.Q || !f.k && f.P && f.L ? "-" : "+";
+  if ((e || g) && 3 == E(c)) {
+    c.M = B(G(a, b.add(v).add(x)));
+    c.Q = B(G(a, b.add(w).add(x)));
+    c.L = B(G(a, b.add(v).add(y)));
+    c.P = B(G(a, b.add(w).add(y)));
+    if (!c.right && c.M && c.L || !c.left && c.Q && c.P) {
+      return "|";
+    }
+    if (!c.i && c.M && c.Q || !c.j && c.P && c.L) {
+      return "-";
+    }
+    d = C(G(a, b.add(v).add(x)));
+    e = C(G(a, b.add(w).add(x)));
+    if (c.j && c.left && c.right && (!d || !e)) {
+      return "-";
+    }
+    d = C(G(a, b.add(v).add(y)));
+    e = C(G(a, b.add(w).add(y)));
+    return!c.i || !c.left || !c.right || d && e ? "+" : "-";
   }
-  if (e && 1 == D(f)) {
-    if (f.left) {
+  if (g && 1 == E(c)) {
+    if (c.left) {
       return ">";
     }
-    if (f.k) {
+    if (c.j) {
       return "v";
     }
-    if (f.i) {
+    if (c.i) {
       return "^";
     }
-    if (f.right) {
+    if (c.right) {
       return "<";
     }
   }
-  return c;
+  return d;
 }
-Q.prototype.getContext = function(a) {
-  var b = C(F(this, a.add(v))), c = C(F(this, a.add(w))), d = C(F(this, a.add(x)));
-  a = C(F(this, a.add(y)));
+R.prototype.getContext = function(a) {
+  var b = B(G(this, a.add(v))), c = B(G(this, a.add(w))), d = B(G(this, a.add(x)));
+  a = B(G(this, a.add(y)));
   return new ea(b, c, d, a);
 };
-function N(a, b) {
-  var c = [], d = a.j.map(function(a) {
+function O(a, b) {
+  var c = [], d = a.k.map(function(a) {
     return a.position.x.toString() + a.position.y.toString();
-  }), e = a.j.filter(function(a, b) {
+  }), e = a.k.filter(function(a, b) {
     return d.indexOf(d[b]) == b;
   });
-  a.j.length = 0;
-  for (var f in e) {
-    var l = e[f].position, k = e[f].n;
+  a.k.length = 0;
+  for (var g in e) {
+    var l = e[g].position, k = e[g].n;
     c.push(new fa(l, null != k.value ? k.value : " "));
-    var s = B(k);
+    var s = A(k);
     if ("\u2009" == s || " " == s) {
       s = null;
     }
-    C(k) && (s = G(a, l));
+    B(k) && (s = I(a, l));
     k.h = null;
     k.value = s;
   }
@@ -549,9 +569,9 @@ function sa(a) {
     var b = a.R.pop(), c;
     for (c in b) {
       var d = b[c];
-      K(a, d.position, d.value);
+      L(a, d.position, d.value);
     }
-    N(a, !0);
+    O(a, !0);
   }
 }
 function ta(a) {
@@ -559,27 +579,27 @@ function ta(a) {
     var b = a.O.pop(), c;
     for (c in b) {
       var d = b[c];
-      K(a, d.position, d.value);
+      L(a, d.position, d.value);
     }
-    N(a);
+    O(a);
   }
 }
-function R(a) {
+function S(a) {
   for (var b = new p(Number.MAX_VALUE, Number.MAX_VALUE), c = new p(-1, -1), d = 0;d < a.cells.length;d++) {
     for (var e = 0;e < a.cells[d].length;e++) {
-      null != B(a.cells[d][e]) && (d < b.x && (b.x = d), e < b.y && (b.y = e), d > c.x && (c.x = d), e > c.y && (c.y = e));
+      null != A(a.cells[d][e]) && (d < b.x && (b.x = d), e < b.y && (b.y = e), d > c.x && (c.x = d), e > c.y && (c.y = e));
     }
   }
   if (0 > c.x) {
     return "";
   }
-  for (var f = "", e = b.y;e <= c.y;e++) {
+  for (var g = "", e = b.y;e <= c.y;e++) {
     for (var l = "", d = b.x;d <= c.x;d++) {
-      var k = G(a, new p(d, e)), l = l + (null == k ? " " : k)
+      var k = I(a, new p(d, e)), l = l + (null == k ? " " : k)
     }
-    f += l.replace("\\s+$/g", "") + "\n";
+    g += l.replace("\\s+$/g", "") + "\n";
   }
-  return f;
+  return g;
 }
 function ua(a, b, c) {
   b = b.split("\n");
@@ -587,23 +607,23 @@ function ua(a, b, c) {
     d.x = Math.max(d.x, Math.round(b[e].length / 2));
   }
   for (e = 0;e < b.length;e++) {
-    for (var f = b[e], l = 0;l < f.length;l++) {
-      var k = f.charAt(l);
+    for (var g = b[e], l = 0;l < g.length;l++) {
+      var k = g.charAt(l);
       -1 != h.indexOf(k) && (k = "+");
       -1 != m.indexOf(k) && (k = "^");
-      K(a, r((new p(l, e)).add(c), d), k);
+      L(a, r((new p(l, e)).add(c), d), k);
     }
   }
 }
-;function S(a, b) {
+;function T(a, b) {
   this.view = a;
   this.state = b;
-  this.d = new L(b);
+  this.d = new M(b);
   this.mode = 0;
   this.r();
 }
-S.prototype.u = function(a) {
-  var b = E(this.view, a);
+T.prototype.u = function(a) {
+  var b = F(this.view, a);
   null == this.s && (this.s = b);
   q(b, this.s) || (this.view.canvas.style.cursor = this.d.l(b));
   2 != this.mode || q(b, this.s) || this.d.move(b);
@@ -615,14 +635,14 @@ S.prototype.u = function(a) {
   }
   this.s = b;
 };
-function T(a) {
+function V(a) {
   2 == a.mode && a.d.end();
   a.mode = 0;
   a.G = null;
   a.H = null;
   a.s = null;
 }
-S.prototype.r = function() {
+T.prototype.r = function() {
   var a = this;
   $(window).resize(function() {
     ia(a.view);
@@ -633,15 +653,15 @@ S.prototype.r = function() {
     $("#draw-tools > button.tool").removeClass("active");
     $("#" + a).toggleClass("active");
     $(".dialog").removeClass("visible");
-    "box-button" == a && (this.d = new L(this.state));
-    "line-button" == a && (this.d = new O(this.state, !1));
-    "arrow-button" == a && (this.d = new O(this.state, !0));
+    "box-button" == a && (this.d = new M(this.state));
+    "line-button" == a && (this.d = new P(this.state, !1));
+    "arrow-button" == a && (this.d = new P(this.state, !0));
     "freeform-button" == a && (this.d = new ka(this.state, "X"));
-    "erase-button" == a && (this.d = new P(this.state));
+    "erase-button" == a && (this.d = new Q(this.state));
     "move-button" == a && (this.d = new ma(this.state));
     "text-button" == a && (this.d = new la(this.state));
     "select-button" == a && (this.d = new oa(this.state));
-    N(this.state);
+    O(this.state);
     this.view.canvas.focus();
   }.bind(this));
   $("#file-tools > button.tool").click(function(a) {
@@ -649,7 +669,7 @@ S.prototype.r = function() {
     $(".dialog").removeClass("visible");
     $("#" + a + "-dialog").toggleClass("visible");
     "import-button" == a && ($("#import-area").val(""), $("#import-area").focus());
-    "export-button" == a && ($("#export-area").val(R(this.state)), $("#export-area").select());
+    "export-button" == a && ($("#export-area").val(S(this.state)), $("#export-area").select());
     "clear-button" == a && this.state.clear();
     "undo-button" == a && sa(this.state);
     "redo-button" == a && ta(this.state);
@@ -659,8 +679,8 @@ S.prototype.r = function() {
   }.bind(this));
   $("#import-submit-button").click(function() {
     this.state.clear();
-    ua(this.state, $("#import-area").val(), E(this.view, new p(this.view.canvas.width / 2, this.view.canvas.height / 2)));
-    N(this.state);
+    ua(this.state, $("#import-area").val(), F(this.view, new p(this.view.canvas.width / 2, this.view.canvas.height / 2)));
+    O(this.state);
     $("#import-area").val("");
     $(".dialog").removeClass("visible");
   }.bind(this));
@@ -700,7 +720,7 @@ S.prototype.r = function() {
   }.bind(this));
   $("#text-tool-close").click(function() {
     $("#text-tool-widget").hide();
-    N(this.state);
+    O(this.state);
   }.bind(this));
 };
 function va(a, b) {
@@ -710,7 +730,7 @@ function va(a, b) {
   this.file = null;
   wa(this);
   $("#drive-button").click(function() {
-    this.t ? xa(this) : (V(this, !1), ya(this));
+    this.t ? xa(this) : (W(this, !1), ya(this));
   }.bind(this));
   $("#drive-filename").click(function() {
     var a = "" + $("#drive-filename").text(), a = prompt("Enter new filename:", a);
@@ -730,7 +750,7 @@ function va(a, b) {
     $("#drive-dialog").removeClass("visible");
   }.bind(this));
 }
-function V(a, b) {
+function W(a, b) {
   window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", immediate:b}, function(a) {
     !a || a.error || this.t || (this.t = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
       Ba(this);
@@ -738,13 +758,13 @@ function V(a, b) {
   }.bind(a));
 }
 function wa(a) {
-  window.gapi && window.gapi.auth && window.gapi.auth.authorize ? V(a, !0) : window.setTimeout(function() {
+  window.gapi && window.gapi.auth && window.gapi.auth.authorize ? W(a, !0) : window.setTimeout(function() {
     wa(this);
   }.bind(a), 500);
 }
 function ya(a) {
   window.setTimeout(function() {
-    this.t ? xa(this) : (V(this, !0), ya(this));
+    this.t ? xa(this) : (W(this, !0), ya(this));
   }.bind(a), 1E3);
 }
 function Ca(a, b) {
@@ -754,12 +774,12 @@ function Ca(a, b) {
 }
 function xa(a) {
   $("#drive-dialog").addClass("visible");
-  var b = R(a.state);
+  var b = S(a.state);
   5 < b.length && b != a.D && a.save();
   za(a);
 }
 function za(a) {
-  W(window.gapi.client.request({path:"/drive/v2/files", params:{q:"mimeType = 'text/plain' and trashed = false"}, method:"GET"}), function(a) {
+  X(window.gapi.client.request({path:"/drive/v2/files", params:{q:"mimeType = 'text/plain' and trashed = false"}, method:"GET"}), function(a) {
     $("#drive-file-list").children().remove();
     a = a.items;
     for (var c in a) {
@@ -774,7 +794,7 @@ function za(a) {
     }
   }.bind(a));
 }
-function W(a, b) {
+function X(a, b) {
   try {
     a.execute(function(a) {
       a.error || b(a);
@@ -783,22 +803,22 @@ function W(a, b) {
   }
 }
 function Aa(a) {
-  R(a.state) != a.D && a.file && a.file.editable && a.save();
+  S(a.state) != a.D && a.file && a.file.editable && a.save();
   window.setTimeout(function() {
     Aa(this);
   }.bind(a), 5E3);
 }
 va.prototype.save = function() {
-  var a = R(this.state);
+  var a = S(this.state);
   $("#drive-save-state").text("Saving...");
-  W(Da(this, a), function(b) {
+  X(Da(this, a), function(b) {
     Ca(this, b);
     $("#drive-save-state").text("Saved");
     this.D = a;
   }.bind(this));
 };
 function Ba(a) {
-  1 < window.location.hash.length && ($("#drive-save-state").text("Loading..."), W(window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}), function(a) {
+  1 < window.location.hash.length && ($("#drive-save-state").text("Loading..."), X(window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}), function(a) {
     Ca(this, a);
     Ea(this);
   }.bind(a)));
@@ -807,9 +827,9 @@ function Ea(a) {
   Fa(a.file.downloadUrl, function(a) {
     $("#drive-save-state").text("Loaded");
     this.state.clear();
-    ua(this.state, a, E(this.view, new p(this.view.canvas.width / 2, this.view.canvas.height / 2)));
-    N(this.state);
-    this.D = R(this.state);
+    ua(this.state, a, F(this.view, new p(this.view.canvas.width / 2, this.view.canvas.height / 2)));
+    O(this.state);
+    this.D = S(this.state);
   }.bind(a));
 }
 function Da(a, b) {
@@ -849,20 +869,20 @@ Ga.prototype.r = function() {
       c.G = a;
       c.H = c.view.offset;
     } else {
-      c = this.c, a = new p(a.clientX, a.clientY), c.mode = 2, c.d.start(E(c.view, a));
+      c = this.c, a = new p(a.clientX, a.clientY), c.mode = 2, c.d.start(F(c.view, a));
     }
   }.bind(this));
   $(a).mouseup(function() {
-    T(this.c);
+    V(this.c);
   }.bind(this));
   $(a).mouseleave(function() {
-    T(this.c);
+    V(this.c);
   }.bind(this));
   $(a).mousemove(function(a) {
     this.c.u(new p(a.clientX, a.clientY));
   }.bind(this));
 };
-function X(a) {
+function Y(a) {
   this.c = a;
   this.C = this.m = !1;
   this.r();
@@ -875,11 +895,11 @@ function Ha(a, b) {
     if (!this.m && !this.C && null != this.N) {
       var a = this.c;
       a.mode = 2;
-      a.d.start(E(a.view, b));
+      a.d.start(F(a.view, b));
     }
   }.bind(a), 150);
 }
-X.prototype.u = function(a) {
+Y.prototype.u = function(a) {
   if (!this.m && 150 > $.now() - this.Y && 6 < r(a, this.N).length()) {
     this.m = !0;
     var b = this.c;
@@ -889,11 +909,11 @@ X.prototype.u = function(a) {
   }
   this.c.u(a);
 };
-X.prototype.reset = function() {
+Y.prototype.reset = function() {
   this.C = this.m = !1;
   this.N = null;
 };
-X.prototype.r = function() {
+Y.prototype.r = function() {
   var a = this.c.view.canvas;
   $(a).bind("touchstart", function(a) {
     a.preventDefault();
@@ -903,7 +923,7 @@ X.prototype.r = function() {
       if (1 < a.originalEvent.touches.length) {
         var c = new p(a.originalEvent.touches[0].pageX, a.originalEvent.touches[0].pageY);
         a = new p(a.originalEvent.touches[1].pageX, a.originalEvent.touches[1].pageY);
-        T(this.c);
+        V(this.c);
         this.C = !0;
         this.m = !1;
         this.Z = r(c, a).length();
@@ -926,12 +946,12 @@ X.prototype.r = function() {
   $(a).bind("touchend", function(a) {
     a.preventDefault();
     this.reset();
-    T(this.c);
+    V(this.c);
   }.bind(this));
 };
-var Y = new Q, Z = new ha(Y), Ia = new S(Z, Y);
-new X(Ia);
-new Ga(Ia);
-new va(Y, Z);
-Z.animate();
+var Z = new R, Ia = new ha(Z), Ja = new T(Ia, Z);
+new Y(Ja);
+new Ga(Ja);
+new va(Z, Ia);
+Ia.animate();
 
