@@ -9,7 +9,7 @@ If you get a permissions error:
 Run a simple web server:
 ~/asciiflow2$python -m SimpleHttpServer
 
-Goto: http://localhost:8000/root.html
+Goto: http://localhost:8000/index.html
 
 When developing, use the Google JS linter, gjslint.
 
