@@ -305,10 +305,10 @@ ascii.State.prototype.outputText = function(opt_box) {
     var line = '';
     for (var i = start.x; i <= end.x; i++) {
       var val = this.getDrawValue(new ascii.Vector(i, j));
-      line += (val == null ? ' ' : val);
+      line += (val == null || val == ERASE_CHAR) ? ' ' : val;
     }
     // Trim end whitespace.
-    output += line.replace('\\s+$/g', '') + '\n';
+    output += line.replace(/\s+$/, '') + '\n';
   }
   return output;
 };

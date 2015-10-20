@@ -7,7 +7,7 @@ If you get a permissions error:
 ~/asciiflow2$ chmod a+x closure-compiler.jar
 
 Run a simple web server:
-~/asciiflow2$python -m SimpleHttpServer
+~/asciiflow2$python -m SimpleHTTPServer
 
 Goto: http://localhost:8000/index.html
 

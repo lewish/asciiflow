@@ -4,7 +4,7 @@ try {
 } catch (aa) {
   window.U = window.U || {};
 }
-var h = ["+", "\u2012", "\u2013", "-", "|"], m = [">", "<", "^", "v"], ba = h.concat(m), n = "ontouchstart" in window || "onmsgesturechange" in window;
+var k = ["+", "\u2012", "\u2013", "-", "|"], m = [">", "<", "^", "v"], ba = k.concat(m), n = "ontouchstart" in window || "onmsgesturechange" in window;
 function p(a, b) {
   this.x = a;
   this.y = b;
@@ -119,12 +119,12 @@ function ja(a) {
   b.font = "15px Courier New";
   for (var g = c.x;g < d.x;g++) {
     for (var l = c.y;l < d.y;l++) {
-      var k = G(a.state, new p(g, l));
-      if (B(k) || null != k.h && " " != A(k)) {
-        a.context.fillStyle = null != k.h ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (l - 1) - a.offset.y, 9, 17);
+      var h = G(a.state, new p(g, l));
+      if (B(h) || null != h.h && " " != A(h)) {
+        a.context.fillStyle = null != h.h ? "#DEF" : "#F5F5F5", b.fillRect(9 * g - a.offset.x, 17 * (l - 1) - a.offset.y, 9, 17);
       }
       var s = I(a.state, new p(g, l));
-      null == s || B(k) && !e || (a.context.fillStyle = "#000000", b.fillText(s, 9 * g - a.offset.x, 17 * l - a.offset.y - 3));
+      null == s || B(h) && !e || (a.context.fillStyle = "#000000", b.fillText(s, 9 * g - a.offset.x, 17 * l - a.offset.y - 3));
     }
   }
   if (a.B) {
@@ -132,13 +132,13 @@ function ja(a) {
     b.strokeStyle = "#000000";
     b.beginPath();
     for (e = c.x;e < d.x;e++) {
-      for (k = !1, g = c.y;g < d.y;g++) {
-        l = G(a.state, new p(e, g)), B(l) && g != d.y - 1 || !k || (b.moveTo(9 * e - a.offset.x + 4.5, 17 * k - a.offset.y - 8.5), b.lineTo(9 * e - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), k = !1), B(l) && !k && (k = g);
+      for (h = !1, g = c.y;g < d.y;g++) {
+        l = G(a.state, new p(e, g)), B(l) && g != d.y - 1 || !h || (b.moveTo(9 * e - a.offset.x + 4.5, 17 * h - a.offset.y - 8.5), b.lineTo(9 * e - a.offset.x + 4.5, 17 * (g - 1) - a.offset.y - 8.5), h = !1), B(l) && !h && (h = g);
       }
     }
     for (g = c.y;g < d.y;g++) {
-      for (k = !1, e = c.x;e < d.x;e++) {
-        l = G(a.state, new p(e, g)), B(l) && e != d.x - 1 || !k || (b.moveTo(9 * k - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (e - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), k = !1), B(l) && !k && (k = e);
+      for (h = !1, e = c.x;e < d.x;e++) {
+        l = G(a.state, new p(e, g)), B(l) && e != d.x - 1 || !h || (b.moveTo(9 * h - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), b.lineTo(9 * (e - 1) - a.offset.x + 4.5, 17 * g - a.offset.y - 8.5), h = !1), B(l) && !h && (h = e);
       }
     }
     a.context.stroke();
@@ -149,13 +149,13 @@ function F(a, b) {
 }
 ;function J(a, b, c, d, e) {
   e = e || "+";
-  var g = new t(b, c), l = g.w, k = g.A, s = g.I, g = g.J, D = d ? c.x : b.x;
+  var g = new t(b, c), l = g.w, h = g.A, s = g.I, g = g.J, D = d ? c.x : b.x;
   for (d = d ? b.y : c.y;l++ < s;) {
     var u = new p(l, d), H = a.getContext(new p(l, d));
     " " == e && 2 == H.j + H.i || K(a, u, e);
   }
-  for (;k++ < g;) {
-    u = new p(D, k), H = a.getContext(new p(D, k)), " " == e && 2 == H.left + H.right || K(a, u, e);
+  for (;h++ < g;) {
+    u = new p(D, h), H = a.getContext(new p(D, h)), " " == e && 2 == H.left + H.right || K(a, u, e);
   }
   L(a, b, e);
   L(a, c, e);
@@ -318,14 +318,14 @@ f.start = function(a) {
   if (B(G(this.state, this.a))) {
     this.state.getContext(this.a);
     b = [];
-    for (var k in z) {
-      var c = na(this, this.a, z[k]), s;
+    for (var h in z) {
+      var c = na(this, this.a, z[h]), s;
       for (s in c) {
-        if (d = c[s], e = 0 != z[k].x, g = -1 != m.indexOf(A(G(this.state, a))), l = -1 != m.indexOf(A(G(this.state, d))), 1 == E(this.state.getContext(d))) {
+        if (d = c[s], e = 0 != z[h].x, g = -1 != m.indexOf(A(G(this.state, a))), l = -1 != m.indexOf(A(G(this.state, d))), 1 == E(this.state.getContext(d))) {
           b.push({position:d, o:e, T:g, S:l});
         } else {
           for (var D in z) {
-            if (0 != z[k].add(z[D]).length() && 2 != z[k].add(z[D]).length()) {
+            if (0 != z[h].add(z[D]).length() && 2 != z[h].add(z[D]).length()) {
               var u = na(this, d, z[D]);
               0 != u.length && (u = u[0], b.push({position:u, o:e, T:g, W:l, S:-1 != m.indexOf(A(G(this.state, u)))}));
             }
@@ -473,7 +473,7 @@ function N(a) {
   a.k.length = 0;
 }
 function I(a, b) {
-  var c = G(a, b), d = null != c.h ? c.h : c.value, e = -1 != h.indexOf(d), g = -1 != m.indexOf(d);
+  var c = G(a, b), d = null != c.h ? c.h : c.value, e = -1 != k.indexOf(d), g = -1 != m.indexOf(d);
   if (!e && !g) {
     return d;
   }
@@ -550,15 +550,15 @@ function O(a, b) {
   });
   a.k.length = 0;
   for (var g in e) {
-    var l = e[g].position, k = e[g].n;
-    c.push(new fa(l, null != k.value ? k.value : " "));
-    var s = A(k);
+    var l = e[g].position, h = e[g].n;
+    c.push(new fa(l, null != h.value ? h.value : " "));
+    var s = A(h);
     if ("\u2009" == s || " " == s) {
       s = null;
     }
-    B(k) && (s = I(a, l));
-    k.h = null;
-    k.value = s;
+    B(h) && (s = I(a, l));
+    h.h = null;
+    h.value = s;
   }
   e = b ? a.O : a.R;
   0 < c.length && (50 < e.length && e.shift(), e.push(c));
@@ -595,9 +595,9 @@ function S(a) {
   }
   for (var g = "", e = b.y;e <= c.y;e++) {
     for (var l = "", d = b.x;d <= c.x;d++) {
-      var k = I(a, new p(d, e)), l = l + (null == k ? " " : k)
+      var h = I(a, new p(d, e)), l = l + (null == h || "\u2009" == h ? " " : h)
     }
-    g += l.replace("\\s+$/g", "") + "\n";
+    g += l.replace(/\s+$/, "") + "\n";
   }
   return g;
 }
@@ -608,10 +608,10 @@ function ua(a, b, c) {
   }
   for (e = 0;e < b.length;e++) {
     for (var g = b[e], l = 0;l < g.length;l++) {
-      var k = g.charAt(l);
-      -1 != h.indexOf(k) && (k = "+");
-      -1 != m.indexOf(k) && (k = "^");
-      L(a, r((new p(l, e)).add(c), d), k);
+      var h = g.charAt(l);
+      -1 != k.indexOf(h) && (h = "+");
+      -1 != m.indexOf(h) && (h = "^");
+      L(a, r((new p(l, e)).add(c), d), h);
     }
   }
 }
