@@ -334,9 +334,6 @@ ascii.State.prototype.fromText = function(value, offset) {
       if (SPECIAL_VALUES.indexOf(char)  != -1) {
         char = SPECIAL_VALUE;
       }
-      if (ALT_SPECIAL_VALUES.indexOf(char) != -1) {
-        char = ALT_SPECIAL_VALUE;
-      }
       this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
     }
   }
