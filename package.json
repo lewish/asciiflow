@@ -1,0 +1,9 @@
+{
+  "name": "asciiflow2",
+  "main": "index.js",
+  "icon": "images/favicon.png",
+  "scripts": {
+      "start": "electron ."
+  }
+}
+
