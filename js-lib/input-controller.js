@@ -1,13 +1,16 @@
+import * as c from './constants';
+import Controller from './controller';
+import Vector from './vector';
+
 /**
  * Handles desktop inputs, and passes them onto the main controller.
  */
-ascii.DesktopController = class {
+export class DesktopController {
   /**
-   * @param {ascii.Controller} controller
+   * @param {Controller} controller
    */
   constructor(controller) {
-    /** @type {ascii.Controller} */ this.controller = controller;
-
+    /** @type {Controller} */ this.controller = controller;
     /** @type {boolean} */ this.isDragging = false;
 
     this.installBindings();
@@ -34,9 +37,9 @@ ascii.DesktopController = class {
     $(canvas).mousedown(e => {
         // Can drag by holding either the control or meta (Apple) key.
         if (e.ctrlKey || e.metaKey) {
-          this.controller.startDrag(new ascii.Vector(e.clientX, e.clientY));
+          this.controller.startDrag(new Vector(e.clientX, e.clientY));
         } else {
-          this.controller.startDraw(new ascii.Vector(e.clientX, e.clientY));
+          this.controller.startDraw(new Vector(e.clientX, e.clientY));
         }
     });
 
@@ -50,7 +53,7 @@ ascii.DesktopController = class {
     });
 
     $(canvas).mousemove(e => {
-        this.controller.handleMove(new ascii.Vector(e.clientX, e.clientY));
+        this.controller.handleMove(new Vector(e.clientX, e.clientY));
     });
   }
 }
@@ -58,14 +61,14 @@ ascii.DesktopController = class {
 /**
  * Handles touch inputs, and passes them onto the main controller.
  */
-ascii.TouchController = class {
+export class TouchController {
   /**
-   * @param {ascii.Controller} controller
+   * @param {Controller} controller
    */
   constructor(controller) {
-    /** @type {ascii.Controller} */ this.controller = controller;
+    /** @type {Controller} */ this.controller = controller;
 
-    /** @type {ascii.Vector} */ this.pressVector;
+    /** @type {Vector} */ this.pressVector;
 
     /** @type {number} */ this.originalZoom;
     /** @type {number} */ this.zoomLength;
@@ -78,7 +81,7 @@ ascii.TouchController = class {
   }
 
   /**
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    */
   handlePress(position) {
     this.pressVector = position;
@@ -90,13 +93,13 @@ ascii.TouchController = class {
       if (!this.dragStarted && !this.zoomStarted && this.pressVector != null) {
         this.controller.startDraw(position);
       }
-    }, DRAG_LATENCY);
+    }, c.DRAG_LATENCY);
   }
 
   /**
    * The multi-touch version of handlePress.
-   * @param {ascii.Vector} positionOne
-   * @param {ascii.Vector} positionTwo
+   * @param {Vector} positionOne
+   * @param {Vector} positionTwo
    */
   handlePressMulti(positionOne, positionTwo) {
     // A second finger as been placed, cancel whatever we were doing.
@@ -108,13 +111,13 @@ ascii.TouchController = class {
   }
 
   /**
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    */
   handleMove(position) {
     // Initiate a drag if we have moved enough, quickly enough.
     if (!this.dragStarted &&
-        ($.now() - this.pressTimestamp) < DRAG_LATENCY &&
-        position.subtract(this.pressVector).length() > DRAG_ACCURACY) {
+        ($.now() - this.pressTimestamp) < c.DRAG_LATENCY &&
+        position.subtract(this.pressVector).length() > c.DRAG_ACCURACY) {
         this.dragStarted = true;
         this.controller.startDrag(position);
     }
@@ -124,8 +127,8 @@ ascii.TouchController = class {
 
   /**
    * The multi-touch version of handleMove, effectively only deals with zooming.
-   * @param {ascii.Vector} positionOne
-   * @param {ascii.Vector} positionTwo
+   * @param {Vector} positionOne
+   * @param {Vector} positionTwo
    */
   handleMoveMulti(positionOne, positionTwo) {
     if (this.zoomStarted) {
@@ -154,14 +157,14 @@ ascii.TouchController = class {
     $(canvas).on('touchstart', e => {
         e.preventDefault();
         if (e.originalEvent.touches.length == 1) {
-          this.handlePress(new ascii.Vector(
+          this.handlePress(new Vector(
             e.originalEvent.touches[0].pageX,
             e.originalEvent.touches[0].pageY));
         } else if (e.originalEvent.touches.length > 1) {
-          this.handlePressMulti(new ascii.Vector(
+          this.handlePressMulti(new Vector(
             e.originalEvent.touches[0].pageX,
             e.originalEvent.touches[0].pageY),
-            new ascii.Vector(
+            new Vector(
                 e.originalEvent.touches[1].pageX,
                 e.originalEvent.touches[1].pageY));
         }
@@ -170,14 +173,14 @@ ascii.TouchController = class {
     $(canvas).on('touchmove', e => {
         e.preventDefault();
         if (e.originalEvent.touches.length == 1) {
-          this.handleMove(new ascii.Vector(
+          this.handleMove(new Vector(
             e.originalEvent.touches[0].pageX,
             e.originalEvent.touches[0].pageY));
         } else if (e.originalEvent.touches.length > 1) {
-          this.handleMoveMulti(new ascii.Vector(
+          this.handleMoveMulti(new Vector(
             e.originalEvent.touches[0].pageX,
             e.originalEvent.touches[0].pageY),
-            new ascii.Vector(
+            new Vector(
                 e.originalEvent.touches[1].pageX,
                 e.originalEvent.touches[1].pageY));
         }

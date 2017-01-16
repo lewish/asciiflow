@@ -1,14 +1,18 @@
+import Vector from './vector';
+import State from './state';
+import View from './view';
+
 const CLIENT_ID = '125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive';
 const DEVELOPER_KEY = 'AIzaSyBbKO_v9p-G9StQjYmtUYLP6Px4MkGions';
 
-ascii.DriveController = class {
+export default class DriveController {
   constructor(state, view) {
     /** @type {boolean} */
     this.driveEnabled = false;
-    /** @type {ascii.State} */
+    /** @type {State} */
     this.state = state;
-    /** @type {ascii.View} */
+    /** @type {View} */
     this.view = view;
     // This is a file resource, as defined by the Drive API.
     /** @type {Object} */
@@ -181,7 +185,7 @@ ascii.DriveController = class {
     this.downloadFile(this.file['downloadUrl'], content => {
       $('#drive-save-state').text('Loaded');
       this.state.clear();
-      this.state.fromText(content, this.view.screenToCell(new ascii.Vector(
+      this.state.fromText(content, this.view.screenToCell(new Vector(
               this.view.canvas.width / 2,
               this.view.canvas.height / 2)));
       this.state.commitDraw();

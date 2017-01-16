@@ -1,3 +1,19 @@
+import * as c from './constants';
+import Vector from './vector';
+import View from './view';
+import State from './state';
+import DrawSelect from './draw-select';
+import {
+  DrawFunction,
+  DrawBox,
+  DrawLine,
+  DrawFreeform,
+  DrawErase,
+  DrawMove,
+  DrawText,
+} from './draw';
+
+
 /**
  * Different modes of control.
  */
@@ -10,29 +26,28 @@ const Mode = {
 /**
  * Handles user input events and modifies state.
  */
-ascii.Controller = class {
+export default class Controller {
   /**
-   * @param {ascii.View} view
-   * @param {ascii.State} state
+   * @param {View} view
+   * @param {State} state
    */
   constructor(view, state) {
-    /** @type {ascii.View} */ this.view = view;
-    /** @type {ascii.State} */ this.state = state;
+    /** @type {View} */ this.view = view;
+    /** @type {State} */ this.state = state;
 
-    /** @type {ascii.DrawFunction} */ this.drawFunction =
-        new ascii.DrawBox(state);
+    /** @type {DrawFunction} */ this.drawFunction = new DrawBox(state);
 
     /** @type {number} */ this.mode = Mode.NONE;
-    /** @type {ascii.Vector} */ this.dragOrigin;
-    /** @type {ascii.Vector} */ this.dragOriginCell;
+    /** @type {Vector} */ this.dragOrigin;
+    /** @type {Vector} */ this.dragOriginCell;
 
-    /** @type {ascii.Vector} */ this.lastMoveCell = null;
+    /** @type {Vector} */ this.lastMoveCell = null;
 
     this.installBindings();
   }
 
   /**
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    */
   startDraw(position) {
     this.mode = Mode.DRAW;
@@ -40,7 +55,7 @@ ascii.Controller = class {
   }
 
   /**
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    */
   startDrag(position) {
     this.mode = Mode.DRAG;
@@ -49,7 +64,7 @@ ascii.Controller = class {
   }
 
   /**
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    */
   handleMove(position) {
     var moveCell = this.view.screenToCell(position);
@@ -117,7 +132,7 @@ ascii.Controller = class {
       this.state.fromText(
           /** @type {string} */
           ($('#import-area').val()),
-          this.view.screenToCell(new ascii.Vector(
+          this.view.screenToCell(new Vector(
               this.view.canvas.width / 2,
               this.view.canvas.height / 2)));
       this.state.commitDraw();
@@ -167,28 +182,28 @@ ascii.Controller = class {
 
     // Install the right draw tool based on button pressed.
     if (id == 'box-button') {
-      this.drawFunction = new ascii.DrawBox(this.state);
+      this.drawFunction = new DrawBox(this.state);
     }
     if (id == 'line-button') {
-      this.drawFunction = new ascii.DrawLine(this.state, false);
+      this.drawFunction = new DrawLine(this.state, false);
     }
     if (id == 'arrow-button') {
-      this.drawFunction = new ascii.DrawLine(this.state, true);
+      this.drawFunction = new DrawLine(this.state, true);
     }
     if (id == 'freeform-button') {
-      this.drawFunction = new ascii.DrawFreeform(this.state, "X");
+      this.drawFunction = new DrawFreeform(this.state, "X");
     }
     if (id == 'erase-button') {
-      this.drawFunction = new ascii.DrawErase(this.state);
+      this.drawFunction = new DrawErase(this.state);
     }
     if (id == 'move-button') {
-      this.drawFunction = new ascii.DrawMove(this.state);
+      this.drawFunction = new DrawMove(this.state);
     }
     if (id == 'text-button') {
-      this.drawFunction = new ascii.DrawText(this.state, this.view);
+      this.drawFunction = new DrawText(this.state, this.view);
     }
     if (id == 'select-button') {
-      this.drawFunction = new ascii.DrawSelect(this.state);
+      this.drawFunction = new DrawSelect(this.state);
     }
     this.state.commitDraw();
     this.view.canvas.focus();
@@ -241,19 +256,19 @@ ascii.Controller = class {
     var specialKeyCode = null;
 
     if (event.ctrlKey || event.metaKey) {
-      if (event.keyCode == 67) { specialKeyCode = KEY_COPY; }
-      if (event.keyCode == 86) { specialKeyCode = KEY_PASTE; }
+      if (event.keyCode == 67) { specialKeyCode = c.KEY_COPY; }
+      if (event.keyCode == 86) { specialKeyCode = c.KEY_PASTE; }
       if (event.keyCode == 90) { this.state.undo(); }
       if (event.keyCode == 89) { this.state.redo(); }
-      if (event.keyCode == 88) { specialKeyCode = KEY_CUT; }
+      if (event.keyCode == 88) { specialKeyCode = c.KEY_CUT; }
     }
 
-    if (event.keyCode == 8) { specialKeyCode = KEY_BACKSPACE; }
-    if (event.keyCode == 13) { specialKeyCode = KEY_RETURN; }
-    if (event.keyCode == 38) { specialKeyCode = KEY_UP; }
-    if (event.keyCode == 40) { specialKeyCode = KEY_DOWN; }
-    if (event.keyCode == 37) { specialKeyCode = KEY_LEFT; }
-    if (event.keyCode == 39) { specialKeyCode = KEY_RIGHT; }
+    if (event.keyCode == 8) { specialKeyCode = c.KEY_BACKSPACE; }
+    if (event.keyCode == 13) { specialKeyCode = c.KEY_RETURN; }
+    if (event.keyCode == 38) { specialKeyCode = c.KEY_UP; }
+    if (event.keyCode == 40) { specialKeyCode = c.KEY_DOWN; }
+    if (event.keyCode == 37) { specialKeyCode = c.KEY_LEFT; }
+    if (event.keyCode == 39) { specialKeyCode = c.KEY_RIGHT; }
 
     if (specialKeyCode != null) {
       //event.preventDefault();

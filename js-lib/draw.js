@@ -1,3 +1,8 @@
+import * as c from './constants';
+import State from './state';
+import Vector from './vector';
+import { Box } from './common';
+
 /**
  * All drawing classes and functions.
  */
@@ -5,14 +10,14 @@
 /**
  * Draws a line on the diagram state.
  *
- * @param {ascii.State} state
- * @param {ascii.Vector} startPosition
- * @param {ascii.Vector} endPosition
+ * @param {State} state
+ * @param {Vector} startPosition
+ * @param {Vector} endPosition
  * @param {boolean} clockwise
  * @param {string=} value
  */
-function drawLine(state, startPosition, endPosition, clockwise, value = SPECIAL_VALUE) {
-  var box = new ascii.Box(startPosition, endPosition);
+function drawLine(state, startPosition, endPosition, clockwise, value = c.SPECIAL_VALUE) {
+  var box = new Box(startPosition, endPosition);
   var startX = box.startX;
   var startY = box.startY;
   var endX = box.endX;
@@ -22,16 +27,16 @@ function drawLine(state, startPosition, endPosition, clockwise, value = SPECIAL_
   var midY = clockwise ? startPosition.y : endPosition.y;
 
   while (startX++ < endX) {
-    var position = new ascii.Vector(startX, midY);
-    var context = state.getContext(new ascii.Vector(startX, midY));
+    var position = new Vector(startX, midY);
+    var context = state.getContext(new Vector(startX, midY));
     // Don't erase any lines that we cross.
     if (value != ' ' || context.up + context.down != 2) {
       state.drawValueIncremental(position, value);
     }
   }
   while (startY++ < endY) {
-    var position = new ascii.Vector(midX, startY);
-    var context = state.getContext(new ascii.Vector(midX, startY));
+    var position = new Vector(midX, startY);
+    var context = state.getContext(new Vector(midX, startY));
     // Don't erase any lines that we cross.
     if (value != ' ' || context.left + context.right != 2) {
       state.drawValueIncremental(position, value);
@@ -40,22 +45,22 @@ function drawLine(state, startPosition, endPosition, clockwise, value = SPECIAL_
 
   state.drawValue(startPosition, value);
   state.drawValue(endPosition, value);
-  state.drawValueIncremental(new ascii.Vector(midX, midY), value);
+  state.drawValueIncremental(new Vector(midX, midY), value);
 }
 
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
  * @interface
  */
-ascii.DrawFunction = class {
-  /** Start of drawing. @param {ascii.Vector} position */
+export class DrawFunction {
+  /** Start of drawing. @param {Vector} position */
   start(position) {};
-  /** Drawing move. @param {ascii.Vector} position */
+  /** Drawing move. @param {Vector} position */
   move(position) {};
   /** End of drawing. */
   end() {};
   /** Cursor for given cell.
-   * @param {ascii.Vector} position
+   * @param {Vector} position
    * @return {string}
    */
   getCursor(position) {};
@@ -64,16 +69,16 @@ ascii.DrawFunction = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawBox = class {
+export class DrawBox {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    */
   constructor(state) {
     this.state = state;
-    /** @type {ascii.Vector} */ this.startPosition = null;
-    /** @type {ascii.Vector} */ this.endPosition = null;
+    /** @type {Vector} */ this.startPosition = null;
+    /** @type {Vector} */ this.endPosition = null;
   }
 
   /** @inheritDoc */
@@ -104,17 +109,17 @@ ascii.DrawBox = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawLine = class {
+export class DrawLine {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    * @param {boolean} isArrow
    */
   constructor(state, isArrow) {
     this.state = state;
     this.isArrow = isArrow;
-    /** @type {ascii.Vector} */ this.startPosition = null;
+    /** @type {Vector} */ this.startPosition = null;
   }
 
   /** @inheritDoc */
@@ -135,7 +140,7 @@ ascii.DrawLine = class {
 
     drawLine(this.state, this.startPosition, position, clockwise);
     if (this.isArrow) {
-      this.state.drawValue(position, ALT_SPECIAL_VALUE);
+      this.state.drawValue(position, c.ALT_SPECIAL_VALUE);
     }
   }
 
@@ -154,17 +159,17 @@ ascii.DrawLine = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawFreeform = class {
+export class DrawFreeform {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    * @param {?string} value
    */
   constructor(state, value) {
     this.state = state;
     this.value = value;
-    if (TOUCH_ENABLED) {
+    if (c.TOUCH_ENABLED) {
       $('#freeform-tool-input').val('');
       $('#freeform-tool-input').hide(0, function() {$('#freeform-tool-input').show(0, function() {$('#freeform-tool-input').focus();});});
     }
@@ -192,7 +197,7 @@ ascii.DrawFreeform = class {
 
   /** @inheritDoc */
   handleKey(value) {
-    if (TOUCH_ENABLED) {
+    if (c.TOUCH_ENABLED) {
       this.value = $('#freeform-tool-input').val().substr(0, 1);
       $('#freeform-tool-input').blur();
       $('#freeform-tool-input').hide(0);
@@ -205,11 +210,11 @@ ascii.DrawFreeform = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawText = class {
+export class DrawText {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    */
   constructor(state, view) {
     this.state = state;
@@ -229,7 +234,7 @@ ascii.DrawText = class {
     // Effectively highlights the starting cell.
     var currentValue = this.state.getCell(this.startPosition).getRawValue();
     this.state.drawValue(this.startPosition,
-        currentValue == null ? ERASE_CHAR : currentValue);
+        currentValue == null ? c.ERASE_CHAR : currentValue);
   }
 
   /** @inheritDoc */
@@ -261,7 +266,7 @@ ascii.DrawText = class {
         x = 0;
         continue;
       }
-      this.state.drawValue(this.endPosition.add(new ascii.Vector(x, y)), text[i]);
+      this.state.drawValue(this.endPosition.add(new Vector(x, y)), text[i]);
       x++;
     }
   }
@@ -271,7 +276,7 @@ ascii.DrawText = class {
    * TODO: This is horrible, and does not quite work, fix it.
    */
   loadExistingText(position) {
-    var currentPosition = new ascii.Vector(position.x, position.y);
+    var currentPosition = new Vector(position.x, position.y);
     var cell = this.state.getCell(position);
     var spacesCount = 0;
     // Go back to find the start of the line.
@@ -284,7 +289,7 @@ ascii.DrawText = class {
       currentPosition.x--;
       cell = this.state.getCell(currentPosition);
     }
-    this.startPosition = currentPosition.add(new ascii.Vector(spacesCount + 1, 0));
+    this.startPosition = currentPosition.add(new Vector(spacesCount + 1, 0));
     var text = '';
     spacesCount = 0;
     currentPosition = this.startPosition.clone();
@@ -306,11 +311,11 @@ ascii.DrawText = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawErase = class {
+export class DrawErase {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    */
   constructor(state) {
     this.state = state;
@@ -336,7 +341,7 @@ ascii.DrawErase = class {
 
     for (var i = startX; i <= endX; i++) {
       for (var j = startY; j <= endY; j++) {
-        this.state.drawValue(new ascii.Vector(i, j), ERASE_CHAR);
+        this.state.drawValue(new Vector(i, j), c.ERASE_CHAR);
       }
     }
   }
@@ -356,11 +361,11 @@ ascii.DrawErase = class {
 }
 
 /**
- * @implements {ascii.DrawFunction}
+ * @implements {DrawFunction}
  */
-ascii.DrawMove = class {
+export class DrawMove {
   /**
-   * @param {ascii.State} state
+   * @param {State} state
    */
   constructor(state) {
     this.state = state;
@@ -372,7 +377,7 @@ ascii.DrawMove = class {
   /** @inheritDoc */
   start(position) {
     this.startPosition =
-        TOUCH_ENABLED ? this.snapToNearest(position) : position;
+        c.TOUCH_ENABLED ? this.snapToNearest(position) : position;
     this.ends = [];
 
     // If this isn't a special cell then quit, or things get weird.
@@ -382,13 +387,13 @@ ascii.DrawMove = class {
     var context = this.state.getContext(this.startPosition);
 
     var ends = [];
-    for (var i of DIRECTIONS) {
+    for (var i of c.DIRECTIONS) {
       var midPoints = this.followLine(this.startPosition, i);
       for (var midPoint of midPoints) {
         // Clockwise is a lie, it is true if we move vertically first.
         var clockwise = (i.x != 0);
-        var startIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(position).getRawValue()) != -1;
-        var midPointIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(midPoint).getRawValue()) != -1;
+        var startIsAlt = c.ALT_SPECIAL_VALUES.indexOf(this.state.getCell(position).getRawValue()) != -1;
+        var midPointIsAlt = c.ALT_SPECIAL_VALUES.indexOf(this.state.getCell(midPoint).getRawValue()) != -1;
 
         var midPointContext = this.state.getContext(midPoint);
         // Special case, a straight line with no turns.
@@ -397,7 +402,7 @@ ascii.DrawMove = class {
           continue;
         }
         // Continue following lines from the midpoint.
-        for (var j of DIRECTIONS) {
+        for (var j of c.DIRECTIONS) {
           if (i.add(j).length() == 0 || i.add(j).length() == 2) {
             // Don't go back on ourselves, or don't carry on in same direction.
             continue;
@@ -408,7 +413,7 @@ ascii.DrawMove = class {
             continue;
           }
           var secondEnd = secondEnds[0];
-          var endIsAlt = ALT_SPECIAL_VALUES.indexOf(this.state.getCell(secondEnd).getRawValue()) != -1;
+          var endIsAlt = c.ALT_SPECIAL_VALUES.indexOf(this.state.getCell(secondEnd).getRawValue()) != -1;
           // On the second line we don't care about multiple
           // junctions, just the last.
           ends.push({position: secondEnd, clockwise, startIsAlt, midPointIsAlt, endIsAlt});
@@ -433,15 +438,15 @@ ascii.DrawMove = class {
     for (var end of this.ends) {
       // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
       if (end.startIsAlt) {
-        this.state.drawValue(position, ALT_SPECIAL_VALUE);
+        this.state.drawValue(position, c.ALT_SPECIAL_VALUE);
       }
       if (end.endIsAlt) {
-        this.state.drawValue(end.position, ALT_SPECIAL_VALUE);
+        this.state.drawValue(end.position, c.ALT_SPECIAL_VALUE);
       }
       if (end.midPointIsAlt) {
         var midX = end.clockwise ? end.position.x : position.x;
         var midY = end.clockwise ? position.y : end.position.y;
-        this.state.drawValue(new ascii.Vector(midX, midY), ALT_SPECIAL_VALUE);
+        this.state.drawValue(new Vector(midX, midY), c.ALT_SPECIAL_VALUE);
       }
     }
   }
@@ -455,9 +460,9 @@ ascii.DrawMove = class {
    * Follows a line in a given direction from the startPosition.
    * Returns a list of positions that were line 'junctions'. This is a bit of a
    * loose definition, but basically means a point around which we resize things.
-   * @param {ascii.Vector} startPosition
-   * @param {ascii.Vector} direction
-   * @return {!Array<ascii.Vector>}
+   * @param {Vector} startPosition
+   * @param {Vector} direction
+   * @return {!Array<Vector>}
    */
   followLine(startPosition, direction) {
     var endPosition = startPosition.clone();
@@ -485,18 +490,18 @@ ascii.DrawMove = class {
    * For a given position, finds the nearest cell that is of any interest to the
    * move tool, e.g. a corner or a line. Will look up to 1 cell in each direction
    * including diagonally.
-   * @param {ascii.Vector} position
-   * @return {ascii.Vector}
+   * @param {Vector} position
+   * @return {Vector}
    */
   snapToNearest(position) {
     if (this.state.getCell(position).isSpecial()) {
       return position;
     }
-    var allDirections = DIRECTIONS.concat([
-      DIR_LEFT.add(DIR_UP),
-      DIR_LEFT.add(DIR_DOWN),
-      DIR_RIGHT.add(DIR_UP),
-      DIR_RIGHT.add(DIR_DOWN)]);
+    var allDirections = c.DIRECTIONS.concat([
+      c.DIR_LEFT.add(c.DIR_UP),
+      c.DIR_LEFT.add(c.DIR_DOWN),
+      c.DIR_RIGHT.add(c.DIR_UP),
+      c.DIR_RIGHT.add(c.DIR_DOWN)]);
 
     var bestDirection = null;
     var bestContextSum = 0;
