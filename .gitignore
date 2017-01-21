@@ -3,3 +3,4 @@ closure-library/*
 .settings/*
 *~
 _site/*
+.DS_Store

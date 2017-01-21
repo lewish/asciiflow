@@ -13,4 +13,3 @@ Goto: http://localhost:8000/index.html
 
 When developing, use the Google JS linter, gjslint.
 
-Adding new source files will require a change to compile.sh.
