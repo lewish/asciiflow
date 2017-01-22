@@ -1,8 +1,9 @@
-import * as c from './constants';
-import Vector from './vector';
-import State from './state';
-import { MappedValue, Box } from './common';
-import { DrawFunction, DrawErase } from './draw';
+import DrawFunction from './function';
+import { ERASE_CHAR, KEY_COPY, KEY_CUT, KEY_PASTE } from '../constants';
+import Vector from '../vector';
+import State from '../state';
+import { MappedValue, Box } from '../common';
+import DrawErase from './erase';
 
 /**
  * @implements {DrawFunction}
@@ -53,7 +54,7 @@ export default class DrawSelect {
   copyArea() {
     var nonEmptyCells = this.state.scratchCells.filter(function(value) {
       var rawValue = value.cell.getRawValue();
-      return value.cell.getRawValue() != null && value.cell.getRawValue() != c.ERASE_CHAR;
+      return value.cell.getRawValue() != null && value.cell.getRawValue() != ERASE_CHAR;
     });
     var topLeft = this.getSelectedBox().topLeft();
     this.selectedCells = nonEmptyCells.map(function(value) {
@@ -82,7 +83,7 @@ export default class DrawSelect {
         // Effectively highlights the cell.
         var currentValue = this.state.getCell(current).getRawValue();
         this.state.drawValue(current,
-            currentValue == null ? c.ERASE_CHAR : currentValue);
+            currentValue == null ? ERASE_CHAR : currentValue);
       }
     }
   }
@@ -129,17 +130,17 @@ export default class DrawSelect {
   handleKey(value) {
     if (this.startPosition != null &&
         this.endPosition != null) {
-      if (value == c.KEY_COPY || value == c.KEY_CUT) {
+      if (value == KEY_COPY || value == KEY_CUT) {
         this.copyArea();
       }
-      if (value == c.KEY_CUT) {
+      if (value == KEY_CUT) {
         var eraser = new DrawErase(this.state);
         eraser.start(this.startPosition);
         eraser.move(this.endPosition);
         this.state.commitDraw();
       }
     }
-    if (value == c.KEY_PASTE) {
+    if (value == KEY_PASTE) {
       this.drawSelected(this.startPosition);
       this.state.commitDraw();
     }

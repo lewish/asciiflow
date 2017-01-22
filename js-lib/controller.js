@@ -2,7 +2,6 @@ import * as c from './constants';
 import Vector from './vector';
 import View from './view';
 import State from './state';
-import DrawSelect from './draw-select';
 import {
   DrawFunction,
   DrawBox,
@@ -11,7 +10,8 @@ import {
   DrawErase,
   DrawMove,
   DrawText,
-} from './draw';
+  DrawSelect,
+} from './draw/index';
 
 
 /**
