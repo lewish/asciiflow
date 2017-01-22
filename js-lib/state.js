@@ -320,7 +320,7 @@ export default class State {
    */
   fromText(value, offset) {
     var lines = value.split('\n');
-    var middle = new ascii.Vector(0, Math.round(lines.length / 2));
+    var middle = new Vector(0, Math.round(lines.length / 2));
     for (var j = 0; j < lines.length; j++) {
       middle.x = Math.max(middle.x, Math.round(lines[j].length / 2));
     }
@@ -331,10 +331,10 @@ export default class State {
         // Convert special output back to special chars.
         // TODO: This is a horrible hack, need to handle multiple special chars
         // correctly and preserve them through line drawing etc.
-        if (SPECIAL_VALUES.indexOf(char)  != -1) {
-          char = SPECIAL_VALUE;
+        if (c.SPECIAL_VALUES.includes(char)) {
+          char = c.SPECIAL_VALUE;
         }
-        this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
+        this.drawValue(new Vector(i, j).add(offset).subtract(middle), char);
       }
     }
   }
