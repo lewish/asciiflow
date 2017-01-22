@@ -12,7 +12,25 @@ export default class Vector {
   }
 
   /**
-   * @param {Vector} other
+   * @param {jQuery.Event} event
+   * @return {!Vector}
+   */
+  static fromMouseEvent(event) {
+    return new Vector(event.clientX, event.clientY);
+  }
+
+  /**
+   * @param {jQuery.Event} event
+   * @param {number=} index
+   * @return {!Vector}
+   */
+  static fromTouchEvent(event, index = 0) {
+    const { pageX, pageY } = event.originalEvent.touches[index];
+    return new Vector(pageX, pageY);
+  }
+
+  /**
+   * @param {?Vector} other
    * @return {boolean}
    */
   equals(other) {
@@ -36,7 +54,7 @@ export default class Vector {
   }
 
   /**
-   * @return {Vector}
+   * @return {!Vector}
    */
   clone() {
     return new Vector(this.x, this.y);
@@ -53,5 +71,41 @@ export default class Vector {
    */
   scale(scale) {
     return new Vector(this.x * scale, this.y * scale);
+  }
+
+  /**
+   * Move up by value. Defaults to 1.
+   * @param {number=} value
+   * @return {Vector}
+   */
+  up(value = 1) {
+    return new Vector(this.x, this.y - value);
+  }
+
+  /**
+   * Move down by value. Defaults to 1.
+   * @param {number=} value
+   * @return {Vector}
+   */
+  down(value = 1) {
+    return new Vector(this.x, this.y + value);
+  }
+
+  /**
+   * Move left by value. Defaults to 1.
+   * @param {number=} value
+   * @return {Vector}
+   */
+  left(value = 1) {
+    return new Vector(this.x - value, this.y);
+  }
+
+  /**
+   * Move right by value. Defaults to 1.
+   * @param {number=} value
+   * @return {Vector}
+   */
+  right(value = 1) {
+    return new Vector(this.x + value, this.y);
   }
 }

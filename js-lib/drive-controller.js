@@ -42,7 +42,7 @@ export default class DriveController {
 
     this.loopSave();
 
-    $(window).on('hashchange', this.loadFromHash);
+    $(window).on('hashchange', () => { this.loadFromHash(); });
 
     $('#drive-new-file-button').click(() => {
       this.file = null;
@@ -60,14 +60,14 @@ export default class DriveController {
     window['gapi']['auth']['authorize']({
         'client_id': CLIENT_ID,
         'scope': SCOPES,
-        'immediate': immediate},
+        immediate },
         result => {
           if (result && !result.error && !this.driveEnabled) {
             this.driveEnabled = true;
             $('#drive-button').addClass('active');
             // We are authorized, so let's se if we can load from the URL hash.
             // This seems to fail if we do it too early.
-            window.setTimeout(this.loadFromHash, 500);
+            window.setTimeout(() => { this.loadFromHash(); }, 500);
           }
         });
   }
@@ -136,7 +136,7 @@ export default class DriveController {
   safeExecute(request, callback) {
     // Could make the API call, don't blow up tho (mobiles n stuff).
     try {
-      request['execute'](function(result) {
+      request['execute'](result => {
         if (!result['error']) {
           callback(result);
         }
@@ -220,8 +220,8 @@ export default class DriveController {
     var method = this.file == null ? 'POST' : 'PUT';
 
     return window['gapi']['client']['request']({
+        method,
         'path': '/upload/drive/v2/files' + fileId,
-        'method': method,
         'params': {'uploadType': 'multipart'},
         'headers': {
           'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
