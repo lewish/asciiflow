@@ -29,31 +29,31 @@ export class DesktopController {
    * Installs input bindings associated with keyboard controls.
    */
   installBindings() {
-    var canvas = this.controller.view.canvas;
-    $(canvas).on('mousewheel', e => {
+    var canvas = $(this.controller.view.canvas);
+    canvas.on('mousewheel', e => {
         this.handleZoom(e.originalEvent.wheelDelta);
     });
 
-    $(canvas).mousedown(e => {
+    canvas.mousedown(e => {
         // Can drag by holding either the control or meta (Apple) key.
         if (e.ctrlKey || e.metaKey) {
-          this.controller.startDrag(new Vector(e.clientX, e.clientY));
+          this.controller.startDrag(Vector.fromMouseEvent(e));
         } else {
-          this.controller.startDraw(new Vector(e.clientX, e.clientY));
+          this.controller.startDraw(Vector.fromMouseEvent(e));
         }
     });
 
     // Pass these events through to the main controller.
-    $(canvas).mouseup(e => {
+    canvas.mouseup(e => {
         this.controller.endAll();
     });
 
-    $(canvas).mouseleave(e => {
+    canvas.mouseleave(e => {
         this.controller.endAll();
     });
 
-    $(canvas).mousemove(e => {
-        this.controller.handleMove(new Vector(e.clientX, e.clientY));
+    canvas.mousemove(e => {
+        this.controller.handleMove(Vector.fromMouseEvent(e));
     });
   }
 }
@@ -152,42 +152,32 @@ export class TouchController {
    * Installs input bindings associated with touch controls.
    */
   installBindings() {
-    var canvas = this.controller.view.canvas;
+    var canvas = $(this.controller.view.canvas);
 
-    $(canvas).on('touchstart', e => {
+    canvas.on('touchstart', e => {
         e.preventDefault();
         if (e.originalEvent.touches.length == 1) {
-          this.handlePress(new Vector(
-            e.originalEvent.touches[0].pageX,
-            e.originalEvent.touches[0].pageY));
+          this.handlePress(Vector.fromTouchEvent(e));
         } else if (e.originalEvent.touches.length > 1) {
-          this.handlePressMulti(new Vector(
-            e.originalEvent.touches[0].pageX,
-            e.originalEvent.touches[0].pageY),
-            new Vector(
-                e.originalEvent.touches[1].pageX,
-                e.originalEvent.touches[1].pageY));
+          this.handlePressMulti(
+            Vector.fromTouchEvent(e, 0),
+            Vector.fromTouchEvent(e, 1));
         }
     });
 
-    $(canvas).on('touchmove', e => {
+    canvas.on('touchmove', e => {
         e.preventDefault();
         if (e.originalEvent.touches.length == 1) {
-          this.handleMove(new Vector(
-            e.originalEvent.touches[0].pageX,
-            e.originalEvent.touches[0].pageY));
+          this.handleMove(Vector.fromTouchEvent(e));
         } else if (e.originalEvent.touches.length > 1) {
-          this.handleMoveMulti(new Vector(
-            e.originalEvent.touches[0].pageX,
-            e.originalEvent.touches[0].pageY),
-            new Vector(
-                e.originalEvent.touches[1].pageX,
-                e.originalEvent.touches[1].pageY));
+          this.handleMoveMulti(
+            Vector.fromTouchEvent(e, 0),
+            Vector.fromTouchEvent(e, 1));
         }
     });
 
     // Pass through, no special handling.
-    $(canvas).on('touchend', e => {
+    canvas.on('touchend', e => {
         e.preventDefault();
         this.reset();
         this.controller.endAll();

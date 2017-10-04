@@ -45,8 +45,7 @@ export default class View {
       this.state.dirty = false;
       this.render();
     }
-    var view = this;
-    window.requestAnimationFrame(function() { view.animate(); });
+    window.requestAnimationFrame(() => { this.animate(); });
   }
 
   /**

@@ -98,8 +98,8 @@ export default class State {
   getDrawValue(position) {
     var cell = this.getCell(position);
     var value = cell.scratchValue != null ? cell.scratchValue : cell.value;
-    var isSpecial = c.SPECIAL_VALUES.indexOf(value) != -1;
-    var isAltSpecial = c.ALT_SPECIAL_VALUES.indexOf(value) != -1;
+    var isSpecial = c.SPECIAL_VALUES.includes(value);
+    var isAltSpecial = c.ALT_SPECIAL_VALUES.includes(value);
     if (!isSpecial && !isAltSpecial) {
       return value;
     }
@@ -146,13 +146,13 @@ export default class State {
       if (!context.up && context.rightdown && context.leftdown) {
         return c.SPECIAL_LINE_H;
       }
-      var leftupempty = this.getCell(position.add(c.DIR_LEFT).add(c.DIR_UP)).isEmpty();
-      var rightupempty = this.getCell(position.add(c.DIR_RIGHT).add(c.DIR_UP)).isEmpty();
+      var leftupempty = this.getCell(position.left().up()).isEmpty();
+      var rightupempty = this.getCell(position.right().up()).isEmpty();
       if (context.up && context.left && context.right && (!leftupempty || !rightupempty)) {
         return c.SPECIAL_LINE_H;
       }
-      var leftdownempty = this.getCell(position.add(c.DIR_LEFT).add(c.DIR_DOWN)).isEmpty();
-      var rightdownempty = this.getCell(position.add(c.DIR_RIGHT).add(c.DIR_DOWN)).isEmpty();
+      var leftdownempty = this.getCell(position.left().down()).isEmpty();
+      var rightdownempty = this.getCell(position.right().down()).isEmpty();
       if (context.down && context.left && context.right && (!leftdownempty || !rightdownempty)) {
         return c.SPECIAL_LINE_H;
       }
@@ -181,10 +181,10 @@ export default class State {
    * @return {CellContext}
    */
   getContext(position) {
-    var left = this.getCell(position.add(c.DIR_LEFT)).isSpecial();
-    var right = this.getCell(position.add(c.DIR_RIGHT)).isSpecial();
-    var up = this.getCell(position.add(c.DIR_UP)).isSpecial();
-    var down = this.getCell(position.add(c.DIR_DOWN)).isSpecial();
+    var left = this.getCell(position.left()).isSpecial();
+    var right = this.getCell(position.right()).isSpecial();
+    var up = this.getCell(position.up()).isSpecial();
+    var down = this.getCell(position.down()).isSpecial();
     return new CellContext(left, right, up, down);
   }
 
@@ -193,10 +193,10 @@ export default class State {
    * @param {CellContext} context
    */
   extendContext(position, context) {
-    context.leftup = this.getCell(position.add(c.DIR_LEFT).add(c.DIR_UP)).isSpecial();
-    context.rightup = this.getCell(position.add(c.DIR_RIGHT).add(c.DIR_UP)).isSpecial();
-    context.leftdown = this.getCell(position.add(c.DIR_LEFT).add(c.DIR_DOWN)).isSpecial();
-    context.rightdown = this.getCell(position.add(c.DIR_RIGHT).add(c.DIR_DOWN)).isSpecial();
+    context.leftup = this.getCell(position.left().up()).isSpecial();
+    context.rightup = this.getCell(position.right().up()).isSpecial();
+    context.leftdown = this.getCell(position.left().down()).isSpecial();
+    context.rightdown = this.getCell(position.right().down()).isSpecial();
   }
 
   /**
@@ -207,11 +207,10 @@ export default class State {
     var oldValues = [];
 
     // Dedupe the scratch values, or this causes havoc for history management.
-    var positions = this.scratchCells.map(function(value) {
+    var positions = this.scratchCells.map(value => {
       return value.position.x.toString() + value.position.y.toString();
     });
-    var scratchCellsUnique =
-        this.scratchCells.filter(function(value, index, arr) {
+    var scratchCellsUnique = this.scratchCells.filter((value, index, arr) => {
       return positions.indexOf(positions[index]) == index;
     });
 
@@ -253,9 +252,8 @@ export default class State {
     if (this.undoStates.length == 0) { return; }
 
     var lastState = this.undoStates.pop();
-    for (var i in lastState) {
-      var mappedValue = lastState[i];
-      this.drawValue(mappedValue.position, mappedValue.value);
+    for (var { position, value } of lastState) {
+      this.drawValue(position, value);
     }
     this.commitDraw(true);
   }
@@ -267,8 +265,8 @@ export default class State {
     if (this.redoStates.length == 0) { return; }
 
     var lastState = this.redoStates.pop();
-    for (var mappedValue of lastState) {
-      this.drawValue(mappedValue.position, mappedValue.value);
+    for (var { position, value } of lastState) {
+      this.drawValue(position, value);
     }
     this.commitDraw();
   }
@@ -320,7 +318,7 @@ export default class State {
    */
   fromText(value, offset) {
     var lines = value.split('\n');
-    var middle = new ascii.Vector(0, Math.round(lines.length / 2));
+    var middle = new Vector(0, Math.round(lines.length / 2));
     for (var j = 0; j < lines.length; j++) {
       middle.x = Math.max(middle.x, Math.round(lines[j].length / 2));
     }
@@ -331,10 +329,10 @@ export default class State {
         // Convert special output back to special chars.
         // TODO: This is a horrible hack, need to handle multiple special chars
         // correctly and preserve them through line drawing etc.
-        if (SPECIAL_VALUES.indexOf(char)  != -1) {
-          char = SPECIAL_VALUE;
+        if (c.SPECIAL_VALUES.includes(char)) {
+          char = c.SPECIAL_VALUE;
         }
-        this.drawValue(new ascii.Vector(i, j).add(offset).subtract(middle), char);
+        this.drawValue(new Vector(i, j).add(offset).subtract(middle), char);
       }
     }
   }

@@ -20,12 +20,12 @@ export class Box {
     /** type {number} */ this.endY = Math.max(a.y, b.y);
   }
 
-  /** @return {Vector} */
+  /** @return {!Vector} */
   topLeft() {
     return new Vector(this.startX, this.startY);
   }
 
-  /** @return {Vector} */
+  /** @return {!Vector} */
   bottomRight() {
     return new Vector(this.endX, this.endY);
   }
@@ -54,7 +54,7 @@ export class Cell {
 
   /** @return {boolean} */
   isSpecial() {
-    return ALL_SPECIAL_VALUES.indexOf(this.getRawValue()) != -1;
+    return ALL_SPECIAL_VALUES.includes(this.getRawValue());
   }
 
   /** @return {boolean} */
