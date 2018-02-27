@@ -1,6 +1,5 @@
 export { default as DrawFunction } from './function';
 export { default as DrawBox } from './box';
-export { default as DrawBoxText } from './boxtext';
 export { default as DrawErase } from './erase';
 export { default as DrawLine } from './line';
 export { default as DrawSelect } from './select';
