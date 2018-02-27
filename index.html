@@ -476,6 +476,13 @@ textarea {
   animation-name: fadeOut;
 }
 
+.output-raw {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  margin: 7px;
+}
+
 </style>
 </head>
 <body>
@@ -512,6 +519,10 @@ textarea {
 <div id="export-button-dialog" class="dialog">
     <textarea readonly id="export-area"></textarea>
     <div class="dialog-button-bar">
+        <div class="output-raw">
+            <input type="checkbox" id="output-raw" />
+            <label for="output-raw">padding</label>
+        </div>
         <button class="close-dialog-button">Close</button>
   </div>
 </div>

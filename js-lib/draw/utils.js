@@ -55,7 +55,7 @@ export function drawLine(
  */
 export function drawText(state, position, text) {
   let x = 0, y = 0;
-  for (const char of text) {
+  for (const char of State.paddingText(text)) {
     if (char == '\n') {
       y++;
       x = 0;

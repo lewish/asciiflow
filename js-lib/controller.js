@@ -123,6 +123,10 @@ export default class Controller {
       this.handleFileButton(e.target.id);
     });
 
+    $('#output-raw').click(e => {
+      this.handleFileButton('export-button');
+    });
+
     $('button.close-dialog-button').click(e => {
       $('.dialog').removeClass('visible');
     });
@@ -223,7 +227,8 @@ export default class Controller {
     }
 
     if (id == 'export-button') {
-      $('#export-area').val(this.state.outputText());
+      var raw = Boolean($("#output-raw").prop("checked"));
+      $('#export-area').val(this.state.outputText(null, raw));
       $('#export-area').select();
     }
     if (id == 'clear-button') {
