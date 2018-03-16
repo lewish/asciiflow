@@ -3,7 +3,7 @@ import Vector from "./vector";
 import View from "./view";
 import State from "./state";
 import { DrawFunction, DrawBox, DrawLine, DrawFreeform, DrawErase, DrawMove, DrawText, DrawSelect } from "./draw/index";
-import DrawFunction from "./function";
+import DrawFunction from "./draw/function";
 
 /**
  * Different modes of control.
