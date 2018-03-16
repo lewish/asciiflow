@@ -1,26 +1,17 @@
-import * as c from './constants';
-import Vector from './vector';
-import View from './view';
-import State from './state';
-import {
-  DrawFunction,
-  DrawBox,
-  DrawLine,
-  DrawFreeform,
-  DrawErase,
-  DrawMove,
-  DrawText,
-  DrawSelect,
-} from './draw/index';
-
+import * as c from "./constants";
+import Vector from "./vector";
+import View from "./view";
+import State from "./state";
+import { DrawFunction, DrawBox, DrawLine, DrawFreeform, DrawErase, DrawMove, DrawText, DrawSelect } from "./draw/index";
+import DrawFunction from "./function";
 
 /**
  * Different modes of control.
  */
 const Mode = {
-    NONE: 0,
-    DRAG: 1,
-    DRAW: 2
+  NONE: 0,
+  DRAG: 1,
+  DRAW: 2
 };
 
 /**
@@ -86,10 +77,7 @@ export default class Controller {
 
     // Drag in progress, update the view origin.
     if (this.mode == Mode.DRAG) {
-      this.view.setOffset(this.dragOriginCell.add(
-          this.dragOrigin
-              .subtract(position)
-              .scale(1 / this.view.zoom)));
+      this.view.setOffset(this.dragOriginCell.add(this.dragOrigin.subtract(position).scale(1 / this.view.zoom)));
     }
     this.lastMoveCell = moveCell;
   }
@@ -112,41 +100,42 @@ export default class Controller {
    * Installs input bindings for common use cases devices.
    */
   installBindings() {
-    $(window).resize(e => { this.view.resizeCanvas() });
+    $(window).resize(e => {
+      this.view.resizeCanvas();
+    });
 
-    $('#draw-tools > button.tool').click(e => {
-      $('#text-tool-widget').hide(0);
+    $("#draw-tools > button.tool").click(e => {
+      $("#text-tool-widget").hide(0);
       this.handleDrawButton(e.target.id);
     });
 
-    $('#file-tools > button.tool').click(e => {
+    $("#file-tools > button.tool").click(e => {
       this.handleFileButton(e.target.id);
     });
 
-    $('button.close-dialog-button').click(e => {
-      $('.dialog').removeClass('visible');
+    $("button.close-dialog-button").click(e => {
+      $(".dialog").removeClass("visible");
     });
 
-    $('#import-submit-button').click(e => {
+    $("#import-submit-button").click(e => {
       this.state.clear();
       this.state.fromText(
-          /** @type {string} */
-          ($('#import-area').val()),
-          this.view.screenToCell(new Vector(
-              this.view.canvas.width / 2,
-              this.view.canvas.height / 2)));
+        /** @type {string} */
+        ($("#import-area").val()),
+        this.view.screenToCell(new Vector(this.view.canvas.width / 2, this.view.canvas.height / 2))
+      );
       this.state.commitDraw();
-      $('#import-area').val('');
-      $('.dialog').removeClass('visible');
+      $("#import-area").val("");
+      $(".dialog").removeClass("visible");
     });
 
-    $('#use-lines-button').click(e => {
-      $('.dialog').removeClass('visible');
+    $("#use-lines-button").click(e => {
+      $(".dialog").removeClass("visible");
       this.view.setUseLines(true);
     });
 
-    $('#use-ascii-button').click(e => {
-      $('.dialog').removeClass('visible');
+    $("#use-ascii-button").click(e => {
+      $(".dialog").removeClass("visible");
       this.view.setUseLines(false);
     });
 
@@ -159,14 +148,14 @@ export default class Controller {
     });
 
     // Bit of a hack, just triggers the text tool to get a new value.
-    $('#text-tool-input, #freeform-tool-input').keyup(() => {
-        this.drawFunction.handleKey('');
+    $("#text-tool-input, #freeform-tool-input").keyup(() => {
+      this.drawFunction.handleKey("");
     });
-    $('#text-tool-input, #freeform-tool-input').change(() => {
-        this.drawFunction.handleKey('');
+    $("#text-tool-input, #freeform-tool-input").change(() => {
+      this.drawFunction.handleKey("");
     });
-    $('#text-tool-close').click(() => {
-      $('#text-tool-widget').hide();
+    $("#text-tool-close").click(() => {
+      $("#text-tool-widget").hide();
       this.state.commitDraw();
     });
   }
@@ -176,33 +165,33 @@ export default class Controller {
    * @param {string} id The ID of the element clicked.
    */
   handleDrawButton(id) {
-    $('#draw-tools > button.tool').removeClass('active');
-    $('#' + id).toggleClass('active');
-    $('.dialog').removeClass('visible');
+    $("#draw-tools > button.tool").removeClass("active");
+    $("#" + id).toggleClass("active");
+    $(".dialog").removeClass("visible");
 
     // Install the right draw tool based on button pressed.
-    if (id == 'box-button') {
+    if (id == "box-button") {
       this.drawFunction = new DrawBox(this.state);
     }
-    if (id == 'line-button') {
+    if (id == "line-button") {
       this.drawFunction = new DrawLine(this.state, false);
     }
-    if (id == 'arrow-button') {
+    if (id == "arrow-button") {
       this.drawFunction = new DrawLine(this.state, true);
     }
-    if (id == 'freeform-button') {
+    if (id == "freeform-button") {
       this.drawFunction = new DrawFreeform(this.state, "X");
     }
-    if (id == 'erase-button') {
+    if (id == "erase-button") {
       this.drawFunction = new DrawErase(this.state);
     }
-    if (id == 'move-button') {
+    if (id == "move-button") {
       this.drawFunction = new DrawMove(this.state);
     }
-    if (id == 'text-button') {
+    if (id == "text-button") {
       this.drawFunction = new DrawText(this.state, this.view);
     }
-    if (id == 'select-button') {
+    if (id == "select-button") {
       this.drawFunction = new DrawSelect(this.state);
     }
     this.state.commitDraw();
@@ -214,25 +203,25 @@ export default class Controller {
    * @param {string} id The ID of the element clicked.
    */
   handleFileButton(id) {
-    $('.dialog').removeClass('visible');
-    $('#' + id + '-dialog').toggleClass('visible');
+    $(".dialog").removeClass("visible");
+    $("#" + id + "-dialog").toggleClass("visible");
 
-    if (id == 'import-button') {
-      $('#import-area').val('');
-      $('#import-area').focus();
+    if (id == "import-button") {
+      $("#import-area").val("");
+      $("#import-area").focus();
     }
 
-    if (id == 'export-button') {
-      $('#export-area').val(this.state.outputText());
-      $('#export-area').select();
+    if (id == "export-button") {
+      $("#export-area").val(this.state.outputText());
+      $("#export-area").select();
     }
-    if (id == 'clear-button') {
+    if (id == "clear-button") {
       this.state.clear();
     }
-    if (id == 'undo-button') {
+    if (id == "undo-button") {
       this.state.undo();
     }
-    if (id == 'redo-button') {
+    if (id == "redo-button") {
       this.state.redo();
     }
   }
@@ -256,19 +245,41 @@ export default class Controller {
     var specialKeyCode = null;
 
     if (event.ctrlKey || event.metaKey) {
-      if (event.keyCode == 67) { specialKeyCode = c.KEY_COPY; }
-      if (event.keyCode == 86) { specialKeyCode = c.KEY_PASTE; }
-      if (event.keyCode == 90) { this.state.undo(); }
-      if (event.keyCode == 89) { this.state.redo(); }
-      if (event.keyCode == 88) { specialKeyCode = c.KEY_CUT; }
+      if (event.keyCode == 67) {
+        specialKeyCode = c.KEY_COPY;
+      }
+      if (event.keyCode == 86) {
+        specialKeyCode = c.KEY_PASTE;
+      }
+      if (event.keyCode == 90) {
+        this.state.undo();
+      }
+      if (event.keyCode == 89) {
+        this.state.redo();
+      }
+      if (event.keyCode == 88) {
+        specialKeyCode = c.KEY_CUT;
+      }
     }
 
-    if (event.keyCode == 8) { specialKeyCode = c.KEY_BACKSPACE; }
-    if (event.keyCode == 13) { specialKeyCode = c.KEY_RETURN; }
-    if (event.keyCode == 38) { specialKeyCode = c.KEY_UP; }
-    if (event.keyCode == 40) { specialKeyCode = c.KEY_DOWN; }
-    if (event.keyCode == 37) { specialKeyCode = c.KEY_LEFT; }
-    if (event.keyCode == 39) { specialKeyCode = c.KEY_RIGHT; }
+    if (event.keyCode == 8) {
+      specialKeyCode = c.KEY_BACKSPACE;
+    }
+    if (event.keyCode == 13) {
+      specialKeyCode = c.KEY_RETURN;
+    }
+    if (event.keyCode == 38) {
+      specialKeyCode = c.KEY_UP;
+    }
+    if (event.keyCode == 40) {
+      specialKeyCode = c.KEY_DOWN;
+    }
+    if (event.keyCode == 37) {
+      specialKeyCode = c.KEY_LEFT;
+    }
+    if (event.keyCode == 39) {
+      specialKeyCode = c.KEY_RIGHT;
+    }
 
     if (specialKeyCode != null) {
       //event.preventDefault();
@@ -277,4 +288,3 @@ export default class Controller {
     }
   }
 }
-
