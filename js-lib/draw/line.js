@@ -1,6 +1,9 @@
 import { DrawFunction } from './function';
 import { drawLine } from './utils';
-import { ALT_SPECIAL_VALUE } from '../constants';
+import { SPECIAL_ARROW_LEFT } from '../constants';
+import { SPECIAL_ARROW_UP } from '../constants';
+import { SPECIAL_ARROW_RIGHT } from '../constants';
+import { SPECIAL_ARROW_DOWN } from '../constants';
 import State from '../state';
 import Vector from '../vector';
 
@@ -33,10 +36,23 @@ export default class DrawLine {
     var endContext = this.state.getContext(position);
     var clockwise = (startContext.up && startContext.down) ||
         (endContext.left && endContext.right);
-
+		
     drawLine(this.state, this.startPosition, position, clockwise);
     if (this.isArrow) {
-      this.state.drawValue(position, ALT_SPECIAL_VALUE);
+		
+	  var endValue;
+	  
+	  if (endContext.up) {
+		endValue = SPECIAL_ARROW_UP;
+	  } else if (endContext.down) {
+		endValue = SPECIAL_ARROW_DOWN;
+	  } else if (endContext.left) {
+		endValue = SPECIAL_ARROW_LEFT;
+	  } else {
+		endValue = SPECIAL_ARROW_RIGHT;
+	  }
+	  
+      this.state.drawValue(position, endValue);
     }
   }
 
