@@ -1,6 +1,7 @@
+*.swp
+*~
+.DS_Store
+.settings/*
+_site/*
 closure-library
 closure-library/*
-.settings/*
-*~
-_site/*
-.DS_Store
