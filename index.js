@@ -10,7 +10,14 @@ const url = require('url')
 let mainWindow;
 
 function createWindow () {
-  mainWindow = new BrowserWindow({width: 800, height: 600, icon: path.join(__dirname, 'images', 'favicon.png')});
+  mainWindow = new BrowserWindow({
+    width: 1024,
+    height: 768,
+    icon: path.join(__dirname, 'images', 'favicon.png'),
+    webPreferences: {
+      nodeIntegration: false
+    }
+  });
   mainWindow.setMenu(null);
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
