@@ -429,7 +429,7 @@ g.i = function(a) {
   S(this.a);
   var b = T(this.a, this.b), c = T(this.a, a);
   V(this.a, this.b, a, b.c && b.b || c.a && c.right);
-  this.c && P(this.a, a, "^");
+  this.c && P(this.a, a, c.c ? "^" : c.b ? "v" : c.a ? "<" : ">");
 };
 g.m = function() {
   Q(this.a);
