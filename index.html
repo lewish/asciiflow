@@ -8,22 +8,20 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <link rel="shortcut icon" sizes="196x196" href="images/favicon.png">
 <title>ASCIIFlow Infinity</title>
-
-<script> window.ad_client = 'ca-pub-0451873530201272' </script>
-<script> window.astip_client = "ca-tipjar-pub-0451873530201272" </script>
-<script async src="https://www.gstatic.com/astip/astip.js"></script>
-
 <style>
+
+* {
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 0.95em;
+  color: #666;
+}
 
 a {
   color: #FF9E20;
 }
 
-body, input, button {
-  font-weight: bold;
-  font-family: sans-serif;
-  font-size: 13px;
-  color: #666;
+body {
   margin: 0px;
 }
 
@@ -92,7 +90,7 @@ button {
 }
 
 .info-description {
-  vertical-align: text-bottom;    
+  vertical-align: text-bottom;
   margin-left: 10px;
   display: inline-block;
   height: 30px;
@@ -143,7 +141,7 @@ button {
   text-align: center;
   padding-left: 0px;
 }
-  
+
   /* Move file tools to the bottom. */
 #file-tools {
   left: 0px;
@@ -547,15 +545,6 @@ textarea {
         <div>Return to the original <a href="http://stable.ascii-flow.appspot.com/">ASCIIFlow</a>.</div><br>
         Developed by <a href="https://plus.google.com/+LewisHemens/about">Lewis</a>, Designed by <a href="mailto:info@samirvine.co.uk">Sam</a> and <a href="mailto:ryangilbanks@gmail.com">Ryan</a>.
         <br>
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- ASCIIFlow Infinity Test -->
-        <ins class="adsbygoogle"
-             style="display:inline-block;width:336px;height:280px"
-             data-ad-client="ca-pub-0451873530201272"
-             data-ad-slot="7038467645"></ins>
-        <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
         <br>
     </div>
     <div class="dialog-button-bar">
@@ -568,7 +557,7 @@ textarea {
     <div class="dialog-button-bar">
         <button class="close-dialog-button">Close</button>
         <button id="import-submit-button">Import</button>
-  </div>  
+  </div>
 </div>
 
 <!-- These dialogs are handled seperately. -->
@@ -598,7 +587,7 @@ textarea {
 
 <canvas id="ascii-canvas"></canvas>
 
-<script src="jquery-1.9.1.min.js"></script>
+<script src="jquery-3.1.1.min.js"></script>
 <script src="js-compiled.js"></script>
 <script src="https://apis.google.com/js/client.js?onload=window.gapiCallback"></script>
 
@@ -610,7 +599,7 @@ if (width > 750) {
   window._tpm['trackPageview'] = true;
 }
 </script>
-<!-- script type="text/javascript" src="//code.tinypass.com/tpl/d1/tpm.js"></script -->
+<script type="text/javascript" src="//code.tinypass.com/tpl/d1/tpm.js"></script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
