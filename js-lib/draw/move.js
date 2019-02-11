@@ -76,7 +76,7 @@ export default class DrawMove {
     for (var end of this.ends) {
       drawLine(this.state, this.startPosition, end.position, end.clockwise, ' ');
     }
-    for (var i in this.ends) {
+    for (var end of this.ends) {
       drawLine(this.state, position, end.position, end.clockwise);
     }
     for (var end of this.ends) {
