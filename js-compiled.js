@@ -106,11 +106,11 @@ function K(a) {
 function M(a) {
   return null == a.value && null == a.a;
 }
-function ja(a, b, c, d) {
+function ja(a, b, c, e) {
   this.a = a;
   this.right = b;
   this.c = c;
-  this.b = d;
+  this.b = e;
   this.h = this.f = this.l = this.g = !1;
 }
 function N(a) {
@@ -136,9 +136,9 @@ function R(a, b) {
   return a.a[b.x][b.y];
 }
 function P(a, b, c) {
-  var d = R(a, b);
-  a.b.push(new la(b, d));
-  d.a = c;
+  var e = R(a, b);
+  a.b.push(new la(b, e));
+  e.a = c;
   a.c = !0;
 }
 function ma(a, b, c) {
@@ -151,15 +151,15 @@ function S(a) {
   a.b.length = 0;
 }
 function na(a, b) {
-  var c = R(a, b), d = null != c.a ? c.a : c.value, e = y.includes(d), f = z.includes(d);
-  if (!e && !f) {
-    return d;
+  var c = R(a, b), e = null != c.a ? c.a : c.value, d = y.includes(e), f = z.includes(e);
+  if (!d && !f) {
+    return e;
   }
   c = T(a, b);
-  if (e && c.a && c.right && !c.c && !c.b) {
+  if (d && c.a && c.right && !c.c && !c.b) {
     return "-";
   }
-  if (e && !c.a && !c.right && c.c && c.b) {
+  if (d && !c.a && !c.right && c.c && c.b) {
     return "|";
   }
   if (4 == N(c)) {
@@ -179,7 +179,7 @@ function na(a, b) {
       return ">";
     }
   }
-  if ((e || f) && 3 == N(c)) {
+  if ((d || f) && 3 == N(c)) {
     c.g = K(R(a, v(x(b))));
     c.l = K(R(a, v(b.right())));
     c.f = K(R(a, w(x(b))));
@@ -190,14 +190,14 @@ function na(a, b) {
     if (!c.b && c.g && c.l || !c.c && c.h && c.f) {
       return "-";
     }
-    d = M(R(a, v(x(b))));
-    e = M(R(a, v(b.right())));
-    if (c.c && c.a && c.right && (!d || !e)) {
+    e = M(R(a, v(x(b))));
+    d = M(R(a, v(b.right())));
+    if (c.c && c.a && c.right && (!e || !d)) {
       return "-";
     }
-    d = M(R(a, w(x(b))));
-    e = M(R(a, w(b.right())));
-    return !(c.b && c.a && c.right) || d && e ? "+" : "-";
+    e = M(R(a, w(x(b))));
+    d = M(R(a, w(b.right())));
+    return !(c.b && c.a && c.right) || e && d ? "+" : "-";
   }
   if (f && 1 == N(c)) {
     if (c.a) {
@@ -213,20 +213,20 @@ function na(a, b) {
       return "<";
     }
   }
-  return d;
+  return e;
 }
 function T(a, b) {
-  var c = K(R(a, x(b))), d = K(R(a, b.right())), e = K(R(a, v(b))), f = K(R(a, w(b)));
-  return new ja(c, d, e, f);
+  var c = K(R(a, x(b))), e = K(R(a, b.right())), d = K(R(a, v(b))), f = K(R(a, w(b)));
+  return new ja(c, e, d, f);
 }
 function Q(a, b) {
-  var c = [], d = a.b.map(function(a) {
+  var c = [], e = a.b.map(function(a) {
     return a.position.x.toString() + a.position.y.toString();
-  }), e = a.b.filter(function(a, b) {
-    return d.indexOf(d[b]) == b;
+  }), d = a.b.filter(function(a, c) {
+    return e.indexOf(e[c]) == c;
   });
   a.b.length = 0;
-  for (var e = n(e), f = e.next();!f.done;f = e.next()) {
+  for (var d = n(d), f = d.next();!f.done;f = d.next()) {
     var k = f.value, f = k.position, k = k.a;
     c.push(new ka(f, null != k.value ? k.value : " "));
     var l = J(k);
@@ -237,8 +237,8 @@ function Q(a, b) {
     k.a = null;
     k.value = l;
   }
-  e = b ? a.f : a.g;
-  0 < c.length && (50 < e.length && e.shift(), e.push(c));
+  d = b ? a.f : a.g;
+  0 < c.length && (50 < d.length && d.shift(), d.push(c));
   a.c = !0;
 }
 function oa(a) {
@@ -258,17 +258,17 @@ function pa(a) {
   }
 }
 function U(a) {
-  for (var b = new p(Number.MAX_VALUE, Number.MAX_VALUE), c = new p(-1, -1), d = 0;d < a.a.length;d++) {
-    for (var e = 0;e < a.a[d].length;e++) {
-      null != J(a.a[d][e]) && (d < b.x && (b.x = d), e < b.y && (b.y = e), d > c.x && (c.x = d), e > c.y && (c.y = e));
+  for (var b = new p(Number.MAX_VALUE, Number.MAX_VALUE), c = new p(-1, -1), e = 0;e < a.a.length;e++) {
+    for (var d = 0;d < a.a[e].length;d++) {
+      null != J(a.a[e][d]) && (e < b.x && (b.x = e), d < b.y && (b.y = d), e > c.x && (c.x = e), d > c.y && (c.y = d));
     }
   }
   if (0 > c.x) {
     return "";
   }
-  for (var f = "", e = b.y;e <= c.y;e++) {
-    for (var k = "", d = b.x;d <= c.x;d++) {
-      var l = na(a, new p(d, e)), k = k + (null == l || "\u2009" == l ? " " : l);
+  for (var f = "", d = b.y;d <= c.y;d++) {
+    for (var k = "", e = b.x;e <= c.x;e++) {
+      var l = na(a, new p(e, d)), k = k + (null == l || "\u2009" == l ? " " : l);
     }
     f += k.replace(/\s+$/, "") + "\n";
   }
@@ -276,30 +276,30 @@ function U(a) {
 }
 function qa(a, b, c) {
   b = b.split("\n");
-  for (var d = new p(0, Math.round(b.length / 2)), e = 0;e < b.length;e++) {
-    d.x = Math.max(d.x, Math.round(b[e].length / 2));
+  for (var e = new p(0, Math.round(b.length / 2)), d = 0;d < b.length;d++) {
+    e.x = Math.max(e.x, Math.round(b[d].length / 2));
   }
-  for (e = 0;e < b.length;e++) {
-    for (var f = b[e], k = 0;k < f.length;k++) {
+  for (d = 0;d < b.length;d++) {
+    for (var f = b[d], k = 0;k < f.length;k++) {
       var l = f.charAt(k);
       y.includes(l) && (l = "+");
-      P(a, u((new p(k, e)).add(c), d), l);
+      P(a, u((new p(k, d)).add(c), e), l);
     }
   }
 }
-;function V(a, b, c, d, e) {
-  e = void 0 === e ? "+" : e;
-  var f = new I(b, c), k = f.a, l = f.b, A = f.c, f = f.f, E = d ? c.x : b.x;
-  for (d = d ? b.y : c.y;k++ < A;) {
-    var q = new p(k, d), L = T(a, new p(k, d));
-    " " == e && 2 == L.c + L.b || ma(a, q, e);
+;function V(a, b, c, e, d) {
+  d = void 0 === d ? "+" : d;
+  var f = new I(b, c), k = f.a, l = f.b, A = f.c, f = f.f, E = e ? c.x : b.x;
+  for (e = e ? b.y : c.y;k++ < A;) {
+    var q = new p(k, e), L = T(a, new p(k, e));
+    " " == d && 2 == L.c + L.b || ma(a, q, d);
   }
   for (;l++ < f;) {
-    q = new p(E, l), L = T(a, new p(E, l)), " " == e && 2 == L.a + L.right || ma(a, q, e);
+    q = new p(E, l), L = T(a, new p(E, l)), " " == d && 2 == L.a + L.right || ma(a, q, d);
   }
-  P(a, b, e);
-  P(a, c, e);
-  ma(a, new p(E, d), e);
+  P(a, b, d);
+  P(a, c, d);
+  ma(a, new p(E, e), d);
 }
 ;function ra(a) {
   this.a = a;
@@ -341,45 +341,45 @@ function ua(a) {
   b.clearRect(0, 0, a.b.width, a.b.height);
   b.scale(a.c, a.c);
   b.translate(a.b.width / 2 / a.c, a.b.height / 2 / a.c);
-  var c = u(W(a, new p(0, 0)), new p(3, 3)), d = W(a, new p(a.b.width, a.b.height)).add(new p(3, 3));
+  var c = u(W(a, new p(0, 0)), new p(3, 3)), e = W(a, new p(a.b.width, a.b.height)).add(new p(3, 3));
   c.x = Math.max(0, Math.min(c.x, 2E3));
-  d.x = Math.max(0, Math.min(d.x, 2E3));
+  e.x = Math.max(0, Math.min(e.x, 2E3));
   c.y = Math.max(0, Math.min(c.y, 600));
-  d.y = Math.max(0, Math.min(d.y, 600));
+  e.y = Math.max(0, Math.min(e.y, 600));
   b.lineWidth = "1";
   b.strokeStyle = "#EEEEEE";
   b.beginPath();
-  for (var e = c.x;e < d.x;e++) {
-    b.moveTo(9 * e - a.a.x, 0 - a.a.y), b.lineTo(9 * e - a.a.x, 17 * a.g.a.length - a.a.y);
+  for (var d = c.x;d < e.x;d++) {
+    b.moveTo(9 * d - a.a.x, 0 - a.a.y), b.lineTo(9 * d - a.a.x, 17 * a.g.a.length - a.a.y);
   }
-  for (e = c.y;e < d.y;e++) {
-    b.moveTo(0 - a.a.x, 17 * e - a.a.y), b.lineTo(9 * a.g.a.length - a.a.x, 17 * e - a.a.y);
+  for (d = c.y;d < e.y;d++) {
+    b.moveTo(0 - a.a.x, 17 * d - a.a.y), b.lineTo(9 * a.g.a.length - a.a.x, 17 * d - a.a.y);
   }
   a.context.stroke();
-  e = !a.h;
+  d = !a.h;
   b.font = "15px Courier New";
-  for (var f = c.x;f < d.x;f++) {
-    for (var k = c.y;k < d.y;k++) {
+  for (var f = c.x;f < e.x;f++) {
+    for (var k = c.y;k < e.y;k++) {
       var l = R(a.g, new p(f, k));
       if (K(l) || null != l.a && " " != J(l)) {
         a.context.fillStyle = null != l.a ? "#DEF" : "#F5F5F5", b.fillRect(9 * f - a.a.x, 17 * (k - 1) - a.a.y, 9, 17);
       }
       var A = na(a.g, new p(f, k));
-      null == A || K(l) && !e || (a.context.fillStyle = "#000000", b.fillText(A, 9 * f - a.a.x, 17 * k - a.a.y - 3));
+      null == A || K(l) && !d || (a.context.fillStyle = "#000000", b.fillText(A, 9 * f - a.a.x, 17 * k - a.a.y - 3));
     }
   }
   if (a.h) {
     b.lineWidth = "1";
     b.strokeStyle = "#000000";
     b.beginPath();
-    for (e = c.x;e < d.x;e++) {
-      for (l = !1, f = c.y;f < d.y;f++) {
-        k = R(a.g, new p(e, f)), K(k) && f != d.y - 1 || !l || (b.moveTo(9 * e - a.a.x + 4.5, 17 * l - a.a.y - 8.5), b.lineTo(9 * e - a.a.x + 4.5, 17 * (f - 1) - a.a.y - 8.5), l = !1), K(k) && !l && (l = f);
+    for (d = c.x;d < e.x;d++) {
+      for (l = !1, f = c.y;f < e.y;f++) {
+        k = R(a.g, new p(d, f)), K(k) && f != e.y - 1 || !l || (b.moveTo(9 * d - a.a.x + 4.5, 17 * l - a.a.y - 8.5), b.lineTo(9 * d - a.a.x + 4.5, 17 * (f - 1) - a.a.y - 8.5), l = !1), K(k) && !l && (l = f);
       }
     }
-    for (f = c.y;f < d.y;f++) {
-      for (l = !1, e = c.x;e < d.x;e++) {
-        k = R(a.g, new p(e, f)), K(k) && e != d.x - 1 || !l || (b.moveTo(9 * l - a.a.x + 4.5, 17 * f - a.a.y - 8.5), b.lineTo(9 * (e - 1) - a.a.x + 4.5, 17 * f - a.a.y - 8.5), l = !1), K(k) && !l && (l = e);
+    for (f = c.y;f < e.y;f++) {
+      for (l = !1, d = c.x;d < e.x;d++) {
+        k = R(a.g, new p(d, f)), K(k) && d != e.x - 1 || !l || (b.moveTo(9 * l - a.a.x + 4.5, 17 * f - a.a.y - 8.5), b.lineTo(9 * (d - 1) - a.a.x + 4.5, 17 * f - a.a.y - 8.5), l = !1), K(k) && !l && (l = d);
       }
     }
     a.context.stroke();
@@ -402,9 +402,9 @@ g.i = function(a) {
   S(this.c);
   this.a = a;
   a = Math.min(this.b.y, this.a.y);
-  for (var b = Math.max(this.b.x, this.a.x), c = Math.max(this.b.y, this.a.y), d = Math.min(this.b.x, this.a.x);d <= b;d++) {
-    for (var e = a;e <= c;e++) {
-      P(this.c, new p(d, e), "\u2009");
+  for (var b = Math.max(this.b.x, this.a.x), c = Math.max(this.b.y, this.a.y), e = Math.min(this.b.x, this.a.x);e <= b;e++) {
+    for (var d = a;d <= c;d++) {
+      P(this.c, new p(e, d), "\u2009");
     }
   }
 };
@@ -467,8 +467,8 @@ g.i = function(a) {
       a = new I(this.a, a);
       for (var b = a.a;b <= a.c;b++) {
         for (var c = a.b;c <= a.f;c++) {
-          var d = new p(b, c), e = J(R(this.c, d));
-          P(this.c, d, null == e ? "\u2009" : e);
+          var e = new p(b, c), d = J(R(this.c, e));
+          P(this.c, e, null == d ? "\u2009" : d);
         }
       }
     }
@@ -484,9 +484,9 @@ function ya(a, b) {
   za(a, c);
 }
 function za(a, b) {
-  for (var c = n(a.l), d = c.next();!d.done;d = c.next()) {
-    var d = d.value, e = d.value;
-    P(a.c, d.position.add(b), e);
+  for (var c = n(a.l), e = c.next();!e.done;e = c.next()) {
+    var e = e.value, d = e.value;
+    P(a.c, e.position.add(b), d);
   }
 }
 g.m = function() {
@@ -533,8 +533,8 @@ g.o = function() {
 g.j = function() {
   var a = $("#text-tool-input").val();
   S(this.b);
-  for (var b = this.b, c = this.c, d = 0, e = 0, a = n(a), f = a.next();!f.done;f = a.next()) {
-    f = f.value, "\n" == f ? (e++, d = 0) : (P(b, c.add(new p(d, e)), f), d++);
+  for (var b = this.b, c = this.c, e = 0, d = 0, a = n(a), f = a.next();!f.done;f = a.next()) {
+    f = f.value, "\n" == f ? (d++, e = 0) : (P(b, c.add(new p(e, d)), f), e++);
   }
 };
 function Ba(a) {
@@ -551,9 +551,9 @@ g.start = function(a) {
     } else {
       var c = H.concat([C.add(F), C.add(G), D.add(F), D.add(G)]);
       b = null;
-      for (var d = 0, c = n(c), e = c.next();!e.done;e = c.next()) {
-        var e = e.value, f = a.add(e), k = N(T(this.a, f));
-        K(R(this.a, f)) && k > d && (b = e, d = k);
+      for (var e = 0, c = n(c), d = c.next();!d.done;d = c.next()) {
+        var d = d.value, f = a.add(d), k = N(T(this.a, f));
+        K(R(this.a, f)) && k > e && (b = d, e = k);
       }
       b = null == b ? a : a.add(b);
     }
@@ -565,9 +565,9 @@ g.start = function(a) {
   if (K(R(this.a, this.b))) {
     T(this.a, this.b);
     b = [];
-    d = n(H);
-    for (c = d.next();!c.done;c = d.next()) {
-      for (c = c.value, e = Ca(this, this.b, c), e = n(e), f = e.next();!f.done;f = e.next()) {
+    e = n(H);
+    for (c = e.next();!c.done;c = e.next()) {
+      for (c = c.value, d = Ca(this, this.b, c), d = n(d), f = d.next();!f.done;f = d.next()) {
         var f = f.value, k = 0 != c.x, l = -1 != z.indexOf(J(R(this.a, a))), A = -1 != z.indexOf(J(R(this.a, f)));
         if (1 == N(T(this.a, f))) {
           b.push({position:f, s:k, v:l, u:A});
@@ -585,28 +585,28 @@ g.start = function(a) {
 g.i = function(a) {
   S(this.a);
   for (var b = n(this.c), c = b.next();!c.done;c = b.next()) {
-    var d = c.value;
-    V(this.a, this.b, d.position, d.s, " ");
-  }
-  for (var e in this.c) {
-    V(this.a, a, d.position, d.s);
+    c = c.value, V(this.a, this.b, c.position, c.s, " ");
   }
   b = n(this.c);
   for (c = b.next();!c.done;c = b.next()) {
-    d = c.value, d.v && P(this.a, a, "^"), d.u && P(this.a, d.position, "^"), d.w && P(this.a, new p(d.s ? d.position.x : a.x, d.s ? a.y : d.position.y), "^");
+    c = c.value, V(this.a, a, c.position, c.s);
+  }
+  b = n(this.c);
+  for (c = b.next();!c.done;c = b.next()) {
+    c = c.value, c.v && P(this.a, a, "^"), c.u && P(this.a, c.position, "^"), c.w && P(this.a, new p(c.s ? c.position.x : a.x, c.s ? a.y : c.position.y), "^");
   }
 };
 g.m = function() {
   Q(this.a);
 };
 function Ca(a, b, c) {
-  for (var d = b.clone(), e = [];;) {
-    var f = d.add(c);
+  for (var e = b.clone(), d = [];;) {
+    var f = e.add(c);
     if (!K(R(a.a, f))) {
-      return t(b, d) || e.push(d), e;
+      return t(b, e) || d.push(e), d;
     }
-    d = f;
-    3 == N(T(a.a, d)) && e.push(d);
+    e = f;
+    3 == N(T(a.a, e)) && d.push(e);
   }
 }
 g.o = function(a) {
@@ -646,9 +646,9 @@ function Ea(a, b) {
   t(c, a.f) || (a.a.b.style.cursor = a.c.o(c));
   2 != a.mode || t(c, a.f) || a.c.i(c);
   if (1 == a.mode) {
-    var d = a.a, e = a.h.add(u(a.g, b).scale(1 / a.a.c));
-    d.a = e;
-    d.f = !0;
+    var e = a.a, d = a.h.add(u(a.g, b).scale(1 / a.a.c));
+    e.a = d;
+    e.f = !0;
   }
   a.f = c;
 }
@@ -740,8 +740,8 @@ function Fa(a) {
   });
 }
 ;function Ga(a, b) {
-  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", A:b}, function(b) {
-    !b || b.error || a.f || (a.f = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
+  window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", A:b}, function(c) {
+    !c || c.error || a.f || (a.f = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
       Ha(a);
     }, 500));
   });
@@ -772,13 +772,13 @@ function Ma() {
     $("#drive-file-list").children().remove();
     a = a.items;
     for (var b in a) {
-      var c = document.createElement("li"), d = document.createElement("a");
-      c.appendChild(d);
-      d.href = "#" + a[b].id;
-      $(d).click(function() {
+      var c = document.createElement("li"), e = document.createElement("a");
+      c.appendChild(e);
+      e.href = "#" + a[b].id;
+      $(e).click(function() {
         $("#drive-dialog").removeClass("visible");
       });
-      d.innerHTML = a[b].title;
+      e.innerHTML = a[b].title;
       $("#drive-file-list").append(c);
     }
   });
@@ -826,35 +826,35 @@ function Pa(a, b) {
   return window.gapi.client.request({method:a.a ? "PUT" : "POST", path:"/upload/drive/v2/files" + (a.a ? "/" + a.a.id : ""), params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:c});
 }
 function Ra(a, b) {
-  var c = window.gapi.auth.getToken().access_token, d = new XMLHttpRequest;
-  d.open("GET", a);
-  d.setRequestHeader("Authorization", "Bearer " + c);
-  d.onload = function() {
-    b(d.responseText);
+  var c = window.gapi.auth.getToken().access_token, e = new XMLHttpRequest;
+  e.open("GET", a);
+  e.setRequestHeader("Authorization", "Bearer " + c);
+  e.onload = function() {
+    b(e.responseText);
   };
-  d.onerror = function() {
+  e.onerror = function() {
     b(null);
   };
-  d.send();
+  e.send();
 }
 ;function Sa(a) {
   var b = $(a.a.a.b);
-  b.on("mousewheel", function(b) {
-    b = a.a.a.c * (0 < b.originalEvent.wheelDelta ? 1.1 : .9);
-    b = Math.max(Math.min(b, 5), .2);
-    var c = a.a.a;
-    c.c = b;
-    c.f = !0;
+  b.on("mousewheel", function(c) {
+    c = a.a.a.c * (0 < c.originalEvent.wheelDelta ? 1.1 : .9);
+    c = Math.max(Math.min(c, 5), .2);
+    var b = a.a.a;
+    b.c = c;
+    b.f = !0;
   });
-  b.mousedown(function(b) {
-    if (b.ctrlKey || b.metaKey) {
-      var c = a.a;
-      b = new p(b.clientX, b.clientY);
-      c.mode = 1;
-      c.g = b;
-      c.h = c.a.a;
+  b.mousedown(function(c) {
+    if (c.ctrlKey || c.metaKey) {
+      var b = a.a;
+      c = new p(c.clientX, c.clientY);
+      b.mode = 1;
+      b.g = c;
+      b.h = b.a.a;
     } else {
-      c = a.a, b = new p(b.clientX, b.clientY), c.mode = 2, c.c.start(W(c.a, b));
+      b = a.a, c = new p(c.clientX, c.clientY), b.mode = 2, b.c.start(W(b.a, c));
     }
   });
   b.mouseup(function() {
@@ -863,8 +863,8 @@ function Ra(a, b) {
   b.mouseleave(function() {
     Y(a.a);
   });
-  b.mousemove(function(b) {
-    Ea(a.a, new p(b.clientX, b.clientY));
+  b.mousemove(function(c) {
+    Ea(a.a, new p(c.clientX, c.clientY));
   });
 }
 function Ta(a, b) {
@@ -881,36 +881,36 @@ function Ta(a, b) {
 }
 function Ua(a) {
   var b = $(a.a.a.b);
-  b.on("touchstart", function(b) {
-    b.preventDefault();
-    if (1 == b.originalEvent.touches.length) {
-      Ta(a, r(b));
+  b.on("touchstart", function(c) {
+    c.preventDefault();
+    if (1 == c.originalEvent.touches.length) {
+      Ta(a, r(c));
     } else {
-      if (1 < b.originalEvent.touches.length) {
-        var c = r(b, 0);
-        b = r(b, 1);
+      if (1 < c.originalEvent.touches.length) {
+        var b = r(c, 0);
+        c = r(c, 1);
         Y(a.a);
         a.c = !0;
         a.b = !1;
-        a.l = u(c, b).length();
+        a.l = u(b, c).length();
         a.g = a.a.a.c;
       }
     }
   });
-  b.on("touchmove", function(b) {
-    b.preventDefault();
-    if (1 == b.originalEvent.touches.length) {
-      b = r(b);
-      if (!a.b && 150 > $.now() - a.h && 6 < u(b, a.f).length()) {
+  b.on("touchmove", function(c) {
+    c.preventDefault();
+    if (1 == c.originalEvent.touches.length) {
+      c = r(c);
+      if (!a.b && 150 > $.now() - a.h && 6 < u(c, a.f).length()) {
         a.b = !0;
-        var c = a.a;
-        c.mode = 1;
-        c.g = b;
-        c.h = c.a.a;
+        var b = a.a;
+        b.mode = 1;
+        b.g = c;
+        b.h = b.a.a;
       }
-      Ea(a.a, b);
+      Ea(a.a, c);
     } else {
-      1 < b.originalEvent.touches.length && a.c && (b = a.g * u(r(b, 0), r(b, 1)).length() / a.l, b = Math.max(Math.min(b, 5), .5), c = a.a.a, c.c = b, c.f = !0);
+      1 < c.originalEvent.touches.length && a.c && (c = a.g * u(r(c, 0), r(c, 1)).length() / a.l, c = Math.max(Math.min(c, 5), .5), b = a.a.a, b.c = c, b.f = !0);
     }
   });
   b.on("touchend", function(b) {
