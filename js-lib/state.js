@@ -334,13 +334,7 @@ export default class State {
       var line = lines[j];
       for (var i = 0; i < line.length; i++) {
         var char = line.charAt(i);
-        // Convert special output back to special chars.
-        // TODO: This is a horrible hack, need to handle multiple special chars
-        // correctly and preserve them through line drawing etc.
-        if (c.SPECIAL_VALUES.includes(char)) {
-          char = c.SPECIAL_VALUE;
-        }
-        this.drawValue(new Vector(i, j).add(offset).subtract(middle), char);
+        this.drawValue(new Vector(i, j).add(offset).subtract(middle), char, true);
       }
     }
   }
