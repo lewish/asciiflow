@@ -1,29 +1,34 @@
 import { DrawFunction } from './function';
 import { drawLine } from './utils';
-import { SPECIAL_ARROW_LEFT } from '../constants';
-import { SPECIAL_ARROW_UP } from '../constants';
-import { SPECIAL_ARROW_RIGHT } from '../constants';
-import { SPECIAL_ARROW_DOWN } from '../constants';
+import { SPECIAL_LINE_V, SPECIAL_LINE_H } from '../constants';
 import State from '../state';
 import Vector from '../vector';
 
 /**
  * @implements {DrawFunction}
  */
-export default class DrawLine {
+export default class DrawPlainLine {
   /**
    * @param {State} state
-   * @param {boolean} isArrow
    */
-  constructor(state, isArrow) {
+  constructor(state) {
     this.state = state;
-    this.isArrow = isArrow;
     /** @type {Vector} */ this.startPosition = null;
   }
 
   /** @inheritDoc */
   start(position) {
     this.startPosition = position;
+  }
+
+  drawEndpoint(position) {
+    var context = this.state.getContext(position);
+    if (context.up || context.down) {
+      this.state.drawValue(position, SPECIAL_LINE_V);
+    }
+    else if (context.left || context.right) {
+      this.state.drawValue(position, SPECIAL_LINE_H);
+    }
   }
 
   /** @inheritDoc */
@@ -36,24 +41,11 @@ export default class DrawLine {
     var endContext = this.state.getContext(position);
     var clockwise = (startContext.up && startContext.down) ||
         (endContext.left && endContext.right);
-		
+
+
     drawLine(this.state, this.startPosition, position, clockwise);
-    if (this.isArrow) {
-		
-	  var endValue;
-	  
-	  if (endContext.up) {
-		endValue = SPECIAL_ARROW_UP;
-	  } else if (endContext.down) {
-		endValue = SPECIAL_ARROW_DOWN;
-	  } else if (endContext.left) {
-		endValue = SPECIAL_ARROW_LEFT;
-	  } else {
-		endValue = SPECIAL_ARROW_RIGHT;
-	  }
-	  
-      this.state.drawValue(position, endValue);
-    }
+    this.drawEndpoint(this.startPosition)
+    this.drawEndpoint(position)
   }
 
   /** @inheritDoc */
