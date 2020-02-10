@@ -58,10 +58,13 @@ export default class State {
    *
    * @param {Vector} position
    * @param {?string} value
+   * @param {?boolean} isText
    */
-  drawValue(position, value) {
+  drawValue(position, value, isText = false) {
     var cell = this.getCell(position);
-    this.scratchCells.push(new MappedCell(position, cell));
+    cell.isText = isText;
+    var mappedCell = new MappedCell(position, cell);
+    this.scratchCells.push(mappedCell);
     cell.scratchValue = value;
     this.dirty = true;
   }
@@ -101,6 +104,11 @@ export default class State {
     var isSpecial = c.SPECIAL_VALUES.includes(value);
     var isAltSpecial = c.ALT_SPECIAL_VALUES.includes(value);
     if (!isSpecial && !isAltSpecial) {
+      return value;
+    }
+
+    if (cell.isText) {
+      // Do not ever alter text that has been entered, it's just rude.
       return value;
     }
 

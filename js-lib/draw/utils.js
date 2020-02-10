@@ -61,7 +61,7 @@ export function drawText(state, position, text) {
       x = 0;
       continue;
     }
-    state.drawValue(position.add(new Vector(x, y)), char);
+    state.drawValue(position.add(new Vector(x, y)), char, true);
     x++;
   }
 }

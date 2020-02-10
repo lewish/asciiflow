@@ -45,6 +45,7 @@ export class Cell {
   constructor() {
     /** @type {?string} */ this.value = null;
     /** @type {?string} */ this.scratchValue = null;
+    this.isText = false;
   }
 
   /** @return {?string} */
