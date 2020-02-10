@@ -340,6 +340,7 @@ textarea {
 .box-image { background-image: url('images/box-icon.gif'); }
 .line-image { background-image: url('images/line-icon.gif'); }
 .arrow-image { background-image: url('images/arrow-icon.gif'); }
+.plain-line-image { background-image: url('images/plain-line-icon.gif'); }
 .freeform-image { background-image: url('images/freeform-icon.gif'); }
 .erase-image { background-image: url('images/erase-icon.gif'); }
 .move-image { background-image: url('images/move-icon.gif'); }
@@ -488,6 +489,7 @@ textarea {
 
 <div id="draw-tools">
   <button id="box-button" class="tool active box-image" title="Draw boxes"></button>
+  <button id="plain-line-button" class="tool plain-line-image" title="Draw plain lines"></button>
   <button id="line-button" class="tool line-image" title="Draw connecting lines"></button>
   <button id="arrow-button" class="tool arrow-image" title="Draw arrows"></button>
   <button id="freeform-button" class="tool freeform-image" title="Freeform drawing"></button>
@@ -527,8 +529,9 @@ textarea {
         Desktop OSX: <span>Hold CMD and drag the screen.</span><br>
         Mobile: <span>Drag quickly to move. Press and hold to start drawing. Pinch to zoom in/out.</span></p>
         <div class="info-icon box-image"></div><div class="info-description">Draw boxes. <span>You can resize them later with the Resize tool.</span></div><br>
-        <div class="info-icon line-image"></div><div class="info-description">Draw lines. <span>Connect it to another line to change the orientation.</span></div><br>
+        <div class="info-icon line-image"></div><div class="info-description">Draw connecting lines. <span>Connect it to another line to change the orientation.</span></div><br>
         <div class="info-icon arrow-image"></div><div class="info-description">Draw arrows. <span>Connect it to another line to change the orientation.</span></div><br>
+        <div class="info-icon plain-line-image"></div><div class="info-description">Draw plain lines. <span>Draw free-form straight lines.</span></div><br>
         <div class="info-icon freeform-image"></div><div class="info-description">Draw freehand. <span>Press a character on the keyboard and draw with it.</span></div><br>
         <div class="info-icon erase-image"></div><div class="info-description">Erase. <span>Drag out an area to remove its contents from the canvas.</span></div><br>
         <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines. <span>Drag a line to change its size/shape.</span></div><br>

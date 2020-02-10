@@ -2,7 +2,7 @@ import * as c from "./constants";
 import Vector from "./vector";
 import View from "./view";
 import State from "./state";
-import { DrawFunction, DrawBox, DrawLine, DrawFreeform, DrawErase, DrawMove, DrawText, DrawSelect } from "./draw/index";
+import { DrawFunction, DrawBox, DrawLine, DrawPlainLine, DrawFreeform, DrawErase, DrawMove, DrawText, DrawSelect } from "./draw/index";
 import DrawFunction from "./draw/function";
 
 /**
@@ -178,6 +178,9 @@ export default class Controller {
     }
     if (id == "arrow-button") {
       this.drawFunction = new DrawLine(this.state, true);
+    }
+    if (id == "plain-line-button") {
+      this.drawFunction = new DrawPlainLine(this.state);
     }
     if (id == "freeform-button") {
       this.drawFunction = new DrawFreeform(this.state, "X");
