@@ -4,6 +4,8 @@ import { SPECIAL_ARROW_LEFT } from '../constants';
 import { SPECIAL_ARROW_UP } from '../constants';
 import { SPECIAL_ARROW_RIGHT } from '../constants';
 import { SPECIAL_ARROW_DOWN } from '../constants';
+import { SPECIAL_LINE_H } from '../constants';
+import { SPECIAL_LINE_V } from '../constants';
 import State from '../state';
 import Vector from '../vector';
 
@@ -13,17 +15,27 @@ import Vector from '../vector';
 export default class DrawLine {
   /**
    * @param {State} state
-   * @param {boolean} isArrow
+   * @param {?string} type
    */
-  constructor(state, isArrow) {
+  constructor(state, type = 'connector') {
     this.state = state;
-    this.isArrow = isArrow;
+    this.type = type
     /** @type {Vector} */ this.startPosition = null;
   }
 
   /** @inheritDoc */
   start(position) {
     this.startPosition = position;
+  }
+
+  drawEndpoint(position) {
+    var context = this.state.getContext(position);
+    if (context.up || context.down) {
+      this.state.drawValue(position, SPECIAL_LINE_V);
+    }
+    else if (context.left || context.right) {
+      this.state.drawValue(position, SPECIAL_LINE_H);
+    }
   }
 
   /** @inheritDoc */
@@ -36,22 +48,24 @@ export default class DrawLine {
     var endContext = this.state.getContext(position);
     var clockwise = (startContext.up && startContext.down) ||
         (endContext.left && endContext.right);
-		
+
     drawLine(this.state, this.startPosition, position, clockwise);
-    if (this.isArrow) {
-		
-	  var endValue;
-	  
-	  if (endContext.up) {
-		endValue = SPECIAL_ARROW_UP;
-	  } else if (endContext.down) {
-		endValue = SPECIAL_ARROW_DOWN;
-	  } else if (endContext.left) {
-		endValue = SPECIAL_ARROW_LEFT;
-	  } else {
-		endValue = SPECIAL_ARROW_RIGHT;
-	  }
-	  
+
+    if (this.type === 'plain') {
+      this.drawEndpoint(this.startPosition)
+      this.drawEndpoint(position)
+    }
+    else if (this.type === 'arrow') {
+  	  var endValue;
+  	  if (endContext.up) {
+    		endValue = SPECIAL_ARROW_UP;
+  	  } else if (endContext.down) {
+    		endValue = SPECIAL_ARROW_DOWN;
+  	  } else if (endContext.left) {
+    		endValue = SPECIAL_ARROW_LEFT;
+  	  } else {
+    		endValue = SPECIAL_ARROW_RIGHT;
+  	  }
       this.state.drawValue(position, endValue);
     }
   }
