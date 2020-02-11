@@ -14,17 +14,58 @@ export default class State {
     this.scratchCells = [];
     /** @type {boolean} */
     this.dirty = true;
+    /** @type {string} */
+    this.storageKey = 'asciiflow2';
 
     /** @type {!Array<Array<MappedValue>>|!Iterable<Iterable<MappedValue>>} */
     this.undoStates = [];
     /** @type {!Array<Array<MappedValue>>|!Iterable<Iterable<MappedValue>>} */
     this.redoStates = [];
 
+    var savedState = this.readStorage();
+
     for (var i = 0; i < this.cells.length; i++) {
       this.cells[i] = new Array(c.MAX_GRID_HEIGHT);
       for (var j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j] = new Cell();
+        var cell = new Cell();
+        if (savedState) {
+          try {
+            cell.value = savedState.cells[i][j].value;
+            cell.isText = savedState.cells[i][j].isText;
+          }
+          catch (e) {
+            // Ignore, leave the cell uninitialized. If there was a useful way
+            // to provide an error to the user, maybe do it...? But who would
+            // actually care that there was some bug in the way we deserialize
+            // invalid localStorage data? And the storage data is going to get
+            // blown away in a second, anyway.
+          }
+        }
+        this.cells[i][j] = cell;
       }
+    }
+  }
+
+  readStorage() {
+    var state = null;
+    var value = window.localStorage.getItem(this.storageKey);
+    if (value) {
+      try {
+        state = JSON.parse(value);
+      }
+      catch (e) {
+        // Ignore, state will remain null.
+      }
+    }
+    return state;
+  }
+
+  writeStorage() {
+    try {
+      window.localStorage.setItem(this.storageKey, JSON.stringify(this.cells));
+    }
+    catch (e) {
+      console.error('error saving cells to localStorage:', e);
     }
   }
 
@@ -251,6 +292,8 @@ export default class State {
       stateStack.push(oldValues);
     }
     this.dirty = true;
+
+    this.writeStorage();
   }
 
   /**
