@@ -22,51 +22,40 @@ export default class State {
     /** @type {!Array<Array<MappedValue>>|!Iterable<Iterable<MappedValue>>} */
     this.redoStates = [];
 
-    var savedState = this.readStorage();
-
     for (var i = 0; i < this.cells.length; i++) {
       this.cells[i] = new Array(c.MAX_GRID_HEIGHT);
       for (var j = 0; j < this.cells[i].length; j++) {
-        var cell = new Cell();
-        if (savedState) {
-          try {
-            cell.value = savedState.cells[i][j].value;
-            cell.isText = savedState.cells[i][j].isText;
-          }
-          catch (e) {
-            // Ignore, leave the cell uninitialized. If there was a useful way
-            // to provide an error to the user, maybe do it...? But who would
-            // actually care that there was some bug in the way we deserialize
-            // invalid localStorage data? And the storage data is going to get
-            // blown away in a second, anyway.
-          }
-        }
-        this.cells[i][j] = cell;
+        this.cells[i][j] = new Cell();
       }
     }
+
+    this.readStorage();
   }
 
   readStorage() {
-    var state = null;
-    var value = window.localStorage.getItem(this.storageKey);
-    if (value) {
-      try {
-        state = JSON.parse(value);
+    try {
+      var saved = window.localStorage.getItem(this.storageKey);
+      if (saved) {
+        saved = JSON.parse(saved);
       }
-      catch (e) {
-        // Ignore, state will remain null.
+      if (saved.cells) {
+        this.fromText(saved.cells, new Vector(c.MAX_GRID_WIDTH/2, c.MAX_GRID_HEIGHT/2));
       }
     }
-    return state;
+    catch (e) {
+      // If there was a useful way to provide an error to the user, maybe do
+      // it...? But who would actually care that there was some bug in the
+      // way we deserialize invalid localStorage data? And the storage data
+      // is going to get blown away in a second, anyway.
+      console.error('error deserializing state from localStorage:', e);
+    }
   }
 
   writeStorage() {
-    try {
-      window.localStorage.setItem(this.storageKey, JSON.stringify(this.cells));
-    }
-    catch (e) {
-      console.error('error saving cells to localStorage:', e);
-    }
+    var cells = this.outputText();
+    window.localStorage.setItem(this.storageKey, JSON.stringify({
+      cells: cells,
+    }));
   }
 
   /**
