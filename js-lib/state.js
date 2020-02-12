@@ -14,6 +14,8 @@ export default class State {
     this.scratchCells = [];
     /** @type {boolean} */
     this.dirty = true;
+    /** @type {boolean} */
+    this.useLines = false;
     /** @type {string} */
     this.storageKey = 'asciiflow2';
 
@@ -41,6 +43,9 @@ export default class State {
       if (saved.cells) {
         this.fromText(saved.cells, new Vector(c.MAX_GRID_WIDTH/2, c.MAX_GRID_HEIGHT/2));
       }
+      if (saved['useLines']) { // see this.writeStorage() for why this is a string
+        this.useLines = true;
+      }
     }
     catch (e) {
       // If there was a useful way to provide an error to the user, maybe do
@@ -55,6 +60,10 @@ export default class State {
     var cells = this.outputText();
     window.localStorage.setItem(this.storageKey, JSON.stringify({
       cells: cells,
+      // This is a string-key because Closure will optimize it to a random
+      // letter, but we really really do want this object property to be
+      // "useLines".
+      'useLines': this.useLines,
     }));
   }
 

@@ -21,8 +21,6 @@ export default class View {
         c.MAX_GRID_HEIGHT * c.CHAR_PIXELS_V / 2);
 
     /** @type {boolean} */ this.dirty = true;
-    // TODO: Should probably save this setting in a cookie or something.
-    /** @type {boolean} */ this.useLines = false;
 
     this.resizeCanvas();
   }
@@ -103,8 +101,8 @@ export default class View {
           j * c.CHAR_PIXELS_V - this.offset.y);
     }
     this.context.stroke();
-    this.renderText(context, startOffset, endOffset, !this.useLines);
-    if (this.useLines) {
+    this.renderText(context, startOffset, endOffset, !this.state.useLines);
+    if (this.state.useLines) {
       this.renderCellsAsLines(context, startOffset, endOffset);
     }
   }
@@ -199,7 +197,8 @@ export default class View {
    * @param {boolean} useLines
    */
   setUseLines(useLines) {
-    this.useLines = useLines;
+    this.state.useLines = useLines;
+    this.state.writeStorage();
     this.dirty = true;
   }
 
