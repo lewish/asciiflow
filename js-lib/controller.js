@@ -158,6 +158,20 @@ export default class Controller {
       $("#text-tool-widget").hide();
       this.state.commitDraw();
     });
+
+    $("#toggle-dark-button").click(e => {
+      if ( e.target.textContent === "Dark Mode")
+      {
+        $(":root").addClass("dark");
+        e.target.textContent = "Light Mode";
+      }
+      else
+      {
+        $(":root").removeClass("dark");
+        e.target.textContent = "Dark Mode";
+      }
+      this.view.render();
+    });
   }
 
   /**

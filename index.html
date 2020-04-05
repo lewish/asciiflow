@@ -274,10 +274,33 @@ button.active, .info-icon {
   margin-right: 80px;
 }
 
+:root {
+  --canvas-bg: transparent;
+  --cell-bg: #F5F5F5;
+  --cell-bg-editing: #DEF;
+  --grid-stroke-color: #EEEEEE;
+  --draw-as-lines-color: #000000;
+  --draw-as-text-color: #000000;
+}
+
+:root.dark {
+  --canvas-bg: #252525;
+  --cell-bg: #252525;
+  --cell-bg-editing: #9D550FB0;
+  --grid-stroke-color: #3C3C3C;
+  --draw-as-lines-color: #F8F8F8;
+  --draw-as-text-color: #F8F8F8;
+}
+
+:root.dark #draw-tools, :root.dark #file-tools, :root.dark .dialog, :root.dark #logo-bar {
+  filter: invert(1.0);
+}
+
 #ascii-canvas {
   position: fixed;
   left: 0px;
   top: 0px;
+  background: var(--canvas-bg);
 }
 
 textarea {
@@ -521,7 +544,8 @@ textarea {
       <img id="options-logo" src="images/logo-options.gif" width="176" height="48" />
         <br>
         <button id="use-lines-button">Lines Mode</button>
-        <button id="use-ascii-button">ASCII Mode</button><br>
+        <button id="use-ascii-button">ASCII Mode</button>
+        <button id="toggle-dark-button">Dark Mode</button><br>
         <p>Moving around.<br>
         Desktop Windows: <span>Hold CTRL and drag the screen.</span><br>
         Desktop OSX: <span>Hold CMD and drag the screen.</span><br>

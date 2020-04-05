@@ -49,3 +49,10 @@ export const DIR_UP    = new Vector( 0, -1);
 export const DIR_DOWN  = new Vector( 0,  1);
 
 export const DIRECTIONS = [DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN];
+
+export const CSS_VAR_CANVAS_BG = '--canvas-bg';
+export const CSS_VAR_CELL_BG = '--cell-bg';
+export const CSS_VAR_CELL_BG_EDITING = '--cell-bg-editing';
+export const CSS_VAR_GRID_STROKE_COLOR = '--grid-stroke-color';
+export const CSS_VAR_DRAW_AS_LINES_COLOR = '--draw-as-lines-color';
+export const CSS_VAR_DRAW_AS_TEXT_COLOR = '--draw-as-text-color';

@@ -1,6 +1,7 @@
 import State from './state';
 import Vector from './vector';
 import * as c from './constants';
+import {CSS_VAR_CANVAS_BG} from "./constants";
 
 /**
  * Handles view operations, state and management of the screen.
@@ -21,10 +22,26 @@ export default class View {
         c.MAX_GRID_HEIGHT * c.CHAR_PIXELS_V / 2);
 
     /** @type {boolean} */ this.dirty = true;
+    /** @type {Object} */ this.styleCache = {};
     // TODO: Should probably save this setting in a cookie or something.
     /** @type {boolean} */ this.useLines = false;
 
+    this.refreshStyleCache();
+
     this.resizeCanvas();
+  }
+
+  /**
+   * Refreshes the cache of style variables.
+   */
+  refreshStyleCache() {
+    var rootStyle = window.getComputedStyle(document.documentElement);
+    this.styleCache[c.CSS_VAR_CANVAS_BG] = rootStyle.getPropertyValue(c.CSS_VAR_CANVAS_BG);
+    this.styleCache[c.CSS_VAR_CELL_BG] = rootStyle.getPropertyValue(c.CSS_VAR_CELL_BG);
+    this.styleCache[c.CSS_VAR_CELL_BG_EDITING] = rootStyle.getPropertyValue(c.CSS_VAR_CELL_BG_EDITING);
+    this.styleCache[c.CSS_VAR_GRID_STROKE_COLOR] = rootStyle.getPropertyValue(c.CSS_VAR_GRID_STROKE_COLOR);
+    this.styleCache[c.CSS_VAR_DRAW_AS_LINES_COLOR] = rootStyle.getPropertyValue(c.CSS_VAR_DRAW_AS_LINES_COLOR);
+    this.styleCache[c.CSS_VAR_DRAW_AS_TEXT_COLOR] = rootStyle.getPropertyValue(c.CSS_VAR_DRAW_AS_TEXT_COLOR);
   }
 
   /**
@@ -60,6 +77,8 @@ export default class View {
     // Clear the visible area.
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    this.refreshStyleCache();
+
     context.scale(this.zoom, this.zoom);
     context.translate(
         this.canvas.width / 2 / this.zoom,
@@ -84,7 +103,7 @@ export default class View {
 
     // Render the grid.
     context.lineWidth = '1';
-    context.strokeStyle = '#EEEEEE';
+    context.strokeStyle = this.styleCache[c.CSS_VAR_GRID_STROKE_COLOR];
     context.beginPath();
     for (var i = startOffset.x; i < endOffset.x; i++) {
       context.moveTo(
@@ -119,7 +138,7 @@ export default class View {
         // of a visible edit (blue).
         if (cell.isSpecial() ||
             (cell.hasScratch() && cell.getRawValue() != ' ')) {
-          this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
+          this.context.fillStyle = cell.hasScratch() ? this.styleCache[c.CSS_VAR_CELL_BG_EDITING] : this.styleCache[c.CSS_VAR_CELL_BG];
           context.fillRect(
               i * c.CHAR_PIXELS_H - this.offset.x,
               (j - 1) * c.CHAR_PIXELS_V - this.offset.y,
@@ -127,7 +146,7 @@ export default class View {
         }
         var cellValue = this.state.getDrawValue(new Vector(i, j));
         if (cellValue != null && (!cell.isSpecial() || drawSpecials)) {
-          this.context.fillStyle = '#000000';
+          this.context.fillStyle = this.styleCache[c.CSS_VAR_DRAW_AS_TEXT_COLOR];
           context.fillText(cellValue,
               i * c.CHAR_PIXELS_H - this.offset.x,
               j * c.CHAR_PIXELS_V - this.offset.y - 3);
@@ -138,7 +157,7 @@ export default class View {
 
   renderCellsAsLines(context, startOffset, endOffset) {
     context.lineWidth = '1';
-    context.strokeStyle = '#000000';
+    context.strokeStyle = this.styleCache[c.CSS_VAR_DRAW_AS_LINES_COLOR];
     context.beginPath();
     for (var i = startOffset.x; i < endOffset.x; i++) {
       var startY = false;

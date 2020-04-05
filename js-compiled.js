@@ -111,7 +111,7 @@ function ja(a, b, c, e) {
   this.right = b;
   this.c = c;
   this.b = e;
-  this.h = this.f = this.l = this.g = !1;
+  this.h = this.f = this.i = this.g = !1;
 }
 function N(a) {
   return a.a + a.right + a.c + a.b;
@@ -181,13 +181,13 @@ function na(a, b) {
   }
   if ((d || f) && 3 == N(c)) {
     c.g = K(R(a, v(x(b))));
-    c.l = K(R(a, v(b.right())));
+    c.i = K(R(a, v(b.right())));
     c.f = K(R(a, w(x(b))));
     c.h = K(R(a, w(b.right())));
-    if (!c.right && c.g && c.f || !c.a && c.l && c.h) {
+    if (!c.right && c.g && c.f || !c.a && c.i && c.h) {
       return "|";
     }
-    if (!c.b && c.g && c.l || !c.c && c.h && c.f) {
+    if (!c.b && c.g && c.i || !c.c && c.h && c.f) {
       return "-";
     }
     e = M(R(a, v(x(b))));
@@ -309,7 +309,7 @@ g = ra.prototype;
 g.start = function(a) {
   this.b = a;
 };
-g.i = function(a) {
+g.j = function(a) {
   S(this.a);
   V(this.a, this.b, a, !0);
   V(this.a, this.b, a, !1);
@@ -320,25 +320,35 @@ g.m = function() {
 g.o = function() {
   return "crosshair";
 };
-g.j = function() {
+g.l = function() {
 };
 function sa(a) {
-  a.b.width = document.documentElement.clientWidth;
-  a.b.height = document.documentElement.clientHeight;
-  a.f = !0;
+  var b = window.getComputedStyle(document.documentElement);
+  a.f["--canvas-bg"] = b.getPropertyValue("--canvas-bg");
+  a.f["--cell-bg"] = b.getPropertyValue("--cell-bg");
+  a.f["--cell-bg-editing"] = b.getPropertyValue("--cell-bg-editing");
+  a.f["--grid-stroke-color"] = b.getPropertyValue("--grid-stroke-color");
+  a.f["--draw-as-lines-color"] = b.getPropertyValue("--draw-as-lines-color");
+  a.f["--draw-as-text-color"] = b.getPropertyValue("--draw-as-text-color");
 }
 function ta(a) {
-  if (a.f || a.g.c) {
-    a.f = !1, a.g.c = !1, ua(a);
-  }
-  window.requestAnimationFrame(function() {
-    ta(a);
-  });
+  a.b.width = document.documentElement.clientWidth;
+  a.b.height = document.documentElement.clientHeight;
+  a.g = !0;
 }
 function ua(a) {
+  if (a.g || a.h.c) {
+    a.g = !1, a.h.c = !1, va(a);
+  }
+  window.requestAnimationFrame(function() {
+    ua(a);
+  });
+}
+function va(a) {
   var b = a.context;
   b.setTransform(1, 0, 0, 1, 0, 0);
   b.clearRect(0, 0, a.b.width, a.b.height);
+  sa(a);
   b.scale(a.c, a.c);
   b.translate(a.b.width / 2 / a.c, a.b.height / 2 / a.c);
   var c = u(W(a, new p(0, 0)), new p(3, 3)), e = W(a, new p(a.b.width, a.b.height)).add(new p(3, 3));
@@ -347,39 +357,39 @@ function ua(a) {
   c.y = Math.max(0, Math.min(c.y, 600));
   e.y = Math.max(0, Math.min(e.y, 600));
   b.lineWidth = "1";
-  b.strokeStyle = "#EEEEEE";
+  b.strokeStyle = a.f["--grid-stroke-color"];
   b.beginPath();
   for (var d = c.x;d < e.x;d++) {
-    b.moveTo(9 * d - a.a.x, 0 - a.a.y), b.lineTo(9 * d - a.a.x, 17 * a.g.a.length - a.a.y);
+    b.moveTo(9 * d - a.a.x, 0 - a.a.y), b.lineTo(9 * d - a.a.x, 17 * a.h.a.length - a.a.y);
   }
   for (d = c.y;d < e.y;d++) {
-    b.moveTo(0 - a.a.x, 17 * d - a.a.y), b.lineTo(9 * a.g.a.length - a.a.x, 17 * d - a.a.y);
+    b.moveTo(0 - a.a.x, 17 * d - a.a.y), b.lineTo(9 * a.h.a.length - a.a.x, 17 * d - a.a.y);
   }
   a.context.stroke();
-  d = !a.h;
+  d = !a.i;
   b.font = "15px Courier New";
   for (var f = c.x;f < e.x;f++) {
     for (var k = c.y;k < e.y;k++) {
-      var l = R(a.g, new p(f, k));
+      var l = R(a.h, new p(f, k));
       if (K(l) || null != l.a && " " != J(l)) {
-        a.context.fillStyle = null != l.a ? "#DEF" : "#F5F5F5", b.fillRect(9 * f - a.a.x, 17 * (k - 1) - a.a.y, 9, 17);
+        a.context.fillStyle = null != l.a ? a.f["--cell-bg-editing"] : a.f["--cell-bg"], b.fillRect(9 * f - a.a.x, 17 * (k - 1) - a.a.y, 9, 17);
       }
-      var A = na(a.g, new p(f, k));
-      null == A || K(l) && !d || (a.context.fillStyle = "#000000", b.fillText(A, 9 * f - a.a.x, 17 * k - a.a.y - 3));
+      var A = na(a.h, new p(f, k));
+      null == A || K(l) && !d || (a.context.fillStyle = a.f["--draw-as-text-color"], b.fillText(A, 9 * f - a.a.x, 17 * k - a.a.y - 3));
     }
   }
-  if (a.h) {
+  if (a.i) {
     b.lineWidth = "1";
-    b.strokeStyle = "#000000";
+    b.strokeStyle = a.f["--draw-as-lines-color"];
     b.beginPath();
     for (d = c.x;d < e.x;d++) {
       for (l = !1, f = c.y;f < e.y;f++) {
-        k = R(a.g, new p(d, f)), K(k) && f != e.y - 1 || !l || (b.moveTo(9 * d - a.a.x + 4.5, 17 * l - a.a.y - 8.5), b.lineTo(9 * d - a.a.x + 4.5, 17 * (f - 1) - a.a.y - 8.5), l = !1), K(k) && !l && (l = f);
+        k = R(a.h, new p(d, f)), K(k) && f != e.y - 1 || !l || (b.moveTo(9 * d - a.a.x + 4.5, 17 * l - a.a.y - 8.5), b.lineTo(9 * d - a.a.x + 4.5, 17 * (f - 1) - a.a.y - 8.5), l = !1), K(k) && !l && (l = f);
       }
     }
     for (f = c.y;f < e.y;f++) {
       for (l = !1, d = c.x;d < e.x;d++) {
-        k = R(a.g, new p(d, f)), K(k) && d != e.x - 1 || !l || (b.moveTo(9 * l - a.a.x + 4.5, 17 * f - a.a.y - 8.5), b.lineTo(9 * (d - 1) - a.a.x + 4.5, 17 * f - a.a.y - 8.5), l = !1), K(k) && !l && (l = d);
+        k = R(a.h, new p(d, f)), K(k) && d != e.x - 1 || !l || (b.moveTo(9 * l - a.a.x + 4.5, 17 * f - a.a.y - 8.5), b.lineTo(9 * (d - 1) - a.a.x + 4.5, 17 * f - a.a.y - 8.5), l = !1), K(k) && !l && (l = d);
       }
     }
     a.context.stroke();
@@ -396,9 +406,9 @@ function W(a, b) {
 g = X.prototype;
 g.start = function(a) {
   this.b = a;
-  this.i(a);
+  this.j(a);
 };
-g.i = function(a) {
+g.j = function(a) {
   S(this.c);
   this.a = a;
   a = Math.min(this.b.y, this.a.y);
@@ -414,18 +424,18 @@ g.m = function() {
 g.o = function() {
   return "crosshair";
 };
-g.j = function() {
+g.l = function() {
 };
-function va(a, b) {
+function wa(a, b) {
   this.a = a;
   this.c = b;
   this.b = null;
 }
-g = va.prototype;
+g = wa.prototype;
 g.start = function(a) {
   this.b = a;
 };
-g.i = function(a) {
+g.j = function(a) {
   S(this.a);
   var b = T(this.a, this.b), c = T(this.a, a);
   V(this.a, this.b, a, b.c && b.b || c.a && c.right);
@@ -437,29 +447,29 @@ g.m = function() {
 g.o = function() {
   return "crosshair";
 };
-g.j = function() {
+g.l = function() {
 };
-function wa(a) {
+function xa(a) {
   this.c = a;
   this.g = this.f = this.b = this.a = null;
   this.h = !0;
-  this.l = [];
+  this.i = [];
 }
-g = wa.prototype;
+g = xa.prototype;
 g.start = function(a) {
-  this.a && this.b && (new I(this.a, this.b)).contains(a) ? (this.f = a, xa(this), ya(this, a)) : (this.a = a, this.b = null, this.h = !1, this.i(a));
+  this.a && this.b && (new I(this.a, this.b)).contains(a) ? (this.f = a, ya(this), za(this, a)) : (this.a = a, this.b = null, this.h = !1, this.j(a));
 };
-function xa(a) {
+function ya(a) {
   var b = a.c.b.filter(function(a) {
     return null != J(a.a) && "\u2009" != J(a.a);
   }), c = ha(new I(a.a, a.b));
-  a.l = b.map(function(a) {
+  a.i = b.map(function(a) {
     return new ka(u(a.position, c), J(a.a));
   });
 }
-g.i = function(a) {
+g.j = function(a) {
   if (this.f) {
-    ya(this, a);
+    za(this, a);
   } else {
     if (1 != this.h) {
       this.b = a;
@@ -474,17 +484,17 @@ g.i = function(a) {
     }
   }
 };
-function ya(a, b) {
+function za(a, b) {
   a.g = b;
   S(a.c);
   var c = new X(a.c);
   c.start(a.a);
-  c.i(a.b);
+  c.j(a.b);
   c = u(a.g, a.f).add(ha(new I(a.a, a.b)));
-  za(a, c);
+  Aa(a, c);
 }
-function za(a, b) {
-  for (var c = n(a.l), e = c.next();!e.done;e = c.next()) {
+function Aa(a, b) {
+  for (var c = n(a.i), e = c.next();!e.done;e = c.next()) {
     var e = e.value, d = e.value;
     P(a.c, e.position.add(b), d);
   }
@@ -497,20 +507,20 @@ g.m = function() {
 g.o = function(a) {
   return this.a && this.b && (new I(this.a, this.b)).contains(a) ? "pointer" : "default";
 };
-g.j = function(a) {
-  if (this.a && this.b && ("<copy>" != a && "<cut>" != a || xa(this), "<cut>" == a)) {
+g.l = function(a) {
+  if (this.a && this.b && ("<copy>" != a && "<cut>" != a || ya(this), "<cut>" == a)) {
     var b = new X(this.c);
     b.start(this.a);
-    b.i(this.b);
+    b.j(this.b);
     Q(this.c);
   }
-  "<paste>" == a && (za(this, this.a), Q(this.c));
+  "<paste>" == a && (Aa(this, this.a), Q(this.c));
 };
-function Aa(a) {
+function Ba(a) {
   this.b = a;
   this.c = this.a = null;
 }
-g = Aa.prototype;
+g = Ba.prototype;
 g.start = function(a) {
   Q(this.b);
   $("#text-tool-input").val("");
@@ -518,7 +528,7 @@ g.start = function(a) {
   a = J(R(this.b, this.a));
   P(this.b, this.a, null == a ? "\u2009" : a);
 };
-g.i = function() {
+g.j = function() {
 };
 g.m = function() {
   null != this.a && (this.c = this.a, this.a = null, $("#text-tool-widget").hide(0, function() {
@@ -530,19 +540,19 @@ g.m = function() {
 g.o = function() {
   return "pointer";
 };
-g.j = function() {
+g.l = function() {
   var a = $("#text-tool-input").val();
   S(this.b);
   for (var b = this.b, c = this.c, e = 0, d = 0, a = n(a), f = a.next();!f.done;f = a.next()) {
     f = f.value, "\n" == f ? (d++, e = 0) : (P(b, c.add(new p(e, d)), f), e++);
   }
 };
-function Ba(a) {
+function Ca(a) {
   this.a = a;
   this.b = null;
   this.c = [];
 }
-g = Ba.prototype;
+g = Ca.prototype;
 g.start = function(a) {
   var b;
   if (B) {
@@ -567,22 +577,22 @@ g.start = function(a) {
     b = [];
     e = n(H);
     for (c = e.next();!c.done;c = e.next()) {
-      for (c = c.value, d = Ca(this, this.b, c), d = n(d), f = d.next();!f.done;f = d.next()) {
+      for (c = c.value, d = Da(this, this.b, c), d = n(d), f = d.next();!f.done;f = d.next()) {
         var f = f.value, k = 0 != c.x, l = -1 != z.indexOf(J(R(this.a, a))), A = -1 != z.indexOf(J(R(this.a, f)));
         if (1 == N(T(this.a, f))) {
           b.push({position:f, s:k, v:l, u:A});
         } else {
           for (var E = n(H), q = E.next();!q.done;q = E.next()) {
-            q = q.value, 0 != c.add(q).length() && 2 != c.add(q).length() && (q = Ca(this, f, q), q.length && (q = q[0], b.push({position:q, s:k, v:l, w:A, u:-1 != z.indexOf(J(R(this.a, q)))})));
+            q = q.value, 0 != c.add(q).length() && 2 != c.add(q).length() && (q = Da(this, f, q), q.length && (q = q[0], b.push({position:q, s:k, v:l, w:A, u:-1 != z.indexOf(J(R(this.a, q)))})));
           }
         }
       }
     }
     this.c = b;
-    this.i(this.b);
+    this.j(this.b);
   }
 };
-g.i = function(a) {
+g.j = function(a) {
   S(this.a);
   for (var b = n(this.c), c = b.next();!c.done;c = b.next()) {
     c = c.value, V(this.a, this.b, c.position, c.s, " ");
@@ -599,7 +609,7 @@ g.i = function(a) {
 g.m = function() {
   Q(this.a);
 };
-function Ca(a, b, c) {
+function Da(a, b, c) {
   for (var e = b.clone(), d = [];;) {
     var f = e.add(c);
     if (!K(R(a.a, f))) {
@@ -612,9 +622,9 @@ function Ca(a, b, c) {
 g.o = function(a) {
   return K(R(this.a, a)) ? "pointer" : "default";
 };
-g.j = function() {
+g.l = function() {
 };
-function Da(a, b) {
+function Ea(a, b) {
   this.a = a;
   this.value = b;
   B && ($("#freeform-tool-input").val(""), $("#freeform-tool-input").hide(0, function() {
@@ -623,11 +633,11 @@ function Da(a, b) {
     });
   }));
 }
-g = Da.prototype;
+g = Ea.prototype;
 g.start = function(a) {
   P(this.a, a, this.value);
 };
-g.i = function(a) {
+g.j = function(a) {
   P(this.a, a, this.value);
 };
 g.m = function() {
@@ -636,19 +646,19 @@ g.m = function() {
 g.o = function() {
   return "crosshair";
 };
-g.j = function(a) {
+g.l = function(a) {
   B && (this.value = $("#freeform-tool-input").val().substr(0, 1), $("#freeform-tool-input").blur(), $("#freeform-tool-input").hide(0));
   1 == a.length && (this.value = a);
 };
-function Ea(a, b) {
+function Fa(a, b) {
   var c = W(a.a, b);
   a.f || (a.f = c);
   t(c, a.f) || (a.a.b.style.cursor = a.c.o(c));
-  2 != a.mode || t(c, a.f) || a.c.i(c);
+  2 != a.mode || t(c, a.f) || a.c.j(c);
   if (1 == a.mode) {
     var e = a.a, d = a.h.add(u(a.g, b).scale(1 / a.a.c));
     e.a = d;
-    e.f = !0;
+    e.g = !0;
   }
   a.f = c;
 }
@@ -659,9 +669,9 @@ function Y(a) {
   a.h = null;
   a.f = null;
 }
-function Fa(a) {
+function Ga(a) {
   $(window).resize(function() {
-    sa(a.a);
+    ta(a.a);
   });
   $("#draw-tools > button.tool").click(function(b) {
     $("#text-tool-widget").hide(0);
@@ -670,13 +680,13 @@ function Fa(a) {
     $("#" + b).toggleClass("active");
     $(".dialog").removeClass("visible");
     "box-button" == b && (a.c = new ra(a.b));
-    "line-button" == b && (a.c = new va(a.b, !1));
-    "arrow-button" == b && (a.c = new va(a.b, !0));
-    "freeform-button" == b && (a.c = new Da(a.b, "X"));
+    "line-button" == b && (a.c = new wa(a.b, !1));
+    "arrow-button" == b && (a.c = new wa(a.b, !0));
+    "freeform-button" == b && (a.c = new Ea(a.b, "X"));
     "erase-button" == b && (a.c = new X(a.b));
-    "move-button" == b && (a.c = new Ba(a.b));
-    "text-button" == b && (a.c = new Aa(a.b));
-    "select-button" == b && (a.c = new wa(a.b));
+    "move-button" == b && (a.c = new Ca(a.b));
+    "text-button" == b && (a.c = new Ba(a.b));
+    "select-button" == b && (a.c = new xa(a.b));
     Q(a.b);
     a.a.b.focus();
   });
@@ -703,17 +713,17 @@ function Fa(a) {
   $("#use-lines-button").click(function() {
     $(".dialog").removeClass("visible");
     var b = a.a;
-    b.h = !0;
-    b.f = !0;
+    b.i = !0;
+    b.g = !0;
   });
   $("#use-ascii-button").click(function() {
     $(".dialog").removeClass("visible");
     var b = a.a;
-    b.h = !1;
-    b.f = !0;
+    b.i = !1;
+    b.g = !0;
   });
   $(window).keypress(function(b) {
-    b.ctrlKey || b.metaKey || 13 == b.keyCode || a.c.j(String.fromCharCode(b.keyCode));
+    b.ctrlKey || b.metaKey || 13 == b.keyCode || a.c.l(String.fromCharCode(b.keyCode));
   });
   $(window).keydown(function(b) {
     var c = null;
@@ -726,49 +736,53 @@ function Fa(a) {
     40 == b.keyCode && (c = "<down>");
     37 == b.keyCode && (c = "<left>");
     39 == b.keyCode && (c = "<right>");
-    null != c && a.c.j(c);
+    null != c && a.c.l(c);
   });
   $("#text-tool-input, #freeform-tool-input").keyup(function() {
-    a.c.j("");
+    a.c.l("");
   });
   $("#text-tool-input, #freeform-tool-input").change(function() {
-    a.c.j("");
+    a.c.l("");
   });
   $("#text-tool-close").click(function() {
     $("#text-tool-widget").hide();
     Q(a.b);
   });
+  $("#toggle-dark-button").click(function(b) {
+    "Dark Mode" === b.target.textContent ? ($(":root").addClass("dark"), b.target.textContent = "Light Mode") : ($(":root").removeClass("dark"), b.target.textContent = "Dark Mode");
+    va(a.a);
+  });
 }
-;function Ga(a, b) {
+;function Ha(a, b) {
   window.gapi.auth.authorize({client_id:"125643747010-9s9n1ne2fnnuh5v967licfkt83r4vba5.apps.googleusercontent.com", scope:"https://www.googleapis.com/auth/drive", A:b}, function(c) {
     !c || c.error || a.f || (a.f = !0, $("#drive-button").addClass("active"), window.setTimeout(function() {
-      Ha(a);
+      Ia(a);
     }, 500));
   });
 }
-function Ia(a) {
-  window.gapi && window.gapi.auth && window.gapi.auth.authorize ? Ga(a, !0) : window.setTimeout(function() {
-    Ia(a);
+function Ja(a) {
+  window.gapi && window.gapi.auth && window.gapi.auth.authorize ? Ha(a, !0) : window.setTimeout(function() {
+    Ja(a);
   }, 500);
 }
-function Ja(a) {
+function Ka(a) {
   window.setTimeout(function() {
-    a.f ? Ka(a) : (Ga(a, !0), Ja(a));
+    a.f ? La(a) : (Ha(a, !0), Ka(a));
   }, 1E3);
 }
-function La(a, b) {
+function Ma(a, b) {
   a.a = b;
   $("#drive-filename").text(b.title);
   window.location.hash = b.id;
 }
-function Ka(a) {
+function La(a) {
   $("#drive-dialog").addClass("visible");
   var b = U(a.b);
   5 < b.length && b != a.c && Z(a);
-  Ma();
+  Na();
 }
-function Ma() {
-  Na(window.gapi.client.request({path:"/drive/v2/files", params:{q:"mimeType = 'text/plain' and trashed = false"}, method:"GET"}), function(a) {
+function Na() {
+  Oa(window.gapi.client.request({path:"/drive/v2/files", params:{q:"mimeType = 'text/plain' and trashed = false"}, method:"GET"}), function(a) {
     $("#drive-file-list").children().remove();
     a = a.items;
     for (var b in a) {
@@ -783,7 +797,7 @@ function Ma() {
     }
   });
 }
-function Na(a, b) {
+function Oa(a, b) {
   try {
     a.execute(function(a) {
       a.error || b(a);
@@ -791,29 +805,29 @@ function Na(a, b) {
   } catch (c) {
   }
 }
-function Oa(a) {
+function Pa(a) {
   U(a.b) != a.c && a.a && a.a.editable && Z(a);
   window.setTimeout(function() {
-    Oa(a);
+    Pa(a);
   }, 5E3);
 }
 function Z(a) {
   var b = U(a.b);
   $("#drive-save-state").text("Saving...");
-  Na(Pa(a, b), function(c) {
-    La(a, c);
+  Oa(Qa(a, b), function(c) {
+    Ma(a, c);
     $("#drive-save-state").text("Saved");
     a.c = b;
   });
 }
-function Ha(a) {
-  1 < window.location.hash.length && ($("#drive-save-state").text("Loading..."), Na(window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}), function(b) {
-    La(a, b);
-    Qa(a);
+function Ia(a) {
+  1 < window.location.hash.length && ($("#drive-save-state").text("Loading..."), Oa(window.gapi.client.request({path:"/drive/v2/files/" + window.location.hash.substr(1, window.location.hash.length - 1), method:"GET"}), function(b) {
+    Ma(a, b);
+    Ra(a);
   }));
 }
-function Qa(a) {
-  Ra(a.a.downloadUrl, function(b) {
+function Ra(a) {
+  Sa(a.a.downloadUrl, function(b) {
     $("#drive-save-state").text("Loaded");
     O(a.b);
     qa(a.b, b, W(a.g, new p(a.g.b.width / 2, a.g.b.height / 2)));
@@ -821,11 +835,11 @@ function Qa(a) {
     a.c = U(a.b);
   });
 }
-function Pa(a, b) {
+function Qa(a, b) {
   var c = "\r\n---------314159265358979323846\r\nContent-Type: application/json\r\n\r\n" + JSON.stringify({title:a.a ? a.a.title : "Untitled ASCII Diagram", mimeType:"text/plain"}) + "\r\n---------314159265358979323846\r\nContent-Type: text/plain\r\n\r\n" + b + "\r\n---------314159265358979323846--";
   return window.gapi.client.request({method:a.a ? "PUT" : "POST", path:"/upload/drive/v2/files" + (a.a ? "/" + a.a.id : ""), params:{uploadType:"multipart"}, headers:{"Content-Type":'multipart/mixed; boundary="-------314159265358979323846"'}, body:c});
 }
-function Ra(a, b) {
+function Sa(a, b) {
   var c = window.gapi.auth.getToken().access_token, e = new XMLHttpRequest;
   e.open("GET", a);
   e.setRequestHeader("Authorization", "Bearer " + c);
@@ -837,14 +851,14 @@ function Ra(a, b) {
   };
   e.send();
 }
-;function Sa(a) {
+;function Ta(a) {
   var b = $(a.a.a.b);
   b.on("mousewheel", function(c) {
     c = a.a.a.c * (0 < c.originalEvent.wheelDelta ? 1.1 : .9);
     c = Math.max(Math.min(c, 5), .2);
     var b = a.a.a;
     b.c = c;
-    b.f = !0;
+    b.g = !0;
   });
   b.mousedown(function(c) {
     if (c.ctrlKey || c.metaKey) {
@@ -863,11 +877,11 @@ function Ra(a, b) {
   b.mouseleave(function() {
     Y(a.a);
   });
-  b.mousemove(function(c) {
-    Ea(a.a, new p(c.clientX, c.clientY));
+  b.mousemove(function(b) {
+    Fa(a.a, new p(b.clientX, b.clientY));
   });
 }
-function Ta(a, b) {
+function Ua(a, b) {
   a.f = b;
   a.h = $.now();
   a.b = !1;
@@ -879,38 +893,38 @@ function Ta(a, b) {
     }
   }, 150);
 }
-function Ua(a) {
+function Va(a) {
   var b = $(a.a.a.b);
-  b.on("touchstart", function(c) {
-    c.preventDefault();
-    if (1 == c.originalEvent.touches.length) {
-      Ta(a, r(c));
+  b.on("touchstart", function(b) {
+    b.preventDefault();
+    if (1 == b.originalEvent.touches.length) {
+      Ua(a, r(b));
     } else {
-      if (1 < c.originalEvent.touches.length) {
-        var b = r(c, 0);
-        c = r(c, 1);
+      if (1 < b.originalEvent.touches.length) {
+        var c = r(b, 0);
+        b = r(b, 1);
         Y(a.a);
         a.c = !0;
         a.b = !1;
-        a.l = u(b, c).length();
+        a.i = u(c, b).length();
         a.g = a.a.a.c;
       }
     }
   });
-  b.on("touchmove", function(c) {
-    c.preventDefault();
-    if (1 == c.originalEvent.touches.length) {
-      c = r(c);
-      if (!a.b && 150 > $.now() - a.h && 6 < u(c, a.f).length()) {
+  b.on("touchmove", function(b) {
+    b.preventDefault();
+    if (1 == b.originalEvent.touches.length) {
+      b = r(b);
+      if (!a.b && 150 > $.now() - a.h && 6 < u(b, a.f).length()) {
         a.b = !0;
-        var b = a.a;
-        b.mode = 1;
-        b.g = c;
-        b.h = b.a.a;
+        var c = a.a;
+        c.mode = 1;
+        c.g = b;
+        c.h = c.a.a;
       }
-      Ea(a.a, c);
+      Fa(a.a, b);
     } else {
-      1 < c.originalEvent.touches.length && a.c && (c = a.g * u(r(c, 0), r(c, 1)).length() / a.l, c = Math.max(Math.min(c, 5), .5), b = a.a.a, b.c = c, b.f = !0);
+      1 < b.originalEvent.touches.length && a.c && (b = a.g * u(r(b, 0), r(b, 1)).length() / a.i, b = Math.max(Math.min(b, 5), .5), c = a.a.a, c.c = b, c.g = !0);
     }
   });
   b.on("touchend", function(b) {
@@ -921,7 +935,7 @@ function Ua(a) {
     Y(a.a);
   });
 }
-;var Va = new function() {
+;var Wa = new function() {
   this.a = Array(2E3);
   this.b = [];
   this.c = !0;
@@ -933,32 +947,34 @@ function Ua(a) {
       this.a[a][b] = new ia;
     }
   }
-}, Wa = new function(a) {
-  this.g = a;
+}, Xa = new function(a) {
+  this.h = a;
   this.b = document.getElementById("ascii-canvas");
   this.context = this.b.getContext("2d");
   this.c = 1;
   this.a = new p(9E3, 5100);
-  this.f = !0;
-  this.h = !1;
+  this.g = !0;
+  this.f = {};
+  this.i = !1;
   sa(this);
-}(Va), Xa = new function(a, b) {
+  ta(this);
+}(Wa), Ya = new function(a, b) {
   this.a = a;
   this.b = b;
   this.c = new ra(b);
   this.mode = 0;
   this.f = null;
-  Fa(this);
-}(Wa, Va);
+  Ga(this);
+}(Xa, Wa);
 new function(a) {
   this.a = a;
   this.c = this.b = !1;
-  Ua(this);
-}(Xa);
+  Va(this);
+}(Ya);
 new function(a) {
   this.a = a;
-  Sa(this);
-}(Xa);
+  Ta(this);
+}(Ya);
 new function(a, b) {
   var c = this;
   this.f = !1;
@@ -966,19 +982,19 @@ new function(a, b) {
   this.g = b;
   this.a = null;
   this.c = "";
-  Ia(this);
+  Ja(this);
   $("#drive-button").click(function() {
-    c.f ? Ka(c) : (Ga(c, !1), Ja(c));
+    c.f ? La(c) : (Ha(c, !1), Ka(c));
   });
   $("#drive-filename").click(function() {
     var a = "" + $("#drive-filename").text(), a = prompt("Enter new filename:", a);
     c.a.title = a;
     Z(c);
-    Ma();
+    Na();
   });
-  Oa(this);
+  Pa(this);
   $(window).on("hashchange", function() {
-    Ha(c);
+    Ia(c);
   });
   $("#drive-new-file-button").click(function() {
     c.a = null;
@@ -987,6 +1003,6 @@ new function(a, b) {
     Z(c);
     $("#drive-dialog").removeClass("visible");
   });
-}(Va, Wa);
-ta(Wa);
+}(Wa, Xa);
+ua(Xa);
 
