@@ -1,7 +1,7 @@
 import State from './state';
 import Vector from './vector';
 import * as c from './constants';
-import {CSS_VAR_CANVAS_BG} from "./constants";
+
 
 /**
  * Handles view operations, state and management of the screen.
