@@ -33,3 +33,32 @@ webpack_dev_server(
         "@npm//webpack-cli",
     ],
 )
+
+load("@npm//webpack:index.bzl", "webpack")
+
+webpack(
+    name = "bundler",
+    data = [
+        ":client",
+    ],
+)
+
+load("@build_bazel_rules_nodejs//:index.bzl", "npm_package_bin")
+
+npm_package_bin(
+    name = "bundle",
+    outs = [
+        "app.bundle.js",
+    ],
+    args = [
+        "--config=$(location :webpack.config.js)",
+        "--output=$(location app.bundle.js)",
+        "--mode=production",
+    ],
+    data = [
+        ":webpack.config.js",
+        "@npm//umd-compat-loader",
+        "@npm//webpack-cli",
+    ],
+    tool = ":bundler",
+)

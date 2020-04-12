@@ -10,6 +10,7 @@
     "@bazel/ibazel": "^0.12.4",
     "@bazel/typescript": "^1.5.0",
     "@types/jquery": "^3.3.34",
+    "electron": "^8.2.1",
     "jquery": "^3.5.0",
     "source-map-support": "^0.5.16",
     "typescript": "^3.8.3",
