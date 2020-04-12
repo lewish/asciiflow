@@ -1,29 +1,24 @@
-import State from './state';
-import Vector from './vector';
-import * as c from './constants';
+import { State } from "asciiflow/client/state";
+import { Vector } from "asciiflow/client/vector";
+import * as constants from "asciiflow/client/constants";
 
 /**
  * Handles view operations, state and management of the screen.
  */
-export default class View {
-  /**
-   * @param {State} state
-   */
-  constructor(state) {
-    /** @type {State} */ this.state = state;
+export class View {
+  public canvas = document.getElementById("ascii-canvas") as HTMLCanvasElement;
+  public context = this.canvas.getContext("2d");
 
-    /** @type {Element} */ this.canvas = document.getElementById('ascii-canvas');
-    /** @type {Object} */ this.context = this.canvas.getContext('2d');
+  public zoom = 1;
+  public offset = new Vector(
+    (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
+    (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2
+  );
 
-    /** @type {number} */ this.zoom = 1;
-    /** @type {Vector} */ this.offset = new Vector(
-        c.MAX_GRID_WIDTH * c.CHAR_PIXELS_H / 2,
-        c.MAX_GRID_HEIGHT * c.CHAR_PIXELS_V / 2);
-
-    /** @type {boolean} */ this.dirty = true;
-    // TODO: Should probably save this setting in a cookie or something.
-    /** @type {boolean} */ this.useLines = false;
-
+  public dirty = true;
+  public useLines = false;
+ 
+  constructor(private readonly state: State) {
     this.resizeCanvas();
   }
 
@@ -45,7 +40,9 @@ export default class View {
       this.state.dirty = false;
       this.render();
     }
-    window.requestAnimationFrame(() => { this.animate(); });
+    window.requestAnimationFrame(() => {
+      this.animate();
+    });
   }
 
   /**
@@ -62,96 +59,121 @@ export default class View {
 
     context.scale(this.zoom, this.zoom);
     context.translate(
-        this.canvas.width / 2 / this.zoom,
-        this.canvas.height / 2 / this.zoom);
+      this.canvas.width / 2 / this.zoom,
+      this.canvas.height / 2 / this.zoom
+    );
 
     // Only render grid lines and cells that are visible.
-    var startOffset = this.screenToCell(new Vector(
-        0,
-        0))
-        .subtract(new Vector(
-        c.RENDER_PADDING_CELLS, c.RENDER_PADDING_CELLS));
-    var endOffset = this.screenToCell(new Vector(
-        this.canvas.width,
-        this.canvas.height))
-        .add(new Vector(
-        c.RENDER_PADDING_CELLS, c.RENDER_PADDING_CELLS));
+    var startOffset = this.screenToCell(new Vector(0, 0)).subtract(
+      new Vector(constants.RENDER_PADDING_CELLS, constants.RENDER_PADDING_CELLS)
+    );
+    var endOffset = this.screenToCell(
+      new Vector(this.canvas.width, this.canvas.height)
+    ).add(
+      new Vector(constants.RENDER_PADDING_CELLS, constants.RENDER_PADDING_CELLS)
+    );
 
-    startOffset.x = Math.max(0, Math.min(startOffset.x, c.MAX_GRID_WIDTH));
-    endOffset.x = Math.max(0, Math.min(endOffset.x, c.MAX_GRID_WIDTH));
-    startOffset.y = Math.max(0, Math.min(startOffset.y, c.MAX_GRID_HEIGHT));
-    endOffset.y = Math.max(0, Math.min(endOffset.y, c.MAX_GRID_HEIGHT));
+    startOffset.x = Math.max(
+      0,
+      Math.min(startOffset.x, constants.MAX_GRID_WIDTH)
+    );
+    endOffset.x = Math.max(0, Math.min(endOffset.x, constants.MAX_GRID_WIDTH));
+    startOffset.y = Math.max(
+      0,
+      Math.min(startOffset.y, constants.MAX_GRID_HEIGHT)
+    );
+    endOffset.y = Math.max(0, Math.min(endOffset.y, constants.MAX_GRID_HEIGHT));
 
     // Render the grid.
-    context.lineWidth = '1';
-    context.strokeStyle = '#EEEEEE';
+    context.lineWidth = 1;
+    context.strokeStyle = "#EEEEEE";
     context.beginPath();
     for (var i = startOffset.x; i < endOffset.x; i++) {
       context.moveTo(
-          i * c.CHAR_PIXELS_H - this.offset.x,
-          0 - this.offset.y);
+        i * constants.CHAR_PIXELS_H - this.offset.x,
+        0 - this.offset.y
+      );
       context.lineTo(
-          i * c.CHAR_PIXELS_H - this.offset.x,
-          this.state.cells.length * c.CHAR_PIXELS_V - this.offset.y);
+        i * constants.CHAR_PIXELS_H - this.offset.x,
+        this.state.cells.length * constants.CHAR_PIXELS_V - this.offset.y
+      );
     }
     for (var j = startOffset.y; j < endOffset.y; j++) {
       context.moveTo(
-          0 - this.offset.x,
-          j * c.CHAR_PIXELS_V - this.offset.y);
+        0 - this.offset.x,
+        j * constants.CHAR_PIXELS_V - this.offset.y
+      );
       context.lineTo(
-          this.state.cells.length * c.CHAR_PIXELS_H - this.offset.x,
-          j * c.CHAR_PIXELS_V - this.offset.y);
+        this.state.cells.length * constants.CHAR_PIXELS_H - this.offset.x,
+        j * constants.CHAR_PIXELS_V - this.offset.y
+      );
     }
     this.context.stroke();
-    this.renderText(context, startOffset, endOffset, !this.useLines);
+    this.renderText(startOffset, endOffset, !this.useLines);
     if (this.useLines) {
-      this.renderCellsAsLines(context, startOffset, endOffset);
+      this.renderCellsAsLines(startOffset, endOffset);
     }
   }
 
-  renderText(context, startOffset, endOffset, drawSpecials) {
+  renderText(startOffset: Vector, endOffset: Vector, drawSpecials: boolean) {
     // Render cells.
-    context.font = '15px Courier New';
+    this.context.font = "15px Courier New";
     for (var i = startOffset.x; i < endOffset.x; i++) {
       for (var j = startOffset.y; j < endOffset.y; j++) {
         var cell = this.state.getCell(new Vector(i, j));
         // Highlight the cell if it is special (grey) or it is part
         // of a visible edit (blue).
-        if (cell.isSpecial() ||
-            (cell.hasScratch() && cell.getRawValue() != ' ')) {
-          this.context.fillStyle = cell.hasScratch() ? '#DEF' : '#F5F5F5';
-          context.fillRect(
-              i * c.CHAR_PIXELS_H - this.offset.x,
-              (j - 1) * c.CHAR_PIXELS_V - this.offset.y,
-              c.CHAR_PIXELS_H, c.CHAR_PIXELS_V);
+        if (
+          cell.isSpecial() ||
+          (cell.hasScratch() && cell.getRawValue() != " ")
+        ) {
+          this.context.fillStyle = cell.hasScratch() ? "#DEF" : "#F5F5F5";
+          this.context.fillRect(
+            i * constants.CHAR_PIXELS_H - this.offset.x,
+            (j - 1) * constants.CHAR_PIXELS_V - this.offset.y,
+            constants.CHAR_PIXELS_H,
+            constants.CHAR_PIXELS_V
+          );
         }
         var cellValue = this.state.getDrawValue(new Vector(i, j));
         if (cellValue != null && (!cell.isSpecial() || drawSpecials)) {
-          this.context.fillStyle = '#000000';
-          context.fillText(cellValue,
-              i * c.CHAR_PIXELS_H - this.offset.x,
-              j * c.CHAR_PIXELS_V - this.offset.y - 3);
+          this.context.fillStyle = "#000000";
+          this.context.fillText(
+            cellValue,
+            i * constants.CHAR_PIXELS_H - this.offset.x,
+            j * constants.CHAR_PIXELS_V - this.offset.y - 3
+          );
         }
       }
     }
   }
 
-  renderCellsAsLines(context, startOffset, endOffset) {
-    context.lineWidth = '1';
-    context.strokeStyle = '#000000';
-    context.beginPath();
+  renderCellsAsLines(startOffset: Vector, endOffset: Vector) {
+    this.context.lineWidth = 1;
+    this.context.strokeStyle = "#000000";
+    this.context.beginPath();
     for (var i = startOffset.x; i < endOffset.x; i++) {
-      var startY = false;
+      var startY = 0;
       for (var j = startOffset.y; j < endOffset.y; j++) {
         var cell = this.state.getCell(new Vector(i, j));
         if ((!cell.isSpecial() || j == endOffset.y - 1) && startY) {
-          context.moveTo(
-              i * c.CHAR_PIXELS_H - this.offset.x + c.CHAR_PIXELS_H/2,
-              startY * c.CHAR_PIXELS_V - this.offset.y - c.CHAR_PIXELS_V/2);
-          context.lineTo(
-              i * c.CHAR_PIXELS_H - this.offset.x + c.CHAR_PIXELS_H/2,
-              (j - 1) * c.CHAR_PIXELS_V - this.offset.y - c.CHAR_PIXELS_V/2);
-          startY = false;
+          this.context.moveTo(
+            i * constants.CHAR_PIXELS_H -
+              this.offset.x +
+              constants.CHAR_PIXELS_H / 2,
+            +startY * constants.CHAR_PIXELS_V -
+              this.offset.y -
+              constants.CHAR_PIXELS_V / 2
+          );
+          this.context.lineTo(
+            i * constants.CHAR_PIXELS_H -
+              this.offset.x +
+              constants.CHAR_PIXELS_H / 2,
+            (j - 1) * constants.CHAR_PIXELS_V -
+              this.offset.y -
+              constants.CHAR_PIXELS_V / 2
+          );
+          startY = 0;
         }
         if (cell.isSpecial() && !startY) {
           startY = j;
@@ -159,17 +181,27 @@ export default class View {
       }
     }
     for (var j = startOffset.y; j < endOffset.y; j++) {
-      var startX = false;
+      var startX = 0;
       for (var i = startOffset.x; i < endOffset.x; i++) {
         var cell = this.state.getCell(new Vector(i, j));
         if ((!cell.isSpecial() || i == endOffset.x - 1) && startX) {
-          context.moveTo(
-              startX * c.CHAR_PIXELS_H - this.offset.x + c.CHAR_PIXELS_H/2,
-              j * c.CHAR_PIXELS_V - this.offset.y - c.CHAR_PIXELS_V/2);
-          context.lineTo(
-              (i -1) * c.CHAR_PIXELS_H - this.offset.x + c.CHAR_PIXELS_H/2,
-              j * c.CHAR_PIXELS_V - this.offset.y - c.CHAR_PIXELS_V/2);
-          startX = false;
+          this.context.moveTo(
+            startX * constants.CHAR_PIXELS_H -
+              this.offset.x +
+              constants.CHAR_PIXELS_H / 2,
+            j * constants.CHAR_PIXELS_V -
+              this.offset.y -
+              constants.CHAR_PIXELS_V / 2
+          );
+          this.context.lineTo(
+            (i - 1) * constants.CHAR_PIXELS_H -
+              this.offset.x +
+              constants.CHAR_PIXELS_H / 2,
+            j * constants.CHAR_PIXELS_V -
+              this.offset.y -
+              constants.CHAR_PIXELS_V / 2
+          );
+          startX = 0;
         }
         if (cell.isSpecial() && !startX) {
           startX = i;
@@ -179,94 +211,89 @@ export default class View {
     this.context.stroke();
   }
 
-  /**
-   * @param {number} zoom
-   */
-  setZoom(zoom) {
+  setZoom(zoom: number) {
     this.zoom = zoom;
     this.dirty = true;
   }
 
-  /**
-   * @param {Vector} offset
-   */
-  setOffset(offset) {
+  setOffset(offset: Vector) {
     this.offset = offset;
     this.dirty = true;
-  };
+  }
 
-  /**
-   * @param {boolean} useLines
-   */
-  setUseLines(useLines) {
+  setUseLines(useLines: boolean) {
     this.useLines = useLines;
     this.dirty = true;
   }
 
   /**
    * Given a screen coordinate, find the frame coordinates.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  screenToFrame(vector) {
+  screenToFrame(vector: Vector) {
     return new Vector(
-        (vector.x - this.canvas.width / 2) / this.zoom + this.offset.x,
-        (vector.y - this.canvas.height / 2) / this.zoom + this.offset.y);
+      (vector.x - this.canvas.width / 2) / this.zoom + this.offset.x,
+      (vector.y - this.canvas.height / 2) / this.zoom + this.offset.y
+    );
   }
 
   /**
    * Given a frame coordinate, find the screen coordinates.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  frameToScreen(vector) {
+  frameToScreen(vector: Vector) {
     return new Vector(
-        (vector.x - this.offset.x) * this.zoom + this.canvas.width / 2,
-        (vector.y - this.offset.y) * this.zoom + this.canvas.height / 2);
+      (vector.x - this.offset.x) * this.zoom + this.canvas.width / 2,
+      (vector.y - this.offset.y) * this.zoom + this.canvas.height / 2
+    );
   }
 
   /**
    * Given a frame coordinate, return the indices for the nearest cell.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  frameToCell(vector) {
+  frameToCell(vector: Vector) {
     // We limit the edges in a bit, as most drawing needs a full context to work.
     return new Vector(
-      Math.min(Math.max(1,
-          Math.round((vector.x - c.CHAR_PIXELS_H / 2) / c.CHAR_PIXELS_H)),
-          c.MAX_GRID_WIDTH - 2),
-      Math.min(Math.max(1,
-          Math.round((vector.y + c.CHAR_PIXELS_V / 2) / c.CHAR_PIXELS_V)),
-          c.MAX_GRID_HEIGHT - 2));
+      Math.min(
+        Math.max(
+          1,
+          Math.round(
+            (vector.x - constants.CHAR_PIXELS_H / 2) / constants.CHAR_PIXELS_H
+          )
+        ),
+        constants.MAX_GRID_WIDTH - 2
+      ),
+      Math.min(
+        Math.max(
+          1,
+          Math.round(
+            (vector.y + constants.CHAR_PIXELS_V / 2) / constants.CHAR_PIXELS_V
+          )
+        ),
+        constants.MAX_GRID_HEIGHT - 2
+      )
+    );
   }
 
   /**
    * Given a cell coordinate, return the frame coordinates.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  cellToFrame(vector) {
+  cellToFrame(vector: Vector) {
     return new Vector(
-        Math.round(vector.x * c.CHAR_PIXELS_H),
-        Math.round(vector.y * c.CHAR_PIXELS_V));
+      Math.round(vector.x * constants.CHAR_PIXELS_H),
+      Math.round(vector.y * constants.CHAR_PIXELS_V)
+    );
   }
 
   /**
    * Given a screen coordinate, return the indices for the nearest cell.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  screenToCell(vector) {
+  screenToCell(vector: Vector) {
     return this.frameToCell(this.screenToFrame(vector));
   }
 
   /**
    * Given a cell coordinate, return the on screen coordinates.
-   * @param {Vector} vector
-   * @return {Vector}
    */
-  cellToScreen(vector) {
+  cellToScreen(vector: Vector) {
     return this.frameToScreen(this.cellToFrame(vector));
   }
 }

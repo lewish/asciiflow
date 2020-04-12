@@ -1,26 +1,23 @@
-import { DrawFunction } from './function';
-import { ERASE_CHAR } from '../constants';
-import State from '../state';
-import Vector from '../vector';
-import { drawText } from './utils';
+import { DrawFunction } from "asciiflow/client/draw/function";
+import { ERASE_CHAR } from "asciiflow/client/constants";
+import { State } from "asciiflow/client/state";
+import { Vector } from "asciiflow/client/vector";
+import { drawText } from "asciiflow/client/draw/utils";
+import { View } from "asciiflow/client/view";
 
 /**
  * @implements {DrawFunction}
  */
-export default class DrawText {
-  /**
-   * @param {State} state
-   */
-  constructor(state, view) {
+export class DrawText implements DrawFunction {
+  private startPosition: Vector;
+  private endPosition: Vector;
+  constructor(public state: State, public view: View) {
     this.state = state;
-    this.startPosition = null;
-    this.endPosition = null;
-  };
+  }
 
-  /** @inheritDoc */
-  start(position) {
+  start(position: Vector) {
     this.state.commitDraw();
-    $('#text-tool-input').val('');
+    $("#text-tool-input").val("");
     this.startPosition = position;
 
     // TODO: Not working yet, needs fixing so that it can
@@ -29,35 +26,33 @@ export default class DrawText {
 
     // Effectively highlights the starting cell.
     var currentValue = this.state.getCell(this.startPosition).getRawValue();
-    this.state.drawValue(this.startPosition,
-        currentValue == null ? ERASE_CHAR : currentValue);
+    this.state.drawValue(
+      this.startPosition,
+      currentValue == null ? ERASE_CHAR : currentValue
+    );
   }
 
-  /** @inheritDoc */
-  move(position) {}
+  move(position: Vector) {}
 
-  /** @inheritDoc */
   end() {
     if (this.startPosition != null) {
       this.endPosition = this.startPosition;
       this.startPosition = null;
       // Valid end click/press, show the textbox and focus it.
-      $('#text-tool-widget').hide(0, () => {
-        $('#text-tool-widget').show(0, () => {
-          $('#text-tool-input').focus();
+      $("#text-tool-widget").hide(0, () => {
+        $("#text-tool-widget").show(0, () => {
+          $("#text-tool-input").focus();
         });
       });
     }
   }
 
-  /** @inheritDoc */
-  getCursor(position) {
-    return 'pointer';
+  getCursor(position: Vector) {
+    return "pointer";
   }
 
-  /** @inheritDoc */
-  handleKey(value) {
-    var text = /** @type {string} */ ($('#text-tool-input').val());
+  handleKey(value: string) {
+    var text = String($("#text-tool-input").val());
     this.state.clearDraw();
     drawText(this.state, this.endPosition, text);
   }
@@ -66,12 +61,15 @@ export default class DrawText {
    * Loads any existing text if it is present.
    * TODO: This is horrible, and does not quite work, fix it.
    */
-  loadExistingText(position) {
+  loadExistingText(position: Vector) {
     var currentPosition = position.clone();
     var cell = this.state.getCell(position);
     var spacesCount = 0;
     // Go back to find the start of the line.
-    while ((!cell.isSpecial() && cell.getRawValue() != null) || spacesCount < 1) {
+    while (
+      (!cell.isSpecial() && cell.getRawValue() != null) ||
+      spacesCount < 1
+    ) {
       if (cell.getRawValue() == null) {
         spacesCount++;
       } else if (!cell.isSpecial()) {
@@ -81,15 +79,18 @@ export default class DrawText {
       cell = this.state.getCell(currentPosition);
     }
     this.startPosition = currentPosition.right(spacesCount + 1);
-    var text = '';
+    var text = "";
     spacesCount = 0;
     currentPosition = this.startPosition.clone();
     // Go forward to load the text.
-    while ((!cell.isSpecial() && cell.getRawValue() != null) || spacesCount < 1) {
+    while (
+      (!cell.isSpecial() && cell.getRawValue() != null) ||
+      spacesCount < 1
+    ) {
       cell = this.state.getCell(currentPosition);
       if (cell.getRawValue() == null) {
         spacesCount++;
-        text += ' ';
+        text += " ";
       } else if (!cell.isSpecial()) {
         spacesCount = 0;
         text += cell.getRawValue();
@@ -97,6 +98,6 @@ export default class DrawText {
       }
       currentPosition.x++;
     }
-    $('#text-tool-input').val(text.substr(0, text.length - 1));
+    $("#text-tool-input").val(text.substr(0, text.length - 1));
   }
 }

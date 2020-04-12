@@ -1,50 +1,41 @@
-import { DrawFunction } from './function';
-import { TOUCH_ENABLED } from '../constants';
-import State from '../state';
+import { TOUCH_ENABLED } from "asciiflow/client/constants";
+import { State } from "asciiflow/client/state";
+import { DrawFunction } from "asciiflow/client/draw/function";
+import { Vector } from "asciiflow/client/vector";
 
-/**
- * @implements {DrawFunction}
- */
-export default class DrawFreeform {
-  /**
-   * @param {State} state
-   * @param {?string} value
-   */
-  constructor(state, value) {
-    this.state = state;
-    this.value = value;
+export class DrawFreeform implements DrawFunction {
+  constructor(private state: State, private value: string) {
     if (TOUCH_ENABLED) {
-      $('#freeform-tool-input').val('');
-      $('#freeform-tool-input').hide(0, function() {$('#freeform-tool-input').show(0, function() {$('#freeform-tool-input').focus();});});
+      // $("#freeform-tool-input").val("");
+      // $("#freeform-tool-input").hide(0, function () {
+      //   $("#freeform-tool-input").show(0, function () {
+      //     $("#freeform-tool-input").focus();
+      //   });
+      // });
     }
   }
 
-  /** @inheritDoc */
-  start(position) {
+  start(position: Vector) {
     this.state.drawValue(position, this.value);
   }
 
-  /** @inheritDoc */
-  move(position) {
+  move(position: Vector) {
     this.state.drawValue(position, this.value);
   }
 
-  /** @inheritDoc */
   end() {
     this.state.commitDraw();
   }
 
-  /** @inheritDoc */
-  getCursor(position) {
-    return 'crosshair';
+  getCursor(position: Vector) {
+    return "crosshair";
   }
 
-  /** @inheritDoc */
-  handleKey(value) {
+  handleKey(value: string) {
     if (TOUCH_ENABLED) {
-      this.value = $('#freeform-tool-input').val().substr(0, 1);
-      $('#freeform-tool-input').blur();
-      $('#freeform-tool-input').hide(0);
+      // this.value = $("#freeform-tool-input").val().substr(0, 1);
+      // $("#freeform-tool-input").blur();
+      // $("#freeform-tool-input").hide(0);
     }
     if (value.length == 1) {
       // The value is not a special character, so lets use it.

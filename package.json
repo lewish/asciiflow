@@ -3,7 +3,19 @@
   "main": "index.js",
   "icon": "images/favicon.png",
   "scripts": {
-      "start": "electron ."
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@bazel/hide-bazel-files": "^1.5.0",
+    "@bazel/ibazel": "^0.12.4",
+    "@bazel/typescript": "^1.5.0",
+    "@types/jquery": "^3.3.34",
+    "jquery": "^3.5.0",
+    "source-map-support": "^0.5.16",
+    "typescript": "^3.8.3",
+    "umd-compat-loader": "^2.1.2",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
-

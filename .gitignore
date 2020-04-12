@@ -1,6 +1,3 @@
-closure-library
-closure-library/*
-.settings/*
-*~
-_site/*
-.DS_Store
+node_modules
+bazel-*
+yarn-error.log

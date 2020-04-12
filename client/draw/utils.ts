@@ -1,20 +1,18 @@
-import { SPECIAL_VALUE } from '../constants';
-import { Box } from '../common';
-import State from '../state';
-import Vector from '../vector';
+import { SPECIAL_VALUE } from "asciiflow/client/constants";
+import { Box } from "asciiflow/client/common";
+import { State } from "asciiflow/client/state";
+import { Vector } from "asciiflow/client/vector";
 
 /**
  * Draws a line on the diagram state.
- *
- * @param {State} state
- * @param {Vector} startPosition
- * @param {Vector} endPosition
- * @param {boolean} clockwise
- * @param {string=} value
  */
 export function drawLine(
-    state, startPosition, endPosition, clockwise, value = SPECIAL_VALUE) {
-
+  state: State,
+  startPosition: Vector,
+  endPosition: Vector,
+  clockwise: boolean,
+  value = SPECIAL_VALUE
+) {
   var box = new Box(startPosition, endPosition);
   var startX = box.startX;
   var startY = box.startY;
@@ -28,7 +26,7 @@ export function drawLine(
     var position = new Vector(startX, midY);
     var context = state.getContext(new Vector(startX, midY));
     // Don't erase any lines that we cross.
-    if (value != ' ' || context.up + context.down != 2) {
+    if (value != " " || +context.up + +context.down != 2) {
       state.drawValueIncremental(position, value);
     }
   }
@@ -36,7 +34,7 @@ export function drawLine(
     var position = new Vector(midX, startY);
     var context = state.getContext(new Vector(midX, startY));
     // Don't erase any lines that we cross.
-    if (value != ' ' || context.left + context.right != 2) {
+    if (value != " " || +context.left + +context.right != 2) {
       state.drawValueIncremental(position, value);
     }
   }
@@ -49,14 +47,12 @@ export function drawLine(
 /**
  * Sets the cells scratch (uncommitted) values to the given text.
  * Handles newlines appropriately.
- * @param {State} state
- * @param {Vector} position
- * @param {string} text
  */
-export function drawText(state, position, text) {
-  let x = 0, y = 0;
+export function drawText(state: State, position: Vector, text: string) {
+  let x = 0,
+    y = 0;
   for (const char of text) {
-    if (char == '\n') {
+    if (char == "\n") {
       y++;
       x = 0;
       continue;

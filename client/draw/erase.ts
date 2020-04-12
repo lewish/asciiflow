@@ -1,29 +1,20 @@
-import { DrawFunction } from './function';
-import { ERASE_CHAR } from '../constants';
-import State from '../state';
-import Vector from '../vector';
+import { ERASE_CHAR } from "asciiflow/client/constants";
+import { DrawFunction } from "asciiflow/client/draw/function";
+import { State } from "asciiflow/client/state";
+import { Vector } from "asciiflow/client/vector";
 
-/**
- * @implements {DrawFunction}
- */
-export default class DrawErase {
-  /**
-   * @param {State} state
-   */
-  constructor(state) {
-    this.state = state;
-    this.startPosition = null;
-    this.endPosition = null;
-  }
+export class DrawErase implements DrawFunction {
+  private startPosition: Vector;
+  private endPosition: Vector;
 
-  /** @inheritDoc */
-  start(position) {
+  constructor(private state: State) {}
+
+  start(position: Vector) {
     this.startPosition = position;
     this.move(position);
   }
 
-  /** @inheritDoc */
-  move(position) {
+  move(position: Vector) {
     this.state.clearDraw();
     this.endPosition = position;
 
@@ -39,16 +30,13 @@ export default class DrawErase {
     }
   }
 
-  /** @inheritDoc */
   end() {
     this.state.commitDraw();
   }
 
-  /** @inheritDoc */
-  getCursor(position) {
-    return 'crosshair';
+  getCursor(position: Vector) {
+    return "crosshair";
   }
 
-  /** @inheritDoc */
-  handleKey(value) {}
+  handleKey(value: string) {}
 }

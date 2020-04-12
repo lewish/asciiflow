@@ -1,9 +1,18 @@
-import * as c from "./constants";
-import Vector from "./vector";
-import View from "./view";
-import State from "./state";
-import { DrawFunction, DrawBox, DrawLine, DrawFreeform, DrawErase, DrawMove, DrawText, DrawSelect } from "./draw/index";
-import DrawFunction from "./draw/function";
+import * as c from "asciiflow/client/constants";
+import { Vector } from "asciiflow/client/vector";
+import { View } from "asciiflow/client/view";
+import { State } from "asciiflow/client/state";
+import {
+  DrawFunction,
+  DrawBox,
+  DrawLine,
+  DrawFreeform,
+  DrawErase,
+  DrawMove,
+  DrawText,
+  DrawSelect,
+} from "asciiflow/client/draw/index";
+import * as $ from "jquery";
 
 /**
  * Different modes of control.
@@ -11,36 +20,28 @@ import DrawFunction from "./draw/function";
 const Mode = {
   NONE: 0,
   DRAG: 1,
-  DRAW: 2
+  DRAW: 2,
 };
 
 /**
  * Handles user input events and modifies state.
  */
-export default class Controller {
-  /**
-   * @param {View} view
-   * @param {State} state
-   */
-  constructor(view, state) {
-    /** @type {View} */ this.view = view;
-    /** @type {State} */ this.state = state;
+export class Controller {
+  private drawFunction: DrawFunction;
+  private mode = Mode.NONE;
+  private dragOrigin: Vector;
+  private dragOriginCell: Vector;
+  private lastMoveCell: Vector;
 
-    /** @type {DrawFunction} */ this.drawFunction = new DrawBox(state);
-
-    /** @type {number} */ this.mode = Mode.NONE;
-    /** @type {Vector} */ this.dragOrigin;
-    /** @type {Vector} */ this.dragOriginCell;
-
-    /** @type {Vector} */ this.lastMoveCell = null;
-
+  constructor(public view: View, private state: State) {
+    this.drawFunction = new DrawBox(state);
     this.installBindings();
   }
 
   /**
    * @param {Vector} position
    */
-  startDraw(position) {
+  startDraw(position: Vector) {
     this.mode = Mode.DRAW;
     this.drawFunction.start(this.view.screenToCell(position));
   }
@@ -48,7 +49,7 @@ export default class Controller {
   /**
    * @param {Vector} position
    */
-  startDrag(position) {
+  startDrag(position: Vector) {
     this.mode = Mode.DRAG;
     this.dragOrigin = position;
     this.dragOriginCell = this.view.offset;
@@ -57,7 +58,7 @@ export default class Controller {
   /**
    * @param {Vector} position
    */
-  handleMove(position) {
+  handleMove(position: Vector) {
     var moveCell = this.view.screenToCell(position);
 
     // First move event, make sure we don't blow up here.
@@ -77,7 +78,11 @@ export default class Controller {
 
     // Drag in progress, update the view origin.
     if (this.mode == Mode.DRAG) {
-      this.view.setOffset(this.dragOriginCell.add(this.dragOrigin.subtract(position).scale(1 / this.view.zoom)));
+      this.view.setOffset(
+        this.dragOriginCell.add(
+          this.dragOrigin.subtract(position).scale(1 / this.view.zoom)
+        )
+      );
     }
     this.lastMoveCell = moveCell;
   }
@@ -100,50 +105,52 @@ export default class Controller {
    * Installs input bindings for common use cases devices.
    */
   installBindings() {
-    $(window).resize(e => {
+    $(window).resize((e) => {
       this.view.resizeCanvas();
     });
 
-    $("#draw-tools > button.tool").click(e => {
+    $("#draw-tools > button.tool").click((e) => {
       $("#text-tool-widget").hide(0);
       this.handleDrawButton(e.target.id);
     });
 
-    $("#file-tools > button.tool").click(e => {
+    $("#file-tools > button.tool").click((e) => {
       this.handleFileButton(e.target.id);
     });
 
-    $("button.close-dialog-button").click(e => {
+    $("button.close-dialog-button").click((e) => {
       $(".dialog").removeClass("visible");
     });
 
-    $("#import-submit-button").click(e => {
+    $("#import-submit-button").click((e) => {
       this.state.clear();
       this.state.fromText(
         /** @type {string} */
-        ($("#import-area").val()),
-        this.view.screenToCell(new Vector(this.view.canvas.width / 2, this.view.canvas.height / 2))
+        String($("#import-area").val()),
+        this.view.screenToCell(
+          new Vector(this.view.canvas.width / 2, this.view.canvas.height / 2)
+        )
       );
       this.state.commitDraw();
       $("#import-area").val("");
       $(".dialog").removeClass("visible");
     });
 
-    $("#use-lines-button").click(e => {
+    $("#use-lines-button").click((e) => {
       $(".dialog").removeClass("visible");
       this.view.setUseLines(true);
     });
 
-    $("#use-ascii-button").click(e => {
+    $("#use-ascii-button").click((e) => {
       $(".dialog").removeClass("visible");
       this.view.setUseLines(false);
     });
 
-    $(window).keypress(e => {
+    $(window).keypress((e: any) => {
       this.handleKeyPress(e);
     });
 
-    $(window).keydown(e => {
+    $(window).keydown((e: any) => {
       this.handleKeyDown(e);
     });
 
@@ -162,9 +169,8 @@ export default class Controller {
 
   /**
    * Handles the buttons in the UI.
-   * @param {string} id The ID of the element clicked.
    */
-  handleDrawButton(id) {
+  handleDrawButton(id: string) {
     $("#draw-tools > button.tool").removeClass("active");
     $("#" + id).toggleClass("active");
     $(".dialog").removeClass("visible");
@@ -202,7 +208,7 @@ export default class Controller {
    * Handles the buttons in the UI.
    * @param {string} id The ID of the element clicked.
    */
-  handleFileButton(id) {
+  handleFileButton(id: string) {
     $(".dialog").removeClass("visible");
     $("#" + id + "-dialog").toggleClass("visible");
 
@@ -230,7 +236,7 @@ export default class Controller {
    * Handles key presses.
    * @param {jQuery.Event} event
    */
-  handleKeyPress(event) {
+  handleKeyPress(event: KeyboardEvent) {
     if (!event.ctrlKey && !event.metaKey && event.keyCode != 13) {
       this.drawFunction.handleKey(String.fromCharCode(event.keyCode));
     }
@@ -240,7 +246,7 @@ export default class Controller {
    * Handles key down events.
    * @param {jQuery.Event} event
    */
-  handleKeyDown(event) {
+  handleKeyDown(event: KeyboardEvent) {
     // Override some special characters so that they can be handled in one place.
     var specialKeyCode = null;
 

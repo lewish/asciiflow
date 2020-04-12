@@ -1,44 +1,37 @@
-import State from '../state';
-import Vector from '../vector';
-import DrawFunction from './function';
-import { drawLine } from './utils';
+import { State } from "asciiflow/client/state";
+import { Vector } from "asciiflow/client/vector";
+import { DrawFunction } from "asciiflow/client/draw/function";
+import { drawLine } from "asciiflow/client/draw/utils";
 
 /**
  * @implements {DrawFunction}
  */
-export default class DrawBox {
-  /**
-   * @param {State} state
-   */
-  constructor(state) {
+export class DrawBox implements DrawFunction {
+  private startPosition: Vector;
+  private endPosition: Vector;
+
+  constructor(private readonly state: State) {
     this.state = state;
-    /** @type {Vector} */ this.startPosition = null;
-    /** @type {Vector} */ this.endPosition = null;
   }
 
-  /** @inheritDoc */
-  start(position) {
+  start(position: Vector) {
     this.startPosition = position;
   }
 
-  /** @inheritDoc */
-  move(position) {
+  move(position: Vector) {
     this.endPosition = position;
     this.state.clearDraw();
     drawLine(this.state, this.startPosition, position, true);
     drawLine(this.state, this.startPosition, position, false);
   }
 
-  /** @inheritDoc */
   end() {
     this.state.commitDraw();
   }
 
-  /** @inheritDoc */
-  getCursor(position) {
-    return 'crosshair';
+  getCursor(position: Vector) {
+    return "crosshair";
   }
 
-  /** @inheritDoc */
-  handleKey(value) {};
+  handleKey(value: string) {}
 }

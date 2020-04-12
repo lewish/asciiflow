@@ -1,21 +1,27 @@
-import Vector from '../vector';
+import { Vector } from "asciiflow/client/vector";
 
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
- * @interface
  */
-export default class DrawFunction {
-  /** Start of drawing. @param {Vector} position */
-  start(position) {};
-  /** Drawing move. @param {Vector} position */
-  move(position) {};
-  /** End of drawing. */
-  end() {};
-  /** Cursor for given cell.
-   * @param {Vector} position
-   * @return {string}
+export interface DrawFunction {
+  /**
+   *  Start of drawing.
    */
-  getCursor(position) {};
-  /** Handle the key with given value being pressed. @param {string} value */
-  handleKey(value) {};
+  start(position: Vector): void;
+  /**
+   * Drawing move.
+   */
+  move(position: Vector): void;
+  /**
+   * End of drawing.
+   */
+  end(): void;
+  /**
+   * Cursor for given cell.
+   */
+  getCursor(position: Vector): string;
+  /**
+   * Handle the key with given value being pressed.
+   */
+  handleKey(value: string): void;
 }
