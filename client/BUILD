@@ -9,11 +9,23 @@ filegroup(
 
 ts_library(
     name = "client",
-    srcs = glob(["**/*.ts"]),
+    srcs = glob([
+        "**/*.ts",
+        "**/*.tsx",
+    ]),
     deps = [
-        "@npm//@types/jquery",
+        "@npm//@material-ui/core",
         "@npm//@types/node",
-        "@npm//jquery",
+        "@npm//@types/react",
+        "@npm//@types/react-dom",
+        "@npm//@types/react-router",
+        "@npm//@types/react-router-dom",
+        "@npm//mobx",
+        "@npm//mobx-react",
+        "@npm//react",
+        "@npm//react-dom",
+        "@npm//react-router",
+        "@npm//react-router-dom",
     ],
 )
 

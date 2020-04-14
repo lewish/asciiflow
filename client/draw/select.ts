@@ -1,4 +1,4 @@
-import { DrawFunction } from "asciiflow/client/draw/function";
+import { IDrawFunction } from "asciiflow/client/draw/function";
 import {
   ERASE_CHAR,
   KEY_COPY,
@@ -6,22 +6,22 @@ import {
   KEY_PASTE,
 } from "asciiflow/client/constants";
 import { Vector } from "asciiflow/client/vector";
-import { State } from "asciiflow/client/state";
+import { CanvasStore } from "asciiflow/client/canvas_store";
 import { MappedValue, Box } from "asciiflow/client/common";
 import { DrawErase } from "asciiflow/client/draw/erase";
 
 /**
  * @implements {DrawFunction}
  */
-export class DrawSelect implements DrawFunction {
+export class DrawSelect implements IDrawFunction {
   private startPosition: Vector;
   private endPosition: Vector;
   private dragStart: Vector;
   private dragEnd: Vector;
   private finished = true;
-  private selectedCells: Array<MappedValue> = [];
+  private selectedCells: MappedValue[] = [];
 
-  constructor(private state: State) {}
+  constructor(private state: CanvasStore) {}
 
   start(position: Vector) {
     // Must be dragging.
@@ -46,14 +46,14 @@ export class DrawSelect implements DrawFunction {
   }
 
   copyArea() {
-    var nonEmptyCells = this.state.scratchCells.filter(function (value) {
-      var rawValue = value.cell.getRawValue();
+    const nonEmptyCells = this.state.scratchCells.filter(function (value) {
+      const rawValue = value.cell.getRawValue();
       return (
         value.cell.getRawValue() != null &&
         value.cell.getRawValue() != ERASE_CHAR
       );
     });
-    var topLeft = this.getSelectedBox().topLeft();
+    const topLeft = this.getSelectedBox().topLeft();
     this.selectedCells = nonEmptyCells.map(function (value) {
       return new MappedValue(
         value.position.subtract(topLeft),
@@ -74,13 +74,13 @@ export class DrawSelect implements DrawFunction {
     this.endPosition = position;
     this.state.clearDraw();
 
-    var box = new Box(this.startPosition, position);
+    const box = new Box(this.startPosition, position);
 
-    for (var i = box.startX; i <= box.endX; i++) {
-      for (var j = box.startY; j <= box.endY; j++) {
-        var current = new Vector(i, j);
+    for (let i = box.startX; i <= box.endX; i++) {
+      for (let j = box.startY; j <= box.endY; j++) {
+        const current = new Vector(i, j);
         // Effectively highlights the cell.
-        var currentValue = this.state.getCell(current).getRawValue();
+        const currentValue = this.state.getCell(current).getRawValue();
         this.state.drawValue(
           current,
           currentValue == null ? ERASE_CHAR : currentValue
@@ -92,17 +92,17 @@ export class DrawSelect implements DrawFunction {
   dragMove(position: Vector) {
     this.dragEnd = position;
     this.state.clearDraw();
-    var eraser = new DrawErase(this.state);
+    const eraser = new DrawErase();
     eraser.start(this.startPosition);
     eraser.move(this.endPosition);
-    var startPos = this.dragEnd
+    const startPos = this.dragEnd
       .subtract(this.dragStart)
       .add(this.getSelectedBox().topLeft());
     this.drawSelected(startPos);
   }
 
   drawSelected(startPos: Vector) {
-    for (var { position, value } of this.selectedCells) {
+    for (const { position, value } of this.selectedCells) {
       this.state.drawValue(position.add(startPos), value);
     }
   }
@@ -135,7 +135,7 @@ export class DrawSelect implements DrawFunction {
         this.copyArea();
       }
       if (value == KEY_CUT) {
-        var eraser = new DrawErase(this.state);
+        const eraser = new DrawErase();
         eraser.start(this.startPosition);
         eraser.move(this.endPosition);
         this.state.commitDraw();

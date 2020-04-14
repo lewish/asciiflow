@@ -4,13 +4,23 @@
 export class Vector {
   constructor(public x: number, public y: number) {}
 
-  static fromMouseEvent(event: MouseEvent) {
+  // TODO: These shouldn't be here.
+  static fromMouseEvent(event: React.MouseEvent<any>) {
     return new Vector(event.clientX, event.clientY);
   }
 
-  static fromTouchEvent(event: TouchEvent, index = 0) {
+  static fromTouchEvent(event: React.TouchEvent<any>, index = 0) {
     const { pageX, pageY } = event.touches[index];
     return new Vector(pageX, pageY);
+  }
+
+  toString() {
+    return `${this.x}:${this.y}`;
+  }
+
+  static fromString(value: string) {
+    const split = value.split(":");
+    return new Vector(Number(split[0]), Number(split[1]));
   }
 
   equals(other: Vector) {

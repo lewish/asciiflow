@@ -1,23 +1,22 @@
-import { DrawFunction } from "asciiflow/client/draw/function";
 import { ERASE_CHAR } from "asciiflow/client/constants";
-import { State } from "asciiflow/client/state";
-import { Vector } from "asciiflow/client/vector";
+import { IDrawFunction } from "asciiflow/client/draw/function";
 import { drawText } from "asciiflow/client/draw/utils";
-import { View } from "asciiflow/client/view";
+import { CanvasStore } from "asciiflow/client/canvas_store";
+import { Vector } from "asciiflow/client/vector";
 
 /**
  * @implements {DrawFunction}
  */
-export class DrawText implements DrawFunction {
+export class DrawText implements IDrawFunction {
   private startPosition: Vector;
   private endPosition: Vector;
-  constructor(public state: State, public view: View) {
+  constructor(public state: CanvasStore) {
     this.state = state;
   }
 
   start(position: Vector) {
     this.state.commitDraw();
-    $("#text-tool-input").val("");
+    // $("#text-tool-input").val("");
     this.startPosition = position;
 
     // TODO: Not working yet, needs fixing so that it can
@@ -39,11 +38,11 @@ export class DrawText implements DrawFunction {
       this.endPosition = this.startPosition;
       this.startPosition = null;
       // Valid end click/press, show the textbox and focus it.
-      $("#text-tool-widget").hide(0, () => {
-        $("#text-tool-widget").show(0, () => {
-          $("#text-tool-input").focus();
-        });
-      });
+      // $("#text-tool-widget").hide(0, () => {
+      //   $("#text-tool-widget").show(0, () => {
+      //     $("#text-tool-input").focus();
+      //   });
+      // });
     }
   }
 
@@ -52,9 +51,9 @@ export class DrawText implements DrawFunction {
   }
 
   handleKey(value: string) {
-    var text = String($("#text-tool-input").val());
-    this.state.clearDraw();
-    drawText(this.state, this.endPosition, text);
+    // var text = String($("#text-tool-input").val());
+    // this.state.clearDraw();
+    // drawText(this.state, this.endPosition, text);
   }
 
   /**
@@ -98,6 +97,6 @@ export class DrawText implements DrawFunction {
       }
       currentPosition.x++;
     }
-    $("#text-tool-input").val(text.substr(0, text.length - 1));
+    // $("#text-tool-input").val(text.substr(0, text.length - 1));
   }
 }

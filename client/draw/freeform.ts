@@ -1,10 +1,10 @@
 import { TOUCH_ENABLED } from "asciiflow/client/constants";
-import { State } from "asciiflow/client/state";
-import { DrawFunction } from "asciiflow/client/draw/function";
+import { CanvasStore } from "asciiflow/client/canvas_store";
+import { IDrawFunction } from "asciiflow/client/draw/function";
 import { Vector } from "asciiflow/client/vector";
 
-export class DrawFreeform implements DrawFunction {
-  constructor(private state: State, private value: string) {
+export class DrawFreeform implements IDrawFunction {
+  constructor(private state: CanvasStore, private value: string) {
     if (TOUCH_ENABLED) {
       // $("#freeform-tool-input").val("");
       // $("#freeform-tool-input").hide(0, function () {

@@ -1,6 +1,6 @@
 import * as constants from "asciiflow/client/constants";
 import { drawLine } from "asciiflow/client/draw/utils";
-import { State } from "asciiflow/client/state";
+import { CanvasStore } from "asciiflow/client/canvas_store";
 import { Vector } from "asciiflow/client/vector";
 
 interface IEnd {
@@ -12,9 +12,9 @@ interface IEnd {
 }
 export class DrawMove {
   private startPosition: Vector;
-  private ends: Array<IEnd> = [];
+  private ends: IEnd[] = [];
 
-  constructor(private state: State) {}
+  constructor(private state: CanvasStore) {}
 
   start(position: Vector) {
     this.startPosition = constants.TOUCH_ENABLED
@@ -26,26 +26,26 @@ export class DrawMove {
     if (!this.state.getCell(this.startPosition).isSpecial()) {
       return;
     }
-    var context = this.state.getContext(this.startPosition);
+    const context = this.state.getContext(this.startPosition);
 
-    var ends: IEnd[] = [];
-    for (var i of constants.DIRECTIONS) {
-      var midPoints = this.followLine(this.startPosition, i);
-      for (var midPoint of midPoints) {
+    const ends: IEnd[] = [];
+    for (const i of constants.DIRECTIONS) {
+      const midPoints = this.followLine(this.startPosition, i);
+      for (const midPoint of midPoints) {
         // Clockwise is a lie, it is true if we move vertically first.
-        var clockwise = i.x != 0;
-        var startIsAlt =
+        const clockwise = i.x !== 0;
+        const startIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
             this.state.getCell(position).getRawValue()
-          ) != -1;
-        var midPointIsAlt =
+          ) !== -1;
+        const midPointIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
             this.state.getCell(midPoint).getRawValue()
-          ) != -1;
+          ) !== -1;
 
-        var midPointContext = this.state.getContext(midPoint);
+        const midPointContext = this.state.getContext(midPoint);
         // Special case, a straight line with no turns.
-        if (midPointContext.sum() == 1) {
+        if (midPointContext.sum() === 1) {
           ends.push({
             position: midPoint,
             clockwise,
@@ -55,21 +55,21 @@ export class DrawMove {
           continue;
         }
         // Continue following lines from the midpoint.
-        for (var j of constants.DIRECTIONS) {
-          if (i.add(j).length() == 0 || i.add(j).length() == 2) {
+        for (const j of constants.DIRECTIONS) {
+          if (i.add(j).length() === 0 || i.add(j).length() === 2) {
             // Don't go back on ourselves, or don't carry on in same direction.
             continue;
           }
-          var secondEnds = this.followLine(midPoint, j);
+          const secondEnds = this.followLine(midPoint, j);
           // Ignore any directions that didn't go anywhere.
-          if (secondEnds.length == 0) {
+          if (secondEnds.length === 0) {
             continue;
           }
-          var secondEnd = secondEnds[0];
-          var endIsAlt =
+          const secondEnd = secondEnds[0];
+          const endIsAlt =
             constants.ALT_SPECIAL_VALUES.indexOf(
               this.state.getCell(secondEnd).getRawValue()
-            ) != -1;
+            ) !== -1;
           // On the second line we don't care about multiple
           // junctions, just the last.
           ends.push({
@@ -90,7 +90,7 @@ export class DrawMove {
   move(position: Vector) {
     this.state.clearDraw();
     // Clear all the lines so we can draw them afresh.
-    for (var end of this.ends) {
+    for (const end of this.ends) {
       drawLine(
         this.state,
         this.startPosition,
@@ -99,10 +99,10 @@ export class DrawMove {
         " "
       );
     }
-    for (var end of this.ends) {
+    for (const end of this.ends) {
       drawLine(this.state, position, end.position, end.clockwise);
     }
-    for (var end of this.ends) {
+    for (const end of this.ends) {
       // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
       if (end.startIsAlt) {
         this.state.drawValue(position, constants.ALT_SPECIAL_VALUE);
@@ -111,8 +111,8 @@ export class DrawMove {
         this.state.drawValue(end.position, constants.ALT_SPECIAL_VALUE);
       }
       if (end.midPointIsAlt) {
-        var midX = end.clockwise ? end.position.x : position.x;
-        var midY = end.clockwise ? position.y : end.position.y;
+        const midX = end.clockwise ? end.position.x : position.x;
+        const midY = end.clockwise ? position.y : end.position.y;
         this.state.drawValue(
           new Vector(midX, midY),
           constants.ALT_SPECIAL_VALUE
@@ -131,10 +131,10 @@ export class DrawMove {
    * loose definition, but basically means a point around which we resize things.
    */
   followLine(startPosition: Vector, direction: Vector) {
-    var endPosition = startPosition.clone();
-    var junctions = [];
+    let endPosition = startPosition.clone();
+    const junctions = [];
     while (true) {
-      var nextEnd = endPosition.add(direction);
+      const nextEnd = endPosition.add(direction);
       if (!this.state.getCell(nextEnd).isSpecial()) {
         // Junctions: Right angles and end T-Junctions.
         if (!startPosition.equals(endPosition)) {
@@ -144,9 +144,9 @@ export class DrawMove {
       }
 
       endPosition = nextEnd;
-      var context = this.state.getContext(endPosition);
+      const context = this.state.getContext(endPosition);
       // Junctions: Side T-Junctions.
-      if (context.sum() == 3) {
+      if (context.sum() === 3) {
         junctions.push(endPosition);
       }
     }
@@ -161,19 +161,19 @@ export class DrawMove {
     if (this.state.getCell(position).isSpecial()) {
       return position;
     }
-    var allDirections = constants.DIRECTIONS.concat([
+    const allDirections = constants.DIRECTIONS.concat([
       constants.DIR_LEFT.add(constants.DIR_UP),
       constants.DIR_LEFT.add(constants.DIR_DOWN),
       constants.DIR_RIGHT.add(constants.DIR_UP),
       constants.DIR_RIGHT.add(constants.DIR_DOWN),
     ]);
 
-    var bestDirection = null;
-    var bestContextSum = 0;
-    for (var direction of allDirections) {
+    let bestDirection = null;
+    let bestContextSum = 0;
+    for (const direction of allDirections) {
       // Find the most connected cell, essentially.
-      var newPos = position.add(direction);
-      var contextSum = this.state.getContext(newPos).sum();
+      const newPos = position.add(direction);
+      const contextSum = this.state.getContext(newPos).sum();
       if (
         this.state.getCell(newPos).isSpecial() &&
         contextSum > bestContextSum

@@ -1,13 +1,11 @@
 import { ERASE_CHAR } from "asciiflow/client/constants";
-import { DrawFunction } from "asciiflow/client/draw/function";
-import { State } from "asciiflow/client/state";
+import { AbstractDrawFunction } from "asciiflow/client/draw/function";
+import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
-export class DrawErase implements DrawFunction {
+export class DrawErase extends AbstractDrawFunction {
   private startPosition: Vector;
   private endPosition: Vector;
-
-  constructor(private state: State) {}
 
   start(position: Vector) {
     this.startPosition = position;
@@ -15,7 +13,7 @@ export class DrawErase implements DrawFunction {
   }
 
   move(position: Vector) {
-    this.state.clearDraw();
+    store.canvas.clearDraw();
     this.endPosition = position;
 
     var startX = Math.min(this.startPosition.x, this.endPosition.x);
@@ -25,18 +23,17 @@ export class DrawErase implements DrawFunction {
 
     for (var i = startX; i <= endX; i++) {
       for (var j = startY; j <= endY; j++) {
-        this.state.drawValue(new Vector(i, j), ERASE_CHAR);
+        store.canvas.drawValue(new Vector(i, j), ERASE_CHAR);
       }
     }
+    store.canvas.apply();
   }
 
   end() {
-    this.state.commitDraw();
+    store.canvas.commitDraw();
   }
 
-  getCursor(position: Vector) {
+  getCursor() {
     return "crosshair";
   }
-
-  handleKey(value: string) {}
 }

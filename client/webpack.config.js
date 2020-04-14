@@ -3,7 +3,7 @@ const webpack = require("webpack");
 
 module.exports = (env, argv) => ({
   mode: argv.mode || "development",
-  entry: [path.resolve(process.env.RUNFILES, "asciiflow/client/launch")],
+  entry: [path.resolve(process.env.RUNFILES, "asciiflow/client/app")],
   output: {
     path: path.dirname(path.resolve(argv.output)),
     filename: path.basename(argv.output),

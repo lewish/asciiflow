@@ -3,14 +3,107 @@ import { Vector } from "asciiflow/client/vector";
 export const MAX_GRID_WIDTH = 2000;
 export const MAX_GRID_HEIGHT = 600;
 
+export interface ICharacterSet {
+  cornerTopLeft: string;
+  cornerTopRight: string;
+  cornerBottomRight: string;
+  cornerBottomLeft: string;
+  arrowLeft: string;
+  arrowRight: string;
+  arrowUp: string;
+  arrowDown: string;
+  lineVertical: string;
+  lineHorizontal: string;
+  junctionDown: string;
+  junctionUp: string;
+  junctionLeft: string;
+  junctionRight: string;
+  junctionAll: string;
+}
+
+export const UNICODE: ICharacterSet = {
+  cornerTopLeft: "┏",
+  cornerTopRight: "┓",
+  cornerBottomRight: "┛",
+  cornerBottomLeft: "┗",
+  arrowLeft: "<",
+  arrowRight: ">",
+  arrowUp: "^",
+  arrowDown: "v",
+  lineVertical: "┃",
+  lineHorizontal: "━",
+  junctionDown: "┳",
+  junctionUp: "┻",
+  junctionLeft: "┫",
+  junctionRight: "┣",
+  junctionAll: "╋",
+};
+
+export const ASCII: ICharacterSet = {
+  cornerTopLeft: "+",
+  cornerTopRight: "+",
+  cornerBottomRight: "+",
+  cornerBottomLeft: "+",
+  arrowLeft: "<",
+  arrowRight: ">",
+  arrowUp: "^",
+  arrowDown: "v",
+  lineVertical: "|",
+  lineHorizontal: "-",
+  junctionDown: "+",
+  junctionUp: "+",
+  junctionLeft: "+",
+  junctionRight: "+",
+  junctionAll: "+",
+};
+
 export const SPECIAL_VALUE = "+";
 export const ALT_SPECIAL_VALUE = "^";
 export const SPECIAL_ARROW_LEFT = "<";
 export const SPECIAL_ARROW_UP = "^";
 export const SPECIAL_ARROW_RIGHT = ">";
 export const SPECIAL_ARROW_DOWN = "v";
-export const SPECIAL_VALUES = ["+", "\u2012", "\u2013", "-", "|"];
-export const ALT_SPECIAL_VALUES = [">", "<", "^", "v"];
+
+type ICharacter = keyof ICharacterSet;
+
+// TODO: Transform on import?
+// "\u2012",
+// "\u2013",
+
+const SPECIAL_VALUE_KEYS: ICharacter[] = [
+  "cornerTopLeft",
+  "cornerTopRight",
+  "cornerBottomRight",
+  "cornerBottomLeft",
+  "lineVertical",
+  "lineHorizontal",
+  "junctionDown",
+  "junctionUp",
+  "junctionLeft",
+  "junctionRight",
+  "junctionAll",
+];
+const ALT_SPECIAL_VALUE_KEYS: ICharacter[] = [
+  "arrowLeft",
+  "arrowRight",
+  "arrowUp",
+  "arrowDown",
+];
+
+export const SPECIAL_VALUES = [
+  ...new Set([
+    ...SPECIAL_VALUE_KEYS.map((key) => UNICODE[key]),
+    ...SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
+  ]),
+];
+
+export const ALT_SPECIAL_VALUES = [
+  ...new Set([
+    ...ALT_SPECIAL_VALUE_KEYS.map((key) => UNICODE[key]),
+    ...ALT_SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
+  ]),
+];
+
 export const ALL_SPECIAL_VALUES = SPECIAL_VALUES.concat(ALT_SPECIAL_VALUES);
 
 export const MAX_UNDO = 50;

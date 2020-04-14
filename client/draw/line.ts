@@ -5,14 +5,14 @@ import {
   SPECIAL_ARROW_UP,
 } from "asciiflow/client/constants";
 import { drawLine } from "asciiflow/client/draw/utils";
-import { State } from "asciiflow/client/state";
+import { CanvasStore } from "asciiflow/client/canvas_store";
 import { Vector } from "asciiflow/client/vector";
-import { DrawFunction } from "asciiflow/client/draw/function";
+import { IDrawFunction } from "asciiflow/client/draw/function";
 
-export class DrawLine implements DrawFunction {
+export class DrawLine implements IDrawFunction {
   private startPosition: Vector;
 
-  constructor(private state: State, private isArrow: boolean) {}
+  constructor(private state: CanvasStore, private isArrow: boolean) {}
 
   start(position: Vector) {
     this.startPosition = position;
@@ -23,15 +23,15 @@ export class DrawLine implements DrawFunction {
 
     // Try to infer line orientation.
     // TODO: Split the line into two lines if we can't satisfy both ends.
-    var startContext = this.state.getContext(this.startPosition);
-    var endContext = this.state.getContext(position);
-    var clockwise =
+    const startContext = this.state.getContext(this.startPosition);
+    const endContext = this.state.getContext(position);
+    const clockwise =
       (startContext.up && startContext.down) ||
       (endContext.left && endContext.right);
 
     drawLine(this.state, this.startPosition, position, clockwise);
     if (this.isArrow) {
-      var endValue;
+      let endValue;
 
       if (endContext.up) {
         endValue = SPECIAL_ARROW_UP;

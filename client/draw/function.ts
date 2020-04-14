@@ -3,7 +3,7 @@ import { Vector } from "asciiflow/client/vector";
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
  */
-export interface DrawFunction {
+export interface IDrawFunction {
   /**
    *  Start of drawing.
    */
@@ -24,4 +24,14 @@ export interface DrawFunction {
    * Handle the key with given value being pressed.
    */
   handleKey(value: string): void;
+}
+
+export abstract class AbstractDrawFunction implements IDrawFunction {
+  start(position: Vector): void {}
+  move(position: Vector): void {}
+  end(): void {}
+  getCursor(position: Vector): string {
+    return "default";
+  }
+  handleKey(value: string): void {}
 }

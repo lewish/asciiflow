@@ -6,6 +6,11 @@
       name="Description"
       content="Infinite ASCII diagrams, save to Google Drive, resize, freeform draw, and export straight to text/html."
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" /> -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
@@ -17,6 +22,7 @@
       sizes="196x196"
       href="public/images/favicon.png"
     />
+
     <title>ASCIIFlow Infinity</title>
     <style>
       * {
@@ -44,31 +50,12 @@
         margin: 5px;
       }
 
-      #draw-tools {
-        text-align: left;
-        padding-left: 120px;
-        display: inline-block;
-        position: fixed;
-        width: 100%;
-        background-color: #fff;
-        z-index: 100;
-        -webkit-box-shadow: 0px 1px 5px 0px #bbb; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-        box-shadow: 0px 1px 5px 0px #bbb; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
+      .toolbar {
+        background-color: white;
       }
 
       #logo-bar {
-        position: fixed;
-        left: 0px;
-        z-index: 101;
         margin: 8px;
-      }
-
-      #file-tools {
-        text-align: right;
-        display: inline-block;
-        position: fixed;
-        right: 2px;
-        z-index: 100;
       }
 
       #draw-tools > button,
@@ -530,257 +517,12 @@
     <div id="logo-interstitial" class="animated fadeOut">
       <img src="public/images/logo-full.gif" class="animated bounceOut" />
     </div>
-
-    <img
-      id="logo-bar"
-      src="public/images/logo-bar.gif"
-      width="88"
-      height="24"
-    />
-
-    <div id="draw-tools">
-      <button
-        id="box-button"
-        class="tool active box-image"
-        title="Draw boxes"
-      ></button>
-      <button
-        id="line-button"
-        class="tool line-image"
-        title="Draw connecting lines"
-      ></button>
-      <button
-        id="arrow-button"
-        class="tool arrow-image"
-        title="Draw arrows"
-      ></button>
-      <button
-        id="freeform-button"
-        class="tool freeform-image"
-        title="Freeform drawing"
-      ></button>
-      <button
-        id="erase-button"
-        class="tool erase-image"
-        title="Erase square areas"
-      ></button>
-      <button
-        id="move-button"
-        class="tool move-image"
-        title="Resize/move boxes and lines"
-      ></button>
-      <button
-        id="text-button"
-        class="tool text-image"
-        title="Text tool"
-      ></button>
-      <button
-        id="select-button"
-        class="tool select-image"
-        title="Select, copy, cut and move"
-      ></button>
-    </div>
-
-    <div id="file-tools">
-      <div id="drive-save-state">Unsaved</div>
-      <button
-        id="drive-button"
-        class="tool drive-image"
-        title="Google Drive Saving"
-      ></button>
-      <button
-        id="export-button"
-        class="tool export-image"
-        title="Export"
-      ></button>
-      <button
-        id="import-button"
-        class="tool import-image"
-        title="Import"
-      ></button>
-      <button id="clear-button" class="tool clear-image" title="Clear"></button>
-      <button id="undo-button" class="tool undo-image" title="Undo"></button>
-      <button id="redo-button" class="tool redo-image" title="Redo"></button>
-      <button id="options-button" class="tool info-image" title="Info"></button>
-    </div>
-
-    <div id="export-button-dialog" class="dialog">
-      <textarea readonly id="export-area"></textarea>
-      <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-      </div>
-    </div>
-
-    <div id="options-button-dialog" class="dialog">
-      <div id="options-scroll">
-        <img
-          id="options-logo"
-          src="public/images/logo-options.gif"
-          width="176"
-          height="48"
-        />
-        <br />
-        <button id="use-lines-button">Lines Mode</button>
-        <button id="use-ascii-button">ASCII Mode</button><br />
-        <p>
-          Moving around.<br />
-          Desktop Windows: <span>Hold CTRL and drag the screen.</span><br />
-          Desktop OSX: <span>Hold CMD and drag the screen.</span><br />
-          Mobile:
-          <span
-            >Drag quickly to move. Press and hold to start drawing. Pinch to
-            zoom in/out.</span
-          >
-        </p>
-        <div class="info-icon box-image"></div>
-        <div class="info-description">
-          Draw boxes.
-          <span>You can resize them later with the Resize tool.</span>
-        </div>
-        <br />
-        <div class="info-icon line-image"></div>
-        <div class="info-description">
-          Draw lines.
-          <span>Connect it to another line to change the orientation.</span>
-        </div>
-        <br />
-        <div class="info-icon arrow-image"></div>
-        <div class="info-description">
-          Draw arrows.
-          <span>Connect it to another line to change the orientation.</span>
-        </div>
-        <br />
-        <div class="info-icon freeform-image"></div>
-        <div class="info-description">
-          Draw freehand.
-          <span>Press a character on the keyboard and draw with it.</span>
-        </div>
-        <br />
-        <div class="info-icon erase-image"></div>
-        <div class="info-description">
-          Erase.
-          <span>Drag out an area to remove its contents from the canvas.</span>
-        </div>
-        <br />
-        <div class="info-icon move-image"></div>
-        <div class="info-description">
-          Resize boxes and lines.
-          <span>Drag a line to change its size/shape.</span>
-        </div>
-        <br />
-        <div class="info-icon text-image"></div>
-        <div class="info-description">
-          Type text.
-          <span
-            >Click and type where you'd like to add text to the canvas.</span
-          >
-        </div>
-        <br />
-        <br />
-        <div class="info-icon-file drive-image"></div>
-        <div class="info-description">
-          Save.
-          <span>Connect to Google Drive to save your work automatically.</span>
-        </div>
-        <br />
-        <div class="info-icon-file export-image"></div>
-        <div class="info-description">
-          Export. <span>Copy your work to use it outside of ASCIIFlow.</span>
-        </div>
-        <br />
-        <div class="info-icon-file import-image"></div>
-        <div class="info-description">
-          Import. <span>Paste ASCII/text to import it onto the canvas.</span>
-        </div>
-        <br />
-        <div class="info-icon-file clear-image"></div>
-        <div class="info-description">
-          Clear.
-          <span
-            >Remove the entire contents from the canvas. Can be undone.</span
-          >
-        </div>
-        <br />
-        <div class="info-icon-file undo-image"></div>
-        <div class="info-description">
-          Undo. <br /><span>Made a mistake? Undo!</span>
-        </div>
-        <br />
-        <div class="info-icon-file redo-image"></div>
-        <div class="info-description">
-          Redo. <br /><span>Too many Undo's? Redo!</span>
-        </div>
-        <br />
-        <br />
-
-        <div>
-          File issues as bugs
-          <a href="https://github.com/lewish/asciiflow2/issues" target="_blank"
-            >here</a
-          >.
-        </div>
-        <br />
-        <div>
-          Return to the original
-          <a href="http://stable.ascii-flow.appspot.com/">ASCIIFlow</a>.
-        </div>
-        <br />
-        Developed by
-        <a href="https://plus.google.com/+LewisHemens/about">Lewis</a>, Designed
-        by <a href="mailto:info@samirvine.co.uk">Sam</a> and
-        <a href="mailto:ryangilbanks@gmail.com">Ryan</a>.
-        <br />
-        <br />
-      </div>
-      <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-      </div>
-    </div>
-
-    <div id="import-button-dialog" class="dialog">
-      <textarea id="import-area"></textarea>
-      <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-        <button id="import-submit-button">Import</button>
-      </div>
-    </div>
-
-    <!-- These dialogs are handled seperately. -->
-
-    <div id="text-tool-widget">
-      <textarea id="text-tool-input"></textarea>
-      <div class="dialog-button-bar">
-        <button id="text-tool-close">Close</button>
-      </div>
-    </div>
-
-    <div id="drive-dialog" class="dialog">
-      <div id="drive-filename">Untitled ASCII Diagram</div>
-      <div style="margin: 5px;">
-        Edit permissions and manage files in
-        <a href="https://drive.google.com/" target="_blank">Google Drive</a>.
-      </div>
-      <br />
-      <button id="drive-new-file-button">New Drawing</button>
-      <br />
-      <div id="drive-file-list">
-        <!-- filled with li's -->
-      </div>
-      <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-      </div>
-    </div>
-
-    <textarea id="freeform-tool-input"></textarea>
-
-    <canvas id="ascii-canvas"></canvas>
-
+    <div id="root"></div>
     <script src="app.bundle.js"></script>
-
     <script>
       window.setTimeout(function () {
         document.getElementById("logo-interstitial").style.display = "none";
-      }, 2000);
+      }, 0);
     </script>
   </body>
 </html>

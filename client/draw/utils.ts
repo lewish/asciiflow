@@ -1,13 +1,13 @@
 import { SPECIAL_VALUE } from "asciiflow/client/constants";
 import { Box } from "asciiflow/client/common";
-import { State } from "asciiflow/client/state";
+import { CanvasStore } from "asciiflow/client/canvas_store";
 import { Vector } from "asciiflow/client/vector";
 
 /**
  * Draws a line on the diagram state.
  */
 export function drawLine(
-  state: State,
+  state: CanvasStore,
   startPosition: Vector,
   endPosition: Vector,
   clockwise: boolean,
@@ -48,7 +48,7 @@ export function drawLine(
  * Sets the cells scratch (uncommitted) values to the given text.
  * Handles newlines appropriately.
  */
-export function drawText(state: State, position: Vector, text: string) {
+export function drawText(state: CanvasStore, position: Vector, text: string) {
   let x = 0,
     y = 0;
   for (const char of text) {
