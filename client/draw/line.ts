@@ -1,15 +1,8 @@
-import {
-  SPECIAL_ARROW_DOWN,
-  SPECIAL_ARROW_LEFT,
-  SPECIAL_ARROW_RIGHT,
-  SPECIAL_ARROW_UP,
-} from "asciiflow/client/constants";
 import { IDrawFunction } from "asciiflow/client/draw/function";
 import { drawLine } from "asciiflow/client/draw/utils";
 import { Layer } from "asciiflow/client/layer";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
-import * as constants from "asciiflow/client/constants";
 
 export class DrawLine implements IDrawFunction {
   private startPosition: Vector;
@@ -43,20 +36,31 @@ export class DrawLine implements IDrawFunction {
 
     drawLine(layer, this.startPosition, position, horizontalFirst);
 
-    const getArrowHead = () => {
-      if (horizontalFirst || position.x === this.startPosition.x) {
-        return position.y < this.startPosition.y
-          ? characters.arrowUp
-          : characters.arrowDown;
-      } else {
-        return position.x > this.startPosition.x
-          ? characters.arrowRight
-          : characters.arrowLeft;
-      }
-    };
-
     if (this.isArrow) {
-      layer.set(position, getArrowHead());
+      layer.set(
+        position,
+        (() => {
+          if (position.x === this.startPosition.x) {
+            return position.y < this.startPosition.y
+              ? characters.arrowUp
+              : characters.arrowDown;
+          }
+          if (position.y === this.startPosition.y) {
+            return position.x < this.startPosition.x
+              ? characters.arrowLeft
+              : characters.arrowRight;
+          }
+          if (horizontalFirst) {
+            return position.y < this.startPosition.y
+              ? characters.arrowUp
+              : characters.arrowDown;
+          } else {
+            return position.x > this.startPosition.x
+              ? characters.arrowRight
+              : characters.arrowLeft;
+          }
+        })()
+      );
     }
     store.canvas.setScratchLayer(layer);
   }

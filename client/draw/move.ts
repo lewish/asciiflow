@@ -27,7 +27,6 @@ export class DrawMove extends AbstractDrawFunction {
     if (!constants.isSpecial(store.canvas.committed.get(position))) {
       return;
     }
-    const context = store.canvas.committed.context(this.startPosition);
 
     const ends: IEnd[] = [];
     for (const i of constants.DIRECTIONS) {
@@ -140,6 +139,10 @@ export class DrawMove extends AbstractDrawFunction {
       const context = store.canvas.committed.context(endPosition);
       // Junctions: Side T-Junctions.
       if (context.sum() === 3) {
+        junctions.push(endPosition);
+      }
+      // Fully connected junctions.
+      if (context.sum() === 4) {
         junctions.push(endPosition);
       }
     }

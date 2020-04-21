@@ -66,7 +66,24 @@ export class CanvasStore {
     const isArrow = Characters.isArrow(value);
 
     if (isArrow) {
-      // Leave arrows as is, but convert them between character sets.
+      // In some situations, we can be certain about arrow orientation.
+      const context = combined.context(position);
+
+      if (context.sum() === 3) {
+        if (!context.up) {
+          return characterSet.arrowUp;
+        }
+        if (!context.down) {
+          return characterSet.arrowDown;
+        }
+        if (!context.left) {
+          return characterSet.arrowLeft;
+        }
+        if (!context.right) {
+          return characterSet.arrowRight;
+        }
+      }
+      // Otherwise, leave arrows as is, but convert them between character sets.
       if (
         value === constants.UNICODE.arrowUp ||
         value === constants.ASCII.arrowUp
@@ -200,12 +217,15 @@ export class CanvasStore {
   }
 
   /**
-   * Ends the current draw, commiting anything currently drawn the scratchpad.
+   * Ends the current draw, commiting anything currently drawn on the scratch layer.
    */
   @action.bound commitScratch() {
     const [newLayer, undoLayer] = this.committed.apply(this.scratch);
     this.committed = newLayer;
-    this.undoLayers.push(undoLayer);
+    if (undoLayer.size() > 0) {
+      // Don't push a no-op to the undo stack.
+      this.undoLayers.push(undoLayer);
+    }
     // If you commit something new, delete the redo stack.
     this.redoLayers = [];
     this.scratch = new Layer();

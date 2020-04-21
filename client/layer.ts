@@ -87,6 +87,10 @@ export class Layer extends AbstractLayer {
     ]);
   }
 
+  public size() {
+    return this.map.size;
+  }
+
   /**
    * Applies another layer to this layer, and returns the new layer and a layer that can be applied to undo the operation.
    */
