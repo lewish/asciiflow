@@ -4,6 +4,7 @@ import {
   FormControlLabel,
   Switch,
   Toolbar as MaterialToolbar,
+  Box,
 } from "@material-ui/core";
 import { Controller } from "asciiflow/client/controller";
 import { Options } from "asciiflow/client/options";
@@ -11,18 +12,41 @@ import { CanvasStore } from "asciiflow/client/canvas_store";
 import { useState } from "react";
 import { useObserver } from "mobx-react";
 import { store } from "asciiflow/client/store";
+import { IDrawFunction } from "asciiflow/client/draw/function";
+import { DrawLine } from "asciiflow/client/draw/line";
+import { DrawBox } from "asciiflow/client/draw/box";
+import { DrawFreeform } from "asciiflow/client/draw/freeform";
+import { DrawErase } from "asciiflow/client/draw/erase";
+import { DrawMove } from "asciiflow/client/draw/move";
+import { DrawText } from "asciiflow/client/draw/text";
+import { DrawSelect } from "asciiflow/client/draw/select";
 
 const TOOLS: {
-  [key: string]: { title: string };
+  [key: string]: { title: string; functionProvider: () => IDrawFunction };
 } = {
-  box: { title: "Draw boxes" },
-  line: { title: "Draw connecting lines" },
-  arrow: { title: "Draw arrows" },
-  freeform: { title: "Freeform drawing" },
-  erase: { title: "Erase square areas" },
-  move: { title: "Resize/move boxes and lines" },
-  text: { title: "Text tool" },
-  select: { title: "Select, copy, cut and move" },
+  box: { title: "Draw boxes", functionProvider: () => new DrawBox() },
+  line: {
+    title: "Draw connecting lines",
+    functionProvider: () => new DrawLine(false),
+  },
+  arrow: { title: "Draw arrows", functionProvider: () => new DrawLine(true) },
+  freeform: {
+    title: "Freeform drawing",
+    functionProvider: () => new DrawFreeform("X"),
+  },
+  erase: {
+    title: "Erase square areas",
+    functionProvider: () => new DrawErase(),
+  },
+  move: {
+    title: "Resize/move boxes and lines",
+    functionProvider: () => new DrawMove(),
+  },
+  text: { title: "Text tool", functionProvider: () => new DrawText() },
+  select: {
+    title: "Select, copy, cut and move",
+    functionProvider: () => new DrawSelect(),
+  },
 };
 
 // handleFileButton(id: string) {
@@ -47,36 +71,6 @@ const TOOLS: {
 //   if (id == "redo-button") {
 //     this.state.redo();
 //   }
-// }
-
-// handleDrawButton(id: string) {
-//   // Install the right draw tool based on button pressed.
-//   if (id == "box-button") {
-//     this.drawFunction = new DrawBox(this.state);
-//   }
-//   if (id == "line-button") {
-//     this.drawFunction = new DrawLine(this.state, false);
-//   }
-//   if (id == "arrow-button") {
-//     this.drawFunction = new DrawLine(this.state, true);
-//   }
-//   if (id == "freeform-button") {
-//     this.drawFunction = new DrawFreeform(this.state, "X");
-//   }
-//   if (id == "erase-button") {
-//     this.drawFunction = new DrawErase(this.state);
-//   }
-//   if (id == "move-button") {
-//     this.drawFunction = new DrawMove(this.state);
-//   }
-//   if (id == "text-button") {
-//     this.drawFunction = new DrawText(this.state, this.view);
-//   }
-//   if (id == "select-button") {
-//     this.drawFunction = new DrawSelect(this.state);
-//   }
-//   this.state.commitDraw();
-//   this.view.canvas.focus();
 // }
 
 // $("#draw-tools > button.tool").click((e) => {
@@ -119,6 +113,7 @@ const TOOLS: {
 // });
 
 export const Toolbar = () => {
+  const [currentTool, setCurrentTool] = useState("box");
   return useObserver(() => (
     <AppBar position="fixed">
       <MaterialToolbar variant="dense" className={"toolbar"}>
@@ -132,7 +127,7 @@ export const Toolbar = () => {
         <FormControlLabel
           control={
             <Switch
-              checked={store.unicode.value}
+              checked={store.unicode.get()}
               onChange={(e) => store.setUnicode(e.target.checked)}
             />
           }
@@ -142,12 +137,16 @@ export const Toolbar = () => {
         <div id="draw-tools">
           {Object.keys(TOOLS).map((tool) => (
             <button
+              key={tool}
               id={`${tool}-button`}
               className={`tool ${
-                store.tool === tool ? "active" : ""
+                currentTool === tool ? "active" : ""
               } ${tool}-image`}
               title={TOOLS[tool].title}
-              onClick={() => store.setTool(tool)}
+              onClick={() => {
+                setCurrentTool(tool);
+                store.setDrawFunction(TOOLS[tool].functionProvider());
+              }}
             />
           ))}
         </div>
@@ -157,39 +156,31 @@ export const Toolbar = () => {
             id="export-button"
             className="tool export-image"
             title="Export"
-          ></button>
+          />
           <button
             id="import-button"
             className="tool import-image"
             title="Import"
-          ></button>
+          />
           <button
             id="clear-button"
             className="tool clear-image"
             title="Clear"
-          ></button>
-          <button
-            id="undo-button"
-            className="tool undo-image"
-            title="Undo"
-          ></button>
-          <button
-            id="redo-button"
-            className="tool redo-image"
-            title="Redo"
-          ></button>
+          />
+          <button id="undo-button" className="tool undo-image" title="Undo" />
+          <button id="redo-button" className="tool redo-image" title="Redo" />
           <Options />
         </div>
 
         <div id="export-button-dialog" className="dialog">
-          <textarea id="export-area"></textarea>
+          <textarea id="export-area" />
           <div className="dialog-button-bar">
             <button className="close-dialog-button">Close</button>
           </div>
         </div>
 
         <div id="import-button-dialog" className="dialog">
-          <textarea id="import-area"></textarea>
+          <textarea id="import-area" />
           <div className="dialog-button-bar">
             <button className="close-dialog-button">Close</button>
             <button id="import-submit-button">Import</button>

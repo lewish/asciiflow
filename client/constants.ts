@@ -22,21 +22,21 @@ export interface ICharacterSet {
 }
 
 export const UNICODE: ICharacterSet = {
-  cornerTopLeft: "┏",
-  cornerTopRight: "┓",
-  cornerBottomRight: "┛",
-  cornerBottomLeft: "┗",
-  arrowLeft: "<",
-  arrowRight: ">",
-  arrowUp: "^",
-  arrowDown: "v",
-  lineVertical: "┃",
-  lineHorizontal: "━",
-  junctionDown: "┳",
-  junctionUp: "┻",
-  junctionLeft: "┫",
-  junctionRight: "┣",
-  junctionAll: "╋",
+  cornerTopLeft: "┌",
+  cornerTopRight: "┐",
+  cornerBottomRight: "┘",
+  cornerBottomLeft: "└",
+  arrowLeft: "◄",
+  arrowRight: "►",
+  arrowUp: "▲",
+  arrowDown: "▼",
+  lineVertical: "│",
+  lineHorizontal: "─",
+  junctionDown: "┬",
+  junctionUp: "┴",
+  junctionLeft: "┤",
+  junctionRight: "├",
+  junctionAll: "┼",
 };
 
 export const ASCII: ICharacterSet = {
@@ -65,10 +65,6 @@ export const SPECIAL_ARROW_RIGHT = ">";
 export const SPECIAL_ARROW_DOWN = "v";
 
 type ICharacter = keyof ICharacterSet;
-
-// TODO: Transform on import?
-// "\u2012",
-// "\u2013",
 
 const SPECIAL_VALUE_KEYS: ICharacter[] = [
   "cornerTopLeft",
@@ -104,7 +100,18 @@ export const ALT_SPECIAL_VALUES = [
   ]),
 ];
 
+export class Characters {
+  public static isLine = (value: string) => {
+    return SPECIAL_VALUES.includes(value);
+  }
+
+  public static isArrow = (value: string) => {
+    return ALT_SPECIAL_VALUES.includes(value);
+  }
+}
 export const ALL_SPECIAL_VALUES = SPECIAL_VALUES.concat(ALT_SPECIAL_VALUES);
+
+export const isSpecial = (value: string) => ALL_SPECIAL_VALUES.includes(value);
 
 export const MAX_UNDO = 50;
 

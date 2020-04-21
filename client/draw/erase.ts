@@ -2,6 +2,7 @@ import { ERASE_CHAR } from "asciiflow/client/constants";
 import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
+import { Layer } from "asciiflow/client/layer";
 
 export class DrawErase extends AbstractDrawFunction {
   private startPosition: Vector;
@@ -13,24 +14,24 @@ export class DrawErase extends AbstractDrawFunction {
   }
 
   move(position: Vector) {
-    store.canvas.clearDraw();
+    const layer = new Layer();
     this.endPosition = position;
 
-    var startX = Math.min(this.startPosition.x, this.endPosition.x);
-    var startY = Math.min(this.startPosition.y, this.endPosition.y);
-    var endX = Math.max(this.startPosition.x, this.endPosition.x);
-    var endY = Math.max(this.startPosition.y, this.endPosition.y);
+    const startX = Math.min(this.startPosition.x, this.endPosition.x);
+    const startY = Math.min(this.startPosition.y, this.endPosition.y);
+    const endX = Math.max(this.startPosition.x, this.endPosition.x);
+    const endY = Math.max(this.startPosition.y, this.endPosition.y);
 
-    for (var i = startX; i <= endX; i++) {
-      for (var j = startY; j <= endY; j++) {
-        store.canvas.drawValue(new Vector(i, j), ERASE_CHAR);
+    for (let i = startX; i <= endX; i++) {
+      for (let j = startY; j <= endY; j++) {
+        layer.set(new Vector(i, j), ERASE_CHAR);
       }
     }
-    store.canvas.apply();
+    store.canvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitDraw();
+    store.canvas.commitScratch();
   }
 
   getCursor() {

@@ -1,6 +1,9 @@
 import * as constants from "asciiflow/client/constants";
+import { isSpecial } from "asciiflow/client/constants";
+import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { drawLine } from "asciiflow/client/draw/utils";
-import { CanvasStore } from "asciiflow/client/canvas_store";
+import { Layer } from "asciiflow/client/layer";
+import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
 interface IEnd {
@@ -10,11 +13,9 @@ interface IEnd {
   midPointIsAlt?: boolean;
   endIsAlt: boolean;
 }
-export class DrawMove {
+export class DrawMove extends AbstractDrawFunction {
   private startPosition: Vector;
   private ends: IEnd[] = [];
-
-  constructor(private state: CanvasStore) {}
 
   start(position: Vector) {
     this.startPosition = constants.TOUCH_ENABLED
@@ -23,10 +24,10 @@ export class DrawMove {
     this.ends = [];
 
     // If this isn't a special cell then quit, or things get weird.
-    if (!this.state.getCell(this.startPosition).isSpecial()) {
+    if (!constants.isSpecial(store.canvas.committed.get(position))) {
       return;
     }
-    const context = this.state.getContext(this.startPosition);
+    const context = store.canvas.committed.context(this.startPosition);
 
     const ends: IEnd[] = [];
     for (const i of constants.DIRECTIONS) {
@@ -36,14 +37,14 @@ export class DrawMove {
         const clockwise = i.x !== 0;
         const startIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
-            this.state.getCell(position).getRawValue()
+            store.canvas.committed.get(position)
           ) !== -1;
         const midPointIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
-            this.state.getCell(midPoint).getRawValue()
+            store.canvas.committed.get(midPoint)
           ) !== -1;
 
-        const midPointContext = this.state.getContext(midPoint);
+        const midPointContext = store.canvas.committed.context(midPoint);
         // Special case, a straight line with no turns.
         if (midPointContext.sum() === 1) {
           ends.push({
@@ -68,7 +69,7 @@ export class DrawMove {
           const secondEnd = secondEnds[0];
           const endIsAlt =
             constants.ALT_SPECIAL_VALUES.indexOf(
-              this.state.getCell(secondEnd).getRawValue()
+              store.canvas.committed.get(secondEnd)
             ) !== -1;
           // On the second line we don't care about multiple
           // junctions, just the last.
@@ -88,41 +89,33 @@ export class DrawMove {
   }
 
   move(position: Vector) {
-    this.state.clearDraw();
+    const layer = new Layer();
     // Clear all the lines so we can draw them afresh.
     for (const end of this.ends) {
-      drawLine(
-        this.state,
-        this.startPosition,
-        end.position,
-        end.clockwise,
-        " "
-      );
+      drawLine(layer, this.startPosition, end.position, end.clockwise, " ");
     }
     for (const end of this.ends) {
-      drawLine(this.state, position, end.position, end.clockwise);
+      drawLine(layer, position, end.position, end.clockwise);
     }
     for (const end of this.ends) {
       // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
       if (end.startIsAlt) {
-        this.state.drawValue(position, constants.ALT_SPECIAL_VALUE);
+        layer.set(position, constants.ALT_SPECIAL_VALUE);
       }
       if (end.endIsAlt) {
-        this.state.drawValue(end.position, constants.ALT_SPECIAL_VALUE);
+        layer.set(end.position, constants.ALT_SPECIAL_VALUE);
       }
       if (end.midPointIsAlt) {
         const midX = end.clockwise ? end.position.x : position.x;
         const midY = end.clockwise ? position.y : end.position.y;
-        this.state.drawValue(
-          new Vector(midX, midY),
-          constants.ALT_SPECIAL_VALUE
-        );
+        layer.set(new Vector(midX, midY), constants.ALT_SPECIAL_VALUE);
       }
     }
+    store.canvas.setScratchLayer(layer);
   }
 
   end() {
-    this.state.commitDraw();
+    store.canvas.commitScratch();
   }
 
   /**
@@ -135,7 +128,7 @@ export class DrawMove {
     const junctions = [];
     while (true) {
       const nextEnd = endPosition.add(direction);
-      if (!this.state.getCell(nextEnd).isSpecial()) {
+      if (!isSpecial(store.canvas.committed.get(nextEnd))) {
         // Junctions: Right angles and end T-Junctions.
         if (!startPosition.equals(endPosition)) {
           junctions.push(endPosition);
@@ -144,7 +137,7 @@ export class DrawMove {
       }
 
       endPosition = nextEnd;
-      const context = this.state.getContext(endPosition);
+      const context = store.canvas.committed.context(endPosition);
       // Junctions: Side T-Junctions.
       if (context.sum() === 3) {
         junctions.push(endPosition);
@@ -158,7 +151,7 @@ export class DrawMove {
    * including diagonally.
    */
   snapToNearest(position: Vector) {
-    if (this.state.getCell(position).isSpecial()) {
+    if (isSpecial(store.canvas.committed.get(position))) {
       return position;
     }
     const allDirections = constants.DIRECTIONS.concat([
@@ -173,9 +166,9 @@ export class DrawMove {
     for (const direction of allDirections) {
       // Find the most connected cell, essentially.
       const newPos = position.add(direction);
-      const contextSum = this.state.getContext(newPos).sum();
+      const contextSum = store.canvas.committed.context(newPos).sum();
       if (
-        this.state.getCell(newPos).isSpecial() &&
+        isSpecial(store.canvas.committed.get(newPos)) &&
         contextSum > bestContextSum
       ) {
         bestDirection = direction;
@@ -190,7 +183,7 @@ export class DrawMove {
   }
 
   getCursor(position: Vector) {
-    if (this.state.getCell(position).isSpecial()) {
+    if (isSpecial(store.canvas.committed.get(position))) {
       return "pointer";
     } else {
       return "default";

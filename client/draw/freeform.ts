@@ -1,10 +1,10 @@
 import { TOUCH_ENABLED } from "asciiflow/client/constants";
-import { CanvasStore } from "asciiflow/client/canvas_store";
 import { IDrawFunction } from "asciiflow/client/draw/function";
+import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
 export class DrawFreeform implements IDrawFunction {
-  constructor(private state: CanvasStore, private value: string) {
+  constructor(private value: string) {
     if (TOUCH_ENABLED) {
       // $("#freeform-tool-input").val("");
       // $("#freeform-tool-input").hide(0, function () {
@@ -16,15 +16,15 @@ export class DrawFreeform implements IDrawFunction {
   }
 
   start(position: Vector) {
-    this.state.drawValue(position, this.value);
+    store.canvas.scratch.set(position, this.value);
   }
 
   move(position: Vector) {
-    this.state.drawValue(position, this.value);
+    store.canvas.scratch.set(position, this.value);
   }
 
   end() {
-    this.state.commitDraw();
+    store.canvas.commitScratch();
   }
 
   getCursor(position: Vector) {
@@ -37,7 +37,7 @@ export class DrawFreeform implements IDrawFunction {
       // $("#freeform-tool-input").blur();
       // $("#freeform-tool-input").hide(0);
     }
-    if (value.length == 1) {
+    if (value.length === 1) {
       // The value is not a special character, so lets use it.
       this.value = value;
     }

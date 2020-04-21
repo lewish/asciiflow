@@ -1,373 +1,264 @@
-import { Vector } from "asciiflow/client/vector";
-import {
-  Cell,
-  MappedValue,
-  MappedCell,
-  CellContext,
-  Box,
-} from "asciiflow/client/common";
+import { Box, ExtendedCellContext } from "asciiflow/client/common";
 import * as constants from "asciiflow/client/constants";
-import { observable, action, computed } from "mobx";
+import { Layer, LayerView } from "asciiflow/client/layer";
 import { store } from "asciiflow/client/store";
+import { Persistent } from "asciiflow/client/store/persistent";
+import { Vector } from "asciiflow/client/vector";
+import { action, observable } from "mobx";
+import { Characters } from "asciiflow/client/constants";
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
-  private cells: Cell[][] = new Array(constants.MAX_GRID_WIDTH);
-  public scratchCells: MappedCell[] = [];
-  public undoStates: MappedValue[][] = [];
-  public redoStates: MappedValue[][] = [];
+  @observable public persistentCommitted = Persistent.custom(
+    "layer",
+    new Layer(),
+    Layer
+  );
+  @observable public scratch = new Layer();
 
-  @observable public dirty = 0;
-
-  public getCells() {
-    // Instead of keeping track of every tiny single cell change, we instead just track a dirty counter.
-    // tslint:disable-next-line: no-unused-expression
-    this.dirty;
-    return this.cells;
+  get committed() {
+    return this.persistentCommitted.get();
   }
 
-  constructor() {
-    for (let i = 0; i < this.cells.length; i++) {
-      this.cells[i] = new Array(constants.MAX_GRID_HEIGHT);
-      for (let j = 0; j < this.cells[i].length; j++) {
-        this.cells[i][j] = new Cell();
-      }
-    }
+  set committed(value: Layer) {
+    this.persistentCommitted.set(value);
   }
 
-  @action.bound apply() {
-    this.dirty = (this.dirty + 1) % Number.MAX_SAFE_INTEGER;
+  get combined() {
+    return new LayerView([this.committed, this.scratch]);
+  }
+
+  @observable public undoLayers: Layer[] = [];
+  @observable public redoLayers: Layer[] = [];
+
+  @action.bound setScratchLayer(layer: Layer) {
+    this.scratch = layer;
   }
 
   /**
    * This clears the entire state, but is undoable.
    */
   @action.bound clear() {
-    for (let i = 0; i < this.cells.length; i++) {
-      for (let j = 0; j < this.cells[i].length; j++) {
-        if (this.cells[i][j].getRawValue() != null) {
-          this.drawValue(new Vector(i, j), constants.ERASE_CHAR);
-        }
-      }
-    }
-    this.commitDraw();
-  }
-
-  /**
-   * Returns the cell at the given coordinates.
-   */
-  getCell(vector: Vector) {
-    return this.cells[vector.x][vector.y];
-  }
-
-  /**
-   * Sets the cells scratch (uncommitted) value at the given position.
-   */
-  drawValue(position: Vector, value: string) {
-    const cell = this.getCell(position);
-    this.scratchCells.push(new MappedCell(position, cell));
-    cell.scratchValue = value;
-  }
-
-  /**
-   * Sets the cells scratch (uncommitted) value at the given position
-   * iff the value is different to what it already is.
-   */
-  drawValueIncremental(position: Vector, value: string) {
-    if (this.getCell(position).getRawValue() != value) {
-      this.drawValue(position, value);
-    }
+    this.undoLayers.push(this.committed);
+    this.persistentCommitted.set(new Layer());
+    this.redoLayers = [];
   }
 
   /**
    * Clears the current drawing scratchpad.
    */
-  clearDraw() {
-    for (const { cell } of this.scratchCells) {
-      cell.scratchValue = null;
-    }
-    this.scratchCells.length = 0;
+  clearScratch() {
+    this.scratch = new Layer();
   }
 
   /**
    * Returns the draw value of a cell at the given position.
    */
   getDrawValue(position: Vector) {
-    const characterSet = store.unicode.value
-      ? constants.UNICODE
-      : constants.ASCII;
+    const characterSet = store.characters;
 
-    const cell = this.getCell(position);
-    const value = cell.scratchValue != null ? cell.scratchValue : cell.value;
-    const isSpecial = constants.SPECIAL_VALUES.includes(value);
-    const isAltSpecial = constants.ALT_SPECIAL_VALUES.includes(value);
-    if (!isSpecial && !isAltSpecial) {
-      return value;
-    }
+    const combined = this.combined;
+    const value = combined.get(position);
+    const isLine = Characters.isLine(value);
+    const isArrow = Characters.isArrow(value);
 
-    // Because the underlying state only stores actual cell values and there is
-    // no underlying representation of shapes, we do a lot of crazy logic here
-    // to make diagrams display as expected.
-    const context = this.getContext(position);
-
-    if (
-      isSpecial &&
-      context.left &&
-      context.right &&
-      !context.up &&
-      !context.down
-    ) {
-      return characterSet.lineHorizontal;
-    }
-    if (
-      isSpecial &&
-      !context.left &&
-      !context.right &&
-      context.up &&
-      context.down
-    ) {
-      return characterSet.lineVertical;
-    }
-    if (context.sum() == 4) {
-      return characterSet.junctionAll;
-    }
-    if (isAltSpecial && context.sum() == 3) {
-      if (!context.left) {
-        return characterSet.arrowLeft;
-      }
-      if (!context.up) {
-        return characterSet.arrowDown;
-      }
-      if (!context.down) {
-        return characterSet.arrowDown;
-      }
-      if (!context.right) {
-        return characterSet.arrowRight;
-      }
-    }
-    if ((isSpecial || isAltSpecial) && context.sum() == 3) {
-      this.extendContext(position, context);
-      if (!context.right && context.leftup && context.leftdown) {
-        return characterSet.lineVertical;
-      }
-      if (!context.left && context.rightup && context.rightdown) {
-        return characterSet.lineVertical;
-      }
-      if (!context.down && context.leftup && context.rightup) {
-        return characterSet.lineHorizontal;
-      }
-      if (!context.up && context.rightdown && context.leftdown) {
-        return characterSet.lineHorizontal;
-      }
-      const leftupempty = this.getCell(position.left().up()).isEmpty();
-      const rightupempty = this.getCell(position.right().up()).isEmpty();
+    if (isArrow) {
+      // Leave arrows as is, but convert them between character sets.
       if (
-        context.up &&
-        context.left &&
-        context.right &&
-        (!leftupempty || !rightupempty)
+        value === constants.UNICODE.arrowUp ||
+        value === constants.ASCII.arrowUp
       ) {
-        return characterSet.lineHorizontal;
-      }
-      const leftdownempty = this.getCell(position.left().down()).isEmpty();
-      const rightdownempty = this.getCell(position.right().down()).isEmpty();
-      if (
-        context.down &&
-        context.left &&
-        context.right &&
-        (!leftdownempty || !rightdownempty)
-      ) {
-        return characterSet.lineHorizontal;
-      }
-      if (context.left && context.right && context.down) {
-        return characterSet.junctionDown;
-      }
-      if (context.left && context.right && context.up) {
-        return characterSet.junctionUp;
-      }
-      if (context.left && context.up && context.down) {
-        return characterSet.junctionLeft;
-      }
-      if (context.up && context.right && context.down) {
-        return characterSet.junctionRight;
-      }
-      return constants.SPECIAL_VALUE;
-    }
-
-    if (isAltSpecial && context.sum() == 1) {
-      if (context.left) {
-        return characterSet.arrowRight;
-      }
-      if (context.up) {
-        return characterSet.arrowDown;
-      }
-      if (context.down) {
         return characterSet.arrowUp;
       }
-      if (context.right) {
+      if (
+        value === constants.UNICODE.arrowDown ||
+        value === constants.ASCII.arrowDown
+      ) {
+        return characterSet.arrowDown;
+      }
+      if (
+        value === constants.UNICODE.arrowLeft ||
+        value === constants.ASCII.arrowLeft
+      ) {
         return characterSet.arrowLeft;
       }
+      if (
+        value === constants.UNICODE.arrowRight ||
+        value === constants.ASCII.arrowRight
+      ) {
+        return characterSet.arrowRight;
+      }
     }
 
-    if (isSpecial && context.sum() === 2) {
-      if (context.right && context.down) {
-        return characterSet.cornerTopLeft;
+    if (isLine) {
+      const context = combined.context(position);
+
+      // Terminating character in a line.
+      if (context.sum() === 1) {
+        if (context.left || context.right) {
+          return characterSet.lineHorizontal;
+        }
+        if (context.up || context.down) {
+          return characterSet.lineVertical;
+        }
       }
-      if (context.left && context.down) {
-        return characterSet.cornerTopRight;
+      // Line sections or corners.
+      if (context.sum() === 2) {
+        if (context.left && context.right) {
+          return characterSet.lineHorizontal;
+        }
+        if (context.up && context.down) {
+          return characterSet.lineVertical;
+        }
+        if (context.right && context.down) {
+          return characterSet.cornerTopLeft;
+        }
+        if (context.left && context.down) {
+          return characterSet.cornerTopRight;
+        }
+        if (context.right && context.up) {
+          return characterSet.cornerBottomLeft;
+        }
+        if (context.left && context.up) {
+          return characterSet.cornerBottomRight;
+        }
       }
-      if (context.right && context.up) {
-        return characterSet.cornerBottomLeft;
+
+      // Three way junctions.
+      if (context.sum() === 3) {
+        if (!context.right && context.leftup && context.leftdown) {
+          return characterSet.lineVertical;
+        }
+        if (!context.left && context.rightup && context.rightdown) {
+          return characterSet.lineVertical;
+        }
+        if (!context.down && context.leftup && context.rightup) {
+          return characterSet.lineHorizontal;
+        }
+        if (!context.up && context.rightdown && context.leftdown) {
+          return characterSet.lineHorizontal;
+        }
+        const leftupempty = !!combined.get(position.left().up());
+        const rightupempty = !!combined.get(position.right().up());
+        if (
+          context.up &&
+          context.left &&
+          context.right &&
+          (!leftupempty || !rightupempty)
+        ) {
+          return characterSet.lineHorizontal;
+        }
+        const leftdownempty = !!combined.get(position.left().down());
+        const rightdownempty = !!combined.get(position.right().down());
+        if (
+          context.down &&
+          context.left &&
+          context.right &&
+          (!leftdownempty || !rightdownempty)
+        ) {
+          return characterSet.lineHorizontal;
+        }
+        // Special cases here are to not put junctions when there is
+        // an adjacent connection arrow that doesn't embed into the line.
+        if (context.left && context.right && context.down) {
+          if (Characters.isArrow(combined.get(position.down()))) {
+            return characterSet.lineHorizontal;
+          }
+          return characterSet.junctionDown;
+        }
+        if (context.left && context.right && context.up) {
+          if (Characters.isArrow(combined.get(position.up()))) {
+            return characterSet.lineHorizontal;
+          }
+          return characterSet.junctionUp;
+        }
+        if (context.left && context.up && context.down) {
+          if (Characters.isArrow(combined.get(position.left()))) {
+            return characterSet.lineVertical;
+          }
+          return characterSet.junctionLeft;
+        }
+        if (context.up && context.right && context.down) {
+          if (Characters.isArrow(combined.get(position.right()))) {
+            return characterSet.lineVertical;
+          }
+          return characterSet.junctionRight;
+        }
+        return constants.SPECIAL_VALUE;
       }
-      if (context.left && context.up) {
-        return characterSet.cornerBottomRight;
-      }
-      if (context.left && context.right) {
-        return characterSet.lineHorizontal;
-      }
-      if (context.up && context.down) {
-        return characterSet.lineVertical;
+
+      // Four way junctions.
+      if (context.sum() === 4) {
+        return characterSet.junctionAll;
       }
     }
+
     return value;
-  }
-
-  getContext(position: Vector) {
-    const left = this.getCell(position.left()).isSpecial();
-    const right = this.getCell(position.right()).isSpecial();
-    const up = this.getCell(position.up()).isSpecial();
-    const down = this.getCell(position.down()).isSpecial();
-    return new CellContext(left, right, up, down);
-  }
-
-  extendContext(position: Vector, context: CellContext) {
-    context.leftup = this.getCell(position.left().up()).isSpecial();
-    context.rightup = this.getCell(position.right().up()).isSpecial();
-    context.leftdown = this.getCell(position.left().down()).isSpecial();
-    context.rightdown = this.getCell(position.right().down()).isSpecial();
   }
 
   /**
    * Ends the current draw, commiting anything currently drawn the scratchpad.
    */
-  @action.bound commitDraw(opt_undo = false) {
-    const oldValues = [];
-
-    // Dedupe the scratch values, or this causes havoc for history management.
-    const positions = this.scratchCells.map((value) => {
-      return value.position.x.toString() + value.position.y.toString();
-    });
-    const scratchCellsUnique = this.scratchCells.filter((value, index, arr) => {
-      return positions.indexOf(positions[index]) == index;
-    });
-
-    this.scratchCells.length = 0;
-
-    for (const { position, cell } of scratchCellsUnique) {
-      // Push the effective old value unto the array.
-      oldValues.push(
-        new MappedValue(position, cell.value != null ? cell.value : " ")
-      );
-
-      let newValue = cell.getRawValue();
-      if (newValue == constants.ERASE_CHAR || newValue == " ") {
-        newValue = null;
-      }
-      // Let's store the actual drawed value, so behaviour matches what the user sees.
-      if (cell.isSpecial()) {
-        newValue = this.getDrawValue(position);
-      }
-      cell.scratchValue = null;
-      cell.value = newValue;
-    }
-
-    const stateStack = opt_undo ? this.redoStates : this.undoStates;
-    if (oldValues.length > 0) {
-      // If we have too many states, clear one out.
-      if (stateStack.length > constants.MAX_UNDO) {
-        stateStack.shift();
-      }
-      stateStack.push(oldValues);
-    }
-    this.apply();
+  @action.bound commitScratch() {
+    const [newLayer, undoLayer] = this.committed.apply(this.scratch);
+    this.committed = newLayer;
+    this.undoLayers.push(undoLayer);
+    // If you commit something new, delete the redo stack.
+    this.redoLayers = [];
+    this.scratch = new Layer();
   }
 
   /**
    * Undoes the last committed state.
    */
   @action.bound undo() {
-    if (this.undoStates.length == 0) {
+    if (this.undoLayers.length === 0) {
       return;
     }
-
-    const lastState = this.undoStates.pop();
-    for (const { position, value } of lastState) {
-      this.drawValue(position, value);
-    }
-    this.commitDraw(true);
+    const [newLayer, redoLayer] = this.committed.apply(this.undoLayers.pop());
+    this.committed = newLayer;
+    this.redoLayers.push(redoLayer);
   }
 
   /**
    * Redoes the last undone.
    */
   @action.bound redo() {
-    if (this.redoStates.length == 0) {
+    if (this.redoLayers.length === 0) {
       return;
     }
-
-    const lastState = this.redoStates.pop();
-    for (const { position, value } of lastState) {
-      this.drawValue(position, value);
-    }
-    this.commitDraw();
+    const [newLayer, undoLayer] = this.committed.apply(this.redoLayers.pop());
+    this.committed = newLayer;
+    this.undoLayers.push(undoLayer);
   }
 
-  /**
-   * Outputs the entire contents of the diagram as text.
-   * @param {Box=} opt_box
-   * @return {string}
-   */
-  outputText(opt_box?: Box) {
-    // Find the first/last cells in the diagram so we don't output everything.
-    let start = new Vector(Number.MAX_VALUE, Number.MAX_VALUE);
-    let end = new Vector(-1, -1);
+  outputText(box?: Box) {
+    if (!box) {
+      // Find the first/last cells in the diagram so we don't output everything.
+      const start = new Vector(
+        Number.MAX_SAFE_INTEGER,
+        Number.MAX_SAFE_INTEGER
+      );
+      const end = new Vector(Number.MIN_SAFE_INTEGER, Number.MIN_SAFE_INTEGER);
 
-    if (!opt_box) {
-      for (let i = 0; i < this.cells.length; i++) {
-        for (let j = 0; j < this.cells[i].length; j++) {
-          if (this.cells[i][j].getRawValue() != null) {
-            if (i < start.x) {
-              start.x = i;
-            }
-            if (j < start.y) {
-              start.y = j;
-            }
-            if (i > end.x) {
-              end.x = i;
-            }
-            if (j > end.y) {
-              end.y = j;
-            }
-          }
-        }
-      }
-      if (end.x < 0) {
-        return "";
-      }
-    } else {
-      start = opt_box.topLeft();
-      end = opt_box.bottomRight();
+      this.committed.entries().forEach(([position, _]) => {
+        start.x = Math.min(start.x, position.x);
+        start.y = Math.min(start.y, position.y);
+        end.x = Math.max(end.x, position.x);
+        end.y = Math.max(end.y, position.y);
+      });
+      box = new Box(start, end);
     }
 
     let output = "";
-    for (let j = start.y; j <= end.y; j++) {
+    for (let j = box.startY; j <= box.endY; j++) {
       let line = "";
-      for (let i = start.x; i <= end.x; i++) {
+      for (let i = box.startX; i <= box.endX; i++) {
         const val = this.getDrawValue(new Vector(i, j));
-        line += val == null || val == constants.ERASE_CHAR ? " " : val;
+        line += val == null || val === constants.ERASE_CHAR ? " " : val;
       }
       // Trim end whitespace.
       output += line.replace(/\s+$/, "") + "\n";
@@ -379,6 +270,7 @@ export class CanvasStore {
    * Loads the given text into the diagram starting at the given offset (centered).
    */
   fromText(value: string, offset: Vector) {
+    const tempLayer = new Layer();
     const lines = value.split("\n");
     const middle = new Vector(0, Math.round(lines.length / 2));
     for (let j = 0; j < lines.length; j++) {
@@ -394,8 +286,10 @@ export class CanvasStore {
         if (constants.SPECIAL_VALUES.includes(char)) {
           char = constants.SPECIAL_VALUE;
         }
-        this.drawValue(new Vector(i, j).add(offset).subtract(middle), char);
+        tempLayer.set(new Vector(i, j).add(offset).subtract(middle), char);
       }
     }
+    this.setScratchLayer(tempLayer);
+    this.commitScratch();
   }
 }

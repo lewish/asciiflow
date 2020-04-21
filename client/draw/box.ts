@@ -2,6 +2,7 @@ import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { drawLine } from "asciiflow/client/draw/utils";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
+import { Layer } from "asciiflow/client/layer";
 
 export class DrawBox extends AbstractDrawFunction {
   private startPosition: Vector;
@@ -11,14 +12,14 @@ export class DrawBox extends AbstractDrawFunction {
   }
 
   move(position: Vector) {
-    store.canvas.clearDraw();
-    drawLine(store.canvas, this.startPosition, position, true);
-    drawLine(store.canvas, this.startPosition, position, false);
-    store.canvas.apply();
+    const layer = new Layer();
+    drawLine(layer, this.startPosition, position, true);
+    drawLine(layer, this.startPosition, position, false);
+    store.canvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitDraw();
+    store.canvas.commitScratch();
   }
 
   getCursor() {

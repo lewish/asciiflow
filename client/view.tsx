@@ -52,7 +52,8 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
  *       however performance is currently very acceptable on test devices.
  */
 function render(canvas: HTMLCanvasElement) {
-  const cells = store.canvas.getCells();
+  const comitted = store.canvas.committed;
+  const scratch = store.canvas.scratch;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -95,7 +96,7 @@ function render(canvas: HTMLCanvasElement) {
     );
     context.lineTo(
       i * constants.CHAR_PIXELS_H - store.offset.x,
-      cells.length * constants.CHAR_PIXELS_V - store.offset.y
+      2000 * constants.CHAR_PIXELS_V - store.offset.y
     );
   }
   for (let j = startOffset.y; j < endOffset.y; j++) {
@@ -104,7 +105,7 @@ function render(canvas: HTMLCanvasElement) {
       j * constants.CHAR_PIXELS_V - store.offset.y
     );
     context.lineTo(
-      cells.length * constants.CHAR_PIXELS_H - store.offset.x,
+      2000 * constants.CHAR_PIXELS_H - store.offset.x,
       j * constants.CHAR_PIXELS_V - store.offset.y
     );
   }
@@ -112,14 +113,13 @@ function render(canvas: HTMLCanvasElement) {
   context.font = "15px Courier New";
   for (let i = startOffset.x; i < endOffset.x; i++) {
     for (let j = startOffset.y; j < endOffset.y; j++) {
-      const cell = store.canvas.getCell(new Vector(i, j));
+      const position = new Vector(i, j);
+      const value = comitted.get(position);
+      const scratchValue = scratch.get(position);
       // Highlight the cell if it is special (grey) or it is part
       // of a visible edit (blue).
-      if (
-        cell.isSpecial() ||
-        (cell.hasScratch() && cell.getRawValue() != " ")
-      ) {
-        context.fillStyle = cell.hasScratch() ? "#DEF" : "#F5F5F5";
+      if (constants.ALL_SPECIAL_VALUES.includes(value) || scratchValue) {
+        context.fillStyle = scratchValue ? "#DEF" : "#F5F5F5";
         context.fillRect(
           i * constants.CHAR_PIXELS_H - store.offset.x,
           (j - 1) * constants.CHAR_PIXELS_V - store.offset.y,

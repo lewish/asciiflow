@@ -5,7 +5,6 @@
     "max-classes-per-file": [false, 1],
     "no-floating-promises": true,
     "jsx-no-lambda": false,
-    "no-empty": false,
-    "strict-boolean-expressions": true
+    "no-empty": false
   }
 }

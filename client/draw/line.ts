@@ -4,51 +4,65 @@ import {
   SPECIAL_ARROW_RIGHT,
   SPECIAL_ARROW_UP,
 } from "asciiflow/client/constants";
-import { drawLine } from "asciiflow/client/draw/utils";
-import { CanvasStore } from "asciiflow/client/canvas_store";
-import { Vector } from "asciiflow/client/vector";
 import { IDrawFunction } from "asciiflow/client/draw/function";
+import { drawLine } from "asciiflow/client/draw/utils";
+import { Layer } from "asciiflow/client/layer";
+import { store } from "asciiflow/client/store";
+import { Vector } from "asciiflow/client/vector";
+import * as constants from "asciiflow/client/constants";
 
 export class DrawLine implements IDrawFunction {
   private startPosition: Vector;
 
-  constructor(private state: CanvasStore, private isArrow: boolean) {}
+  constructor(private isArrow: boolean) {}
 
   start(position: Vector) {
     this.startPosition = position;
   }
 
   move(position: Vector) {
-    this.state.clearDraw();
-
+    const layer = new Layer();
     // Try to infer line orientation.
     // TODO: Split the line into two lines if we can't satisfy both ends.
-    const startContext = this.state.getContext(this.startPosition);
-    const endContext = this.state.getContext(position);
-    const clockwise =
+    const characters = store.characters;
+
+    const startContext = store.canvas.committed.context(this.startPosition);
+    const endContext = store.canvas.committed.context(position);
+
+    const horizontalStart =
       (startContext.up && startContext.down) ||
-      (endContext.left && endContext.right);
+      (startContext.leftup && startContext.leftdown) ||
+      (startContext.rightup && startContext.rightdown);
 
-    drawLine(this.state, this.startPosition, position, clockwise);
-    if (this.isArrow) {
-      let endValue;
+    const verticalEnd =
+      (endContext.left && endContext.right) ||
+      (endContext.leftup && endContext.rightup) ||
+      (endContext.leftdown && endContext.rightdown);
 
-      if (endContext.up) {
-        endValue = SPECIAL_ARROW_UP;
-      } else if (endContext.down) {
-        endValue = SPECIAL_ARROW_DOWN;
-      } else if (endContext.left) {
-        endValue = SPECIAL_ARROW_LEFT;
+    const horizontalFirst = horizontalStart || verticalEnd;
+
+    drawLine(layer, this.startPosition, position, horizontalFirst);
+
+    const getArrowHead = () => {
+      if (horizontalFirst || position.x === this.startPosition.x) {
+        return position.y < this.startPosition.y
+          ? characters.arrowUp
+          : characters.arrowDown;
       } else {
-        endValue = SPECIAL_ARROW_RIGHT;
+        return position.x > this.startPosition.x
+          ? characters.arrowRight
+          : characters.arrowLeft;
       }
+    };
 
-      this.state.drawValue(position, endValue);
+    if (this.isArrow) {
+      layer.set(position, getArrowHead());
     }
+    store.canvas.setScratchLayer(layer);
   }
 
   end() {
-    this.state.commitDraw();
+    store.canvas.commitScratch();
   }
 
   getCursor(position: Vector) {

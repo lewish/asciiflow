@@ -63,26 +63,36 @@ export class Cell {
   }
 }
 
-/**
- * The context for a cell, i.e. the status of the cells around it.
- */
-export class CellContext {
+
+export class ExtendedCellContext {
   constructor(
     public left: boolean,
     public right: boolean,
     public up: boolean,
     public down: boolean,
-    public leftup = false,
-    public leftdown = false,
-    public rightup = false,
-    public rightdown = false
+    public leftup: boolean,
+    public leftdown: boolean,
+    public rightup: boolean,
+    public rightdown: boolean
   ) {}
 
+  sum() {
+    return +this.left + +this.right + +this.up + +this.down;
+  }
   /**
    * Returns the total number of surrounding special cells.
    */
-  sum() {
-    return +this.left + +this.right + +this.up + +this.down;
+  extendedSum() {
+    return (
+      +this.left +
+      +this.right +
+      +this.up +
+      +this.down +
+      +this.leftup +
+      +this.leftdown +
+      +this.rightup +
+      +this.rightdown
+    );
   }
 }
 

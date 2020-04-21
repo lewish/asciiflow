@@ -4,31 +4,10 @@ import { Vector } from "asciiflow/client/vector";
 import { action, observable } from "mobx";
 import { DrawBox } from "asciiflow/client/draw/box";
 import { IDrawFunction } from "asciiflow/client/draw/function";
-
-export class LocalStorageItem<T> {
-  @observable public value: T = null;
-
-  constructor(public readonly key: string, defaultValue: T) {
-    const localStorageValue = localStorage.getItem(key);
-    if (
-      typeof localStorageValue === "undefined" ||
-      localStorageValue === null
-    ) {
-      this.value = defaultValue;
-    } else {
-      this.value = JSON.parse(localStorageValue) as T;
-    }
-  }
-
-  set(value: T) {
-    this.value = value;
-    localStorage.setItem(this.key, JSON.stringify(value));
-  }
-}
+import { Persistent } from "asciiflow/client/store/persistent";
 
 export class Store {
-  @observable public unicode = new LocalStorageItem("unicode", true);
-  @observable public tool = "box";
+  @observable public unicode = Persistent.json("unicode", true);
   @observable public zoom = 1;
   @observable public offset = new Vector(
     (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
@@ -39,14 +18,14 @@ export class Store {
 
   @observable public drawFunction: IDrawFunction = new DrawBox();
 
+  get characters() {
+    return this.unicode.get() ? constants.UNICODE : constants.ASCII;
+  }
+
   public canvas = new CanvasStore();
 
   @action.bound public setUnicode(value: boolean) {
     this.unicode.set(value);
-  }
-
-  @action.bound public setTool(value: string) {
-    this.tool = value;
   }
 
   @action.bound public setZoom(value: number) {
@@ -55,6 +34,10 @@ export class Store {
 
   @action.bound public setOffset(value: Vector) {
     this.offset = value;
+  }
+
+  @action.bound public setDrawFunction(fn: IDrawFunction) {
+    this.drawFunction = fn;
   }
 }
 
