@@ -64,7 +64,11 @@ export class Controller {
         specialKeyCode = constants.KEY_PASTE;
       }
       if (event.keyCode === 90) {
-        store.canvas.undo();
+        if (event.shiftKey) {
+          store.canvas.redo();
+        } else {
+          store.canvas.undo();
+        }
       }
       if (event.keyCode === 89) {
         store.canvas.redo();
@@ -76,6 +80,9 @@ export class Controller {
 
     if (event.keyCode === 8) {
       specialKeyCode = constants.KEY_BACKSPACE;
+    }
+    if (event.keyCode === 46) {
+      specialKeyCode = constants.KEY_DELETE;
     }
     if (event.keyCode === 13) {
       specialKeyCode = constants.KEY_RETURN;
@@ -111,12 +118,12 @@ export class Controller {
     }
 
     // In drawing mode, so pass the mouse move on, but remove duplicates.
-    if (this.mode == Mode.DRAW && !moveCell.equals(this.lastMoveCell)) {
+    if (this.mode === Mode.DRAW && !moveCell.equals(this.lastMoveCell)) {
       store.drawFunction.move(moveCell);
     }
 
     // Drag in progress, update the view origin.
-    if (this.mode == Mode.DRAG) {
+    if (this.mode === Mode.DRAG && !moveCell.equals(this.lastMoveCell)) {
       store.setOffset(
         this.dragOriginCell.add(
           this.dragOrigin.subtract(position).scale(1 / store.zoom)
@@ -160,7 +167,7 @@ export class DesktopController {
   };
 
   handleWheel = (e: React.WheelEvent<any>) => {
-    const delta = (-e.deltaY);
+    const delta = -e.deltaY;
     const newZoom = store.zoom * (delta > 0 ? 1.1 : 0.9);
     store.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
   };

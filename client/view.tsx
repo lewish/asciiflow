@@ -52,7 +52,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
  *       however performance is currently very acceptable on test devices.
  */
 function render(canvas: HTMLCanvasElement) {
-  const comitted = store.canvas.committed;
+  const committed = store.canvas.committed;
   const scratch = store.canvas.scratch;
 
   const context = canvas.getContext("2d");
@@ -111,31 +111,48 @@ function render(canvas: HTMLCanvasElement) {
   }
   context.stroke();
   context.font = "15px Courier New";
-  for (let i = startOffset.x; i < endOffset.x; i++) {
-    for (let j = startOffset.y; j < endOffset.y; j++) {
-      const position = new Vector(i, j);
-      const value = comitted.get(position);
-      const scratchValue = scratch.get(position);
-      // Highlight the cell if it is special (grey) or it is part
-      // of a visible edit (blue).
-      if (constants.ALL_SPECIAL_VALUES.includes(value) || scratchValue) {
-        context.fillStyle = scratchValue ? "#DEF" : "#F5F5F5";
-        context.fillRect(
-          i * constants.CHAR_PIXELS_H - store.offset.x,
-          (j - 1) * constants.CHAR_PIXELS_V - store.offset.y,
-          constants.CHAR_PIXELS_H,
-          constants.CHAR_PIXELS_V
-        );
-      }
-      const cellValue = store.canvas.getDrawValue(new Vector(i, j));
-      if (cellValue != null) {
-        context.fillStyle = "#000000";
-        context.fillText(
-          cellValue,
-          i * constants.CHAR_PIXELS_H - store.offset.x,
-          j * constants.CHAR_PIXELS_V - store.offset.y - 3
-        );
-      }
+  for (const [position, value] of committed.entries()) {
+    // Highlight the cell if it is special (grey) or it is part
+    // of a visible edit (blue).
+    if (constants.ALL_SPECIAL_VALUES.includes(value)) {
+      context.fillStyle = "#F5F5F5";
+      context.fillRect(
+        position.x * constants.CHAR_PIXELS_H - store.offset.x,
+        (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y,
+        constants.CHAR_PIXELS_H,
+        constants.CHAR_PIXELS_V
+      );
+    }
+    const cellValue = store.canvas.getDrawValue(position);
+    if (cellValue != null && cellValue !== "" && cellValue !== " ") {
+      context.fillStyle = "#000000";
+      context.fillText(
+        cellValue,
+        position.x * constants.CHAR_PIXELS_H - store.offset.x,
+        position.y * constants.CHAR_PIXELS_V - store.offset.y - 3
+      );
+    }
+  }
+  for (const [position] of scratch.entries()) {
+    // Highlight the cell if it is special (grey) or it is part
+    // of a visible edit (blue).
+
+      context.fillStyle =  "#DEF";
+      context.fillRect(
+        position.x * constants.CHAR_PIXELS_H - store.offset.x,
+        (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y,
+        constants.CHAR_PIXELS_H,
+        constants.CHAR_PIXELS_V
+      );
+    
+    const cellValue = store.canvas.getDrawValue(position);
+    if (cellValue != null && cellValue !== "" && cellValue !== " ") {
+      context.fillStyle = "#000000";
+      context.fillText(
+        cellValue,
+        position.x * constants.CHAR_PIXELS_H - store.offset.x,
+        position.y * constants.CHAR_PIXELS_V - store.offset.y - 3
+      );
     }
   }
 }

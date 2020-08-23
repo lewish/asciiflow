@@ -116,7 +116,7 @@ export const Toolbar = () => {
   const [currentTool, setCurrentTool] = useState("box");
   return useObserver(() => (
     <AppBar position="fixed">
-      <MaterialToolbar variant="dense" className={"toolbar"}>
+      <MaterialToolbar className={"toolbar"}>
         <img
           id="logo-bar"
           src="public/images/logo-bar.gif"
@@ -145,6 +145,9 @@ export const Toolbar = () => {
               title={TOOLS[tool].title}
               onClick={() => {
                 setCurrentTool(tool);
+                if (!!store.drawFunction) {
+                  store.drawFunction.cleanup();
+                }
                 store.setDrawFunction(TOOLS[tool].functionProvider());
               }}
             />

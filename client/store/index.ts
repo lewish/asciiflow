@@ -5,8 +5,27 @@ import { action, observable } from "mobx";
 import { DrawBox } from "asciiflow/client/draw/box";
 import { IDrawFunction } from "asciiflow/client/draw/function";
 import { Persistent } from "asciiflow/client/store/persistent";
+import { DrawLine } from "asciiflow/client/draw/line";
+import { DrawSelect } from "asciiflow/client/draw/select";
+
+export enum ToolMode {
+  BOX = 1,
+  SELECT = 2,
+  FREEFORM = 3,
+  ARROWS = 6,
+  LINES = 4,
+  TEXT = 5,
+}
 
 export class Store {
+
+  public readonly boxTool = new DrawBox();
+  public readonly lineTool = new DrawLine(false);
+  public readonly arrowTool = new DrawLine(true);
+  public readonly selectTool = new DrawSelect();
+
+
+  @observable public toolMode = ToolMode.BOX;
   @observable public unicode = Persistent.json("unicode", true);
   @observable public zoom = 1;
   @observable public offset = new Vector(
@@ -38,6 +57,10 @@ export class Store {
 
   @action.bound public setDrawFunction(fn: IDrawFunction) {
     this.drawFunction = fn;
+  }
+
+  @action.bound public setToolMode(toolMode: ToolMode) {
+    this.toolMode = toolMode;
   }
 }
 

@@ -1,13 +1,18 @@
-import { IDrawFunction } from "asciiflow/client/draw/function";
+import {
+  IDrawFunction,
+  AbstractDrawFunction,
+} from "asciiflow/client/draw/function";
 import { drawLine } from "asciiflow/client/draw/utils";
 import { Layer } from "asciiflow/client/layer";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
-export class DrawLine implements IDrawFunction {
+export class DrawLine extends AbstractDrawFunction {
   private startPosition: Vector;
 
-  constructor(private isArrow: boolean) {}
+  constructor(private isArrow: boolean) {
+    super();
+  }
 
   start(position: Vector) {
     this.startPosition = position;
@@ -72,6 +77,4 @@ export class DrawLine implements IDrawFunction {
   getCursor(position: Vector) {
     return "crosshair";
   }
-
-  handleKey(value: string) {}
 }

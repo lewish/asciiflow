@@ -100,9 +100,13 @@ export class Layer extends AbstractLayer {
     const undoLayer = new Layer();
     Array.from(otherLayer.map.entries()).forEach(([key, newValue]) => {
       const oldValue = this.map.get(key);
-      newLayer.map.set(key, newValue);
+      if (newValue === "") {
+        newLayer.map.delete(key);
+      } else {
+        newLayer.map.set(key, newValue);
+      }
       if (oldValue !== newValue) {
-        undoLayer.map.set(key, oldValue);
+        undoLayer.map.set(key, !!oldValue ? oldValue : "");
       }
     });
     return [newLayer, undoLayer];

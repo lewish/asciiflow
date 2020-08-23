@@ -19,6 +19,8 @@ export class CanvasStore {
   );
   @observable public scratch = new Layer();
 
+  @observable public highlightCells: Vector[] = [];
+
   get committed() {
     return this.persistentCommitted.get();
   }
@@ -274,11 +276,13 @@ export class CanvasStore {
     }
 
     let output = "";
-    for (let j = box.startY; j <= box.endY; j++) {
+    const topLeft = box.topLeft();
+    const bottomRight = box.bottomRight();
+    for (let j = topLeft.y; j <= bottomRight.y; j++) {
       let line = "";
-      for (let i = box.startX; i <= box.endX; i++) {
+      for (let i = topLeft.x; i <= bottomRight.x; i++) {
         const val = this.getDrawValue(new Vector(i, j));
-        line += val == null || val === constants.ERASE_CHAR ? " " : val;
+        line += val == null ? " " : val;
       }
       // Trim end whitespace.
       output += line.replace(/\s+$/, "") + "\n";

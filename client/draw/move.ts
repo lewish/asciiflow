@@ -91,7 +91,7 @@ export class DrawMove extends AbstractDrawFunction {
     const layer = new Layer();
     // Clear all the lines so we can draw them afresh.
     for (const end of this.ends) {
-      drawLine(layer, this.startPosition, end.position, end.clockwise, " ");
+      drawLine(layer, this.startPosition, end.position, end.clockwise, "");
     }
     for (const end of this.ends) {
       drawLine(layer, position, end.position, end.clockwise);
@@ -187,7 +187,7 @@ export class DrawMove extends AbstractDrawFunction {
 
   getCursor(position: Vector) {
     if (isSpecial(store.canvas.committed.get(position))) {
-      return "pointer";
+      return "move";
     } else {
       return "default";
     }

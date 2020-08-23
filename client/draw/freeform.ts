@@ -1,18 +1,14 @@
 import { TOUCH_ENABLED } from "asciiflow/client/constants";
-import { IDrawFunction } from "asciiflow/client/draw/function";
+import {
+  IDrawFunction,
+  AbstractDrawFunction,
+} from "asciiflow/client/draw/function";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
-export class DrawFreeform implements IDrawFunction {
+export class DrawFreeform extends AbstractDrawFunction {
   constructor(private value: string) {
-    if (TOUCH_ENABLED) {
-      // $("#freeform-tool-input").val("");
-      // $("#freeform-tool-input").hide(0, function () {
-      //   $("#freeform-tool-input").show(0, function () {
-      //     $("#freeform-tool-input").focus();
-      //   });
-      // });
-    }
+    super();
   }
 
   start(position: Vector) {

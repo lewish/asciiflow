@@ -118,8 +118,6 @@ export const MAX_UNDO = 50;
 export const SPECIAL_LINE_H = "-";
 export const SPECIAL_LINE_V = "|";
 
-export const ERASE_CHAR = "\u2009";
-
 export const DRAG_LATENCY = 150; // Milliseconds.
 export const DRAG_ACCURACY = 6; // Pixels.
 
@@ -130,6 +128,7 @@ export const RENDER_PADDING_CELLS = 3;
 
 export const KEY_RETURN = "<enter>";
 export const KEY_BACKSPACE = "<backspace>";
+export const KEY_DELETE = "<delete>";
 export const KEY_COPY = "<copy>";
 export const KEY_PASTE = "<paste>";
 export const KEY_CUT = "<cut>";

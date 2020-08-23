@@ -15,10 +15,10 @@ export function drawLine(
   value = SPECIAL_VALUE
 ) {
   const box = new Box(startPosition, endPosition);
-  let startX = box.startX;
-  let startY = box.startY;
-  const endX = box.endX;
-  const endY = box.endY;
+  let startX = box.topLeft().x;
+  let startY = box.topLeft().y;
+  const endX = box.bottomRight().x;
+  const endY = box.bottomRight().y;
 
   const midX = clockwise ? endPosition.x : startPosition.x;
   const midY = clockwise ? startPosition.y : endPosition.y;

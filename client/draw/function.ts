@@ -24,6 +24,11 @@ export interface IDrawFunction {
    * Handle the key with given value being pressed.
    */
   handleKey(value: string): void;
+
+  /**
+   * When exiting the tool.
+   */
+  cleanup(): void;
 }
 
 export abstract class AbstractDrawFunction implements IDrawFunction {
@@ -34,4 +39,5 @@ export abstract class AbstractDrawFunction implements IDrawFunction {
     return "default";
   }
   handleKey(value: string): void {}
+  cleanup(): void {}
 }

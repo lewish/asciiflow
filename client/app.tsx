@@ -8,6 +8,7 @@ import { Toolbar } from "asciiflow/client/toolbar";
 import { View } from "asciiflow/client/view";
 import { BrowserRouter, Route } from "react-router-dom";
 import ReactDOM = require("react-dom");
+import { Drawer } from "asciiflow/client/drawer";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -17,6 +18,7 @@ export const App = () => {
   return (
     <>
       <Toolbar />
+      <Drawer />
       <View
         {...desktopController.getHandlerProps()}
         {...touchController.getHandlerProps()}

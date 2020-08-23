@@ -1,0 +1,15 @@
+.drawer {
+  width: 250px;
+
+  .logo {
+    width: 150px;
+    margin: -3px 10px 0px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+  }
+}

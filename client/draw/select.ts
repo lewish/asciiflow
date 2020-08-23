@@ -1,149 +1,157 @@
-import { IDrawFunction, AbstractDrawFunction } from "asciiflow/client/draw/function";
 import {
-  ERASE_CHAR,
-  KEY_COPY,
-  KEY_CUT,
-  KEY_PASTE,
-} from "asciiflow/client/constants";
+  IDrawFunction,
+  AbstractDrawFunction,
+} from "asciiflow/client/draw/function";
+import { KEY_COPY, KEY_CUT, KEY_PASTE, KEY_BACKSPACE, KEY_DELETE } from "asciiflow/client/constants";
 import { Vector } from "asciiflow/client/vector";
 import { CanvasStore } from "asciiflow/client/canvas_store";
 import { MappedValue, Box } from "asciiflow/client/common";
 import { DrawErase } from "asciiflow/client/draw/erase";
+import { store } from "asciiflow/client/store";
+import { Layer } from "asciiflow/client/layer";
+import { DrawMove } from "asciiflow/client/draw/move";
+import { isSpecial } from "asciiflow/client/constants";
 
-/**
- * @implements {DrawFunction}
- */
 export class DrawSelect extends AbstractDrawFunction {
-  // private startPosition: Vector;
-  // private endPosition: Vector;
-  // private dragStart: Vector;
-  // private dragEnd: Vector;
-  // private finished = true;
-  // private selectedCells: MappedValue[] = [];
+  private moveTool: DrawMove;
 
-  // constructor(private state: CanvasStore) {}
+  private copiedLayer: Layer;
 
-  // start(position: Vector) {
-  //   // Must be dragging.
-  //   if (
-  //     this.startPosition != null &&
-  //     this.endPosition != null &&
-  //     this.getSelectedBox().contains(position)
-  //   ) {
-  //     this.dragStart = position;
-  //     this.copyArea();
-  //     this.dragMove(position);
-  //   } else {
-  //     this.startPosition = position;
-  //     this.endPosition = null;
-  //     this.finished = false;
-  //     this.move(position);
-  //   }
-  // }
+  private selectBox: Box;
 
-  // getSelectedBox() {
-  //   return new Box(this.startPosition, this.endPosition);
-  // }
+  private dragStart: Vector;
+  private dragEnd: Vector;
 
-  // copyArea() {
-  //   const nonEmptyCells = this.state.scratchCells.filter(function (value) {
-  //     const rawValue = value.cell.getRawValue();
-  //     return (
-  //       value.cell.getRawValue() != null &&
-  //       value.cell.getRawValue() != ERASE_CHAR
-  //     );
-  //   });
-  //   const topLeft = this.getSelectedBox().topLeft();
-  //   this.selectedCells = nonEmptyCells.map(function (value) {
-  //     return new MappedValue(
-  //       value.position.subtract(topLeft),
-  //       value.cell.getRawValue()
-  //     );
-  //   });
-  // }
+  start(position: Vector) {
+    if (this.selectBox != null && this.selectBox.contains(position)) {
+      // Start a drag.
+      this.startDrag(position);
+    } else if (isSpecial(store.canvas.committed.get(position))) {
+      // Start a resize.
+      this.moveTool = new DrawMove();
+      this.moveTool.start(position);
+    } else {
+      // Start a selection.
+      this.startSelect(position);
+    }
+  }
 
-  // move(position: Vector) {
-  //   if (this.dragStart != null) {
-  //     this.dragMove(position);
-  //     return;
-  //   }
+  startSelect(position: Vector) {
+    this.selectBox = new Box(position, position);
+  }
 
-  //   if (this.finished == true) {
-  //     return;
-  //   }
-  //   this.endPosition = position;
-  //   this.state.clearDraw();
+  startDrag(position: Vector) {
+    this.dragStart = position;
+    this.dragEnd = position;
+  }
 
-  //   const box = new Box(this.startPosition, position);
+  move(position: Vector) {
+    if (this.dragStart != null) {
+      this.moveDrag(position);
+    } else if (!!this.moveTool) {
+      this.moveTool.move(position);
+    } else {
+      this.moveSelect(position);
+    }
+  }
 
-  //   for (let i = box.startX; i <= box.endX; i++) {
-  //     for (let j = box.startY; j <= box.endY; j++) {
-  //       const current = new Vector(i, j);
-  //       // Effectively highlights the cell.
-  //       const currentValue = this.state.getCell(current).getRawValue();
-  //       this.state.drawValue(
-  //         current,
-  //         currentValue == null ? ERASE_CHAR : currentValue
-  //       );
-  //     }
-  //   }
-  // }
+  moveSelect(position: Vector) {
+    this.selectBox = new Box(this.selectBox.start, position);
 
-  // dragMove(position: Vector) {
-  //   this.dragEnd = position;
-  //   this.state.clearDraw();
-  //   const eraser = new DrawErase();
-  //   eraser.start(this.startPosition);
-  //   eraser.move(this.endPosition);
-  //   const startPos = this.dragEnd
-  //     .subtract(this.dragStart)
-  //     .add(this.getSelectedBox().topLeft());
-  //   this.drawSelected(startPos);
-  // }
+    const selectionLayer = new Layer();
 
-  // drawSelected(startPos: Vector) {
-  //   for (const { position, value } of this.selectedCells) {
-  //     this.state.drawValue(position.add(startPos), value);
-  //   }
-  // }
+    store.canvas.committed.entries().forEach(([key, value]) => {
+      if (this.selectBox.contains(key)) {
+        selectionLayer.set(key, value);
+      }
+    });
 
-  // end() {
-  //   if (this.dragStart != null) {
-  //     this.state.commitDraw();
-  //     this.startPosition = null;
-  //     this.endPosition = null;
-  //   }
-  //   this.dragStart = null;
-  //   this.dragEnd = null;
-  //   this.finished = true;
-  // }
+    store.canvas.setScratchLayer(selectionLayer);
+  }
 
-  // getCursor(position: Vector) {
-  //   if (
-  //     this.startPosition != null &&
-  //     this.endPosition != null &&
-  //     new Box(this.startPosition, this.endPosition).contains(position)
-  //   ) {
-  //     return "pointer";
-  //   }
-  //   return "default";
-  // }
+  moveDrag(position: Vector) {
+    this.dragEnd = position;
+    const moveDelta = this.dragEnd.subtract(this.dragStart);
 
-  // handleKey(value: String) {
-  //   if (this.startPosition != null && this.endPosition != null) {
-  //     if (value == KEY_COPY || value == KEY_CUT) {
-  //       this.copyArea();
-  //     }
-  //     if (value == KEY_CUT) {
-  //       const eraser = new DrawErase();
-  //       eraser.start(this.startPosition);
-  //       eraser.move(this.endPosition);
-  //       this.state.commitDraw();
-  //     }
-  //   }
-  //   if (value == KEY_PASTE) {
-  //     this.drawSelected(this.startPosition);
-  //     this.state.commitDraw();
-  //   }
-  // }
+    const layer = new Layer();
+
+    // Erase existing drawing.
+    store.canvas.committed.entries().forEach(([key]) => {
+      if (this.selectBox.contains(key)) {
+        layer.set(key, "");
+      }
+    });
+    // Move characters.
+    store.canvas.committed.entries().forEach(([key, value]) => {
+      if (this.selectBox.contains(key)) {
+        layer.set(key.add(moveDelta), value);
+      }
+    });
+
+    store.canvas.setScratchLayer(layer);
+  }
+
+  end() {
+    if (this.dragStart != null) {
+      store.canvas.commitScratch();
+      this.selectBox = null;
+    } else if (!!this.moveTool) {
+      this.moveTool.end();
+      this.moveTool = null;
+    }
+    this.dragStart = null;
+    this.dragEnd = null;
+  }
+
+  getCursor(position: Vector) {
+    if (this.selectBox != null && this.selectBox.contains(position)) {
+      return "pointer";
+    }
+    if (isSpecial(store.canvas.committed.get(position))) {
+      return "move";
+    }
+    return "default";
+  }
+
+  handleKey(value: string) {
+    if (this.selectBox != null) {
+      if (value === KEY_COPY || value === KEY_CUT) {
+        this.copiedLayer = new Layer();
+        store.canvas.committed.entries().forEach(([key, value]) => {
+          if (this.selectBox.contains(key)) {
+            this.copiedLayer.set(key, value);
+          }
+        });
+      }
+      if (value === KEY_CUT) {
+        const layer = new Layer();
+        store.canvas.committed.entries().forEach(([key]) => {
+          if (this.selectBox.contains(key)) {
+            layer.set(key, "");
+          }
+        });
+        store.canvas.setScratchLayer(layer);
+        store.canvas.commitScratch();
+      }
+    }
+    if (value === KEY_BACKSPACE || value === KEY_DELETE) {
+      const layer = new Layer();
+      store.canvas.committed.entries().forEach(([key]) => {
+        if (this.selectBox.contains(key)) {
+          layer.set(key, "");
+        }
+      });
+      store.canvas.setScratchLayer(layer);
+      store.canvas.commitScratch();
+    }
+
+    if (value === KEY_PASTE) {
+      const offsetLayer = new Layer();
+      this.copiedLayer.entries().forEach(([key, value]) => {
+        offsetLayer.set(key.add(this.dragEnd.subtract(this.dragStart)), value);
+      });
+      store.canvas.setScratchLayer(offsetLayer);
+      store.canvas.commitScratch();
+    }
+  }
 }

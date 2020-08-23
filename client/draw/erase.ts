@@ -1,4 +1,3 @@
-import { ERASE_CHAR } from "asciiflow/client/constants";
 import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
@@ -24,7 +23,7 @@ export class DrawErase extends AbstractDrawFunction {
 
     for (let i = startX; i <= endX; i++) {
       for (let j = startY; j <= endY; j++) {
-        layer.set(new Vector(i, j), ERASE_CHAR);
+        layer.set(new Vector(i, j), "");
       }
     }
     store.canvas.setScratchLayer(layer);
