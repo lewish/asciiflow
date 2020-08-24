@@ -1,16 +1,17 @@
+import { Box } from "asciiflow/client/common";
 import {
-  IDrawFunction,
-  AbstractDrawFunction,
-} from "asciiflow/client/draw/function";
-import { KEY_COPY, KEY_CUT, KEY_PASTE, KEY_BACKSPACE, KEY_DELETE } from "asciiflow/client/constants";
-import { Vector } from "asciiflow/client/vector";
-import { CanvasStore } from "asciiflow/client/canvas_store";
-import { MappedValue, Box } from "asciiflow/client/common";
-import { DrawErase } from "asciiflow/client/draw/erase";
-import { store } from "asciiflow/client/store";
-import { Layer } from "asciiflow/client/layer";
+  isSpecial,
+  KEY_BACKSPACE,
+  KEY_COPY,
+  KEY_CUT,
+  KEY_DELETE,
+  KEY_PASTE,
+} from "asciiflow/client/constants";
+import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { DrawMove } from "asciiflow/client/draw/move";
-import { isSpecial } from "asciiflow/client/constants";
+import { Layer } from "asciiflow/client/layer";
+import { store } from "asciiflow/client/store";
+import { Vector } from "asciiflow/client/vector";
 
 export class DrawSelect extends AbstractDrawFunction {
   private moveTool: DrawMove;

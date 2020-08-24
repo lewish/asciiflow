@@ -1,16 +1,16 @@
 import { Vector } from "asciiflow/client/vector";
-import { ExtendedCellContext } from "asciiflow/client/common";
+import { CellContext } from "asciiflow/client/common";
 import * as constants from "asciiflow/client/constants";
 
 export interface ILayerView {
   get(position: Vector): string;
-  context(position: Vector): ExtendedCellContext;
+  context(position: Vector): CellContext;
 }
 
 abstract class AbstractLayer implements ILayerView {
   abstract get(position: Vector): string;
 
-  context(position: Vector): ExtendedCellContext {
+  context(position: Vector): CellContext {
     const left = constants.ALL_SPECIAL_VALUES.includes(
       this.get(position.left())
     );
@@ -33,7 +33,7 @@ abstract class AbstractLayer implements ILayerView {
     const rightdown = constants.ALL_SPECIAL_VALUES.includes(
       this.get(position.right().down())
     );
-    return new ExtendedCellContext(
+    return new CellContext(
       left,
       right,
       up,

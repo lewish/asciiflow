@@ -1,4 +1,4 @@
-import { Box, ExtendedCellContext } from "asciiflow/client/common";
+import { Box, CellContext } from "asciiflow/client/common";
 import * as constants from "asciiflow/client/constants";
 import { Layer, LayerView } from "asciiflow/client/layer";
 import { store } from "asciiflow/client/store";

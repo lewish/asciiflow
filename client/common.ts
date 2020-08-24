@@ -56,7 +56,7 @@ export class Cell {
   }
 }
 
-export class ExtendedCellContext {
+export class CellContext {
   constructor(
     public left: boolean,
     public right: boolean,
@@ -86,18 +86,4 @@ export class ExtendedCellContext {
       +this.rightdown
     );
   }
-}
-
-/**
- * A pair of a vector and a string value. Used in history management.
- */
-export class MappedValue {
-  constructor(public position: Vector, public value: string) {}
-}
-
-/**
- * A pair of a vector and a cell. Used in history management.
- */
-export class MappedCell {
-  constructor(public position: Vector, public cell: Cell) {}
 }

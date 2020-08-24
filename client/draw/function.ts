@@ -1,4 +1,5 @@
 import { Vector } from "asciiflow/client/vector";
+import { IModifierKeys } from "asciiflow/client/store";
 
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.
@@ -7,11 +8,11 @@ export interface IDrawFunction {
   /**
    *  Start of drawing.
    */
-  start(position: Vector): void;
+  start(position: Vector, modifierKeys: IModifierKeys): void;
   /**
    * Drawing move.
    */
-  move(position: Vector): void;
+  move(position: Vector, modifierKeys: IModifierKeys): void;
   /**
    * End of drawing.
    */
@@ -19,11 +20,11 @@ export interface IDrawFunction {
   /**
    * Cursor for given cell.
    */
-  getCursor(position: Vector): string;
+  getCursor(position: Vector, modifierKeys: IModifierKeys): string;
   /**
    * Handle the key with given value being pressed.
    */
-  handleKey(value: string): void;
+  handleKey(value: string, modifierKeys: IModifierKeys): void;
 
   /**
    * When exiting the tool.
@@ -32,12 +33,12 @@ export interface IDrawFunction {
 }
 
 export abstract class AbstractDrawFunction implements IDrawFunction {
-  start(position: Vector): void {}
-  move(position: Vector): void {}
+  start(position: Vector, modifierKeys: IModifierKeys): void {}
+  move(position: Vector, modifierKeys: IModifierKeys): void {}
   end(): void {}
-  getCursor(position: Vector): string {
+  getCursor(position: Vector, modifierKeys: IModifierKeys): string {
     return "default";
   }
-  handleKey(value: string): void {}
+  handleKey(value: string, modifierKeys: IModifierKeys): void {}
   cleanup(): void {}
 }

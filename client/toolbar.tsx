@@ -49,69 +49,6 @@ const TOOLS: {
   },
 };
 
-// handleFileButton(id: string) {
-//   $(".dialog").removeClass("visible");
-//   $("#" + id + "-dialog").toggleClass("visible");
-
-//   if (id == "import-button") {
-//     $("#import-area").val("");
-//     $("#import-area").focus();
-//   }
-
-//   if (id == "export-button") {
-//     $("#export-area").val(this.state.outputText());
-//     $("#export-area").select();
-//   }
-//   if (id == "clear-button") {
-//     this.state.clear();
-//   }
-//   if (id == "undo-button") {
-//     this.state.undo();
-//   }
-//   if (id == "redo-button") {
-//     this.state.redo();
-//   }
-// }
-
-// $("#draw-tools > button.tool").click((e) => {
-//   $("#text-tool-widget").hide(0);
-//   this.handleDrawButton(e.target.id);
-// });
-
-// $("#file-tools > button.tool").click((e) => {
-//   this.handleFileButton(e.target.id);
-// });
-
-// $("button.close-dialog-button").click((e) => {
-//   $(".dialog").removeClass("visible");
-// });
-
-// $("#import-submit-button").click((e) => {
-//   this.state.clear();
-//   this.state.fromText(
-//     /** @type {string} */
-//     String($("#import-area").val()),
-//     this.view.screenToCell(
-//       new Vector(this.view.canvas.width / 2, this.view.canvas.height / 2)
-//     )
-//   );
-//   this.state.commitDraw();
-//   $("#import-area").val("");
-//   $(".dialog").removeClass("visible");
-// });
-
-// // Bit of a hack, just triggers the text tool to get a new value.
-// $("#text-tool-input, #freeform-tool-input").keyup(() => {
-//   this.drawFunction.handleKey("");
-// });
-// $("#text-tool-input, #freeform-tool-input").change(() => {
-//   this.drawFunction.handleKey("");
-// });
-// $("#text-tool-close").click(() => {
-//   $("#text-tool-widget").hide();
-//   this.state.commitDraw();
-// });
-
 export const Toolbar = () => {
   const [currentTool, setCurrentTool] = useState("box");
   return useObserver(() => (

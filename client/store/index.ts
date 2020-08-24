@@ -17,17 +17,24 @@ export enum ToolMode {
   TEXT = 5,
 }
 
-export class Store {
+export interface IModifierKeys {
+  shift?: boolean;
+  ctrl?: boolean;
+  meta?: boolean;
+}
 
+export class Store {
   public readonly boxTool = new DrawBox();
   public readonly lineTool = new DrawLine(false);
   public readonly arrowTool = new DrawLine(true);
   public readonly selectTool = new DrawSelect();
 
-
   @observable public toolMode = ToolMode.BOX;
+
   @observable public unicode = Persistent.json("unicode", true);
+
   @observable public zoom = 1;
+
   @observable public offset = new Vector(
     (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
     (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2
@@ -36,6 +43,8 @@ export class Store {
   @observable public currentCursor: string = "default";
 
   @observable public drawFunction: IDrawFunction = new DrawBox();
+
+  @observable public modifierKeys: IModifierKeys = {};
 
   get characters() {
     return this.unicode.get() ? constants.UNICODE : constants.ASCII;

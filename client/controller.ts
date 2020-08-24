@@ -1,5 +1,5 @@
 import * as constants from "asciiflow/client/constants";
-import { store } from "asciiflow/client/store";
+import { store, IModifierKeys } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 import { screenToCell } from "asciiflow/client/view";
 import { HTMLAttributes } from "react";
@@ -15,6 +15,11 @@ const Mode = {
   DRAW: 2,
 };
 
+type EventWithModifierKeys =
+  | KeyboardEvent
+  | React.MouseEvent
+  | React.TouchEvent;
+
 /**
  * Handles user input events and modifies state.
  */
@@ -24,9 +29,9 @@ export class Controller {
   private dragOriginCell: Vector;
   private lastMoveCell: Vector;
 
-  startDraw(position: Vector) {
+  startDraw(position: Vector, e: EventWithModifierKeys) {
     this.mode = Mode.DRAW;
-    store.drawFunction.start(screenToCell(position));
+    store.drawFunction.start(screenToCell(position), getModifierKeys(e));
   }
 
   startDrag(position: Vector) {
@@ -48,7 +53,10 @@ export class Controller {
 
   handleKeyPress(event: KeyboardEvent) {
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
-      store.drawFunction.handleKey(String.fromCharCode(event.keyCode));
+      store.drawFunction.handleKey(
+        String.fromCharCode(event.keyCode),
+        getModifierKeys(event)
+      );
     }
   }
 
@@ -99,12 +107,11 @@ export class Controller {
     if (event.keyCode === 39) {
       specialKeyCode = constants.KEY_RIGHT;
     }
-    if (specialKeyCode != null) {
-      store.drawFunction.handleKey(specialKeyCode);
-    }
+
+    store.drawFunction.handleKey(specialKeyCode, getModifierKeys(event));
   }
 
-  public handleMove(position: Vector) {
+  public handleMove(position: Vector, e: EventWithModifierKeys) {
     const moveCell = screenToCell(position);
 
     // First move event, make sure we don't blow up here.
@@ -114,12 +121,15 @@ export class Controller {
 
     // Update the cursor pointer, depending on the draw function.
     if (!moveCell.equals(this.lastMoveCell)) {
-      store.currentCursor = store.drawFunction.getCursor(moveCell);
+      store.currentCursor = store.drawFunction.getCursor(
+        moveCell,
+        getModifierKeys(e)
+      );
     }
 
     // In drawing mode, so pass the mouse move on, but remove duplicates.
     if (this.mode === Mode.DRAW && !moveCell.equals(this.lastMoveCell)) {
-      store.drawFunction.move(moveCell);
+      store.drawFunction.move(moveCell, getModifierKeys(e));
     }
 
     // Drag in progress, update the view origin.
@@ -134,6 +144,13 @@ export class Controller {
   }
 }
 
+function getModifierKeys(event: EventWithModifierKeys): IModifierKeys {
+  return {
+    ctrl: event.ctrlKey,
+    shift: event.shiftKey,
+    meta: event.metaKey,
+  };
+}
 /**
  * Handles desktop inputs, and passes them onto the main controller.
  */
@@ -154,7 +171,7 @@ export class DesktopController {
     if (e.ctrlKey || e.metaKey) {
       this.controller.startDrag(Vector.fromMouseEvent(e));
     } else {
-      this.controller.startDraw(Vector.fromMouseEvent(e));
+      this.controller.startDraw(Vector.fromMouseEvent(e), e);
     }
   };
 
@@ -173,7 +190,7 @@ export class DesktopController {
   };
 
   handleMouseMove = (e: React.MouseEvent<any>) => {
-    this.controller.handleMove(Vector.fromMouseEvent(e));
+    this.controller.handleMove(Vector.fromMouseEvent(e), e);
   };
 }
 
@@ -198,7 +215,7 @@ export class TouchController {
     };
   }
 
-  private handlePress(position: Vector) {
+  private handlePress(position: Vector, e: EventWithModifierKeys) {
     this.pressVector = position;
     this.pressTimestamp = Date.now();
     this.dragStarted = false;
@@ -206,7 +223,7 @@ export class TouchController {
     // If a drag or zoom didn't start and if we didn't release already, then handle it as a draw.
     window.setTimeout(() => {
       if (!this.dragStarted && !this.zoomStarted && this.pressVector != null) {
-        this.controller.startDraw(position);
+        this.controller.startDraw(position, e);
       }
     }, constants.DRAG_LATENCY);
   }
@@ -220,7 +237,7 @@ export class TouchController {
     this.originalZoom = store.zoom;
   }
 
-  private handleMove(position: Vector) {
+  private handleMove(position: Vector, e: EventWithModifierKeys) {
     // Initiate a drag if we have moved enough, quickly enough.
     if (
       !this.dragStarted &&
@@ -231,7 +248,7 @@ export class TouchController {
       this.controller.startDrag(position);
     }
     // Pass on the event.
-    this.controller.handleMove(position);
+    this.controller.handleMove(position, e);
   }
 
   private handleMoveMulti(positionOne: Vector, positionTwo: Vector) {
@@ -256,7 +273,7 @@ export class TouchController {
   public handleTouchStart = (e: React.TouchEvent<any>) => {
     e.preventDefault();
     if (e.touches.length === 1) {
-      this.handlePress(Vector.fromTouchEvent(e));
+      this.handlePress(Vector.fromTouchEvent(e), e);
     } else if (e.touches.length > 1) {
       this.handlePressMulti(
         Vector.fromTouchEvent(e, 0),
@@ -268,7 +285,7 @@ export class TouchController {
   public handleTouchMove = (e: React.TouchEvent<any>) => {
     e.preventDefault();
     if (e.touches.length === 1) {
-      this.handleMove(Vector.fromTouchEvent(e));
+      this.handleMove(Vector.fromTouchEvent(e), e);
     } else if (e.touches.length > 1) {
       this.handleMoveMulti(
         Vector.fromTouchEvent(e, 0),
