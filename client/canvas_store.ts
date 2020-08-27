@@ -208,6 +208,18 @@ export class CanvasStore {
 
       // Four way junctions.
       if (context.sum() === 4) {
+        if (
+          Characters.isArrow(combined.get(position.up())) &&
+          Characters.isArrow(combined.get(position.down()))
+        ) {
+          return characterSet.lineHorizontal;
+        }
+        if (
+          Characters.isArrow(combined.get(position.left())) &&
+          Characters.isArrow(combined.get(position.right()))
+        ) {
+          return characterSet.lineVertical;
+        }
         return characterSet.junctionAll;
       }
     }
