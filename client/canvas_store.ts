@@ -160,23 +160,20 @@ export class CanvasStore {
         if (!context.up && context.rightdown && context.leftdown) {
           return characterSet.lineHorizontal;
         }
-        const leftupempty = !!combined.get(position.left().up());
-        const rightupempty = !!combined.get(position.right().up());
+
         if (
           context.up &&
           context.left &&
           context.right &&
-          (!leftupempty || !rightupempty)
+          (context.leftup || context.rightup)
         ) {
           return characterSet.lineHorizontal;
         }
-        const leftdownempty = !!combined.get(position.left().down());
-        const rightdownempty = !!combined.get(position.right().down());
         if (
           context.down &&
           context.left &&
           context.right &&
-          (!leftdownempty || !rightdownempty)
+          (context.leftdown || context.rightdown)
         ) {
           return characterSet.lineHorizontal;
         }
