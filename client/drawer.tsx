@@ -29,27 +29,21 @@ export function Drawer() {
           </IconButton>
         </div>
         <List>
-          <ListItem button={true} selected={store.toolMode === ToolMode.BOX}>
-            <ListItemIcon>
-              <Icons.CheckBoxOutlineBlank />
-            </ListItemIcon>
-            <ListItemText primary={"Boxes"} />
-          </ListItem>
-          <ListItem
-            button={true}
-            onClick={() => store.setToolMode(ToolMode.SELECT)}
-          >
-            <ListItemIcon>
-              <Icons.NearMe />
-            </ListItemIcon>
-            <ListItemText primary={"Select & Move"} />
-          </ListItem>
-          <ListItem button={true}>
-            <ListItemIcon>
-              <Icons.Gesture />
-            </ListItemIcon>
-            <ListItemText primary={"Freeform draw"} />
-          </ListItem>
+          <ToolControl
+            name="Boxes"
+            tool={ToolMode.BOX}
+            icon={<Icons.CheckBoxOutlineBlank />}
+          />
+          <ToolControl
+            name="Select & Move"
+            tool={ToolMode.SELECT}
+            icon={<Icons.NearMe />}
+          />
+          <ToolControl
+            name="Freeform"
+            tool={ToolMode.FREEFORM}
+            icon={<Icons.Gesture />}
+          />
           <ListItem
             button={true}
             onClick={() => store.setToolMode(ToolMode.LINES)}
@@ -84,14 +78,43 @@ export function Drawer() {
               </ListItem>
             </List>
           </Collapse>
-          <ListItem button={true}>
-            <ListItemIcon>
-              <Icons.TextFields />
-            </ListItemIcon>
-            <ListItemText primary={"Text"} />
-          </ListItem>
+          <ToolControl
+            name="Text"
+            tool={ToolMode.TEXT}
+            icon={<Icons.TextFields />}
+          />
         </List>
       </MaterialDrawer>
+    );
+  });
+}
+
+function ToolControl(
+  props: React.PropsWithChildren<{
+    tool: ToolMode;
+    name: string;
+    icon: React.ReactNode;
+  }>
+) {
+  return useObserver(() => {
+    return (
+      <ListItem
+        selected={store.toolMode === props.tool}
+        button={true}
+        onClick={() => store.setToolMode(props.tool)}
+      >
+        <ListItemIcon>{props.icon}</ListItemIcon>
+        <ListItemText primary={props.name} />
+        {props.children && (
+          <Collapse
+            in={store.toolMode === props.tool}
+            timeout="auto"
+            unmountOnExit={true}
+          >
+            {props.children}
+          </Collapse>
+        )}
+      </ListItem>
     );
   });
 }

@@ -31,7 +31,7 @@ export class Controller {
 
   startDraw(position: Vector, e: EventWithModifierKeys) {
     this.mode = Mode.DRAW;
-    store.drawFunction.start(screenToCell(position), getModifierKeys(e));
+    store.currentTool.start(screenToCell(position), getModifierKeys(e));
   }
 
   startDrag(position: Vector) {
@@ -42,7 +42,7 @@ export class Controller {
 
   endAll() {
     if (this.mode === Mode.DRAW) {
-      store.drawFunction.end();
+      store.currentTool.end();
     }
     // Cleanup state.
     this.mode = Mode.NONE;
@@ -53,7 +53,7 @@ export class Controller {
 
   handleKeyPress(event: KeyboardEvent) {
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
-      store.drawFunction.handleKey(
+      store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
         getModifierKeys(event)
       );
@@ -108,7 +108,7 @@ export class Controller {
       specialKeyCode = constants.KEY_RIGHT;
     }
 
-    store.drawFunction.handleKey(specialKeyCode, getModifierKeys(event));
+    store.currentTool.handleKey(specialKeyCode, getModifierKeys(event));
   }
 
   public handleMove(position: Vector, e: EventWithModifierKeys) {
@@ -121,7 +121,7 @@ export class Controller {
 
     // Update the cursor pointer, depending on the draw function.
     if (!moveCell.equals(this.lastMoveCell)) {
-      store.currentCursor = store.drawFunction.getCursor(
+      store.currentCursor = store.currentTool.getCursor(
         moveCell,
         getModifierKeys(e)
       );
@@ -129,7 +129,7 @@ export class Controller {
 
     // In drawing mode, so pass the mouse move on, but remove duplicates.
     if (this.mode === Mode.DRAW && !moveCell.equals(this.lastMoveCell)) {
-      store.drawFunction.move(moveCell, getModifierKeys(e));
+      store.currentTool.move(moveCell, getModifierKeys(e));
     }
 
     // Drag in progress, update the view origin.

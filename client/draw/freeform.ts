@@ -5,18 +5,23 @@ import {
 } from "asciiflow/client/draw/function";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
+import { Layer } from "asciiflow/client/layer";
 
 export class DrawFreeform extends AbstractDrawFunction {
-  constructor(private value: string) {
-    super();
-  }
+  private value = "x";
+
+  private currentLayer: Layer;
 
   start(position: Vector) {
-    store.canvas.scratch.set(position, this.value);
+    this.currentLayer = new Layer();
+    this.currentLayer.set(position, this.value);
+    store.canvas.setScratchLayer(this.currentLayer);
   }
 
   move(position: Vector) {
-    store.canvas.scratch.set(position, this.value);
+    [this.currentLayer] = new Layer().apply(this.currentLayer);
+    this.currentLayer.set(position, this.value);
+    store.canvas.setScratchLayer(this.currentLayer);
   }
 
   end() {

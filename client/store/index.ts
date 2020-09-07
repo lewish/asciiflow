@@ -7,6 +7,8 @@ import { IDrawFunction } from "asciiflow/client/draw/function";
 import { Persistent } from "asciiflow/client/store/persistent";
 import { DrawLine } from "asciiflow/client/draw/line";
 import { DrawSelect } from "asciiflow/client/draw/select";
+import { DrawFreeform } from "asciiflow/client/draw/freeform";
+import { DrawText } from "asciiflow/client/draw/text";
 
 export enum ToolMode {
   BOX = 1,
@@ -14,7 +16,7 @@ export enum ToolMode {
   FREEFORM = 3,
   ARROWS = 6,
   LINES = 4,
-  TEXT = 5,
+  TEXT = 7,
 }
 
 export interface IModifierKeys {
@@ -28,6 +30,8 @@ export class Store {
   public readonly lineTool = new DrawLine(false);
   public readonly arrowTool = new DrawLine(true);
   public readonly selectTool = new DrawSelect();
+  public readonly freeformTool = new DrawFreeform();
+  public readonly textTool = new DrawText();
 
   @observable public toolMode = ToolMode.BOX;
 
@@ -42,7 +46,23 @@ export class Store {
 
   @observable public currentCursor: string = "default";
 
-  @observable public drawFunction: IDrawFunction = new DrawBox();
+  get currentTool(): IDrawFunction {
+    return this.toolMode === ToolMode.BOX
+      ? this.boxTool
+      : this.toolMode === ToolMode.LINES
+      ? this.lineTool
+      : this.toolMode === ToolMode.ARROWS
+      ? this.arrowTool
+      : this.toolMode === ToolMode.FREEFORM
+      ? this.freeformTool
+      : this.toolMode === ToolMode.TEXT
+      ? this.textTool
+      : this.toolMode === ToolMode.SELECT
+      ? this.selectTool
+      : (() => {
+          throw new Error("Unrecognised tool.");
+        })();
+  }
 
   @observable public modifierKeys: IModifierKeys = {};
 
@@ -62,10 +82,6 @@ export class Store {
 
   @action.bound public setOffset(value: Vector) {
     this.offset = value;
-  }
-
-  @action.bound public setDrawFunction(fn: IDrawFunction) {
-    this.drawFunction = fn;
   }
 
   @action.bound public setToolMode(toolMode: ToolMode) {

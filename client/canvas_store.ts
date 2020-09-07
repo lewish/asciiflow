@@ -19,7 +19,7 @@ export class CanvasStore {
   );
   @observable public scratch = new Layer();
 
-  @observable public highlightCells: Vector[] = [];
+  @observable public selection: Box;
 
   get committed() {
     return this.persistentCommitted.get();
@@ -35,6 +35,14 @@ export class CanvasStore {
 
   @observable public undoLayers: Layer[] = [];
   @observable public redoLayers: Layer[] = [];
+
+  @action.bound setSelection(box: Box) {
+    this.selection = box;
+  }
+
+  clearSelection() {
+    this.setSelection(null);
+  }
 
   @action.bound setScratchLayer(layer: Layer) {
     this.scratch = layer;
@@ -165,7 +173,8 @@ export class CanvasStore {
           context.up &&
           context.left &&
           context.right &&
-          (context.leftup || context.rightup)
+          context.leftup &&
+          context.rightup
         ) {
           return characterSet.lineHorizontal;
         }
@@ -173,7 +182,8 @@ export class CanvasStore {
           context.down &&
           context.left &&
           context.right &&
-          (context.leftdown || context.rightdown)
+          context.leftdown &&
+          context.rightdown
         ) {
           return characterSet.lineHorizontal;
         }

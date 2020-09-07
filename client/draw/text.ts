@@ -1,27 +1,24 @@
 import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { Layer } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
+import { store, IModifierKeys } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
 export class DrawText extends AbstractDrawFunction {
-  private lastClickedPosition: Vector;
   private currentPosition: Vector;
   private textLayer: Layer;
 
   start(position: Vector) {
-    this.lastClickedPosition = position;
     this.currentPosition = position;
+    this.textLayer = new Layer();
+    this.textLayer.set(position, store.canvas.committed.get(position));
+    store.canvas.setScratchLayer(this.textLayer);
   }
 
-  move(position: Vector) {}
-
-  end() {}
-
-  getCursor(position: Vector) {
-    return "pointer";
+  getCursor() {
+    return "text";
   }
 
-  handleKey(value: string) {
+  handleKey(value: string, modifierKeys: IModifierKeys) {
     let newLayer = new Layer();
     if (!!this.textLayer) {
       [newLayer] = newLayer.apply(this.textLayer);
@@ -31,10 +28,14 @@ export class DrawText extends AbstractDrawFunction {
     // Handle special characters.
     if (value.startsWith("<") && value.endsWith(">")) {
       if (value === "<enter>") {
-        this.currentPosition = new Vector(
-          this.lastClickedPosition.x,
-          this.currentPosition.y + 1
-        );
+        if (modifierKeys.shift || modifierKeys.ctrl || modifierKeys.meta) {
+          this.currentPosition = new Vector(
+            this.currentPosition.x,
+            this.currentPosition.y + 1
+          );
+        } else {
+          store.canvas.commitScratch();
+        }
       }
       if (value === "<backspace>") {
         this.currentPosition = this.currentPosition.left();

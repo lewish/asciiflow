@@ -17,8 +17,8 @@ const desktopController = new DesktopController(controller);
 export const App = () => {
   return (
     <>
-      <Toolbar />
       <Drawer />
+      <Toolbar />
       <View
         {...desktopController.getHandlerProps()}
         {...touchController.getHandlerProps()}

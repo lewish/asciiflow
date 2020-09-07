@@ -39,6 +39,7 @@ export class DrawSelect extends AbstractDrawFunction {
 
   startSelect(position: Vector) {
     this.selectBox = new Box(position, position);
+    store.canvas.setSelection(this.selectBox);
   }
 
   startDrag(position: Vector) {
@@ -68,11 +69,18 @@ export class DrawSelect extends AbstractDrawFunction {
     });
 
     store.canvas.setScratchLayer(selectionLayer);
+    store.canvas.setSelection(this.selectBox);
   }
 
   moveDrag(position: Vector) {
     this.dragEnd = position;
     const moveDelta = this.dragEnd.subtract(this.dragStart);
+    store.canvas.setSelection(
+      new Box(
+        this.selectBox.topLeft().add(moveDelta),
+        this.selectBox.bottomRight().add(moveDelta)
+      )
+    );
 
     const layer = new Layer();
 
@@ -96,6 +104,7 @@ export class DrawSelect extends AbstractDrawFunction {
     if (this.dragStart != null) {
       store.canvas.commitScratch();
       this.selectBox = null;
+      store.canvas.clearSelection();
     } else if (!!this.moveTool) {
       this.moveTool.end();
       this.moveTool = null;

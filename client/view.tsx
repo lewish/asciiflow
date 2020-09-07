@@ -54,6 +54,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
 function render(canvas: HTMLCanvasElement) {
   const committed = store.canvas.committed;
   const scratch = store.canvas.scratch;
+  const selection = store.canvas.selection;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -111,49 +112,79 @@ function render(canvas: HTMLCanvasElement) {
   }
   context.stroke();
   context.font = "15px Courier New";
-  for (const [position, value] of committed.entries()) {
-    // Highlight the cell if it is special (grey) or it is part
-    // of a visible edit (blue).
-    if (constants.ALL_SPECIAL_VALUES.includes(value)) {
-      context.fillStyle = "#F5F5F5";
-      context.fillRect(
-        position.x * constants.CHAR_PIXELS_H - store.offset.x,
-        (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y,
-        constants.CHAR_PIXELS_H,
-        constants.CHAR_PIXELS_V
-      );
-    }
-    const cellValue = store.canvas.getDrawValue(position);
-    if (cellValue != null && cellValue !== "" && cellValue !== " ") {
+
+  function highlight(position: Vector, color: string) {
+    context.fillStyle = color;
+    context.fillRect(
+      position.x * constants.CHAR_PIXELS_H - store.offset.x + 0.5,
+      (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y + 0.5,
+      constants.CHAR_PIXELS_H - 1,
+      constants.CHAR_PIXELS_V - 1
+    );
+  }
+
+  function text(position: Vector, value: string) {
+    if (value !== null && value !== "" && value !== " ") {
       context.fillStyle = "#000000";
       context.fillText(
-        cellValue,
+        value,
         position.x * constants.CHAR_PIXELS_H - store.offset.x,
         position.y * constants.CHAR_PIXELS_V - store.offset.y - 3
       );
     }
   }
-  for (const [position] of scratch.entries()) {
-    // Highlight the cell if it is special (grey) or it is part
-    // of a visible edit (blue).
 
-      context.fillStyle =  "#DEF";
-      context.fillRect(
-        position.x * constants.CHAR_PIXELS_H - store.offset.x,
-        (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y,
-        constants.CHAR_PIXELS_H,
-        constants.CHAR_PIXELS_V
-      );
-    
-    const cellValue = store.canvas.getDrawValue(position);
-    if (cellValue != null && cellValue !== "" && cellValue !== " ") {
-      context.fillStyle = "#000000";
-      context.fillText(
-        cellValue,
-        position.x * constants.CHAR_PIXELS_H - store.offset.x,
-        position.y * constants.CHAR_PIXELS_V - store.offset.y - 3
-      );
+  if (!!selection) {
+    // Fill the selection box.
+    const topLeft = selection.topLeft();
+    const bottomRight = selection.bottomRight();
+    for (let x = topLeft.x; x <= bottomRight.x; x++) {
+      for (let y = topLeft.y; y <= bottomRight.y; y++) {
+        highlight(new Vector(x, y), "#DEF");
+      }
     }
+  }
+  for (const [position, value] of committed.entries()) {
+    if (constants.ALL_SPECIAL_VALUES.includes(value)) {
+      highlight(position, "#F5F5F5");
+    }
+    const cellValue = store.canvas.getDrawValue(position);
+    text(position, cellValue);
+  }
+  for (const [position] of scratch.entries()) {
+    highlight(position, "#DEF");
+    const cellValue = store.canvas.getDrawValue(position);
+    text(position, cellValue);
+  }
+
+  if (!!selection) {
+    // Outline the selection box.
+    const topLeft = selection.topLeft();
+    const bottomRight = selection.bottomRight();
+    context.lineWidth = 1;
+    context.strokeStyle = "#BDF";
+    context.beginPath();
+    context.moveTo(
+      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+    );
+    context.lineTo(
+      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
+      bottomRight.y * constants.CHAR_PIXELS_V - store.offset.y
+    );
+    context.lineTo(
+      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - store.offset.x,
+      bottomRight.y * constants.CHAR_PIXELS_V - store.offset.y
+    );
+    context.lineTo(
+      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - store.offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+    );
+    context.lineTo(
+      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+    );
+    context.stroke();
   }
 }
 
