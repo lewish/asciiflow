@@ -34,8 +34,8 @@
     "typescript": "^3.8.3",
     "umd-compat-loader": "^2.1.2",
     "vscode": "^1.1.36",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

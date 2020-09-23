@@ -1,6 +1,12 @@
 const path = require("path");
 const webpack = require("webpack");
 
+const filename = /.*/;
+filename.test = (str) => {
+  console.log(str);
+  return true;
+};
+
 module.exports = (env, argv) => ({
   mode: argv.mode || "development",
   entry: [path.resolve(process.env.RUNFILES, "asciiflow/client/app")],
@@ -25,9 +31,22 @@ module.exports = (env, argv) => ({
     port: 9110,
     open: false,
     publicPath: "/",
+    // Triggers a rebuild when requesting the output filename.
+    filename: new RegExp(`.*\\/${path.basename(argv.output)}`),
+    lazy: true,
     contentBase: path.resolve("./client"),
     stats: {
       colors: true,
+    },
+    after: (_, socket) => {
+      // Listen to STDIN, which is written to by ibazel to tell it to reload.
+      // Must check the message so we only bundle after a successful build completes.
+      process.stdin.on("data", (data) => {
+        if (!String(data).includes("IBAZEL_BUILD_COMPLETED SUCCESS")) {
+          return;
+        }
+        socket.sockWrite(socket.sockets, "content-changed");
+      });
     },
   },
   resolve: {

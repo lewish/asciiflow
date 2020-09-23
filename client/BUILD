@@ -62,6 +62,9 @@ webpack_dev_server(
         "@npm//style-loader",
         "@npm//webpack-cli",
     ],
+    tags = [
+        "ibazel_notify_changes",
+    ],
 )
 
 webpack(
