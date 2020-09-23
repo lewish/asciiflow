@@ -64,11 +64,6 @@ module.exports = (env, argv) => ({
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: [{ loader: "umd-compat-loader" }],
-      },
-      {
         test: /\.css$/,
         exclude: /node_modules/,
         use: [

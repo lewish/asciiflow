@@ -1,4 +1,4 @@
-load("@npm_bazel_typescript//:index.bzl", "ts_library")
+load("//:ts_library.bzl", "ts_library")
 load("@io_bazel_rules_sass//:defs.bzl", "multi_sass_binary")
 load("@npm//webpack-dev-server:index.bzl", "webpack_dev_server")
 load("@npm//webpack:index.bzl", "webpack")
@@ -71,6 +71,10 @@ webpack(
     name = "bundler",
     data = [
         ":client",
+        ":sass",
+        ":webpack.config.js",
+        "@npm//css-loader",
+        "@npm//style-loader",
     ],
 )
 
@@ -86,7 +90,6 @@ npm_package_bin(
     ],
     data = [
         ":webpack.config.js",
-        "@npm//umd-compat-loader",
         "@npm//webpack-cli",
     ],
     tool = ":bundler",
