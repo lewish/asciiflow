@@ -6,9 +6,8 @@
     "start": "electron ."
   },
   "dependencies": {
-    "@bazel/hide-bazel-files": "^1.5.0",
     "@bazel/ibazel": "^0.12.4",
-    "@bazel/typescript": "^1.5.0",
+    "@bazel/typescript": "^2.2.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@types/material-ui": "^0.21.8",
