@@ -51,7 +51,7 @@ export function Drawer() {
             <ListItemIcon>
               <Icons.TrendingDown />
             </ListItemIcon>
-            <ListItemText primary={"Arrows & Lines1"} />
+            <ListItemText primary={"Arrows & Lines"} />
             {store.toolMode === ToolMode.LINES ? (
               <Icons.ExpandLess />
             ) : (
