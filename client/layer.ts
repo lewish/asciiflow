@@ -100,7 +100,8 @@ export class Layer extends AbstractLayer {
     const undoLayer = new Layer();
     Array.from(otherLayer.map.entries()).forEach(([key, newValue]) => {
       const oldValue = this.map.get(key);
-      if (newValue === "") {
+      // Spaces and empty strings are deletion characters.
+      if (newValue === "" || newValue === " ") {
         newLayer.map.delete(key);
       } else {
         newLayer.map.set(key, newValue);
@@ -121,7 +122,11 @@ export class LayerView extends AbstractLayer {
   get(position: Vector): string {
     for (let i = this.layers.length; i >= 0; i--) {
       if (this.layers[i] && this.layers[i].has(position)) {
-        return this.layers[i].get(position);
+        const val = this.layers[i].get(position);
+        if (val === "" || val === " ") {
+          return null;
+        }
+        return val;
       }
     }
     return null;

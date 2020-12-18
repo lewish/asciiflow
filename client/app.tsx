@@ -41,3 +41,4 @@ render().catch((e) => console.log(e));
 
 window.addEventListener("keypress", (e) => controller.handleKeyPress(e));
 window.addEventListener("keydown", (e) => controller.handleKeyDown(e));
+window.addEventListener("keyup", (e) => controller.handleKeyUp(e));

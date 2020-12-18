@@ -10,7 +10,7 @@ import {
 import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { DrawMove } from "asciiflow/client/draw/move";
 import { Layer } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
+import { IModifierKeys, store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 
 export class DrawSelect extends AbstractDrawFunction {
@@ -23,11 +23,18 @@ export class DrawSelect extends AbstractDrawFunction {
   private dragStart: Vector;
   private dragEnd: Vector;
 
-  start(position: Vector) {
-    if (this.selectBox != null && this.selectBox.contains(position)) {
+  start(position: Vector, modifierKeys: IModifierKeys) {
+    if (
+      this.selectBox != null &&
+      this.selectBox.contains(position) &&
+      !modifierKeys.shift
+    ) {
       // Start a drag.
       this.startDrag(position);
-    } else if (isSpecial(store.canvas.committed.get(position))) {
+    } else if (
+      isSpecial(store.canvas.committed.get(position)) &&
+      !modifierKeys.shift
+    ) {
       // Start a resize.
       this.moveTool = new DrawMove();
       this.moveTool.start(position);

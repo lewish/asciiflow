@@ -127,7 +127,8 @@ export class DrawMove extends AbstractDrawFunction {
     const junctions = [];
     while (true) {
       const nextEnd = endPosition.add(direction);
-      if (!isSpecial(store.canvas.committed.get(nextEnd))) {
+      const nextEndValue = store.canvas.committed.get(nextEnd);
+      if (!isSpecial(nextEndValue)) {
         // Junctions: Right angles and end T-Junctions.
         if (!startPosition.equals(endPosition)) {
           junctions.push(endPosition);

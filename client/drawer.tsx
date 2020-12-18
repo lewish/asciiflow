@@ -51,7 +51,7 @@ export function Drawer() {
             <ListItemIcon>
               <Icons.TrendingDown />
             </ListItemIcon>
-            <ListItemText primary={"Arrows & Lines"} />
+            <ListItemText primary={"Arrows & Lines1"} />
             {store.toolMode === ToolMode.LINES ? (
               <Icons.ExpandLess />
             ) : (
@@ -59,23 +59,25 @@ export function Drawer() {
             )}
           </ListItem>
           <Collapse
-            in={store.toolMode === ToolMode.LINES}
+            in={
+              store.toolMode === ToolMode.LINES ||
+              store.toolMode === ToolMode.ARROWS
+            }
             timeout="auto"
-            unmountOnExit={true}
+            unmountOnExit={false}
           >
             <List component="div" disablePadding={true}>
-              <ListItem button={true}>
-                <ListItemIcon>
-                  <Icons.TrendingUp />
-                </ListItemIcon>
-                <ListItemText primary={"Arrow"} />
-              </ListItem>
-              <ListItem button={true}>
-                <ListItemIcon>
-                  <Icons.ShowChart />
-                </ListItemIcon>
-                <ListItemText primary={"Line"} />
-              </ListItem>
+              <ToolControl
+                name="Arrow"
+                tool={ToolMode.ARROWS}
+                icon={<Icons.TrendingUp />}
+              />
+
+              <ToolControl
+                name="Line"
+                tool={ToolMode.LINES}
+                icon={<Icons.ShowChart />}
+              />
             </List>
           </Collapse>
           <ToolControl

@@ -75,9 +75,63 @@ export class CanvasStore {
     const isLine = Characters.isLine(value);
     const isArrow = Characters.isArrow(value);
 
+    function inText(textPosition: Vector) {
+      return (
+        (combined.get(textPosition.left()) &&
+          !constants.isSpecial(combined.get(textPosition.left()))) ||
+        (combined.get(textPosition.right()) &&
+          !constants.isSpecial(combined.get(textPosition.right())))
+      );
+    }
+
     if (isArrow) {
       // In some situations, we can be certain about arrow orientation.
       const context = combined.context(position);
+
+      if (context.sum() === 1) {
+        if (context.up) {
+          return characterSet.arrowDown;
+        }
+        if (context.down) {
+          return characterSet.arrowUp;
+        }
+        if (context.left) {
+          return characterSet.arrowRight;
+        }
+        if (context.right) {
+          return characterSet.arrowLeft;
+        }
+      }
+
+      if (context.sum() === 2) {
+        if (
+          context.left &&
+          context.right &&
+          !context.rightup &&
+          !context.rightdown
+        ) {
+          return characterSet.arrowLeft;
+        }
+        if (
+          context.left &&
+          context.right &&
+          !context.leftup &&
+          !context.leftdown
+        ) {
+          return characterSet.arrowRight;
+        }
+        if (context.up && context.down && !context.leftup && !context.rightup) {
+          return characterSet.arrowDown;
+        }
+        if (
+          context.up &&
+          context.down &&
+          !context.leftdown &&
+          !context.rightdown
+        ) {
+          return characterSet.arrowUp;
+        }
+      }
 
       if (context.sum() === 3) {
         if (!context.up) {
@@ -100,15 +154,20 @@ export class CanvasStore {
       ) {
         return characterSet.arrowUp;
       }
+      // Only convert v's to unicode if we are sure they are not part of text.
       if (
-        value === constants.UNICODE.arrowDown ||
-        value === constants.ASCII.arrowDown
+        (value === constants.UNICODE.arrowDown ||
+          value === constants.ASCII.arrowDown) &&
+        context.sum() > 0 &&
+        !inText(position)
       ) {
         return characterSet.arrowDown;
       }
       if (
-        value === constants.UNICODE.arrowLeft ||
-        value === constants.ASCII.arrowLeft
+        (value === constants.UNICODE.arrowLeft ||
+          value === constants.ASCII.arrowLeft) &&
+        context.sum() > 0 &&
+        !inText(position)
       ) {
         return characterSet.arrowLeft;
       }
@@ -190,28 +249,46 @@ export class CanvasStore {
         // Special cases here are to not put junctions when there is
         // an adjacent connection arrow that doesn't embed into the line.
         if (context.left && context.right && context.down) {
-          if (Characters.isArrow(combined.get(position.down()))) {
-            return characterSet.lineHorizontal;
+          const down = combined.get(position.down());
+          if (
+            (down === constants.UNICODE.arrowDown ||
+              down === constants.ASCII.arrowDown) &&
+            !inText(position.down())
+          ) {
+            return characterSet.junctionDown;
           }
-          return characterSet.junctionDown;
+          return characterSet.lineHorizontal;
         }
         if (context.left && context.right && context.up) {
-          if (Characters.isArrow(combined.get(position.up()))) {
-            return characterSet.lineHorizontal;
+          const up = combined.get(position.up());
+          if (
+            (up === constants.UNICODE.arrowUp ||
+              up === constants.ASCII.arrowUp) &&
+            !inText(position.up())
+          ) {
+            return characterSet.junctionUp;
           }
-          return characterSet.junctionUp;
+          return characterSet.lineHorizontal;
         }
         if (context.left && context.up && context.down) {
-          if (Characters.isArrow(combined.get(position.left()))) {
-            return characterSet.lineVertical;
+          const left = combined.get(position.left());
+          if (
+            left === constants.UNICODE.arrowLeft ||
+            left === constants.ASCII.arrowLeft
+          ) {
+            return characterSet.junctionLeft;
           }
-          return characterSet.junctionLeft;
+          return characterSet.lineVertical;
         }
         if (context.up && context.right && context.down) {
-          if (Characters.isArrow(combined.get(position.right()))) {
-            return characterSet.lineVertical;
+          const right = combined.get(position.right());
+          if (
+            right === constants.UNICODE.arrowRight ||
+            right === constants.ASCII.arrowRight
+          ) {
+            return characterSet.junctionRight;
           }
-          return characterSet.junctionRight;
+          return characterSet.lineVertical;
         }
         return constants.SPECIAL_VALUE;
       }
