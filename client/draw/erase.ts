@@ -26,11 +26,11 @@ export class DrawErase extends AbstractDrawFunction {
         layer.set(new Vector(i, j), "");
       }
     }
-    store.canvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitScratch();
+    store.currentCanvas.commitScratch();
   }
 
   getCursor() {

@@ -38,7 +38,7 @@ export class Controller {
   startDrag(position: Vector) {
     this.mode = Mode.DRAG;
     this.dragOrigin = position;
-    this.dragOriginCell = store.offset;
+    this.dragOriginCell = store.currentCanvas.offset;
   }
 
   endAll() {
@@ -74,13 +74,13 @@ export class Controller {
       }
       if (event.keyCode === 90) {
         if (event.shiftKey) {
-          store.canvas.redo();
+          store.currentCanvas.redo();
         } else {
-          store.canvas.undo();
+          store.currentCanvas.undo();
         }
       }
       if (event.keyCode === 89) {
-        store.canvas.redo();
+        store.currentCanvas.redo();
       }
       if (event.keyCode === 88) {
         specialKeyCode = constants.KEY_CUT;
@@ -144,9 +144,9 @@ export class Controller {
 
     // Drag in progress, update the view origin.
     if (this.mode === Mode.DRAG && !moveCell.equals(this.lastMoveCell)) {
-      store.setOffset(
+      store.currentCanvas.setOffset(
         this.dragOriginCell.add(
-          this.dragOrigin.subtract(position).scale(1 / store.zoom)
+          this.dragOrigin.subtract(position).scale(1 / store.currentCanvas.zoom)
         )
       );
     }
@@ -195,8 +195,8 @@ export class DesktopController {
 
   handleWheel = (e: React.WheelEvent<any>) => {
     const delta = -e.deltaY;
-    const newZoom = store.zoom * (delta > 0 ? 1.1 : 0.9);
-    store.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
+    const newZoom = store.currentCanvas.zoom * (delta > 0 ? 1.1 : 0.9);
+    store.currentCanvas.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
   };
 
   handleMouseMove = (e: React.MouseEvent<any>) => {
@@ -244,7 +244,7 @@ export class TouchController {
     this.zoomStarted = true;
     this.dragStarted = false;
     this.zoomLength = positionOne.subtract(positionTwo).length();
-    this.originalZoom = store.zoom;
+    this.originalZoom = store.currentCanvas.zoom;
   }
 
   private handleMove(position: Vector, e: EventWithModifierKeys) {
@@ -267,7 +267,7 @@ export class TouchController {
         (this.originalZoom * positionOne.subtract(positionTwo).length()) /
         this.zoomLength;
       newZoom = Math.max(Math.min(newZoom, 5), 0.5);
-      store.setZoom(newZoom);
+      store.currentCanvas.setZoom(newZoom);
     }
   }
 

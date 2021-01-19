@@ -15,8 +15,8 @@ export class DrawText extends AbstractDrawFunction {
     if (!this.textLayer) {
       this.textLayer = new Layer();
     }
-    store.canvas.setScratchLayer(this.textLayer);
-    store.canvas.setSelection(new Box(position, position));
+    store.currentCanvas.setScratchLayer(this.textLayer);
+    store.currentCanvas.setSelection(new Box(position, position));
   }
 
   getCursor() {
@@ -39,14 +39,14 @@ export class DrawText extends AbstractDrawFunction {
             this.currentPosition.y + 1
           );
         } else {
-          store.canvas.commitScratch();
+          store.currentCanvas.commitScratch();
           this.textLayer = null;
         }
       }
       if (value === "<backspace>") {
         this.currentPosition = this.currentPosition.left();
         this.textLayer.delete(this.currentPosition);
-        store.canvas.setScratchLayer(this.textLayer);
+        store.currentCanvas.setScratchLayer(this.textLayer);
       }
       if (value === "<left>") {
         this.currentPosition = this.currentPosition.left();
@@ -60,7 +60,7 @@ export class DrawText extends AbstractDrawFunction {
       if (value === "<down>") {
         this.currentPosition = this.currentPosition.down();
       }
-      store.canvas.setSelection(
+      store.currentCanvas.setSelection(
         new Box(this.currentPosition, this.currentPosition)
       );
       return;
@@ -69,15 +69,15 @@ export class DrawText extends AbstractDrawFunction {
     // Add the new text to the layer and move to the right.
     this.textLayer.set(this.currentPosition, value);
     this.currentPosition = this.currentPosition.right();
-    store.canvas.setScratchLayer(this.textLayer);
-    store.canvas.setSelection(
+    store.currentCanvas.setScratchLayer(this.textLayer);
+    store.currentCanvas.setSelection(
       new Box(this.currentPosition, this.currentPosition)
     );
   }
 
   cleanup() {
     if (!!this.textLayer) {
-      store.canvas.commitScratch();
+      store.currentCanvas.commitScratch();
       this.textLayer = null;
     }
   }

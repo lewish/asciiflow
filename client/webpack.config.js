@@ -15,14 +15,11 @@ module.exports = (env, argv) => ({
     warnings: true,
   },
   devServer: {
-    // headers: {
-    //   "Cache-Control": "no-store",
-    // },
     port: 9110,
     open: false,
     // Triggers a rebuild when requesting the output filename.
-    lazy: true,
     filename: new RegExp(`.*\\/${path.basename(argv.output)}`),
+    lazy: true,
     contentBase: path.resolve("./client"),
     stats: {
       colors: true,
@@ -30,6 +27,7 @@ module.exports = (env, argv) => ({
     watchOptions: {
       aggregateTimeout: 2000,
     },
+    historyApiFallback: true,
     after: (_, socket, compiler) => {
       // Listen to STDIN, which is written to by ibazel to tell it to reload.
       // Must check the message so we only bundle after a successful build completes.
@@ -37,7 +35,7 @@ module.exports = (env, argv) => ({
         if (!String(data).includes("IBAZEL_BUILD_COMPLETED SUCCESS")) {
           return;
         }
-        // Force compilation and then notify clients.
+        // Force compilation and then tell clients to refresh.
         compiler.run(() => socket.sockWrite(socket.sockets, "content-changed"));
       });
     },

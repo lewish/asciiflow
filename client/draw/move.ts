@@ -24,7 +24,7 @@ export class DrawMove extends AbstractDrawFunction {
     this.ends = [];
 
     // If this isn't a special cell then quit, or things get weird.
-    if (!constants.isSpecial(store.canvas.committed.get(position))) {
+    if (!constants.isSpecial(store.currentCanvas.committed.get(position))) {
       return;
     }
 
@@ -36,14 +36,14 @@ export class DrawMove extends AbstractDrawFunction {
         const clockwise = i.x !== 0;
         const startIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
-            store.canvas.committed.get(position)
+            store.currentCanvas.committed.get(position)
           ) !== -1;
         const midPointIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
-            store.canvas.committed.get(midPoint)
+            store.currentCanvas.committed.get(midPoint)
           ) !== -1;
 
-        const midPointContext = store.canvas.committed.context(midPoint);
+        const midPointContext = store.currentCanvas.committed.context(midPoint);
         // Special case, a straight line with no turns.
         if (midPointContext.sum() === 1) {
           ends.push({
@@ -68,7 +68,7 @@ export class DrawMove extends AbstractDrawFunction {
           const secondEnd = secondEnds[0];
           const endIsAlt =
             constants.ALT_SPECIAL_VALUES.indexOf(
-              store.canvas.committed.get(secondEnd)
+              store.currentCanvas.committed.get(secondEnd)
             ) !== -1;
           // On the second line we don't care about multiple
           // junctions, just the last.
@@ -110,11 +110,11 @@ export class DrawMove extends AbstractDrawFunction {
         layer.set(new Vector(midX, midY), constants.ALT_SPECIAL_VALUE);
       }
     }
-    store.canvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitScratch();
+    store.currentCanvas.commitScratch();
   }
 
   /**
@@ -127,7 +127,7 @@ export class DrawMove extends AbstractDrawFunction {
     const junctions = [];
     while (true) {
       const nextEnd = endPosition.add(direction);
-      const nextEndValue = store.canvas.committed.get(nextEnd);
+      const nextEndValue = store.currentCanvas.committed.get(nextEnd);
       if (!isSpecial(nextEndValue)) {
         // Junctions: Right angles and end T-Junctions.
         if (!startPosition.equals(endPosition)) {
@@ -137,7 +137,7 @@ export class DrawMove extends AbstractDrawFunction {
       }
 
       endPosition = nextEnd;
-      const context = store.canvas.committed.context(endPosition);
+      const context = store.currentCanvas.committed.context(endPosition);
       // Junctions: Side T-Junctions.
       if (context.sum() === 3) {
         junctions.push(endPosition);
@@ -155,7 +155,7 @@ export class DrawMove extends AbstractDrawFunction {
    * including diagonally.
    */
   snapToNearest(position: Vector) {
-    if (isSpecial(store.canvas.committed.get(position))) {
+    if (isSpecial(store.currentCanvas.committed.get(position))) {
       return position;
     }
     const allDirections = constants.DIRECTIONS.concat([
@@ -170,9 +170,9 @@ export class DrawMove extends AbstractDrawFunction {
     for (const direction of allDirections) {
       // Find the most connected cell, essentially.
       const newPos = position.add(direction);
-      const contextSum = store.canvas.committed.context(newPos).sum();
+      const contextSum = store.currentCanvas.committed.context(newPos).sum();
       if (
-        isSpecial(store.canvas.committed.get(newPos)) &&
+        isSpecial(store.currentCanvas.committed.get(newPos)) &&
         contextSum > bestContextSum
       ) {
         bestDirection = direction;
@@ -187,7 +187,7 @@ export class DrawMove extends AbstractDrawFunction {
   }
 
   getCursor(position: Vector) {
-    if (isSpecial(store.canvas.committed.get(position))) {
+    if (isSpecial(store.currentCanvas.committed.get(position))) {
       return "move";
     } else {
       return "default";

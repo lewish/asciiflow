@@ -15,11 +15,11 @@ export class DrawBox extends AbstractDrawFunction {
     const layer = new Layer();
     drawLine(layer, this.startPosition, position, true);
     drawLine(layer, this.startPosition, position, false);
-    store.canvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitScratch();
+    store.currentCanvas.commitScratch();
   }
 
   getCursor() {

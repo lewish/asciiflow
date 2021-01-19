@@ -1,9 +1,12 @@
 import { Box, CellContext } from "asciiflow/client/common";
 import * as constants from "asciiflow/client/constants";
 import { Layer, LayerView } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
-import { Persistent } from "asciiflow/client/store/persistent";
-import { Vector } from "asciiflow/client/vector";
+import { DrawingId, store } from "asciiflow/client/store";
+import {
+  ArrayStringifier,
+  Persistent,
+} from "asciiflow/client/store/persistent";
+import { IVector, Vector } from "asciiflow/client/vector";
 import { action, observable } from "mobx";
 import { Characters } from "asciiflow/client/constants";
 
@@ -12,8 +15,50 @@ import { Characters } from "asciiflow/client/constants";
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
+  constructor(public readonly drawingId: DrawingId) {}
+
+  private persistentKey(...values: string[]) {
+    return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
+  }
+
+  private _name = Persistent.json(this.persistentKey("name"), null as string);
+
+  public get name() {
+    return this._name.get();
+  }
+
+  @action.bound public setName(value: string) {
+    this._name.set(value);
+  }
+
+  private _zoom = Persistent.json(this.persistentKey("zoom"), 1);
+
+  public get zoom() {
+    return this._zoom.get();
+  }
+
+  @action.bound public setZoom(value: number) {
+    this._zoom.set(value);
+  }
+
+  private _offset = Persistent.json<IVector>(this.persistentKey("offset"), {
+    x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
+    y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
+  });
+
+  public get offset() {
+    return new Vector(this._offset.get().x, this._offset.get().y);
+  }
+
+  @action.bound public setOffset(value: Vector) {
+    this._offset.set({
+      x: value.x,
+      y: value.y,
+    });
+  }
+
   @observable public persistentCommitted = Persistent.custom(
-    "layer",
+    this.persistentKey("committed-layer"),
     new Layer(),
     Layer
   );
@@ -33,8 +78,17 @@ export class CanvasStore {
     return new LayerView([this.committed, this.scratch]);
   }
 
-  @observable public undoLayers: Layer[] = [];
-  @observable public redoLayers: Layer[] = [];
+  @observable public undoLayers = Persistent.custom(
+    this.persistentKey("undo-layers"),
+    [],
+    new ArrayStringifier(Layer)
+  );
+
+  @observable public redoLayers = Persistent.custom(
+    this.persistentKey("redo-layers"),
+    [],
+    new ArrayStringifier(Layer)
+  );
 
   @action.bound setSelection(box: Box) {
     this.selection = box;
@@ -52,9 +106,10 @@ export class CanvasStore {
    * This clears the entire state, but is undoable.
    */
   @action.bound clear() {
-    this.undoLayers.push(this.committed);
+    this.undoLayers.get().push(this.committed);
+    this.undoLayers.sync();
     this.persistentCommitted.set(new Layer());
-    this.redoLayers = [];
+    this.redoLayers.set([]);
   }
 
   /**
@@ -322,10 +377,11 @@ export class CanvasStore {
     this.committed = newLayer;
     if (undoLayer.size() > 0) {
       // Don't push a no-op to the undo stack.
-      this.undoLayers.push(undoLayer);
+      this.undoLayers.get().push(undoLayer);
+      this.undoLayers.sync();
     }
     // If you commit something new, delete the redo stack.
-    this.redoLayers = [];
+    this.redoLayers.set([]);
     this.scratch = new Layer();
   }
 
@@ -333,24 +389,32 @@ export class CanvasStore {
    * Undoes the last committed state.
    */
   @action.bound undo() {
-    if (this.undoLayers.length === 0) {
+    if (this.undoLayers.get().length === 0) {
       return;
     }
-    const [newLayer, redoLayer] = this.committed.apply(this.undoLayers.pop());
+    const [newLayer, redoLayer] = this.committed.apply(
+      this.undoLayers.get().pop()
+    );
     this.committed = newLayer;
-    this.redoLayers.push(redoLayer);
+    this.redoLayers.get().push(redoLayer);
+    this.undoLayers.sync();
+    this.redoLayers.sync();
   }
 
   /**
    * Redoes the last undone.
    */
   @action.bound redo() {
-    if (this.redoLayers.length === 0) {
+    if (this.redoLayers.get().length === 0) {
       return;
     }
-    const [newLayer, undoLayer] = this.committed.apply(this.redoLayers.pop());
+    const [newLayer, undoLayer] = this.committed.apply(
+      this.redoLayers.get().pop()
+    );
     this.committed = newLayer;
-    this.undoLayers.push(undoLayer);
+    this.undoLayers.get().push(undoLayer);
+    this.undoLayers.sync();
+    this.redoLayers.sync();
   }
 
   outputText(box?: Box) {

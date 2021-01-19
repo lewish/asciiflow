@@ -1,4 +1,3 @@
-import { CanvasStore } from "asciiflow/client/canvas_store";
 import { Box } from "asciiflow/client/common";
 import { SPECIAL_VALUE } from "asciiflow/client/constants";
 import { Layer } from "asciiflow/client/layer";

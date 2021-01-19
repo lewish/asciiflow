@@ -37,12 +37,14 @@ ts_library(
         "@npm//@types/react-dom",
         "@npm//@types/react-router",
         "@npm//@types/react-router-dom",
+        "@npm//@types/uuid",
         "@npm//mobx",
         "@npm//mobx-react",
         "@npm//react",
         "@npm//react-dom",
         "@npm//react-router",
         "@npm//react-router-dom",
+        "@npm//uuid",
     ],
 )
 

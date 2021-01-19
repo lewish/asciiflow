@@ -39,7 +39,12 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
       <canvas
         width={document.documentElement.clientWidth}
         height={document.documentElement.clientHeight}
-        style={{ cursor: store.currentCursor }}
+        style={{
+          cursor: store.currentCursor,
+          position: "fixed",
+          left: 0,
+          top: 0,
+        }}
         id="ascii-canvas"
         {...rest}
       />
@@ -52,20 +57,20 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
  *       however performance is currently very acceptable on test devices.
  */
 function render(canvas: HTMLCanvasElement) {
-  const committed = store.canvas.committed;
-  const scratch = store.canvas.scratch;
-  const selection = store.canvas.selection;
+  const committed = store.currentCanvas.committed;
+  const scratch = store.currentCanvas.scratch;
+  const selection = store.currentCanvas.selection;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
   // Clear the visible area.
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  context.scale(store.zoom, store.zoom);
-  context.translate(
-    canvas.width / 2 / store.zoom,
-    canvas.height / 2 / store.zoom
-  );
+  const zoom = store.currentCanvas.zoom;
+  const offset = store.currentCanvas.offset;
+
+  context.scale(zoom, zoom);
+  context.translate(canvas.width / 2 / zoom, canvas.height / 2 / zoom);
 
   // Only render grid lines and cells that are visible.
   const startOffset = screenToCell(new Vector(0, 0)).subtract(
@@ -91,23 +96,17 @@ function render(canvas: HTMLCanvasElement) {
   context.strokeStyle = "#EEEEEE";
   context.beginPath();
   for (let i = startOffset.x; i < endOffset.x; i++) {
-    context.moveTo(
-      i * constants.CHAR_PIXELS_H - store.offset.x,
-      0 - store.offset.y
-    );
+    context.moveTo(i * constants.CHAR_PIXELS_H - offset.x, 0 - offset.y);
     context.lineTo(
-      i * constants.CHAR_PIXELS_H - store.offset.x,
-      2000 * constants.CHAR_PIXELS_V - store.offset.y
+      i * constants.CHAR_PIXELS_H - offset.x,
+      2000 * constants.CHAR_PIXELS_V - offset.y
     );
   }
   for (let j = startOffset.y; j < endOffset.y; j++) {
-    context.moveTo(
-      0 - store.offset.x,
-      j * constants.CHAR_PIXELS_V - store.offset.y
-    );
+    context.moveTo(0 - offset.x, j * constants.CHAR_PIXELS_V - offset.y);
     context.lineTo(
-      2000 * constants.CHAR_PIXELS_H - store.offset.x,
-      j * constants.CHAR_PIXELS_V - store.offset.y
+      2000 * constants.CHAR_PIXELS_H - offset.x,
+      j * constants.CHAR_PIXELS_V - offset.y
     );
   }
   context.stroke();
@@ -116,8 +115,8 @@ function render(canvas: HTMLCanvasElement) {
   function highlight(position: Vector, color: string) {
     context.fillStyle = color;
     context.fillRect(
-      position.x * constants.CHAR_PIXELS_H - store.offset.x + 0.5,
-      (position.y - 1) * constants.CHAR_PIXELS_V - store.offset.y + 0.5,
+      position.x * constants.CHAR_PIXELS_H - offset.x + 0.5,
+      (position.y - 1) * constants.CHAR_PIXELS_V - offset.y + 0.5,
       constants.CHAR_PIXELS_H - 1,
       constants.CHAR_PIXELS_V - 1
     );
@@ -128,8 +127,8 @@ function render(canvas: HTMLCanvasElement) {
       context.fillStyle = "#000000";
       context.fillText(
         value,
-        position.x * constants.CHAR_PIXELS_H - store.offset.x,
-        position.y * constants.CHAR_PIXELS_V - store.offset.y - 3
+        position.x * constants.CHAR_PIXELS_H - offset.x,
+        position.y * constants.CHAR_PIXELS_V - offset.y - 3
       );
     }
   }
@@ -148,12 +147,12 @@ function render(canvas: HTMLCanvasElement) {
     if (constants.ALL_SPECIAL_VALUES.includes(value)) {
       highlight(position, "#F5F5F5");
     }
-    const cellValue = store.canvas.getDrawValue(position);
+    const cellValue = store.currentCanvas.getDrawValue(position);
     text(position, cellValue);
   }
   for (const [position] of scratch.entries()) {
     highlight(position, "#DEF");
-    const cellValue = store.canvas.getDrawValue(position);
+    const cellValue = store.currentCanvas.getDrawValue(position);
     text(position, cellValue);
   }
 
@@ -165,24 +164,24 @@ function render(canvas: HTMLCanvasElement) {
     context.strokeStyle = "#BDF";
     context.beginPath();
     context.moveTo(
-      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
-      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+      topLeft.x * constants.CHAR_PIXELS_H - offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - offset.y
     );
     context.lineTo(
-      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
-      bottomRight.y * constants.CHAR_PIXELS_V - store.offset.y
+      topLeft.x * constants.CHAR_PIXELS_H - offset.x,
+      bottomRight.y * constants.CHAR_PIXELS_V - offset.y
     );
     context.lineTo(
-      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - store.offset.x,
-      bottomRight.y * constants.CHAR_PIXELS_V - store.offset.y
+      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - offset.x,
+      bottomRight.y * constants.CHAR_PIXELS_V - offset.y
     );
     context.lineTo(
-      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - store.offset.x,
-      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+      (bottomRight.x + 1) * constants.CHAR_PIXELS_H - offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - offset.y
     );
     context.lineTo(
-      topLeft.x * constants.CHAR_PIXELS_H - store.offset.x,
-      (topLeft.y - 1) * constants.CHAR_PIXELS_V - store.offset.y
+      topLeft.x * constants.CHAR_PIXELS_H - offset.x,
+      (topLeft.y - 1) * constants.CHAR_PIXELS_V - offset.y
     );
     context.stroke();
   }
@@ -192,11 +191,11 @@ function render(canvas: HTMLCanvasElement) {
  * Given a screen coordinate, find the frame coordinates.
  */
 export function screenToFrame(vector: Vector) {
+  const zoom = store.currentCanvas.zoom;
+  const offset = store.currentCanvas.offset;
   return new Vector(
-    (vector.x - document.documentElement.clientWidth / 2) / store.zoom +
-      store.offset.x,
-    (vector.y - document.documentElement.clientHeight / 2) / store.zoom +
-      store.offset.y
+    (vector.x - document.documentElement.clientWidth / 2) / zoom + offset.x,
+    (vector.y - document.documentElement.clientHeight / 2) / zoom + offset.y
   );
 }
 
@@ -204,11 +203,11 @@ export function screenToFrame(vector: Vector) {
  * Given a frame coordinate, find the screen coordinates.
  */
 export function frameToScreen(vector: Vector) {
+  const zoom = store.currentCanvas.zoom;
+  const offset = store.currentCanvas.offset;
   return new Vector(
-    (vector.x - store.offset.x) * store.zoom +
-      document.documentElement.clientWidth / 2,
-    (vector.y - store.offset.y) * store.zoom +
-      document.documentElement.clientHeight / 2
+    (vector.x - offset.x) * zoom + document.documentElement.clientWidth / 2,
+    (vector.y - offset.y) * zoom + document.documentElement.clientHeight / 2
   );
 }
 

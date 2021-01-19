@@ -32,8 +32,8 @@ export class DrawLine extends AbstractDrawFunction {
     // TODO: Split the line into two lines if we can't satisfy both ends.
     const characters = store.characters;
 
-    const startContext = store.canvas.committed.context(this.startPosition);
-    const endContext = store.canvas.committed.context(this.endPosition);
+    const startContext = store.currentCanvas.committed.context(this.startPosition);
+    const endContext = store.currentCanvas.committed.context(this.endPosition);
 
     const horizontalStart =
       (startContext.up && startContext.down) ||
@@ -77,11 +77,11 @@ export class DrawLine extends AbstractDrawFunction {
         })()
       );
     }
-    store.canvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {
-    store.canvas.commitScratch();
+    store.currentCanvas.commitScratch();
     this.startPosition = null;
     this.endPosition = null;
   }

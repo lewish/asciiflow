@@ -1,14 +1,20 @@
 import * as constants from "asciiflow/client/constants";
-import { CanvasStore } from "asciiflow/client/canvas_store";
 import { Vector } from "asciiflow/client/vector";
 import { action, observable } from "mobx";
 import { DrawBox } from "asciiflow/client/draw/box";
 import { IDrawFunction } from "asciiflow/client/draw/function";
-import { Persistent } from "asciiflow/client/store/persistent";
+import {
+  ArrayStringifier,
+  IStringifier,
+  JSONStringifier,
+  Persistent,
+} from "asciiflow/client/store/persistent";
 import { DrawLine } from "asciiflow/client/draw/line";
 import { DrawSelect } from "asciiflow/client/draw/select";
 import { DrawFreeform } from "asciiflow/client/draw/freeform";
 import { DrawText } from "asciiflow/client/draw/text";
+import * as uuid from "uuid";
+import { CanvasStore } from "asciiflow/client/store/canvas";
 
 export enum ToolMode {
   BOX = 1,
@@ -25,6 +31,52 @@ export interface IModifierKeys {
   meta?: boolean;
 }
 
+export interface IDrawing {
+  id: string;
+  name: string;
+}
+
+export class DrawingId {
+  public static local(id: string) {
+    return new DrawingId("local", id, null);
+  }
+
+  public static share(spec: string) {
+    return new DrawingId("local", null, spec);
+  }
+
+  constructor(
+    public readonly type: "local" | "share",
+    public readonly localId: string,
+    public readonly shareSpec: string
+  ) {}
+
+  public get persistentKey() {
+    return Persistent.key(
+      this.type,
+      this.type === "local" ? this.localId : this.shareSpec
+    );
+  }
+
+  public toString() {
+    return DrawingId.STRINGIFIER.serialize(this);
+  }
+
+  public static fromString(value: string) {
+    return DrawingId.STRINGIFIER.deserialize(value);
+  }
+
+  public static readonly STRINGIFIER: IStringifier<DrawingId> = {
+    deserialize(value: string) {
+      const object = new JSONStringifier<any>().deserialize(value);
+      return new DrawingId(object.type, object.localId, object.shareSpec);
+    },
+    serialize(value: DrawingId) {
+      return new JSONStringifier().serialize(value);
+    },
+  };
+}
+
 export class Store {
   public readonly boxTool = new DrawBox();
   public readonly lineTool = new DrawLine(false);
@@ -33,15 +85,28 @@ export class Store {
   public readonly freeformTool = new DrawFreeform();
   public readonly textTool = new DrawText();
 
+  @observable private _route: DrawingId = DrawingId.local(null);
+
+  public get route() {
+    return this._route;
+  }
+
+  @action.bound public setRoute(value: DrawingId) {
+    if (JSON.stringify(value) !== JSON.stringify(store.route)) {
+      this._route = value;
+    }
+  }
+
+  @observable public freeformCharacter = "x";
+
   @observable public toolMode = ToolMode.BOX;
-
   @observable public unicode = Persistent.json("unicode", true);
+  @observable public controlsOpen = Persistent.json("controlsOpen", false);
 
-  @observable public zoom = 1;
-
-  @observable public offset = new Vector(
-    (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
-    (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2
+  @observable drawings = Persistent.custom(
+    "localDrawingIds",
+    [],
+    new ArrayStringifier(DrawingId.STRINGIFIER)
   );
 
   @observable public currentCursor: string = "default";
@@ -70,23 +135,48 @@ export class Store {
     return this.unicode.get() ? constants.UNICODE : constants.ASCII;
   }
 
-  public canvas = new CanvasStore();
+  private canvases = new Map<string, CanvasStore>();
+
+  get currentCanvas() {
+    return this.canvas(this._route);
+  }
+
+  public canvas(drawingId: DrawingId) {
+    let canvas = this.canvases.get(drawingId.toString());
+    if (!canvas) {
+      // Add the drawing ID to the list of all drawing IDs.
+      if (
+        !this.drawings
+          .get()
+          .some(
+            (otherDrawingId) =>
+              otherDrawingId.toString() === drawingId.toString()
+          )
+      ) {
+        this.drawings.set([...this.drawings.get(), drawingId]);
+      }
+      canvas = new CanvasStore(drawingId);
+      this.canvases.set(drawingId.toString(), canvas);
+    }
+    return canvas;
+  }
+
+  @action.bound public setFreeformCharacter(value: string) {
+    this.freeformCharacter = value;
+  }
 
   @action.bound public setUnicode(value: boolean) {
     this.unicode.set(value);
   }
 
-  @action.bound public setZoom(value: number) {
-    this.zoom = value;
-  }
-
-  @action.bound public setOffset(value: Vector) {
-    this.offset = value;
-  }
-
   @action.bound public setToolMode(toolMode: ToolMode) {
     this.toolMode = toolMode;
   }
+}
+
+function generateId() {
+  const hex = uuid.v4().replace(/\-/g, "");
+  return hex.substr(0, 16);
 }
 
 export const store = new Store();

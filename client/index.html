@@ -10,7 +10,6 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     />
-    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" /> -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
@@ -20,284 +19,17 @@
     <link
       rel="shortcut icon"
       sizes="196x196"
-      href="public/images/favicon.png"
+      href="/public/images/favicon.png"
     />
 
-    <title>ASCIIFlow Infinity</title>
+    <title>ASCIIFlow</title>
     <style>
       * {
-        font-weight: bold;
-        font-family: sans-serif;
-        font-size: 0.95em;
-        color: #666;
-      }
-
-      a {
-        color: #ff9e20;
+        font-family: Roboto, sans-serif;
       }
 
       body {
         margin: 0px;
-      }
-
-      button {
-        cursor: pointer;
-      }
-
-      #drive-file-list li {
-        list-style: none;
-        font-size: 15px;
-        margin: 5px;
-      }
-
-      .toolbar {
-        background-color: white;
-      }
-
-      #logo-bar {
-        margin: 8px;
-      }
-
-      #draw-tools > button,
-      #file-tools > button {
-        font-size: 12px;
-        vertical-align: top;
-        display: inline-block;
-        margin: 8px 8px;
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        cursor: pointer;
-        outline: 0 !important;
-        background-size: 200% 100% !important;
-        background-color: #fff;
-      }
-
-      #file-tools > button.info-image {
-        margin-left: 30px;
-      }
-
-      .info-icon,
-      .info-icon-file {
-        width: 30px;
-        height: 30px;
-        margin: 0 0 5px -4px;
-        background-size: 100% !important;
-        background-size: 200% 100% !important;
-        display: inline-block;
-      }
-
-      .info-description {
-        vertical-align: text-bottom;
-        margin-left: 10px;
-        display: inline-block;
-        height: 30px;
-        width: 64%;
-        text-align: left;
-      }
-
-      .info-description br {
-        display: none;
-      }
-
-      .dialog span {
-        color: #aaa;
-      }
-
-      #drive-filename {
-        display: inline-block;
-      }
-
-      #drive-save-state {
-        display: inline-block;
-        line-height: 40px;
-        margin-right: 10px;
-        color: #bbb;
-        font-weight: normal;
-        font-size: 0.9em;
-      }
-
-      #drive-filename {
-        font-size: 30px;
-        border: gray 1px solid;
-        padding: 5px;
-        background: #eee;
-        cursor: pointer;
-      }
-
-      /* Mobile overrides */
-      @media (max-width: 780px) {
-        #logo-bar {
-          margin: 10px;
-        }
-
-        #draw-tools > button,
-        #file-tools > button {
-          margin: 10px 4px;
-        }
-
-        #draw-tools {
-          text-align: center;
-          padding-left: 0px;
-        }
-
-        /* Move file tools to the bottom. */
-        #file-tools {
-          left: 0px;
-          padding-left: 9px;
-          bottom: 0px;
-          background-color: #fff;
-          width: 100%;
-          text-align: left;
-          -webkit-box-shadow: 0px -1px 5px 0px #bbb; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-          box-shadow: 0px -1px 5px 0px #bbb; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
-        }
-
-        #drive-save-state {
-          line-height: 44px;
-          margin-right: 6px;
-        }
-
-        #options-button {
-          position: fixed;
-          right: 6px;
-        }
-
-        #drive-filename {
-          display: block;
-        }
-      }
-
-      .dialog {
-        position: fixed;
-        left: 0px;
-        right: 0px;
-        top: 0px;
-        bottom: 0px;
-        margin: auto;
-        width: 85%;
-        height: 89%;
-        max-width: 640px;
-        max-height: 380px;
-        background: #fff;
-        display: none;
-        z-index: 100;
-        padding: 20px;
-        text-align: center;
-        -webkit-box-shadow: 0px 0px 5px 0px #bbb; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-        box-shadow: 0px 0px 5px 0px #bbb; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
-      }
-
-      .visible {
-        display: block !important;
-      }
-
-      #draw-tools > button,
-      #file-tools > button {
-        border-width: 0px;
-      }
-
-      button.active,
-      .info-icon {
-        background-position: right;
-      }
-
-      .dialog > button {
-        margin-top: 6px;
-        display: inline-block;
-      }
-
-      .close-dialog-button,
-      #import-submit-button,
-      #text-tool-close {
-        position: absolute;
-        right: 0px;
-        bottom: 0px;
-        margin: 7px;
-        border: 0;
-        -webkit-appearance: none;
-        background-color: transparent;
-      }
-
-      @media (max-width: 500px) {
-        #logo-bar {
-          display: none;
-        }
-        .info-description {
-          vertical-align: top;
-          width: 84%;
-        }
-        .dialog,
-        .dialog p {
-          font-size: 0.9em !important;
-        }
-        .dialog {
-          padding: 10px;
-          max-height: 410px;
-        }
-        .info-icon,
-        .info-icon-file {
-          margin: 0 0 10px -4px;
-        }
-
-        .info-description br {
-          display: block;
-        }
-
-        .close-dialog-button,
-        #import-submit-button,
-        #text-tool-close {
-          margin: 10px 3px;
-        }
-      }
-
-      #options-logo {
-        margin: 10px 0 0;
-      }
-
-      #options-scroll {
-        overflow-y: scroll;
-        height: 91%;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      #options-scroll p {
-        margin: 10px 0 15px;
-      }
-
-      .dialog-button-bar {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 8%;
-        min-height: 34px;
-        background-color: #ddd;
-        text-align: right;
-      }
-
-      #import-submit-button {
-        margin-right: 80px;
-      }
-
-      #ascii-canvas {
-        position: fixed;
-        left: 0px;
-        top: 0px;
-      }
-
-      textarea {
-        width: 100%;
-        height: 91%;
-        font-size: 1.2em;
-        font-weight: normal;
-        overflow: hidden;
-        resize: none;
-        margin: 0px;
-        padding: 0px;
-        border: 0px;
-        font-family: monospace;
-        white-space: pre;
       }
 
       #logo-interstitial {
@@ -325,70 +57,8 @@
         margin: auto;
       }
 
-      #text-tool-widget {
-        display: none;
-        z-index: 100;
-        position: fixed;
-        top: 60px;
-        left: 0px;
-        right: 0px;
-        width: 300px;
-        height: 100px;
-        margin: auto;
-        text-align: center;
-        box-shadow: 0px 0px 3px 3px #ccc;
-      }
-
       .fade-out {
         opacity: 0;
-      }
-
-      .box-image {
-        background-image: url("public/images/box-icon.gif");
-      }
-      .line-image {
-        background-image: url("public/images/line-icon.gif");
-      }
-      .arrow-image {
-        background-image: url("public/images/arrow-icon.gif");
-      }
-      .freeform-image {
-        background-image: url("public/images/freeform-icon.gif");
-      }
-      .erase-image {
-        background-image: url("public/images/erase-icon.gif");
-      }
-      .move-image {
-        background-image: url("public/images/move-icon.gif");
-      }
-      .text-image {
-        background-image: url("public/images/text-icon.gif");
-      }
-
-      .drive-image {
-        background-image: url("public/images/drive-icon.gif");
-      }
-      .export-image {
-        background-image: url("public/images/export-icon.gif");
-      }
-      .import-image {
-        background-image: url("public/images/import-icon.gif");
-      }
-      .clear-image {
-        background-image: url("public/images/clear-icon.gif");
-      }
-      .undo-image {
-        background-image: url("public/images/undo-icon.gif");
-      }
-      .redo-image {
-        background-image: url("public/images/redo-icon.gif");
-      }
-      .select-image {
-        background-image: url("public/images/select-icon.gif");
-      }
-
-      .info-image {
-        background-image: url("public/images/info-icon.gif");
       }
 
       /* New intro animation */
@@ -515,10 +185,10 @@
   </head>
   <body>
     <div id="logo-interstitial" class="animated fadeOut">
-      <img src="public/images/logo-full.gif" class="animated bounceOut" />
+      <img src="/public/images/logo-full.gif" class="animated bounceOut" />
     </div>
     <div id="root"></div>
-    <script src="app.bundle.js"></script>
+    <script src="/app.bundle.js"></script>
     <script>
       window.setTimeout(function () {
         document.getElementById("logo-interstitial").style.display = "none";

@@ -32,7 +32,7 @@ export class DrawSelect extends AbstractDrawFunction {
       // Start a drag.
       this.startDrag(position);
     } else if (
-      isSpecial(store.canvas.committed.get(position)) &&
+      isSpecial(store.currentCanvas.committed.get(position)) &&
       !modifierKeys.shift
     ) {
       // Start a resize.
@@ -46,7 +46,7 @@ export class DrawSelect extends AbstractDrawFunction {
 
   startSelect(position: Vector) {
     this.selectBox = new Box(position, position);
-    store.canvas.setSelection(this.selectBox);
+    store.currentCanvas.setSelection(this.selectBox);
   }
 
   startDrag(position: Vector) {
@@ -69,20 +69,20 @@ export class DrawSelect extends AbstractDrawFunction {
 
     const selectionLayer = new Layer();
 
-    store.canvas.committed.entries().forEach(([key, value]) => {
+    store.currentCanvas.committed.entries().forEach(([key, value]) => {
       if (this.selectBox.contains(key)) {
         selectionLayer.set(key, value);
       }
     });
 
-    store.canvas.setScratchLayer(selectionLayer);
-    store.canvas.setSelection(this.selectBox);
+    store.currentCanvas.setScratchLayer(selectionLayer);
+    store.currentCanvas.setSelection(this.selectBox);
   }
 
   moveDrag(position: Vector) {
     this.dragEnd = position;
     const moveDelta = this.dragEnd.subtract(this.dragStart);
-    store.canvas.setSelection(
+    store.currentCanvas.setSelection(
       new Box(
         this.selectBox.topLeft().add(moveDelta),
         this.selectBox.bottomRight().add(moveDelta)
@@ -92,26 +92,26 @@ export class DrawSelect extends AbstractDrawFunction {
     const layer = new Layer();
 
     // Erase existing drawing.
-    store.canvas.committed.entries().forEach(([key]) => {
+    store.currentCanvas.committed.entries().forEach(([key]) => {
       if (this.selectBox.contains(key)) {
         layer.set(key, "");
       }
     });
     // Move characters.
-    store.canvas.committed.entries().forEach(([key, value]) => {
+    store.currentCanvas.committed.entries().forEach(([key, value]) => {
       if (this.selectBox.contains(key)) {
         layer.set(key.add(moveDelta), value);
       }
     });
 
-    store.canvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {
     if (this.dragStart != null) {
-      store.canvas.commitScratch();
+      store.currentCanvas.commitScratch();
       this.selectBox = null;
-      store.canvas.clearSelection();
+      store.currentCanvas.clearSelection();
     } else if (!!this.moveTool) {
       this.moveTool.end();
       this.moveTool = null;
@@ -124,7 +124,7 @@ export class DrawSelect extends AbstractDrawFunction {
     if (this.selectBox != null && this.selectBox.contains(position)) {
       return "pointer";
     }
-    if (isSpecial(store.canvas.committed.get(position))) {
+    if (isSpecial(store.currentCanvas.committed.get(position))) {
       return "move";
     }
     return "default";
@@ -134,7 +134,7 @@ export class DrawSelect extends AbstractDrawFunction {
     if (this.selectBox != null) {
       if (value === KEY_COPY || value === KEY_CUT) {
         this.copiedLayer = new Layer();
-        store.canvas.committed.entries().forEach(([key, value]) => {
+        store.currentCanvas.committed.entries().forEach(([key, value]) => {
           if (this.selectBox.contains(key)) {
             this.copiedLayer.set(key, value);
           }
@@ -142,24 +142,24 @@ export class DrawSelect extends AbstractDrawFunction {
       }
       if (value === KEY_CUT) {
         const layer = new Layer();
-        store.canvas.committed.entries().forEach(([key]) => {
+        store.currentCanvas.committed.entries().forEach(([key]) => {
           if (this.selectBox.contains(key)) {
             layer.set(key, "");
           }
         });
-        store.canvas.setScratchLayer(layer);
-        store.canvas.commitScratch();
+        store.currentCanvas.setScratchLayer(layer);
+        store.currentCanvas.commitScratch();
       }
     }
     if (value === KEY_BACKSPACE || value === KEY_DELETE) {
       const layer = new Layer();
-      store.canvas.committed.entries().forEach(([key]) => {
+      store.currentCanvas.committed.entries().forEach(([key]) => {
         if (this.selectBox.contains(key)) {
           layer.set(key, "");
         }
       });
-      store.canvas.setScratchLayer(layer);
-      store.canvas.commitScratch();
+      store.currentCanvas.setScratchLayer(layer);
+      store.currentCanvas.commitScratch();
     }
 
     if (value === KEY_PASTE) {
@@ -167,8 +167,8 @@ export class DrawSelect extends AbstractDrawFunction {
       this.copiedLayer.entries().forEach(([key, value]) => {
         offsetLayer.set(key.add(this.dragEnd.subtract(this.dragStart)), value);
       });
-      store.canvas.setScratchLayer(offsetLayer);
-      store.canvas.commitScratch();
+      store.currentCanvas.setScratchLayer(offsetLayer);
+      store.currentCanvas.commitScratch();
     }
   }
 }

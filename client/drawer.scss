@@ -1,15 +1,30 @@
 .drawer {
-  width: 250px;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  max-width: 380px;
+  z-index: 11;
+  border-radius: 8px !important;
 
   .logo {
-    width: 150px;
+    height: 30px;
     margin: -3px 10px 0px;
   }
 
   .header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 10px;
   }
+}
+
+.freeformLabel {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.helpText {
+  padding: 15px;
+  line-height: 1.8;
 }

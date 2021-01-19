@@ -1,7 +1,12 @@
 /**
  * Stores a 2D vector.
  */
-export class Vector {
+
+export interface IVector {
+  x: number;
+  y: number;
+}
+export class Vector implements IVector {
   constructor(public x: number, public y: number) {}
 
   // TODO: These shouldn't be here.
