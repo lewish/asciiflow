@@ -58,6 +58,14 @@ export class DrawingId {
     );
   }
 
+  public get href() {
+    if (!!this.localId) {
+      return `/local/${encodeURIComponent(this.localId)}`;
+    } else {
+      return `/share/${encodeURIComponent(this.shareSpec)}`;
+    }
+  }
+
   public toString() {
     return DrawingId.STRINGIFIER.serialize(this);
   }
@@ -171,6 +179,20 @@ export class Store {
 
   @action.bound public setToolMode(toolMode: ToolMode) {
     this.toolMode = toolMode;
+  }
+
+  @action.bound public deleteDrawing(drawingId: DrawingId) {
+    this.drawings.set(
+      this.drawings
+        .get()
+        .filter(
+          (subDrawingId) => subDrawingId.toString() !== drawingId.toString()
+        )
+    );
+    // Also delete other local storage.
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith(this.canvas(drawingId).persistentKey()))
+      .forEach((key) => localStorage.removeItem(key));
   }
 }
 

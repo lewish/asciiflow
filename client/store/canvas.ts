@@ -17,7 +17,7 @@ import { Characters } from "asciiflow/client/constants";
 export class CanvasStore {
   constructor(public readonly drawingId: DrawingId) {}
 
-  private persistentKey(...values: string[]) {
+  public persistentKey(...values: string[]) {
     return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
   }
 

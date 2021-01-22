@@ -9,6 +9,7 @@ import { DrawingId, store } from "asciiflow/client/store";
 import { View } from "asciiflow/client/view";
 import { BrowserRouter, Route, useParams } from "react-router-dom";
 import ReactDOM = require("react-dom");
+import * as styles from "asciiflow/client/app.css";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -28,13 +29,13 @@ export const App = () => {
   );
 
   return (
-    <>
+    <div className={styles.app}>
       <Drawer />
       <View
         {...desktopController.getHandlerProps()}
         {...touchController.getHandlerProps()}
       />
-    </>
+    </div>
   );
 };
 

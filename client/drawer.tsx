@@ -17,15 +17,21 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Button,
+  TextField,
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
-import { store, ToolMode } from "asciiflow/client/store";
+import { DrawingId, store, ToolMode } from "asciiflow/client/store";
 import { ControlledMenu } from "asciiflow/client/components/controlled_menu";
 import { IRouteProps } from "asciiflow/client/app";
 import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
+import { useHistory } from "react-router";
 
 export function Drawer() {
+  const history = useHistory();
+  const defaultNewDrawingName = "Untitled drawing";
+
   return useObserver(() => {
     return (
       <Paper elevation={3} className={styles.drawer}>
@@ -54,18 +60,30 @@ export function Drawer() {
                 <IconButton>
                   <Icons.GetApp />
                 </IconButton>
-                <IconButton>
-                  <Icons.Add />
-                </IconButton>
+                <NewDrawingButton />
                 <IconButton>
                   <Icons.ExpandLess />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
             {store.drawings.get().map((drawingId) => (
-              <ListItem>
+              <ListItem
+                key={drawingId.toString()}
+                component="a"
+                href={drawingId.href}
+                onClick={(e: React.MouseEvent) => {
+                  history.push(drawingId.href);
+                  e.preventDefault();
+                }}
+              >
                 <ListItemIcon>
-                  <Icons.FileCopy />
+                  <Icons.FileCopy
+                    color={
+                      store.route.toString() === drawingId.toString()
+                        ? "primary"
+                        : "inherit"
+                    }
+                  />
                 </ListItemIcon>
                 <ListItemText>
                   {store.canvas(drawingId).name ||
@@ -80,35 +98,31 @@ export function Drawer() {
                       </IconButton>
                     }
                   >
-                    <MenuItem>
-                      <ListItemIcon>
-                        <Icons.Delete />
-                      </ListItemIcon>
-                      Delete
-                    </MenuItem>
                     <ControlledDialog
                       button={
                         <MenuItem>
                           <ListItemIcon>
-                            <Icons.Edit />
+                            <Icons.Delete />
                           </ListItemIcon>
-                          Rename
+                          Delete
                         </MenuItem>
                       }
+                      confirmButton={
+                        <Button
+                          onClick={() => store.deleteDrawing(drawingId)}
+                          color="secondary"
+                        >
+                          Delete
+                        </Button>
+                      }
                     >
-                      <DialogTitle>Rename drawing</DialogTitle>
+                      <DialogTitle>Delete drawing</DialogTitle>
                       <DialogContent>
-                        Give this drawing a new name.
+                        Are you sure you want to delete this drawing?
                       </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                          Cancel
-                        </Button>
-                        <Button onClick={handleClose} color="primary">
-                          Subscribe
-                        </Button>
-                      </DialogActions>
                     </ControlledDialog>
+
+                    <RenameDrawingButton />
                   </ControlledMenu>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -270,4 +284,100 @@ function ToolHelp(
   return useObserver(() => {
     return store.toolMode === props.tool ? <>{props.children}</> : null;
   });
+}
+
+function isValidDrawingName(name: string) {
+  return !store.drawings
+    .get()
+    .some(
+      (drawingId) => DrawingId.local(name).toString() === drawingId.toString()
+    );
+}
+
+function NewDrawingButton() {
+  const history = useHistory();
+  let defaultNewDrawingName = "Untitled drawing";
+  for (let i = 2; true; i++) {
+    if (!isValidDrawingName(defaultNewDrawingName)) {
+      defaultNewDrawingName = `Untitled drawing ${i}`;
+    } else {
+      break;
+    }
+  }
+  const [newDrawingName, setNewDrawingName] = React.useState(
+    defaultNewDrawingName
+  );
+  const validDrawingName = isValidDrawingName(newDrawingName);
+  return (
+    <ControlledDialog
+      button={
+        <IconButton>
+          <Icons.Add />
+        </IconButton>
+      }
+      confirmButton={
+        <Button
+          onClick={() => history.push(DrawingId.local(newDrawingName).href)}
+          color="primary"
+        >
+          Create
+        </Button>
+      }
+    >
+      <DialogTitle>Create a new drawing</DialogTitle>
+      <DialogContent>Provide a name for the drawing.</DialogContent>
+      <DialogContent>
+        <TextField
+          error={!validDrawingName}
+          label="Drawing name"
+          helperText={!validDrawingName && "Drawing name must be unique."}
+          defaultValue={defaultNewDrawingName}
+          onChange={(e) => setNewDrawingName(e.target.value)}
+        />
+      </DialogContent>
+    </ControlledDialog>
+  );
+}
+
+function RenameDrawingButton() {
+  const history = useHistory();
+  let defaultNewDrawingName = store.currentCanvas.name;
+  const [newDrawingName, setNewDrawingName] = React.useState(
+    defaultNewDrawingName
+  );
+  const validDrawingName = isValidDrawingName(newDrawingName);
+  return (
+    <ControlledDialog
+      button={
+        <MenuItem>
+          <ListItemIcon>
+            <Icons.Edit />
+          </ListItemIcon>
+          Rename
+        </MenuItem>
+      }
+      confirmButton={
+        <Button
+          onClick={() => history.push(DrawingId.local(newDrawingName).href)}
+          color="primary"
+        >
+          Create
+        </Button>
+      }
+    >
+      <DialogTitle>Rename drawing</DialogTitle>
+      <DialogContent>Provide a new name for the drawing.</DialogContent>
+      <DialogContent>
+        <TextField
+          error={!validDrawingName}
+          label="Drawing name"
+          helperText={
+            !validDrawingName && "Drawing name must be unique and different."
+          }
+          defaultValue={defaultNewDrawingName}
+          onChange={(e) => setNewDrawingName(e.target.value)}
+        />
+      </DialogContent>
+    </ControlledDialog>
+  );
 }
