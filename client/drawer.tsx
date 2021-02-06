@@ -19,6 +19,7 @@ import {
   DialogActions,
   Button,
   TextField,
+  Snackbar,
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
@@ -30,17 +31,12 @@ import { useHistory } from "react-router";
 
 export function Drawer() {
   const history = useHistory();
-  const defaultNewDrawingName = "Untitled drawing";
-
   return useObserver(() => {
     return (
       <Paper elevation={3} className={styles.drawer}>
         <div className={styles.header}>
           <img src="/public/logo_full.svg" className={styles.logo} />
 
-          <IconButton>
-            <Icons.Share />
-          </IconButton>
           <IconButton
             onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
           >
@@ -86,9 +82,10 @@ export function Drawer() {
                   />
                 </ListItemIcon>
                 <ListItemText>
-                  {store.canvas(drawingId).name ||
-                    drawingId.localId ||
-                    "new drawing"}
+                  {drawingId.localId || "Default drawing"}{" "}
+                  <span className={styles.bytesLabel}>
+                    ({store.canvas(drawingId).committed.size()}B)
+                  </span>
                 </ListItemText>
                 <ListItemSecondaryAction>
                   <ControlledMenu
@@ -122,7 +119,8 @@ export function Drawer() {
                       </DialogContent>
                     </ControlledDialog>
 
-                    <RenameDrawingButton />
+                    <RenameDrawingButton drawingId={drawingId} />
+                    <ShareButton drawingId={drawingId} />
                   </ControlledMenu>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -339,9 +337,9 @@ function NewDrawingButton() {
   );
 }
 
-function RenameDrawingButton() {
+function RenameDrawingButton({ drawingId }: { drawingId: DrawingId }) {
   const history = useHistory();
-  let defaultNewDrawingName = store.currentCanvas.name;
+  let defaultNewDrawingName = drawingId.localId;
   const [newDrawingName, setNewDrawingName] = React.useState(
     defaultNewDrawingName
   );
@@ -358,7 +356,10 @@ function RenameDrawingButton() {
       }
       confirmButton={
         <Button
-          onClick={() => history.push(DrawingId.local(newDrawingName).href)}
+          onClick={() => {
+            store.renameDrawing(drawingId.localId, newDrawingName);
+            history.push(DrawingId.local(newDrawingName).href);
+          }}
           color="primary"
         >
           Create
@@ -379,5 +380,41 @@ function RenameDrawingButton() {
         />
       </DialogContent>
     </ControlledDialog>
+  );
+}
+
+function ShareButton({ drawingId }: { drawingId: DrawingId }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <MenuItem
+      onClick={() => {
+        navigator.clipboard.writeText(
+          `${window.location.protocol}//${window.location.host}${
+            DrawingId.share(store.canvas(drawingId).shareSpec).href
+          })`
+        );
+        setOpen(true);
+      }}
+    >
+      <ListItemIcon>
+        <Icons.Share />
+      </ListItemIcon>
+      Share
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        message="Copied link to clipboard"
+        action={
+          <Button color="secondary" size="small" onClick={() => setOpen(false)}>
+            Dismiss
+          </Button>
+        }
+      />
+    </MenuItem>
   );
 }

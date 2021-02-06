@@ -1,20 +1,19 @@
 import * as constants from "asciiflow/client/constants";
-import { Vector } from "asciiflow/client/vector";
-import { action, observable } from "mobx";
 import { DrawBox } from "asciiflow/client/draw/box";
+import { DrawFreeform } from "asciiflow/client/draw/freeform";
 import { IDrawFunction } from "asciiflow/client/draw/function";
+import { DrawLine } from "asciiflow/client/draw/line";
+import { DrawSelect } from "asciiflow/client/draw/select";
+import { DrawText } from "asciiflow/client/draw/text";
+import { CanvasStore } from "asciiflow/client/store/canvas";
 import {
   ArrayStringifier,
   IStringifier,
   JSONStringifier,
   Persistent,
 } from "asciiflow/client/store/persistent";
-import { DrawLine } from "asciiflow/client/draw/line";
-import { DrawSelect } from "asciiflow/client/draw/select";
-import { DrawFreeform } from "asciiflow/client/draw/freeform";
-import { DrawText } from "asciiflow/client/draw/text";
+import { action, observable } from "mobx";
 import * as uuid from "uuid";
-import { CanvasStore } from "asciiflow/client/store/canvas";
 
 export enum ToolMode {
   BOX = 1,
@@ -59,10 +58,13 @@ export class DrawingId {
   }
 
   public get href() {
-    if (!!this.localId) {
-      return `/local/${encodeURIComponent(this.localId)}`;
-    } else {
+    if (!!this.shareSpec) {
       return `/share/${encodeURIComponent(this.shareSpec)}`;
+    } else {
+      if (this.localId === null) {
+        return `/`;
+      }
+      return `/local/${encodeURIComponent(this.localId)}`;
     }
   }
 
@@ -193,6 +195,35 @@ export class Store {
     Object.keys(localStorage)
       .filter((key) => key.startsWith(this.canvas(drawingId).persistentKey()))
       .forEach((key) => localStorage.removeItem(key));
+  }
+
+  @action.bound public renameDrawing(
+    originalLocalId: string,
+    newLocalId: string
+  ) {
+    const originalId = DrawingId.local(originalLocalId);
+    const newId = DrawingId.local(newLocalId);
+    this.drawings.set(
+      this.drawings
+        .get()
+        .map((drawingId) =>
+          drawingId.toString() === originalId.toString() ? newId : drawingId
+        )
+    );
+
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith(this.canvas(originalId).persistentKey()))
+      .forEach((key) => {
+        localStorage.removeItem(key);
+        localStorage.setItem(
+          key.replace(
+            this.canvas(originalId).persistentKey(),
+            this.canvas(newId).persistentKey()
+          ),
+          localStorage.getItem(key)
+        );
+      });
+    this.canvases.delete(newId.toString());
   }
 }
 

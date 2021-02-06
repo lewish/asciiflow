@@ -9,6 +9,7 @@ import {
 import { IVector, Vector } from "asciiflow/client/vector";
 import { action, observable } from "mobx";
 import { Characters } from "asciiflow/client/constants";
+import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
@@ -19,16 +20,6 @@ export class CanvasStore {
 
   public persistentKey(...values: string[]) {
     return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
-  }
-
-  private _name = Persistent.json(this.persistentKey("name"), null as string);
-
-  public get name() {
-    return this._name.get();
-  }
-
-  @action.bound public setName(value: string) {
-    this._name.set(value);
   }
 
   private _zoom = Persistent.json(this.persistentKey("zoom"), 1);
@@ -76,6 +67,13 @@ export class CanvasStore {
 
   get combined() {
     return new LayerView([this.committed, this.scratch]);
+  }
+
+  get shareSpec() {
+    return new DrawingStringifier().serialize({
+      name: this.drawingId.localId,
+      layer: this.committed,
+    });
   }
 
   @observable public undoLayers = Persistent.custom(

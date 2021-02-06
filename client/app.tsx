@@ -25,7 +25,7 @@ export const App = () => {
   store.setRoute(
     routeProps.share
       ? DrawingId.share(routeProps.share)
-      : DrawingId.local(routeProps.local)
+      : DrawingId.local(routeProps.local || null)
   );
 
   return (
