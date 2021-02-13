@@ -24,7 +24,7 @@ export const App = () => {
   const routeProps = useParams<IRouteProps>();
   store.setRoute(
     routeProps.share
-      ? DrawingId.share(routeProps.share)
+      ? DrawingId.share(decodeURIComponent(routeProps.share))
       : DrawingId.local(routeProps.local || null)
   );
 

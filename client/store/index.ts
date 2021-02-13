@@ -1,8 +1,9 @@
 import * as constants from "asciiflow/client/constants";
 import { DrawBox } from "asciiflow/client/draw/box";
 import { DrawFreeform } from "asciiflow/client/draw/freeform";
-import { IDrawFunction } from "asciiflow/client/draw/function";
+import { AbstractDrawFunction, IDrawFunction } from "asciiflow/client/draw/function";
 import { DrawLine } from "asciiflow/client/draw/line";
+import { DrawNull } from "asciiflow/client/draw/null";
 import { DrawSelect } from "asciiflow/client/draw/select";
 import { DrawText } from "asciiflow/client/draw/text";
 import { CanvasStore } from "asciiflow/client/store/canvas";
@@ -41,7 +42,7 @@ export class DrawingId {
   }
 
   public static share(spec: string) {
-    return new DrawingId("local", null, spec);
+    return new DrawingId("share", null, spec);
   }
 
   constructor(
@@ -94,6 +95,7 @@ export class Store {
   public readonly selectTool = new DrawSelect();
   public readonly freeformTool = new DrawFreeform();
   public readonly textTool = new DrawText();
+  public readonly nullTool = new DrawNull();
 
   @observable private _route: DrawingId = DrawingId.local(null);
 
@@ -109,11 +111,18 @@ export class Store {
 
   @observable public freeformCharacter = "x";
 
-  @observable public toolMode = ToolMode.BOX;
-  @observable public unicode = Persistent.json("unicode", true);
-  @observable public controlsOpen = Persistent.json("controlsOpen", false);
+  @observable public selectedToolMode = ToolMode.BOX;
 
-  @observable drawings = Persistent.custom(
+  public get toolMode() {
+    if (this.route.shareSpec) {
+      return null;
+    }
+    return this.selectedToolMode;
+  }
+  @observable public unicode = Persistent.json("unicode", true);
+  @observable public controlsOpen = Persistent.json("controlsOpen", true);
+
+  @observable localDrawingIds = Persistent.custom(
     "localDrawingIds",
     [],
     new ArrayStringifier(DrawingId.STRINGIFIER)
@@ -134,9 +143,7 @@ export class Store {
       ? this.textTool
       : this.toolMode === ToolMode.SELECT
       ? this.selectTool
-      : (() => {
-          throw new Error("Unrecognised tool.");
-        })();
+      : this.nullTool;
   }
 
   @observable public modifierKeys: IModifierKeys = {};
@@ -151,19 +158,27 @@ export class Store {
     return this.canvas(this._route);
   }
 
+  get drawings() {
+    if (this.route.shareSpec) {
+      return [this.route, ...this.localDrawingIds.get()];
+    }
+    return this.localDrawingIds.get();
+  }
+
   public canvas(drawingId: DrawingId) {
     let canvas = this.canvases.get(drawingId.toString());
     if (!canvas) {
-      // Add the drawing ID to the list of all drawing IDs.
+      // Add the drawing ID to the list of all drawing IDs if it's a local one.
       if (
-        !this.drawings
+        !!drawingId.localId &&
+        !this.localDrawingIds
           .get()
           .some(
             (otherDrawingId) =>
               otherDrawingId.toString() === drawingId.toString()
           )
       ) {
-        this.drawings.set([...this.drawings.get(), drawingId]);
+        this.localDrawingIds.set([...this.localDrawingIds.get(), drawingId]);
       }
       canvas = new CanvasStore(drawingId);
       this.canvases.set(drawingId.toString(), canvas);
@@ -180,12 +195,12 @@ export class Store {
   }
 
   @action.bound public setToolMode(toolMode: ToolMode) {
-    this.toolMode = toolMode;
+    this.selectedToolMode = toolMode;
   }
 
   @action.bound public deleteDrawing(drawingId: DrawingId) {
-    this.drawings.set(
-      this.drawings
+    this.localDrawingIds.set(
+      this.localDrawingIds
         .get()
         .filter(
           (subDrawingId) => subDrawingId.toString() !== drawingId.toString()
@@ -203,8 +218,8 @@ export class Store {
   ) {
     const originalId = DrawingId.local(originalLocalId);
     const newId = DrawingId.local(newLocalId);
-    this.drawings.set(
-      this.drawings
+    this.localDrawingIds.set(
+      this.localDrawingIds
         .get()
         .map((drawingId) =>
           drawingId.toString() === originalId.toString() ? newId : drawingId
@@ -224,6 +239,14 @@ export class Store {
         );
       });
     this.canvases.delete(newId.toString());
+  }
+
+  @action.bound public saveDrawing(shareDrawingId: DrawingId, name: string) {
+    const sharedDrawing = this.canvas(shareDrawingId);
+    const localDrawing = this.canvas(DrawingId.local(name));
+    localDrawing.persistentCommitted.set(
+      sharedDrawing.persistentCommitted.get()
+    );
   }
 }
 

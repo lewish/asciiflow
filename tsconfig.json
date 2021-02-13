@@ -14,7 +14,8 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "lib": ["es2017", "dom"]
+    "lib": ["es2017", "dom"],
+    "esModuleInterop": true
   },
   "exclude": ["bazel-*", "node_modules"]
 }

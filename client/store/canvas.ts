@@ -50,7 +50,9 @@ export class CanvasStore {
 
   @observable public persistentCommitted = Persistent.custom(
     this.persistentKey("committed-layer"),
-    new Layer(),
+    this.drawingId.shareSpec
+      ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
+      : new Layer(),
     Layer
   );
   @observable public scratch = new Layer();

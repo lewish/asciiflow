@@ -28,6 +28,7 @@ import { ControlledMenu } from "asciiflow/client/components/controlled_menu";
 import { IRouteProps } from "asciiflow/client/app";
 import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
 import { useHistory } from "react-router";
+import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
 
 export function Drawer() {
   const history = useHistory();
@@ -62,7 +63,7 @@ export function Drawer() {
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
-            {store.drawings.get().map((drawingId) => (
+            {store.drawings.map((drawingId) => (
               <ListItem
                 key={drawingId.toString()}
                 component="a"
@@ -73,16 +74,31 @@ export function Drawer() {
                 }}
               >
                 <ListItemIcon>
-                  <Icons.FileCopy
-                    color={
-                      store.route.toString() === drawingId.toString()
-                        ? "primary"
-                        : "inherit"
-                    }
-                  />
+                  {drawingId.shareSpec ? (
+                    <Icons.Share
+                      color={
+                        store.route.toString() === drawingId.toString()
+                          ? "primary"
+                          : "inherit"
+                      }
+                    />
+                  ) : (
+                    <Icons.FileCopy
+                      color={
+                        store.route.toString() === drawingId.toString()
+                          ? "primary"
+                          : "inherit"
+                      }
+                    />
+                  )}
                 </ListItemIcon>
                 <ListItemText>
-                  {drawingId.localId || "Default drawing"}{" "}
+                  {drawingId.localId
+                    ? drawingId.localId
+                    : drawingId.shareSpec
+                    ? new DrawingStringifier().deserialize(drawingId.shareSpec)
+                        .name
+                    : "Default drawing"}{" "}
                   <span className={styles.bytesLabel}>
                     ({store.canvas(drawingId).committed.size()}B)
                   </span>
@@ -95,32 +111,45 @@ export function Drawer() {
                       </IconButton>
                     }
                   >
-                    <ControlledDialog
-                      button={
-                        <MenuItem>
-                          <ListItemIcon>
-                            <Icons.Delete />
-                          </ListItemIcon>
-                          Delete
-                        </MenuItem>
-                      }
-                      confirmButton={
-                        <Button
-                          onClick={() => store.deleteDrawing(drawingId)}
-                          color="secondary"
+                    {drawingId.shareSpec ? (
+                      <ForkDrawingButton drawingId={drawingId} menu={true} />
+                    ) : (
+                      <>
+                        <ControlledDialog
+                          button={
+                            <MenuItem>
+                              <ListItemIcon>
+                                <Icons.Delete />
+                              </ListItemIcon>
+                              Delete
+                            </MenuItem>
+                          }
+                          confirmButton={
+                            <Button
+                              onClick={() => {
+                                store.deleteDrawing(drawingId);
+                                history.push(
+                                  store.drawings.length > 0
+                                    ? store.drawings[0].href
+                                    : DrawingId.local(null).href
+                                );
+                              }}
+                              color="secondary"
+                            >
+                              Delete
+                            </Button>
+                          }
                         >
-                          Delete
-                        </Button>
-                      }
-                    >
-                      <DialogTitle>Delete drawing</DialogTitle>
-                      <DialogContent>
-                        Are you sure you want to delete this drawing?
-                      </DialogContent>
-                    </ControlledDialog>
+                          <DialogTitle>Delete drawing</DialogTitle>
+                          <DialogContent>
+                            Are you sure you want to delete this drawing?
+                          </DialogContent>
+                        </ControlledDialog>
 
-                    <RenameDrawingButton drawingId={drawingId} />
-                    <ShareButton drawingId={drawingId} />
+                        <RenameDrawingButton drawingId={drawingId} />
+                        <ShareButton drawingId={drawingId} />
+                      </>
+                    )}
                   </ControlledMenu>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -134,49 +163,63 @@ export function Drawer() {
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
-            <ToolControl
-              name="Boxes"
-              tool={ToolMode.BOX}
-              icon={<Icons.CheckBoxOutlineBlank />}
-            />
-            <ToolControl
-              name="Select & Move"
-              tool={ToolMode.SELECT}
-              icon={<Icons.NearMe />}
-            />
-            <ToolControl
-              name="Freeform"
-              tool={ToolMode.FREEFORM}
-              icon={<Icons.Gesture />}
-            >
-              <ListItemSecondaryAction>
-                <Chip
-                  variant="outlined"
-                  style={{ marginRight: 10 }}
-                  label={
-                    <span className={styles.freeformLabel}>
-                      {store.freeformCharacter}
-                    </span>
-                  }
+            {store.route.shareSpec ? (
+              <>
+                <div className={styles.helpText}>
+                  This is a shared drawing. To make edits fork it so it can be
+                  saved locally.
+                </div>
+                <div className={styles.helpText}>
+                  <ForkDrawingButton drawingId={store.route} />
+                </div>
+              </>
+            ) : (
+              <>
+                <ToolControl
+                  name="Boxes"
+                  tool={ToolMode.BOX}
+                  icon={<Icons.CheckBoxOutlineBlank />}
                 />
-              </ListItemSecondaryAction>
-            </ToolControl>
-            <ToolControl
-              name="Arrow"
-              tool={ToolMode.ARROWS}
-              icon={<Icons.TrendingUp />}
-            />
+                <ToolControl
+                  name="Select & Move"
+                  tool={ToolMode.SELECT}
+                  icon={<Icons.NearMe />}
+                />
+                <ToolControl
+                  name="Freeform"
+                  tool={ToolMode.FREEFORM}
+                  icon={<Icons.Gesture />}
+                >
+                  <ListItemSecondaryAction>
+                    <Chip
+                      variant="outlined"
+                      style={{ marginRight: 10 }}
+                      label={
+                        <span className={styles.freeformLabel}>
+                          {store.freeformCharacter}
+                        </span>
+                      }
+                    />
+                  </ListItemSecondaryAction>
+                </ToolControl>
+                <ToolControl
+                  name="Arrow"
+                  tool={ToolMode.ARROWS}
+                  icon={<Icons.TrendingUp />}
+                />
 
-            <ToolControl
-              name="Line"
-              tool={ToolMode.LINES}
-              icon={<Icons.ShowChart />}
-            />
-            <ToolControl
-              name="Text"
-              tool={ToolMode.TEXT}
-              icon={<Icons.TextFields />}
-            />
+                <ToolControl
+                  name="Line"
+                  tool={ToolMode.LINES}
+                  icon={<Icons.ShowChart />}
+                />
+                <ToolControl
+                  name="Text"
+                  tool={ToolMode.TEXT}
+                  icon={<Icons.TextFields />}
+                />
+              </>
+            )}
             <ListItem>
               <ListItemText>Help</ListItemText>
               <ListItemSecondaryAction>
@@ -229,11 +272,16 @@ export function Drawer() {
             <ShortcutChip label={"ctrl + enter"} /> to start a new line without
             committing your changes. Use the{" "}
             <ShortcutChip label={"arrow keys"} /> to move around.
-          </ToolHelp>
-          <br />
-          Pan around the canvas by holding <ShortcutChip label="space" /> and
-          dragging with the mouse. Use <ShortcutChip label="ctrl + z" /> to undo
-          and <ShortcutChip label="ctrl + shift + z" /> to redo.
+          </ToolHelp>{" "}
+          Pan around the canvas by holding <ShortcutChip label="space" />
+          {store.route.shareSpec ? (
+            "."
+          ) : (
+            <>
+              and dragging with the mouse. Use <ShortcutChip label="ctrl + z" />{" "}
+              to undo and <ShortcutChip label="ctrl + shift + z" /> to redo.
+            </>
+          )}
         </div>
       </Paper>
     );
@@ -285,7 +333,7 @@ function ToolHelp(
 }
 
 function isValidDrawingName(name: string) {
-  return !store.drawings
+  return !store.localDrawingIds
     .get()
     .some(
       (drawingId) => DrawingId.local(name).toString() === drawingId.toString()
@@ -372,9 +420,66 @@ function RenameDrawingButton({ drawingId }: { drawingId: DrawingId }) {
         <TextField
           error={!validDrawingName}
           label="Drawing name"
-          helperText={
-            !validDrawingName && "Drawing name must be unique and different."
-          }
+          helperText={!validDrawingName && "Drawing name already exists."}
+          defaultValue={defaultNewDrawingName}
+          onChange={(e) => setNewDrawingName(e.target.value)}
+        />
+      </DialogContent>
+    </ControlledDialog>
+  );
+}
+
+function ForkDrawingButton({
+  drawingId,
+  menu,
+}: {
+  drawingId: DrawingId;
+  menu?: boolean;
+}) {
+  const history = useHistory();
+  const drawing = new DrawingStringifier().deserialize(drawingId.shareSpec);
+  let defaultNewDrawingName = drawing.name;
+  const [newDrawingName, setNewDrawingName] = React.useState(
+    defaultNewDrawingName
+  );
+  const validDrawingName = isValidDrawingName(newDrawingName);
+  return (
+    <ControlledDialog
+      button={
+        menu ? (
+          <MenuItem>
+            <ListItemIcon>
+              <Icons.Edit />
+            </ListItemIcon>
+            Fork & edit
+          </MenuItem>
+        ) : (
+          <Button color="primary" startIcon={<Icons.Edit />}>
+            Fork & edit
+          </Button>
+        )
+      }
+      confirmButton={
+        <Button
+          onClick={() => {
+            store.saveDrawing(drawingId, newDrawingName);
+            history.push(DrawingId.local(newDrawingName).href);
+          }}
+          color="primary"
+        >
+          Fork
+        </Button>
+      }
+    >
+      <DialogTitle>Fork drawing</DialogTitle>
+      <DialogContent>
+        Save this shared drawing locally so it can be edited.
+      </DialogContent>
+      <DialogContent>
+        <TextField
+          error={!validDrawingName}
+          label="Drawing name"
+          helperText={!validDrawingName && "Drawing name already exists."}
           defaultValue={defaultNewDrawingName}
           onChange={(e) => setNewDrawingName(e.target.value)}
         />

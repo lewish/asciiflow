@@ -3,6 +3,7 @@ import {
   IStringifier,
   JSONStringifier,
 } from "asciiflow/client/store/persistent";
+import { Base64 } from "js-base64";
 import * as pako from "pako";
 
 export interface IDrawing {
@@ -23,12 +24,12 @@ export class DrawingStringifier implements IStringifier<IDrawing> {
     });
     const jsonBytes = new TextEncoder().encode(jsonString);
     const deflatedBytes = pako.deflate(jsonBytes);
-    const deflatedString = new TextDecoder("utf8").decode(deflatedBytes);
-    return btoa(unescape(encodeURIComponent(deflatedString)));
+    const base64 = Base64.fromUint8Array(deflatedBytes);
+    return base64;
+    
   }
   public deserialize(value: string) {
-    const deflatedString = decodeURIComponent(escape(atob(value)));
-    const deflatedBytes = new TextEncoder().encode(deflatedString);
+    const deflatedBytes = Base64.toUint8Array(value);
     const jsonBytes = pako.inflate(deflatedBytes);
     const jsonString = new TextDecoder("utf8").decode(jsonBytes);
     const object = new JSONStringifier<IDrawingPartial>().deserialize(

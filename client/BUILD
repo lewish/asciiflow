@@ -24,14 +24,18 @@ css_typings(
 
 ts_library(
     name = "client",
-    srcs = glob([
-        "**/*.ts",
-        "**/*.tsx",
-    ]),
+    srcs = glob(
+        [
+            "**/*.ts",
+            "**/*.tsx",
+        ],
+        exclude = ["**/*.spec.ts"],
+    ),
     deps = [
         ":css_typings",
         "@npm//@material-ui/core",
         "@npm//@material-ui/icons",
+        "@npm//@types/js-base64",
         "@npm//@types/node",
         "@npm//@types/pako",
         "@npm//@types/react",
@@ -39,6 +43,7 @@ ts_library(
         "@npm//@types/react-router",
         "@npm//@types/react-router-dom",
         "@npm//@types/uuid",
+        "@npm//js-base64",
         "@npm//mobx",
         "@npm//mobx-react",
         "@npm//pako",
@@ -47,6 +52,24 @@ ts_library(
         "@npm//react-router",
         "@npm//react-router-dom",
         "@npm//uuid",
+    ],
+)
+
+load("//testing:index.bzl", "ts_test_suite")
+
+ts_test_suite(
+    name = "tests",
+    srcs = glob(["**/*.spec.ts"]),
+    data = [
+        "@npm//source-map-support",
+    ],
+    templated_args = ["--node_options=--require=source-map-support/register"],
+    deps = [
+        ":client",
+        "//testing",
+        "@npm//@types/chai",
+        "@npm//@types/node",
+        "@npm//chai",
     ],
 )
 
