@@ -8,7 +8,7 @@ export function ControlledDialog({
   ...rest
 }: Omit<DialogProps, "open"> & {
   button: React.ReactNode;
-  confirmButton: React.ReactNode;
+  confirmButton?: React.ReactNode;
 }) {
   const [open, setOpen] = React.useState(false);
   return (
@@ -18,7 +18,9 @@ export function ControlledDialog({
         {children}
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <span onClick={() => setOpen(false)}>{confirmButton}</span>
+          {confirmButton && (
+            <span onClick={() => setOpen(false)}>{confirmButton}</span>
+          )}
         </DialogActions>
       </Dialog>
     </>

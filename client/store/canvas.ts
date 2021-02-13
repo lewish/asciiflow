@@ -418,6 +418,9 @@ export class CanvasStore {
   }
 
   outputText(box?: Box) {
+    if (this.committed.entries().length === 0) {
+      return "";
+    }
     if (!box) {
       // Find the first/last cells in the diagram so we don't output everything.
       const start = new Vector(

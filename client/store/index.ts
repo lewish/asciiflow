@@ -1,11 +1,15 @@
 import * as constants from "asciiflow/client/constants";
 import { DrawBox } from "asciiflow/client/draw/box";
 import { DrawFreeform } from "asciiflow/client/draw/freeform";
-import { AbstractDrawFunction, IDrawFunction } from "asciiflow/client/draw/function";
+import {
+  AbstractDrawFunction,
+  IDrawFunction,
+} from "asciiflow/client/draw/function";
 import { DrawLine } from "asciiflow/client/draw/line";
 import { DrawNull } from "asciiflow/client/draw/null";
 import { DrawSelect } from "asciiflow/client/draw/select";
 import { DrawText } from "asciiflow/client/draw/text";
+import { IExportConfig } from "asciiflow/client/export";
 import { CanvasStore } from "asciiflow/client/store/canvas";
 import {
   ArrayStringifier,
@@ -121,6 +125,10 @@ export class Store {
   }
   @observable public unicode = Persistent.json("unicode", true);
   @observable public controlsOpen = Persistent.json("controlsOpen", true);
+  @observable public exportConfig = Persistent.json(
+    "exportConfig",
+    {} as IExportConfig
+  );
 
   @observable localDrawingIds = Persistent.custom(
     "localDrawingIds",

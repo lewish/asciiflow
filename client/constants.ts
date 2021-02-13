@@ -122,7 +122,7 @@ export const DRAG_LATENCY = 150; // Milliseconds.
 export const DRAG_ACCURACY = 6; // Pixels.
 
 export const CHAR_PIXELS_H = 9;
-export const CHAR_PIXELS_V = 17;
+export const CHAR_PIXELS_V = 16;
 
 export const RENDER_PADDING_CELLS = 3;
 

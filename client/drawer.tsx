@@ -29,6 +29,7 @@ import { IRouteProps } from "asciiflow/client/app";
 import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
 import { useHistory } from "react-router";
 import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
+import { ExportDialog } from "asciiflow/client/export";
 
 export function Drawer() {
   const history = useHistory();
@@ -54,9 +55,15 @@ export function Drawer() {
             <ListItem>
               <ListItemText>File</ListItemText>
               <ListItemSecondaryAction>
-                <IconButton>
-                  <Icons.GetApp />
-                </IconButton>
+                <ExportDialog
+                  button={
+                    <IconButton>
+                      <Icons.GetApp />
+                    </IconButton>
+                  }
+                  drawingId={store.route}
+                />
+
                 <NewDrawingButton />
                 <IconButton>
                   <Icons.ExpandLess />
@@ -278,6 +285,7 @@ export function Drawer() {
             "."
           ) : (
             <>
+              {" "}
               and dragging with the mouse. Use <ShortcutChip label="ctrl + z" />{" "}
               to undo and <ShortcutChip label="ctrl + shift + z" /> to redo.
             </>
