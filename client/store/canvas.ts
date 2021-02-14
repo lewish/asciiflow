@@ -303,31 +303,55 @@ export class CanvasStore {
         }
         // Special cases here are to not put junctions when there is
         // an adjacent connection arrow that doesn't embed into the line.
+        const up = combined.get(position.up());
+        const down = combined.get(position.down());
+        const left = combined.get(position.left());
+        const right = combined.get(position.right());
         if (context.left && context.right && context.down) {
-          const down = combined.get(position.down());
-          if (down === constants.UNICODE.arrowUp) {
+          if (Characters.isArrow(down)) {
             return characterSet.lineHorizontal;
+          }
+          if (Characters.isArrow(right)) {
+            return characterSet.cornerTopRight;
+          }
+          if (Characters.isArrow(left)) {
+            return characterSet.cornerTopLeft;
           }
           return characterSet.junctionDown;
         }
         if (context.left && context.right && context.up) {
-          const up = combined.get(position.up());
-          if (up === constants.UNICODE.arrowDown) {
+          if (Characters.isArrow(up)) {
             return characterSet.lineHorizontal;
+          }
+          if (Characters.isArrow(left)) {
+            return characterSet.cornerBottomLeft;
+          }
+          if (Characters.isArrow(right)) {
+            return characterSet.cornerBottomRight;
           }
           return characterSet.junctionUp;
         }
         if (context.left && context.up && context.down) {
-          const left = combined.get(position.left());
-          if (left === constants.UNICODE.arrowRight) {
+          if (Characters.isArrow(left)) {
             return characterSet.lineVertical;
+          }
+          if (Characters.isArrow(up)) {
+            return characterSet.cornerTopRight;
+          }
+          if (Characters.isArrow(down)) {
+            return characterSet.cornerBottomRight;
           }
           return characterSet.junctionLeft;
         }
         if (context.up && context.right && context.down) {
-          const right = combined.get(position.right());
-          if (right === constants.UNICODE.arrowLeft) {
+          if (Characters.isArrow(right)) {
             return characterSet.lineVertical;
+          }
+          if (Characters.isArrow(up)) {
+            return characterSet.cornerTopLeft;
+          }
+          if (Characters.isArrow(down)) {
+            return characterSet.cornerBottomLeft;
           }
           return characterSet.junctionRight;
         }
@@ -336,16 +360,40 @@ export class CanvasStore {
 
       // Four way junctions.
       if (context.sum() === 4) {
-        if (
-          Characters.isArrow(combined.get(position.up())) &&
-          Characters.isArrow(combined.get(position.down()))
-        ) {
+        const upIsArrow = Characters.isArrow(combined.get(position.up()));
+        const downIsArrow = Characters.isArrow(combined.get(position.down()));
+        const leftIsArrow = Characters.isArrow(combined.get(position.left()));
+        const rightIsArrow = Characters.isArrow(combined.get(position.right()));
+        // Single arrows.
+        if (upIsArrow && !downIsArrow && !leftIsArrow && !rightIsArrow) {
+          return characterSet.junctionDown;
+        }
+        if (!upIsArrow && downIsArrow && !leftIsArrow && !rightIsArrow) {
+          return characterSet.junctionUp;
+        }
+        if (!upIsArrow && !downIsArrow && leftIsArrow && !rightIsArrow) {
+          return characterSet.junctionRight;
+        }
+        if (!upIsArrow && !downIsArrow && !leftIsArrow && rightIsArrow) {
+          return characterSet.junctionLeft;
+        }
+        // Two arrows.
+        if (upIsArrow && downIsArrow && !leftIsArrow && !rightIsArrow) {
           return characterSet.lineHorizontal;
         }
-        if (
-          Characters.isArrow(combined.get(position.left())) &&
-          Characters.isArrow(combined.get(position.right()))
-        ) {
+        if (upIsArrow && !downIsArrow && leftIsArrow && !rightIsArrow) {
+          return characterSet.cornerTopLeft;
+        }
+        if (upIsArrow && !downIsArrow && !leftIsArrow && rightIsArrow) {
+          return characterSet.cornerTopRight;
+        }
+        if (!upIsArrow && downIsArrow && leftIsArrow && !rightIsArrow) {
+          return characterSet.cornerBottomLeft;
+        }
+        if (!upIsArrow && downIsArrow && !leftIsArrow && rightIsArrow) {
+          return characterSet.cornerBottomRight;
+        }
+        if (!upIsArrow && !downIsArrow && leftIsArrow && rightIsArrow) {
           return characterSet.lineVertical;
         }
         return characterSet.junctionAll;
