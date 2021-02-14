@@ -305,45 +305,31 @@ export class CanvasStore {
         // an adjacent connection arrow that doesn't embed into the line.
         if (context.left && context.right && context.down) {
           const down = combined.get(position.down());
-          if (
-            (down === constants.UNICODE.arrowDown ||
-              down === constants.ASCII.arrowDown) &&
-            !inText(position.down())
-          ) {
-            return characterSet.junctionDown;
+          if (down === constants.UNICODE.arrowUp) {
+            return characterSet.lineHorizontal;
           }
-          return characterSet.lineHorizontal;
+          return characterSet.junctionDown;
         }
         if (context.left && context.right && context.up) {
           const up = combined.get(position.up());
-          if (
-            (up === constants.UNICODE.arrowUp ||
-              up === constants.ASCII.arrowUp) &&
-            !inText(position.up())
-          ) {
-            return characterSet.junctionUp;
+          if (up === constants.UNICODE.arrowDown) {
+            return characterSet.lineHorizontal;
           }
-          return characterSet.lineHorizontal;
+          return characterSet.junctionUp;
         }
         if (context.left && context.up && context.down) {
           const left = combined.get(position.left());
-          if (
-            left === constants.UNICODE.arrowLeft ||
-            left === constants.ASCII.arrowLeft
-          ) {
-            return characterSet.junctionLeft;
+          if (left === constants.UNICODE.arrowRight) {
+            return characterSet.lineVertical;
           }
-          return characterSet.lineVertical;
+          return characterSet.junctionLeft;
         }
         if (context.up && context.right && context.down) {
           const right = combined.get(position.right());
-          if (
-            right === constants.UNICODE.arrowRight ||
-            right === constants.ASCII.arrowRight
-          ) {
-            return characterSet.junctionRight;
+          if (right === constants.UNICODE.arrowLeft) {
+            return characterSet.lineVertical;
           }
-          return characterSet.lineVertical;
+          return characterSet.junctionRight;
         }
         return constants.SPECIAL_VALUE;
       }

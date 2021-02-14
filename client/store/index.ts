@@ -125,6 +125,18 @@ export class Store {
   }
   @observable public unicode = Persistent.json("unicode", true);
   @observable public controlsOpen = Persistent.json("controlsOpen", true);
+  @observable public fileControlsOpen = Persistent.json(
+    "fileControlsOpen",
+    true
+  );
+  @observable public editControlsOpen = Persistent.json(
+    "editControlsOpen",
+    true
+  );
+  @observable public helpControlsOpen = Persistent.json(
+    "editControlsOpen",
+    true
+  );
   @observable public exportConfig = Persistent.json(
     "exportConfig",
     {} as IExportConfig

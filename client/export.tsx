@@ -1,27 +1,24 @@
 import {
-  DialogTitle,
-  FormControlLabel,
-  FormGroup,
-  TextareaAutosize,
-  Checkbox,
-  DialogContent,
-  InputLabel,
-  Select,
-  MenuItem,
   Chip,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextareaAutosize,
 } from "@material-ui/core";
-
 import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
-import { DrawingId, store } from "asciiflow/client/store";
+import { ASCII, UNICODE } from "asciiflow/client/constants";
 import * as styles from "asciiflow/client/export.css";
-import * as React from "react";
-
+import { DrawingId, store } from "asciiflow/client/store";
 import { useObserver } from "mobx-react";
+import * as React from "react";
 
 export interface IExportConfig {
   wrapper?: "star" | "hash" | "slash" | "dash";
   indent?: number;
-  basic?: boolean;
+  characters?: "basic" | "extended";
 }
 
 export function ExportDialog({
@@ -41,31 +38,51 @@ export function ExportDialog({
       <ControlledDialog button={button}>
         <DialogTitle>Export drawing</DialogTitle>
         <DialogContent>
-          <InputLabel>Comment block type</InputLabel>
-          <Select
-            value={exportConfig.wrapper || "none"}
-            onChange={(e) =>
-              store.exportConfig.set({
-                ...exportConfig,
-                wrapper: e.target.value as any,
-              })
-            }
-          >
-            <MenuItem value={"none"}>None</MenuItem>
-            <MenuItem value={"star"}>
-              Standard multi-line <CommentTypeChip label="/* */" />
-            </MenuItem>
-            <MenuItem value={"hash"}>
-              Hashes <CommentTypeChip label="#" />
-            </MenuItem>
-            <MenuItem value={"slash"}>
-              Slashes <CommentTypeChip label="//" />
-            </MenuItem>
-            <MenuItem value={"dash"}>
-              Dashes <CommentTypeChip label="--" />
-            </MenuItem>
-          </Select>
-
+          <div>
+            <FormControl>
+              <InputLabel>Character set</InputLabel>
+              <Select
+                value={exportConfig.characters ?? "extended"}
+                onChange={(e) =>
+                  store.exportConfig.set({
+                    ...exportConfig,
+                    characters: e.target.value as any,
+                  })
+                }
+              >
+                <MenuItem value={"extended"}>ASCII Extended</MenuItem>
+                <MenuItem value={"basic"}>ASCII Basic</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <FormControl>
+              <InputLabel>Comment type</InputLabel>
+              <Select
+                value={exportConfig.wrapper || "none"}
+                onChange={(e) =>
+                  store.exportConfig.set({
+                    ...exportConfig,
+                    wrapper: e.target.value as any,
+                  })
+                }
+              >
+                <MenuItem value={"none"}>None</MenuItem>
+                <MenuItem value={"star"}>
+                  Standard multi-line <CommentTypeChip label="/* */" />
+                </MenuItem>
+                <MenuItem value={"hash"}>
+                  Hashes <CommentTypeChip label="#" />
+                </MenuItem>
+                <MenuItem value={"slash"}>
+                  Slashes <CommentTypeChip label="//" />
+                </MenuItem>
+                <MenuItem value={"dash"}>
+                  Dashes <CommentTypeChip label="--" />
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </div>
           <TextareaAutosize value={drawingText} className={styles.textArea} />
         </DialogContent>
       </ControlledDialog>
@@ -91,6 +108,17 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
   }
   function setLines(lines: string[]) {
     text = lines.join("\n");
+  }
+  if (exportConfig.characters === "basic") {
+    const unicodeToAscii = new Map(
+      Object.entries(UNICODE).map(([key, value]) => [
+        value,
+        (ASCII as any)[key],
+      ])
+    );
+    text = [...text]
+      .map((value) => unicodeToAscii.get(value) || value)
+      .join("");
   }
   if (exportConfig.indent) {
     setLines(

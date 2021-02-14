@@ -27,7 +27,7 @@ export class DrawFreeform extends AbstractDrawFunction {
   }
 
   handleKey(value: string) {
-    if (value.length === 1) {
+    if (value && value.length === 1) {
       // The value is not a special character, so lets use it.
       store.freeformCharacter = value;
     }
