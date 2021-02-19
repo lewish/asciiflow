@@ -202,36 +202,6 @@ export class CanvasStore {
           return characterSet.arrowRight;
         }
       }
-      // Otherwise, leave arrows as is, but convert them between character sets.
-      if (
-        value === constants.UNICODE.arrowUp ||
-        value === constants.ASCII.arrowUp
-      ) {
-        return characterSet.arrowUp;
-      }
-      // Only convert v's to unicode if we are sure they are not part of text.
-      if (
-        (value === constants.UNICODE.arrowDown ||
-          value === constants.ASCII.arrowDown) &&
-        context.sum() > 0 &&
-        !inText(position)
-      ) {
-        return characterSet.arrowDown;
-      }
-      if (
-        (value === constants.UNICODE.arrowLeft ||
-          value === constants.ASCII.arrowLeft) &&
-        context.sum() > 0 &&
-        !inText(position)
-      ) {
-        return characterSet.arrowLeft;
-      }
-      if (
-        value === constants.UNICODE.arrowRight ||
-        value === constants.ASCII.arrowRight
-      ) {
-        return characterSet.arrowRight;
-      }
     }
 
     if (isLine) {

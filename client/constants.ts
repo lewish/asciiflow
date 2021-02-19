@@ -57,12 +57,8 @@ export const ASCII: ICharacterSet = {
   junctionAll: "+",
 };
 
-export const SPECIAL_VALUE = "+";
-export const ALT_SPECIAL_VALUE = "^";
-export const SPECIAL_ARROW_LEFT = "<";
-export const SPECIAL_ARROW_UP = "^";
-export const SPECIAL_ARROW_RIGHT = ">";
-export const SPECIAL_ARROW_DOWN = "v";
+export const SPECIAL_VALUE = UNICODE.junctionAll;
+export const ALT_SPECIAL_VALUE = UNICODE.arrowRight;
 
 type ICharacter = keyof ICharacterSet;
 
@@ -89,14 +85,14 @@ const ALT_SPECIAL_VALUE_KEYS: ICharacter[] = [
 export const SPECIAL_VALUES = [
   ...new Set([
     ...SPECIAL_VALUE_KEYS.map((key) => UNICODE[key]),
-    ...SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
+    // ...SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
   ]),
 ];
 
 export const ALT_SPECIAL_VALUES = [
   ...new Set([
     ...ALT_SPECIAL_VALUE_KEYS.map((key) => UNICODE[key]),
-    ...ALT_SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
+    // ...ALT_SPECIAL_VALUE_KEYS.map((key) => ASCII[key]),
   ]),
 ];
 

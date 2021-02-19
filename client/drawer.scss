@@ -33,3 +33,15 @@
 .bytesLabel {
   color: #bbb;
 }
+
+button.fab {
+  z-index: 11;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  background-color: #fff;
+
+  img {
+    height: 55px;
+  }
+}

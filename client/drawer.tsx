@@ -20,6 +20,7 @@ import {
   Button,
   TextField,
   Snackbar,
+  Fab,
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
@@ -34,10 +35,24 @@ import { ExportDialog } from "asciiflow/client/export";
 export function Drawer() {
   const history = useHistory();
   return useObserver(() => {
+    if (!store.controlsOpen.get()) {
+      return (
+        <Fab className={styles.fab}>
+          <img src={"/public/logo_min.svg"} />
+        </Fab>
+      );
+    }
     return (
       <Paper elevation={3} className={styles.drawer}>
         <div className={styles.header}>
-          <img src="/public/logo_full.svg" className={styles.logo} />
+          <img
+            src={
+              store.controlsOpen.get()
+                ? "/public/logo_full.svg"
+                : "/public/logo_min.svg"
+            }
+            className={styles.logo}
+          />
 
           <IconButton
             onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
