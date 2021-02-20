@@ -37,7 +37,10 @@ export function Drawer() {
   return useObserver(() => {
     if (!store.controlsOpen.get()) {
       return (
-        <Fab className={styles.fab}>
+        <Fab
+          className={styles.fab}
+          onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
+        >
           <img src={"/public/logo_min.svg"} />
         </Fab>
       );
@@ -267,6 +270,15 @@ export function Drawer() {
               <ListItem>
                 <ListItemText>Help</ListItemText>
                 <ListItemSecondaryAction>
+                  <IconButton
+                    onClick={() => store.darkMode.set(!store.darkMode.get())}
+                  >
+                    {store.darkMode.get() ? (
+                      <Icons.WbIncandescent />
+                    ) : (
+                      <Icons.Brightness2Outlined />
+                    )}
+                  </IconButton>
                   <IconButton
                     onClick={() =>
                       store.helpControlsOpen.set(!store.helpControlsOpen.get())

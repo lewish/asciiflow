@@ -10,8 +10,27 @@ import { autorun } from "mobx";
  * Handles view operations, state and management of the screen.
  */
 
+function getColors() {
+  if (store.darkMode.get()) {
+    return {
+      background: "#333",
+      grid: "#444",
+      text: "#DDD",
+      highlight: "#444",
+      selection: "#456",
+    };
+  }
+  return {
+    background: "#FFF",
+    grid: "#EEE",
+    text: "#333",
+    highlight: "#F6F6F6",
+    selection: "#DEF",
+  };
+}
 export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
   useObserver(() => {
+    const colors = getColors();
     useEffect(() => {
       const canvas = document.getElementById(
         "ascii-canvas"
@@ -35,11 +54,13 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
         window.removeEventListener("resize", handler);
       };
     });
+
     return (
       <canvas
         width={document.documentElement.clientWidth}
         height={document.documentElement.clientHeight}
         style={{
+          backgroundColor: colors.background,
           cursor: store.currentCursor,
           position: "fixed",
           left: 0,
@@ -91,9 +112,11 @@ function render(canvas: HTMLCanvasElement) {
   );
   endOffset.y = Math.max(0, Math.min(endOffset.y, constants.MAX_GRID_HEIGHT));
 
+  const colors = getColors();
+
   // Render the grid.
   context.lineWidth = 1;
-  context.strokeStyle = "#EEEEEE";
+  context.strokeStyle = colors.grid;
   context.beginPath();
   for (let i = startOffset.x; i < endOffset.x; i++) {
     context.moveTo(i * constants.CHAR_PIXELS_H - offset.x, 0 - offset.y);
@@ -124,7 +147,7 @@ function render(canvas: HTMLCanvasElement) {
 
   function text(position: Vector, value: string) {
     if (value !== null && value !== "" && value !== " ") {
-      context.fillStyle = "#000000";
+      context.fillStyle = colors.text;
       context.fillText(
         value,
         position.x * constants.CHAR_PIXELS_H - offset.x,
@@ -139,19 +162,19 @@ function render(canvas: HTMLCanvasElement) {
     const bottomRight = selection.bottomRight();
     for (let x = topLeft.x; x <= bottomRight.x; x++) {
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
-        highlight(new Vector(x, y), "#DEF");
+        highlight(new Vector(x, y), colors.selection);
       }
     }
   }
   for (const [position, value] of committed.entries()) {
     if (constants.ALL_SPECIAL_VALUES.includes(value)) {
-      highlight(position, "#F5F5F5");
+      highlight(position, colors.highlight);
     }
     const cellValue = store.currentCanvas.getDrawValue(position);
     text(position, cellValue);
   }
   for (const [position] of scratch.entries()) {
-    highlight(position, "#DEF");
+    highlight(position, colors.highlight);
     const cellValue = store.currentCanvas.getDrawValue(position);
     text(position, cellValue);
   }
@@ -161,7 +184,7 @@ function render(canvas: HTMLCanvasElement) {
     const topLeft = selection.topLeft();
     const bottomRight = selection.bottomRight();
     context.lineWidth = 1;
-    context.strokeStyle = "#BDF";
+    context.strokeStyle = colors.selection;
     context.beginPath();
     context.moveTo(
       topLeft.x * constants.CHAR_PIXELS_H - offset.x,

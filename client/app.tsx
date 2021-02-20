@@ -10,6 +10,9 @@ import { View } from "asciiflow/client/view";
 import { BrowserRouter, Route, useParams } from "react-router-dom";
 import ReactDOM = require("react-dom");
 import * as styles from "asciiflow/client/app.css";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { useObserver } from "mobx-react";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -21,22 +24,37 @@ export interface IRouteProps {
 }
 
 export const App = () => {
-  const routeProps = useParams<IRouteProps>();
-  store.setRoute(
-    routeProps.share
-      ? DrawingId.share(decodeURIComponent(routeProps.share))
-      : DrawingId.local(routeProps.local || null)
-  );
+  return useObserver(() => {
+    const routeProps = useParams<IRouteProps>();
+    store.setRoute(
+      routeProps.share
+        ? DrawingId.share(decodeURIComponent(routeProps.share))
+        : DrawingId.local(routeProps.local || null)
+    );
 
-  return (
-    <div className={styles.app}>
-      <Drawer />
-      <View
-        {...desktopController.getHandlerProps()}
-        {...touchController.getHandlerProps()}
-      />
-    </div>
-  );
+    const theme = React.useMemo(
+      () =>
+        createMuiTheme({
+          palette: {
+            type: store.darkMode.get() ? "dark" : "light",
+          },
+        }),
+      [store.darkMode.get()]
+    );
+    return (
+      <ThemeProvider theme={theme}>
+        <div
+          className={[styles.app, store.darkMode.get() ? "dark" : ""].join(" ")}
+        >
+          <Drawer />
+          <View
+            {...desktopController.getHandlerProps()}
+            {...touchController.getHandlerProps()}
+          />
+        </div>
+      </ThemeProvider>
+    );
+  });
 };
 
 async function render() {

@@ -150,6 +150,12 @@ export class Store {
 
   @observable public currentCursor: string = "default";
 
+  public readonly darkMode = Persistent.json(
+    "darkMode",
+    window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
+
   get currentTool(): IDrawFunction {
     return this.toolMode === ToolMode.BOX
       ? this.boxTool
