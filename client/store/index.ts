@@ -188,7 +188,16 @@ export class Store {
     if (this.route.shareSpec) {
       return [this.route, ...this.localDrawingIds.get()];
     }
-    return this.localDrawingIds.get();
+
+    const localDrawingIds = this.localDrawingIds.get();
+    if (
+      !localDrawingIds.some(
+        (drawingId) => !drawingId.localId && !drawingId.shareSpec
+      )
+    ) {
+      return [DrawingId.local(null), ...localDrawingIds];
+    }
+    return localDrawingIds;
   }
 
   public canvas(drawingId: DrawingId) {
