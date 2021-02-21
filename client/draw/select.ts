@@ -17,12 +17,25 @@ import { Vector } from "asciiflow/client/vector";
 export class DrawSelect extends AbstractDrawFunction {
   private moveTool: DrawMove;
 
-  private copiedText: string;
-
   private selectBox: Box;
 
   private dragStart: Vector;
   private dragEnd: Vector;
+
+  constructor() {
+    super();
+    window.document.addEventListener("paste", (e) => {
+      const clipboardText = e.clipboardData.getData("text");
+      if (this.selectBox) {
+        const pastedLayer = textToLayer(
+          clipboardText,
+          this.selectBox.topLeft()
+        );
+        store.currentCanvas.setScratchLayer(pastedLayer);
+        store.currentCanvas.commitScratch();
+      }
+    });
+  }
 
   start(position: Vector, modifierKeys: IModifierKeys) {
     if (
@@ -133,11 +146,13 @@ export class DrawSelect extends AbstractDrawFunction {
 
   handleKey(value: string) {
     if (this.selectBox != null) {
+      // Use the native keyboard for copy pasting.
       if (value === KEY_COPY || value === KEY_CUT) {
-        this.copiedText = layerToText(
+        const copiedText = layerToText(
           store.currentCanvas.rendered,
           this.selectBox
         );
+        navigator.clipboard.writeText(copiedText);
       }
       if (value === KEY_CUT) {
         const layer = new Layer();
@@ -158,15 +173,6 @@ export class DrawSelect extends AbstractDrawFunction {
         }
       });
       store.currentCanvas.setScratchLayer(layer);
-      store.currentCanvas.commitScratch();
-    }
-
-    if (value === KEY_PASTE) {
-      const pastedLayer = textToLayer(
-        this.copiedText,
-        this.selectBox.topLeft()
-      );
-      store.currentCanvas.setScratchLayer(pastedLayer);
       store.currentCanvas.commitScratch();
     }
   }

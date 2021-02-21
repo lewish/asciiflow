@@ -49,7 +49,7 @@ export function textToLayer(value: string, offset?: Vector) {
     const line = lines[j];
     for (let i = 0; i < line.length; i++) {
       let char = line.charAt(i);
-      layer.set(new Vector(i, j).add(offset), char);
+      layer.set(new Vector(i, j).add(offset), char); 
     }
   }
   return layer;
