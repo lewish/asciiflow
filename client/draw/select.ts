@@ -11,12 +11,13 @@ import { AbstractDrawFunction } from "asciiflow/client/draw/function";
 import { DrawMove } from "asciiflow/client/draw/move";
 import { Layer } from "asciiflow/client/layer";
 import { IModifierKeys, store } from "asciiflow/client/store";
+import { layerToText, textToLayer } from "asciiflow/client/text_utils";
 import { Vector } from "asciiflow/client/vector";
 
 export class DrawSelect extends AbstractDrawFunction {
   private moveTool: DrawMove;
 
-  private copiedLayer: Layer;
+  private copiedText: string;
 
   private selectBox: Box;
 
@@ -133,12 +134,10 @@ export class DrawSelect extends AbstractDrawFunction {
   handleKey(value: string) {
     if (this.selectBox != null) {
       if (value === KEY_COPY || value === KEY_CUT) {
-        this.copiedLayer = new Layer();
-        store.currentCanvas.committed.entries().forEach(([key, value]) => {
-          if (this.selectBox.contains(key)) {
-            this.copiedLayer.set(key, value);
-          }
-        });
+        this.copiedText = layerToText(
+          store.currentCanvas.rendered,
+          this.selectBox
+        );
       }
       if (value === KEY_CUT) {
         const layer = new Layer();
@@ -163,11 +162,11 @@ export class DrawSelect extends AbstractDrawFunction {
     }
 
     if (value === KEY_PASTE) {
-      const offsetLayer = new Layer();
-      this.copiedLayer.entries().forEach(([key, value]) => {
-        offsetLayer.set(key.add(this.dragEnd.subtract(this.dragStart)), value);
-      });
-      store.currentCanvas.setScratchLayer(offsetLayer);
+      const pastedLayer = textToLayer(
+        this.copiedText,
+        this.selectBox.topLeft()
+      );
+      store.currentCanvas.setScratchLayer(pastedLayer);
       store.currentCanvas.commitScratch();
     }
   }

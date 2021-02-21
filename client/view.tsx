@@ -1,10 +1,10 @@
 import * as constants from "asciiflow/client/constants";
 import { store } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
+import { autorun } from "mobx";
 import { useObserver } from "mobx-react";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { autorun } from "mobx";
+import { useEffect } from "react";
 
 /**
  * Handles view operations, state and management of the screen.
@@ -81,6 +81,7 @@ function render(canvas: HTMLCanvasElement) {
   const committed = store.currentCanvas.committed;
   const scratch = store.currentCanvas.scratch;
   const selection = store.currentCanvas.selection;
+  const rendered = store.currentCanvas.rendered;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -168,14 +169,14 @@ function render(canvas: HTMLCanvasElement) {
   }
   for (const [position, value] of committed.entries()) {
     if (constants.ALL_SPECIAL_VALUES.includes(value)) {
-      highlight(position, colors.highlight);
+      // highlight(position, colors.highlight);
     }
-    const cellValue = store.currentCanvas.getDrawValue(position);
+    const cellValue = rendered.get(position);
     text(position, cellValue);
   }
   for (const [position] of scratch.entries()) {
     highlight(position, colors.highlight);
-    const cellValue = store.currentCanvas.getDrawValue(position);
+    const cellValue = rendered.get(position);
     text(position, cellValue);
   }
 

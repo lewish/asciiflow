@@ -6,10 +6,13 @@ import { IStringifier } from "asciiflow/client/store/persistent";
 export interface ILayerView {
   get(position: Vector): string;
   context(position: Vector): CellContext;
+  keys(): Vector[];
+  entries(): [Vector, string][];
 }
 
-abstract class AbstractLayer implements ILayerView {
+export abstract class AbstractLayer implements ILayerView {
   abstract get(position: Vector): string;
+  abstract keys(): Vector[];
 
   context(position: Vector): CellContext {
     const left = constants.ALL_SPECIAL_VALUES.includes(
@@ -45,10 +48,15 @@ abstract class AbstractLayer implements ILayerView {
       rightdown
     );
   }
+
+  entries() {
+    return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
+  }
 }
 
 export class Layer extends AbstractLayer {
   public static serialize = (value: Layer) => {
+    // Most efficient format seems to be to just store the drawing as plain text with an offset.
     return JSON.stringify([...value.map.entries()]);
   };
 
@@ -58,7 +66,7 @@ export class Layer extends AbstractLayer {
     return layer;
   };
 
-  private map = new Map<string, string>();
+  public map = new Map<string, string>();
 
   public delete(position?: Vector) {
     this.map.delete(position.toString());
@@ -81,11 +89,8 @@ export class Layer extends AbstractLayer {
     return this.map.has(position.toString());
   }
 
-  public entries(): [Vector, string][] {
-    return [...this.map.entries()].map(([key, value]) => [
-      Vector.fromString(key),
-      value,
-    ]);
+  public keys(): Vector[] {
+    return [...this.map.keys()].map((key) => Vector.fromString(key));
   }
 
   public size() {
@@ -118,6 +123,14 @@ export class Layer extends AbstractLayer {
 export class LayerView extends AbstractLayer {
   public constructor(private layers: Layer[]) {
     super();
+  }
+
+  keys(): Vector[] {
+    const keys = new Set<string>();
+    for (const layer of this.layers) {
+      [...layer.map.keys()].forEach((key) => keys.add(key));
+    }
+    return [...keys].map((key) => Vector.fromString(key));
   }
 
   get(position: Vector): string {

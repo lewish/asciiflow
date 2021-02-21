@@ -1,5 +1,8 @@
 import {
+  Button,
   Chip,
+  Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -12,6 +15,7 @@ import { ControlledDialog } from "asciiflow/client/components/controlled_dialog"
 import { ASCII, UNICODE } from "asciiflow/client/constants";
 import * as styles from "asciiflow/client/export.css";
 import { DrawingId, store } from "asciiflow/client/store";
+import { layerToText } from "asciiflow/client/text_utils";
 import { useObserver } from "mobx-react";
 import * as React from "react";
 
@@ -29,63 +33,70 @@ export function ExportDialog({
   drawingId: DrawingId;
 }) {
   return useObserver(() => {
+    const [open, setOpen] = React.useState(false);
     const exportConfig = store.exportConfig.get();
-    const drawingText = applyConfig(
-      store.canvas(drawingId).outputText(),
-      exportConfig
-    );
+    // Only compute the text if the dialog is open.
+    const drawingText = open
+      ? applyConfig(layerToText(store.canvas(drawingId).rendered), exportConfig)
+      : "";
     return (
-      <ControlledDialog button={button}>
-        <DialogTitle>Export drawing</DialogTitle>
-        <DialogContent>
-          <div>
-            <FormControl>
-              <InputLabel>Character set</InputLabel>
-              <Select
-                value={exportConfig.characters ?? "extended"}
-                onChange={(e) =>
-                  store.exportConfig.set({
-                    ...exportConfig,
-                    characters: e.target.value as any,
-                  })
-                }
-              >
-                <MenuItem value={"extended"}>ASCII Extended</MenuItem>
-                <MenuItem value={"basic"}>ASCII Basic</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div>
-            <FormControl>
-              <InputLabel>Comment type</InputLabel>
-              <Select
-                value={exportConfig.wrapper || "none"}
-                onChange={(e) =>
-                  store.exportConfig.set({
-                    ...exportConfig,
-                    wrapper: e.target.value as any,
-                  })
-                }
-              >
-                <MenuItem value={"none"}>None</MenuItem>
-                <MenuItem value={"star"}>
-                  Standard multi-line <CommentTypeChip label="/* */" />
-                </MenuItem>
-                <MenuItem value={"hash"}>
-                  Hashes <CommentTypeChip label="#" />
-                </MenuItem>
-                <MenuItem value={"slash"}>
-                  Slashes <CommentTypeChip label="//" />
-                </MenuItem>
-                <MenuItem value={"dash"}>
-                  Dashes <CommentTypeChip label="--" />
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <TextareaAutosize value={drawingText} className={styles.textArea} />
-        </DialogContent>
-      </ControlledDialog>
+      <>
+        <span onClick={(e) => setOpen(true)}>{button}</span>
+        <Dialog open={Boolean(open)} onClose={() => setOpen(null)}>
+          <DialogTitle>Export drawing</DialogTitle>
+          <DialogContent>
+            <div>
+              <FormControl>
+                <InputLabel>Character set</InputLabel>
+                <Select
+                  value={exportConfig.characters ?? "extended"}
+                  onChange={(e) =>
+                    store.exportConfig.set({
+                      ...exportConfig,
+                      characters: e.target.value as any,
+                    })
+                  }
+                >
+                  <MenuItem value={"extended"}>ASCII Extended</MenuItem>
+                  <MenuItem value={"basic"}>ASCII Basic</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl>
+                <InputLabel>Comment type</InputLabel>
+                <Select
+                  value={exportConfig.wrapper || "none"}
+                  onChange={(e) =>
+                    store.exportConfig.set({
+                      ...exportConfig,
+                      wrapper: e.target.value as any,
+                    })
+                  }
+                >
+                  <MenuItem value={"none"}>None</MenuItem>
+                  <MenuItem value={"star"}>
+                    Standard multi-line <CommentTypeChip label="/* */" />
+                  </MenuItem>
+                  <MenuItem value={"hash"}>
+                    Hashes <CommentTypeChip label="#" />
+                  </MenuItem>
+                  <MenuItem value={"slash"}>
+                    Slashes <CommentTypeChip label="//" />
+                  </MenuItem>
+                  <MenuItem value={"dash"}>
+                    Dashes <CommentTypeChip label="--" />
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            <TextareaAutosize value={drawingText} className={styles.textArea} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      </>
     );
   });
 }
