@@ -124,8 +124,11 @@ export class DrawSelect extends AbstractDrawFunction {
   end() {
     if (this.dragStart != null) {
       store.currentCanvas.commitScratch();
-      this.selectBox = null;
-      store.currentCanvas.clearSelection();
+      this.selectBox = new Box(
+        this.selectBox.topLeft().add(this.dragEnd).subtract(this.dragStart),
+        this.selectBox.bottomRight().add(this.dragEnd).subtract(this.dragStart)
+      );
+      store.currentCanvas.setSelection(this.selectBox);
     } else if (!!this.moveTool) {
       this.moveTool.end();
       this.moveTool = null;

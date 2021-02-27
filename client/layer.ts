@@ -2,6 +2,7 @@ import { Vector } from "asciiflow/client/vector";
 import { CellContext } from "asciiflow/client/common";
 import * as constants from "asciiflow/client/constants";
 import { IStringifier } from "asciiflow/client/store/persistent";
+import { layerToText, textToLayer } from "asciiflow/client/text_utils";
 
 export interface ILayerView {
   get(position: Vector): string;
@@ -49,21 +50,33 @@ export abstract class AbstractLayer implements ILayerView {
     );
   }
 
-  entries() {
+  public entries() {
     return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
   }
 }
 
+interface ILayerJSON {
+  x: number;
+  y: number;
+  text: string;
+}
 export class Layer extends AbstractLayer {
   public static serialize = (value: Layer) => {
     // Most efficient format seems to be to just store the drawing as plain text with an offset.
-    return JSON.stringify([...value.map.entries()]);
+    return JSON.stringify({
+      x: value
+        .entries()
+        .reduce((acc, [key]) => Math.min(acc, key.x), Number.MAX_SAFE_INTEGER),
+      y: value
+        .entries()
+        .reduce((acc, [key]) => Math.min(acc, key.y), Number.MAX_SAFE_INTEGER),
+      text: layerToText(value),
+    } as ILayerJSON);
   };
 
   public static deserialize = (value: string) => {
-    const layer = new Layer();
-    layer.map = new Map(JSON.parse(value));
-    return layer;
+    const object = JSON.parse(value) as ILayerJSON;
+    return textToLayer(object.text, new Vector(object.x, object.y));
   };
 
   public map = new Map<string, string>();

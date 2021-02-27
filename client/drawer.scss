@@ -45,3 +45,18 @@ button.fab {
     height: 55px;
   }
 }
+
+:global(.dark) {
+  button.fab {
+    background-color: #444;
+  }
+}
+
+.githubMark {
+  filter: opacity(80%);
+}
+:global(.dark) {
+  .githubMark {
+    filter: invert(100%);
+  }
+}

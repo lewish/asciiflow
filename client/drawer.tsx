@@ -189,6 +189,17 @@ export function Drawer() {
                             <ShareButton drawingId={drawingId} />
                           </>
                         )}
+                        <ExportDialog
+                          button={
+                            <MenuItem>
+                              <ListItemIcon>
+                                <Icons.GetApp />
+                              </ListItemIcon>
+                              Export
+                            </MenuItem>
+                          }
+                          drawingId={drawingId}
+                        />
                       </ControlledMenu>
                     </ListItemSecondaryAction>
                   </ListItem>
@@ -270,6 +281,16 @@ export function Drawer() {
               <ListItem>
                 <ListItemText>Help</ListItemText>
                 <ListItemSecondaryAction>
+                  <a href="https://github.com/lewish/asciiflow2">
+                    <IconButton>
+                      <img
+                        className={styles.githubMark}
+                        width="24"
+                        height="24"
+                        src="public/github_mark.png"
+                      />
+                    </IconButton>
+                  </a>
                   <IconButton
                     onClick={() => store.darkMode.set(!store.darkMode.get())}
                   >
@@ -309,8 +330,8 @@ export function Drawer() {
                 <ToolHelp tool={ToolMode.SELECT}>
                   Click and drag on any boxes, lines, or arrows to resize and
                   move them. Select any area and then drag to move it, or use{" "}
-                  <ShortcutChip label="ctrl + c" /> to copy,{" "}
-                  <ShortcutChip label="ctrl + v" /> to paste, and{" "}
+                  <ShortcutChip label={`${ctrlOrCmd()} + c`} /> to copy,{" "}
+                  <ShortcutChip label={`${ctrlOrCmd()} + v`} /> to paste, and{" "}
                   <ShortcutChip label="delete" /> or{" "}
                   <ShortcutChip label="backspace" /> to erase. Hold{" "}
                   <ShortcutChip label="shift" /> to force selection mode instead
@@ -348,8 +369,8 @@ export function Drawer() {
                   Click on any square and start typing. Press{" "}
                   <ShortcutChip label={"enter"} /> to save your changes. Press
                   either <ShortcutChip label={"shift + enter"} /> or{" "}
-                  <ShortcutChip label={"ctrl + enter"} /> to start a new line
-                  without committing your changes. Use the{" "}
+                  <ShortcutChip label={`${ctrlOrCmd()} + enter`} /> to start a
+                  new line without committing your changes. Use the{" "}
                   <ShortcutChip label={"arrow keys"} /> to move around.
                 </ToolHelp>{" "}
                 Pan around the canvas by holding <ShortcutChip label="space" />
@@ -359,8 +380,9 @@ export function Drawer() {
                   <>
                     {" "}
                     and dragging with the mouse. Use{" "}
-                    <ShortcutChip label="ctrl + z" /> to undo and{" "}
-                    <ShortcutChip label="ctrl + shift + z" /> to redo.
+                    <ShortcutChip label={`${ctrlOrCmd()} + z`} /> to undo and{" "}
+                    <ShortcutChip label={`${ctrlOrCmd()} + shift + z`} /> to
+                    redo.
                   </>
                 )}
               </div>
@@ -370,6 +392,13 @@ export function Drawer() {
       </Paper>
     );
   });
+}
+
+function ctrlOrCmd() {
+  if (navigator.platform.toLowerCase().startsWith("mac")) {
+    return "cmd";
+  }
+  return "ctrl";
 }
 
 function ShortcutChip({ label }: { label: string }) {
@@ -471,7 +500,7 @@ function NewDrawingButton() {
 
 function RenameDrawingButton({ drawingId }: { drawingId: DrawingId }) {
   const history = useHistory();
-  let defaultNewDrawingName = drawingId.localId;
+  const defaultNewDrawingName = drawingId.localId;
   const [newDrawingName, setNewDrawingName] = React.useState(
     defaultNewDrawingName
   );
@@ -522,7 +551,7 @@ function ForkDrawingButton({
 }) {
   const history = useHistory();
   const drawing = new DrawingStringifier().deserialize(drawingId.shareSpec);
-  let defaultNewDrawingName = drawing.name;
+  const defaultNewDrawingName = drawing.name;
   const [newDrawingName, setNewDrawingName] = React.useState(
     defaultNewDrawingName
   );
@@ -579,8 +608,8 @@ function ShareButton({ drawingId }: { drawingId: DrawingId }) {
       onClick={() => {
         navigator.clipboard.writeText(
           `${window.location.protocol}//${window.location.host}${
-            DrawingId.share(store.canvas(drawingId).shareSpec).href
-          })`
+            window.location.pathname
+          }#${DrawingId.share(store.canvas(drawingId).shareSpec).href})`
         );
         setOpen(true);
       }}

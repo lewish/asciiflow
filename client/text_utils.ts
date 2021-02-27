@@ -1,3 +1,4 @@
+import { StayCurrentLandscape } from "@material-ui/icons";
 import { Box } from "asciiflow/client/common";
 import { ILayerView, Layer } from "asciiflow/client/layer";
 import { Vector } from "asciiflow/client/vector";
@@ -20,19 +21,19 @@ export function layerToText(layer: ILayerView, box?: Box) {
     box = new Box(start, end);
   }
 
-  let output = "";
-  const topLeft = box.topLeft();
-  const bottomRight = box.bottomRight();
-  for (let j = topLeft.y; j <= bottomRight.y; j++) {
-    let line = "";
-    for (let i = topLeft.x; i <= bottomRight.x; i++) {
-      const val = layer.get(new Vector(i, j));
-      line += val == null ? " " : val;
-    }
-    // Trim end whitespace.
-    output += line.replace(/\s+$/, "") + "\n";
-  }
-  return output;
+  const lineArrays = [
+    ...new Array(box.bottomRight().y - box.topLeft().y + 1),
+  ].map((x) =>
+    [...new Array(box.bottomRight().x - box.topLeft().x + 1)].fill(" ")
+  ) as string[][];
+
+  layer.entries().forEach(([key, value]) => {
+    lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
+  });
+  return lineArrays
+    .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
+    .map((line) => line.replace(/\s+$/, ""))
+    .join("\n");
 }
 
 /**
@@ -48,8 +49,10 @@ export function textToLayer(value: string, offset?: Vector) {
   for (let j = 0; j < lines.length; j++) {
     const line = lines[j];
     for (let i = 0; i < line.length; i++) {
-      let char = line.charAt(i);
-      layer.set(new Vector(i, j).add(offset), char); 
+      const char = line.charAt(i);
+      if (char !== " ") {
+        layer.set(new Vector(i, j).add(offset), char);
+      }
     }
   }
   return layer;

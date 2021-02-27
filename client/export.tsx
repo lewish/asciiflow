@@ -9,6 +9,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextareaAutosize,
 } from "@material-ui/core";
 import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
@@ -20,7 +21,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "hash" | "slash" | "dash";
+  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -42,58 +43,66 @@ export function ExportDialog({
     return (
       <>
         <span onClick={(e) => setOpen(true)}>{button}</span>
-        <Dialog open={Boolean(open)} onClose={() => setOpen(null)}>
+        <Dialog
+          open={Boolean(open)}
+          onClose={() => setOpen(null)}
+          className={store.darkMode.get() ? "dark" : ""}
+        >
           <DialogTitle>Export drawing</DialogTitle>
           <DialogContent>
-            <div>
-              <FormControl>
-                <InputLabel>Character set</InputLabel>
-                <Select
-                  value={exportConfig.characters ?? "extended"}
-                  onChange={(e) =>
-                    store.exportConfig.set({
-                      ...exportConfig,
-                      characters: e.target.value as any,
-                    })
-                  }
-                >
-                  <MenuItem value={"extended"}>ASCII Extended</MenuItem>
-                  <MenuItem value={"basic"}>ASCII Basic</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl>
-                <InputLabel>Comment type</InputLabel>
-                <Select
-                  value={exportConfig.wrapper || "none"}
-                  onChange={(e) =>
-                    store.exportConfig.set({
-                      ...exportConfig,
-                      wrapper: e.target.value as any,
-                    })
-                  }
-                >
-                  <MenuItem value={"none"}>None</MenuItem>
-                  <MenuItem value={"star"}>
-                    Standard multi-line <CommentTypeChip label="/* */" />
-                  </MenuItem>
-                  <MenuItem value={"hash"}>
-                    Hashes <CommentTypeChip label="#" />
-                  </MenuItem>
-                  <MenuItem value={"slash"}>
-                    Slashes <CommentTypeChip label="//" />
-                  </MenuItem>
-                  <MenuItem value={"dash"}>
-                    Dashes <CommentTypeChip label="--" />
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </div>
+            <FormControl className={styles.formControl}>
+              <InputLabel>Character set</InputLabel>
+              <Select
+                value={exportConfig.characters ?? "extended"}
+                onChange={(e) =>
+                  store.exportConfig.set({
+                    ...exportConfig,
+                    characters: e.target.value as any,
+                  })
+                }
+              >
+                <MenuItem value={"extended"}>ASCII Extended</MenuItem>
+                <MenuItem value={"basic"}>ASCII Basic</MenuItem>
+              </Select>
+            </FormControl>
+          </DialogContent>
+          <DialogContent>
+            <FormControl className={styles.formControl}>
+              <InputLabel>Comment type</InputLabel>
+              <Select
+                value={exportConfig.wrapper || "none"}
+                onChange={(e) =>
+                  store.exportConfig.set({
+                    ...exportConfig,
+                    wrapper: e.target.value as any,
+                  })
+                }
+              >
+                <MenuItem value={"none"}>None</MenuItem>
+                <MenuItem value={"star"}>
+                  Standard multi-line <CommentTypeChip label="/* */" />
+                </MenuItem>
+                <MenuItem value={"star-filled"}>
+                  Filled multi-line <CommentTypeChip label="/***/" />
+                </MenuItem>
+                <MenuItem value={"hash"}>
+                  Hashes <CommentTypeChip label="#" />
+                </MenuItem>
+                <MenuItem value={"slash"}>
+                  Slashes <CommentTypeChip label="//" />
+                </MenuItem>
+                <MenuItem value={"dash"}>
+                  Dashes <CommentTypeChip label="--" />
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </DialogContent>
+          <DialogContent>
             <TextareaAutosize value={drawingText} className={styles.textArea} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
+            <CopyToClipboardButton text={drawingText} />
+            <Button onClick={() => setOpen(false)}>Close</Button>
           </DialogActions>
         </Dialog>
       </>
@@ -110,6 +119,38 @@ function CommentTypeChip({ label }: { label: React.ReactNode }) {
       }
       size="small"
     />
+  );
+}
+
+function CopyToClipboardButton({ text }: { text: string }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <Button
+        color="primary"
+        onClick={async () => {
+          await navigator.clipboard.writeText(text);
+          setOpen(true);
+        }}
+      >
+        Copy to clipboard
+      </Button>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        message="Copied drawing to clipboard"
+        action={
+          <Button color="secondary" size="small" onClick={() => setOpen(false)}>
+            Dismiss
+          </Button>
+        }
+      />
+    </>
   );
 }
 
@@ -137,8 +178,17 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     );
   }
   if (exportConfig.wrapper) {
-    if (exportConfig.wrapper === "star") {
-      setLines(["/*", ...lines().map((line) => ` * ${line}`), " */"]);
+    if (
+      exportConfig.wrapper === "star" ||
+      exportConfig.wrapper === "star-filled"
+    ) {
+      setLines([
+        "/*",
+        ...lines().map((line) =>
+          exportConfig.wrapper === "star-filled" ? ` * ${line}` : line
+        ),
+        " */",
+      ]);
     }
     if (exportConfig.wrapper === "hash") {
       setLines(lines().map((line) => `# ${line}`));
