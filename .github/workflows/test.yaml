@@ -1,0 +1,19 @@
+name: Test
+
+on: push
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository.
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Builds code and runs the tests using Bazelisk.
+      - name: Run tests
+        uses: mattinsler/bazelisk:latest
+        with:
+          command: bazel test ...
