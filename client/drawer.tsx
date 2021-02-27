@@ -384,7 +384,9 @@ export function Drawer() {
                     <ShortcutChip label={`${ctrlOrCmd()} + shift + z`} /> to
                     redo.
                   </>
-                )}
+                )}{" "}
+                You can return to the previous version of ASCIIFlow{" "}
+                <a href="legacy">here</a>.
               </div>
             )}
           </>
