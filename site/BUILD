@@ -5,7 +5,12 @@ load(
 
 copy_filegroups_to_this_package(
     name = "site",
-    # you can list more than one filegroup:
     srcs = ["//client:site"],
+    strip_path = "client/",
+)
+
+copy_filegroups_to_this_package(
+    name = "legacy",
+    srcs = ["//legacy"],
     strip_path = "client/",
 )
