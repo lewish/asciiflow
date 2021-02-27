@@ -1,18 +1,17 @@
 import React = require("react");
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import * as styles from "asciiflow/client/app.css";
 import {
   Controller,
   DesktopController,
-  TouchController,
+  TouchController
 } from "asciiflow/client/controller";
 import { Drawer } from "asciiflow/client/drawer";
 import { DrawingId, store } from "asciiflow/client/store";
 import { View } from "asciiflow/client/view";
-import { BrowserRouter, Route, useParams } from "react-router-dom";
-import ReactDOM = require("react-dom");
-import * as styles from "asciiflow/client/app.css";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { useObserver } from "mobx-react";
+import { HashRouter, Route, useParams } from "react-router-dom";
+import ReactDOM = require("react-dom");
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -59,11 +58,11 @@ export const App = () => {
 
 async function render() {
   ReactDOM.render(
-    <BrowserRouter>
+    <HashRouter>
       <Route exact path="/" component={App} />
       <Route path="/local/:local" component={App} />
       <Route path="/share/:share" component={App} />
-    </BrowserRouter>,
+    </HashRouter>,
     document.getElementById("root")
   );
 }
