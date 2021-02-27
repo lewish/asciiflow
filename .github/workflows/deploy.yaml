@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Builds code using bazelisk.
+      # Builds code using bazelisk and copies the site folder out of the bazel symlinked dir.
       - name: Build the site
         uses: "docker://mattinsler/bazelisk:latest"
         with:
