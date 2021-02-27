@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-      - af3
+      - master
 
 jobs:
   test:
