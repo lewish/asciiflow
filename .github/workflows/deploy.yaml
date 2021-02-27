@@ -19,7 +19,7 @@ jobs:
       - name: Build the site
         uses: docker://mattinsler/bazelisk:latest
         with:
-          args: build site
+          args: bazel build site
       
       # Deploy the site to gh-pages.
       - name: Deploy the site
