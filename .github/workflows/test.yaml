@@ -6,8 +6,6 @@ jobs:
   test:
     name: Test and build
     runs-on: ubuntu-latest
-    container:
-      image: mattinsler/bazelisk:latest
 
     steps:
       # Checks out a copy of your repository.
@@ -16,4 +14,6 @@ jobs:
 
       # Builds code and runs the tests using Bazelisk.
       - name: Run tests
-        run: bazel test ...
+        uses: docker://mattinsler/bazelisk:latest
+        with:
+          args: bazel test ...

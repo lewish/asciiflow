@@ -21,6 +21,9 @@ jobs:
         with:
           args: bazel build site
       
+      - name: Debug
+        run: "ls -la"
+        
       # Deploy the site to gh-pages.
       - name: Deploy the site
         uses: JamesIves/github-pages-deploy-action@4.0.0
