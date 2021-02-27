@@ -18,7 +18,8 @@ jobs:
       # Builds code using bazelisk.
       - name: Build the site
         uses: docker://mattinsler/bazelisk:latest
-        args: build site
+        with:
+          args: build site
       
       # Deploy the site to gh-pages.
       - name: Deploy the site
