@@ -19,18 +19,11 @@ jobs:
       - name: Build the site
         uses: docker://mattinsler/bazelisk:latest
         with:
-          args: bazel build site
-      
-      - name: Debug 2
-        run: "echo $PWD"
-  
-      - name: Debug
-        run: "ls -la bazel-bin"
-
+          args: bazel build site && cp -LR bazel-bin/site ./gh-pages-deploy
   
       # Deploy the site to gh-pages.
       - name: Deploy the site
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
-          branch: "gh-pages"
-          folder: "./bazel-bin/site"
+          branch: gh-pages
+          folder: gh-pages-deploy
