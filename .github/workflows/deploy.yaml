@@ -7,20 +7,20 @@ on:
 
 jobs:
   test:
-    name: Test and build
+    name: Build and deploy
     runs-on: ubuntu-latest
-    container:
-      image: mattinsler/bazelisk:latest
 
     steps:
       # Checks out a copy of your repository.
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Builds code and runs the tests using Bazelisk.
+      # Builds code using bazelisk.
       - name: Build the site
-        run: bazel build site
+        uses: docker://mattinsler/bazelisk:latest
+        args: build site
       
+      # Deploy the site to gh-pages.
       - name: Deploy the site
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
