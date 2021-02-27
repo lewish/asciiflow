@@ -12,5 +12,4 @@ copy_filegroups_to_this_package(
 copy_filegroups_to_this_package(
     name = "legacy",
     srcs = ["//legacy"],
-    strip_path = "client/",
 )
