@@ -1,6 +1,6 @@
-package(default_visibility = ["//visibility:public"])
+load("//:ts_library.bzl", "ts_library")
 
-load("@npm_bazel_typescript//:index.bzl", "ts_library")
+package(default_visibility = ["//visibility:public"])
 
 ts_library(
     name = "vscode",
