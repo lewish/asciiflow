@@ -19,6 +19,7 @@ jobs:
       - name: Build the site
         uses: docker://mattinsler/bazelisk:latest
         with:
+          entrypoint: bash
           args: bazel build site && cp -r --dereference bazel-bin/site ./gh-pages-deploy
   
       # Deploy the site to gh-pages.
