@@ -1,627 +1,202 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<meta name="Description" content="Infinite ASCII diagrams, save to Google Drive, resize, freeform draw, and export straight to text/html.">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="mobile-web-app-capable" content="yes" />
-<link rel="shortcut icon" sizes="196x196" href="images/favicon.png">
-<title>ASCIIFlow Infinity</title>
-<style>
-
-* {
-  font-weight: bold;
-  font-family: sans-serif;
-  font-size: 0.95em;
-  color: #666;
-}
-
-a {
-  color: #FF9E20;
-}
-
-body {
-  margin: 0px;
-}
-
-button {
-  cursor: pointer;
-}
-
-#drive-file-list li {
-  list-style: none;
-  font-size: 15px;
-  margin: 5px;
-}
-
-#draw-tools {
-  text-align: left;
-  padding-left: 120px;
-  display: inline-block;
-  position: fixed;
-  width: 100%;
-  background-color: #FFF;
-  z-index: 100;
-  -webkit-box-shadow: 0px 1px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-          box-shadow: 0px 1px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
-}
-
-#logo-bar {
-  position: fixed;
-  left: 0px;
-  z-index: 101;
-  margin: 8px;
-}
-
-#file-tools {
-  text-align: right;
-  display: inline-block;
-  position: fixed;
-  right: 2px;
-  z-index: 100;
-}
-
-#draw-tools > button, #file-tools > button {
-  font-size: 12px;
-  vertical-align: top;
-  display: inline-block;
-  margin: 8px 8px;
-  width: 24px;
-  height: 24px;
-  text-align: center;
-  cursor: pointer;
-  outline: 0 !important;
-  background-size: 200% 100% !important;
-  background-color: #FFF;
-}
-
-#file-tools > button.info-image {
-  margin-left: 30px;
-}
-
-.info-icon, .info-icon-file {
-  width: 30px;
-  height: 30px;
-  margin: 0 0 5px -4px;
-  background-size: 100% !important;
-  background-size: 200% 100% !important;
-  display: inline-block;
-}
-
-.info-description {
-  vertical-align: text-bottom;
-  margin-left: 10px;
-  display: inline-block;
-  height: 30px;
-  width: 64%;
-  text-align: left;
-}
-
-.info-description br {
-  display: none;
-}
-
-.dialog span {
-  color: #AAA;
-}
-
-#drive-filename {
-  display: inline-block;
-}
-
-#drive-save-state {
-  display: inline-block;
-  line-height: 40px;
-  margin-right: 10px;
-  color: #bbb;
-  font-weight: normal;
-  font-size: 0.9em;
-}
-
-#drive-filename {
-  font-size: 30px;
-  border: gray 1px solid;
-  padding: 5px;
-  background: #EEE;
-  cursor: pointer;
-}
-
-/* Mobile overrides */
-@media(max-width:780px) {
-#logo-bar {
-  margin: 10px;
-}
-
-#draw-tools > button, #file-tools > button {
-  margin: 10px 4px;
-}
-
-#draw-tools {
-  text-align: center;
-  padding-left: 0px;
-}
-
-  /* Move file tools to the bottom. */
-#file-tools {
-  left: 0px;
-  padding-left: 9px;
-    bottom: 0px;
-    background-color: #FFF;
-    width: 100%;
-  text-align: left;
-  -webkit-box-shadow: 0px -1px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-          box-shadow: 0px -1px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
-}
-
-#drive-save-state {
-  line-height: 44px;
-  margin-right: 6px;
-}
-
-#options-button {
-  position: fixed;
-  right: 6px;
-}
-
-#drive-filename {
-  display: block;
-}
-}
-
-.dialog {
-  position: fixed;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  margin: auto;
-  width: 85%;
-  height: 89%;
-  max-width: 640px;
-  max-height: 380px;
-  background: #FFF;
-  display: none;
-  z-index: 100;
-  padding: 20px;
-  text-align: center;
-  -webkit-box-shadow: 0px 0px 5px 0px #BBB; /* Android 2.3+, iOS 4.0.2-4.2, Safari 3-4 */
-          box-shadow: 0px 0px 5px 0px #BBB; /* Chrome 6+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
-}
-
-.visible {
-  display: block !important;
-}
-
-#draw-tools > button, #file-tools > button {
-  border-width: 0px;
-}
-
-button.active, .info-icon {
-  background-position: right;
-}
-
-.dialog > button {
-  margin-top: 6px;
-  display: inline-block;
-}
-
-.close-dialog-button, #import-submit-button, #text-tool-close {
-  position: absolute;
-  right: 0px;
-  bottom: 0px;
-  margin: 7px;
-  border: 0;
-  -webkit-appearance: none;
-  background-color: transparent;
-}
-
-@media(max-width:500px) {
-#logo-bar {
-  display: none;
-}
-.info-description {
-  vertical-align: top;
-  width: 84%;
-}
-.dialog, .dialog p {
-  font-size: 0.90em !important;
-}
-.dialog {
-  padding: 10px;
-  max-height: 410px;
-}
-.info-icon, .info-icon-file {
-  margin: 0 0 10px -4px;
-}
-
-.info-description br {
-  display: block;
-}
-
-.close-dialog-button, #import-submit-button, #text-tool-close {
-  margin: 10px 3px;
-}
-
-}
-
-#options-logo {
-  margin: 10px 0 0;
-}
-
-#options-scroll {
-  overflow-y: scroll;
-  height: 91%;
-  -webkit-overflow-scrolling: touch;
-}
-
-#options-scroll p {
-  margin: 10px 0 15px;
-}
-
-.dialog-button-bar {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 8%;
-  min-height: 34px;
-  background-color: #DDD;
-  text-align: right;
-}
-
-#import-submit-button {
-  margin-right: 80px;
-}
-
-#ascii-canvas {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-}
-
-textarea {
-  width: 100%;
-  height: 91%;
-  font-size: 1.2em;
-  font-weight: normal;
-  overflow: hidden;
-  resize: none;
-  margin: 0px;
-  padding: 0px;
-  border: 0px;
-  font-family: monospace;
-  white-space: pre;
-}
-
-#logo-interstitial {
-  text-align: center;
-  vertical-align: middle;
-  background-color: #FFF;
-  z-index: 200;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-/*  transition: opacity 1.5s ease-in-out; */
-  background-size: 100%;
-  pointer-events: none;
-}
-
-#logo-interstitial > img {
-  display: inline;
-  max-width: 100%;
-  max-height: 100%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-#text-tool-widget {
-  display: none;
-  z-index: 100;
-  position: fixed;
-  top: 60px;
-  left: 0px;
-  right: 0px;
-  width: 300px;
-  height: 100px;
-  margin: auto;
-  text-align: center;
-  box-shadow: 0px 0px 3px 3px #CCC;
-}
-
-.fade-out {
-  opacity: 0;
-}
-
-.box-image { background-image: url('images/box-icon.gif'); }
-.line-image { background-image: url('images/line-icon.gif'); }
-.arrow-image { background-image: url('images/arrow-icon.gif'); }
-.freeform-image { background-image: url('images/freeform-icon.gif'); }
-.erase-image { background-image: url('images/erase-icon.gif'); }
-.move-image { background-image: url('images/move-icon.gif'); }
-.text-image { background-image: url('images/text-icon.gif'); }
-
-.drive-image { background-image: url('images/drive-icon.gif'); }
-.export-image { background-image: url('images/export-icon.gif'); }
-.import-image { background-image: url('images/import-icon.gif'); }
-.clear-image { background-image: url('images/clear-icon.gif'); }
-.undo-image { background-image: url('images/undo-icon.gif'); }
-.redo-image { background-image: url('images/redo-icon.gif'); }
-.select-image { background-image: url('images/select-icon.gif'); }
-
-.info-image { background-image: url('images/info-icon.gif'); }
-
-/* New intro animation */
-
-.animated {
-  -webkit-animation-duration: 3s;
-  animation-duration: 3s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-}
-
-@-webkit-keyframes bounceOut {
-  0% {
-    opacity: 0;
-    -webkit-transform: scale(.9);
-    transform: scale(.9);
-  }
-
-  12.5% {
-    opacity: 1;
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-
-  73% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-
-  83% {
-    -webkit-transform: scale(.95);
-    transform: scale(.95);
-  }
-
-  92% {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
-  }
-
-  100% {
-    -webkit-transform: scale(.3);
-    transform: scale(.3);
-  }
-}
-
-@keyframes bounceOut {
-  0% {
-    opacity: 0;
-    -webkit-transform: scale(.9);
-    -ms-transform: scale(.9);
-    transform: scale(.9);
-  }
-
-  12.5% {
-    opacity: 1;
-    -webkit-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-
-  73% {
-    -webkit-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-
-  83% {
-    -webkit-transform: scale(.95);
-    -ms-transform: scale(.95);
-    transform: scale(.95);
-  }
-
-  92% {
-    -webkit-transform: scale(1.1);
-    -ms-transform: scale(1.1);
-    transform: scale(1.1);
-  }
-
-  100% {
-    -webkit-transform: scale(.3);
-    -ms-transform: scale(.3);
-    transform: scale(.3);
-  }
-}
-
-.bounceOut {
-  -webkit-animation-name: bounceOut;
-  animation-name: bounceOut;
-}
-
-@-webkit-keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-.fadeOut {
-  -webkit-animation-name: fadeOut;
-  animation-name: fadeOut;
-}
-
-</style>
-</head>
-<body>
-
-<div id="logo-interstitial" class="animated fadeOut">
-  <img src="images/logo-full.gif" class="animated bounceOut" />
-</div>
-
-<img id="logo-bar" src="images/logo-bar.gif" width="88" height="24" />
-
-<div id="draw-tools">
-  <button id="box-button" class="tool active box-image" title="Draw boxes"></button>
-  <button id="line-button" class="tool line-image" title="Draw connecting lines"></button>
-  <button id="arrow-button" class="tool arrow-image" title="Draw arrows"></button>
-  <button id="freeform-button" class="tool freeform-image" title="Freeform drawing"></button>
-  <button id="erase-button" class="tool erase-image" title="Erase square areas"></button>
-  <button id="move-button" class="tool move-image" title="Resize/move boxes and lines"></button>
-  <button id="text-button" class="tool text-image" title="Text tool"></button>
-  <button id="select-button" class="tool select-image" title="Select, copy, cut and move"></button>
-</div>
-
-<div id="file-tools">
-  <div id="drive-save-state">Unsaved</div>
-  <button id="drive-button" class="tool drive-image" title="Google Drive Saving"></button>
-  <button id="export-button" class="tool export-image" title="Export"></button>
-  <button id="import-button" class="tool import-image" title="Import"></button>
-  <button id="clear-button" class="tool clear-image" title="Clear"></button>
-  <button id="undo-button" class="tool undo-image" title="Undo"></button>
-  <button id="redo-button" class="tool redo-image" title="Redo"></button>
-  <button id="options-button" class="tool info-image" title="Info"></button>
-</div>
-
-
-<div id="export-button-dialog" class="dialog">
-    <textarea readonly id="export-area"></textarea>
-    <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-  </div>
-</div>
-
-<div id="options-button-dialog" class="dialog">
-  <div id="options-scroll">
-      <img id="options-logo" src="images/logo-options.gif" width="176" height="48" />
-        <br>
-        <button id="use-lines-button">Lines Mode</button>
-        <button id="use-ascii-button">ASCII Mode</button><br>
-        <p>Moving around.<br>
-        Desktop Windows: <span>Hold CTRL and drag the screen.</span><br>
-        Desktop OSX: <span>Hold CMD and drag the screen.</span><br>
-        Mobile: <span>Drag quickly to move. Press and hold to start drawing. Pinch to zoom in/out.</span></p>
-        <div class="info-icon box-image"></div><div class="info-description">Draw boxes. <span>You can resize them later with the Resize tool.</span></div><br>
-        <div class="info-icon line-image"></div><div class="info-description">Draw lines. <span>Connect it to another line to change the orientation.</span></div><br>
-        <div class="info-icon arrow-image"></div><div class="info-description">Draw arrows. <span>Connect it to another line to change the orientation.</span></div><br>
-        <div class="info-icon freeform-image"></div><div class="info-description">Draw freehand. <span>Press a character on the keyboard and draw with it.</span></div><br>
-        <div class="info-icon erase-image"></div><div class="info-description">Erase. <span>Drag out an area to remove its contents from the canvas.</span></div><br>
-        <div class="info-icon move-image"></div><div class="info-description">Resize boxes and lines. <span>Drag a line to change its size/shape.</span></div><br>
-        <div class="info-icon text-image"></div><div class="info-description">Type text. <span>Click and type where you'd like to add text to the canvas.</span></div><br>
-        <br>
-        <div class="info-icon-file drive-image"></div><div class="info-description">Save. <span>Connect to Google Drive to save your work automatically.</span></div><br>
-        <div class="info-icon-file export-image"></div><div class="info-description">Export. <span>Copy your work to use it outside of ASCIIFlow.</span></div><br>
-        <div class="info-icon-file import-image"></div><div class="info-description">Import. <span>Paste ASCII/text to import it onto the canvas.</span></div><br>
-        <div class="info-icon-file clear-image"></div><div class="info-description">Clear. <span>Remove the entire contents from the canvas. Can be undone.</span></div><br>
-        <div class="info-icon-file undo-image"></div><div class="info-description">Undo. <br><span>Made a mistake? Undo!</span></div><br>
-        <div class="info-icon-file redo-image"></div><div class="info-description">Redo. <br><span>Too many Undo's? Redo!</span></div><br>
-        <br>
-
-        <div>File issues as bugs <a href="https://github.com/lewish/asciiflow2/issues" target="_blank">here</a>.</div><br>
-        <div>Return to the original <a href="http://stable.ascii-flow.appspot.com/">ASCIIFlow</a>.</div><br>
-        Developed by <a href="https://plus.google.com/+LewisHemens/about">Lewis</a>, Designed by <a href="mailto:info@samirvine.co.uk">Sam</a> and <a href="mailto:ryangilbanks@gmail.com">Ryan</a>.
-        <br>
-        <br>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="Description"
+      content="Infinite ASCII diagrams, save to Google Drive, resize, freeform draw, and export straight to text/html."
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="shortcut icon" sizes="196x196" href="/public/favicon.png" />
+
+    <title>ASCIIFlow</title>
+    <style>
+      * {
+        font-family: Roboto, sans-serif;
+      }
+
+      body {
+        margin: 0px;
+      }
+
+      #logo-interstitial {
+        text-align: center;
+        vertical-align: middle;
+        z-index: 200;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: #333;
+        /*  transition: opacity 1.5s ease-in-out; */
+        background-size: 100%;
+        pointer-events: none;
+      }
+
+      #logo-interstitial > img {
+        display: inline;
+        max-width: 600px;
+        max-height: 600px;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
+
+      .fade-out {
+        opacity: 0;
+      }
+
+      /* New intro animation */
+
+      .animated {
+        -webkit-animation-duration: 3s;
+        animation-duration: 3s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+      }
+
+      @-webkit-keyframes bounceOut {
+        0% {
+          opacity: 0;
+          -webkit-transform: scale(0.9);
+          transform: scale(0.9);
+        }
+
+        12.5% {
+          opacity: 1;
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+
+        73% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+
+        83% {
+          -webkit-transform: scale(0.95);
+          transform: scale(0.95);
+        }
+
+        92% {
+          -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+        }
+
+        100% {
+          -webkit-transform: scale(0.3);
+          transform: scale(0.3);
+        }
+      }
+
+      @keyframes bounceOut {
+        0% {
+          opacity: 0;
+          -webkit-transform: scale(0.9);
+          -ms-transform: scale(0.9);
+          transform: scale(0.9);
+        }
+
+        12.5% {
+          opacity: 1;
+          -webkit-transform: scale(1);
+          -ms-transform: scale(1);
+          transform: scale(1);
+        }
+
+        73% {
+          -webkit-transform: scale(1);
+          -ms-transform: scale(1);
+          transform: scale(1);
+        }
+
+        83% {
+          -webkit-transform: scale(0.95);
+          -ms-transform: scale(0.95);
+          transform: scale(0.95);
+        }
+
+        92% {
+          -webkit-transform: scale(1.1);
+          -ms-transform: scale(1.1);
+          transform: scale(1.1);
+        }
+
+        100% {
+          -webkit-transform: scale(0.3);
+          -ms-transform: scale(0.3);
+          transform: scale(0.3);
+        }
+      }
+
+      .bounceOut {
+        -webkit-animation-name: bounceOut;
+        animation-name: bounceOut;
+      }
+
+      @-webkit-keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+
+        90% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+
+        90% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .fadeOut {
+        -webkit-animation-name: fadeOut;
+        animation-name: fadeOut;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="logo-interstitial" class="animated fadeOut">
+      <img src="/public/logo_full.svg" class="animated bounceOut" />
     </div>
-    <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-    </div>
-</div>
-
-<div id="import-button-dialog" class="dialog">
-  <textarea id="import-area"></textarea>
-    <div class="dialog-button-bar">
-        <button class="close-dialog-button">Close</button>
-        <button id="import-submit-button">Import</button>
-  </div>
-</div>
-
-<!-- These dialogs are handled seperately. -->
-
-<div id="text-tool-widget">
-  <textarea id="text-tool-input"></textarea>
-  <div class="dialog-button-bar">
-    <button id="text-tool-close">Close</button>
-  </div>
-</div>
-
-<div id="drive-dialog" class="dialog">
-  <div id="drive-filename">Untitled ASCII Diagram</div>
-  <div style="margin: 5px;">Edit permissions and manage files in <a href="https://drive.google.com/" target="_blank">Google Drive</a>.</div>
-  <br>
-  <button id="drive-new-file-button">New Drawing</button>
-  <br>
-  <div id="drive-file-list">
-    <!-- filled with li's -->
-  </div>
-  <div class="dialog-button-bar">
-    <button class="close-dialog-button">Close</button>
-  </div>
-</div>
-
-<textarea id="freeform-tool-input"></textarea>
-
-<canvas id="ascii-canvas"></canvas>
-
-<script src="jquery-3.1.1.min.js"></script>
-<script src="js-compiled.js"></script>
-<script src="https://apis.google.com/js/client.js?onload=window.gapiCallback"></script>
-
-<script type="text/javascript">
-var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-if (width > 750) {
-  window._tpm = window._tpm || [];
-  window._tpm['paywallID'] = '37774341';
-  window._tpm['trackPageview'] = true;
-}
-</script>
-<script type="text/javascript" src="https://code.tinypass.com/tpl/d1/tpm.js"></script>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','analytics');
-
-  analytics('create', 'UA-49427709-1', 'asciiflow.com');
-  analytics('send', 'pageview');
-
-</script>
-
-<link rel="stylesheet" type="text/css" href="addtohomescreen.css">
-<script src="addtohomescreen.min.js"></script>
-
-<script>
-window.setTimeout(function() { $('#logo-interstitial').hide(); }, 3000);
-addToHomescreen({
-   startDelay: 6
-});
-</script>
-
-</body>
+    <div id="root"></div>
+    <script src="/app.bundle.js"></script>
+    <script>
+      const shownInterstitial = window.localStorage.getItem(
+        "shownInterstitial"
+      );
+      if (shownInterstitial) {
+        document.getElementById("logo-interstitial").style.display = "none";
+      } else {
+        window.localStorage.setItem("shownInterstitial", true);
+        window.setTimeout(function () {
+          document.getElementById("logo-interstitial").style.display = "none";
+        }, 3000);
+      }
+    </script>
+  </body>
 </html>
