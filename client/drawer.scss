@@ -1,0 +1,62 @@
+.drawer {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  max-width: 380px;
+  z-index: 11;
+  border-radius: 8px !important;
+
+  .logo {
+    height: 30px;
+    margin: -3px 10px 0px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    padding-right: 16px;
+  }
+}
+
+.freeformLabel {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.helpText {
+  padding: 15px;
+  line-height: 1.8;
+}
+
+.bytesLabel {
+  color: #bbb;
+}
+
+button.fab {
+  z-index: 11;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  background-color: #fff;
+
+  img {
+    height: 55px;
+  }
+}
+
+:global(.dark) {
+  button.fab {
+    background-color: #444;
+  }
+}
+
+.githubMark {
+  filter: opacity(80%);
+}
+:global(.dark) {
+  .githubMark {
+    filter: invert(100%);
+  }
+}

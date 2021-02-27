@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository.
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Builds code using bazelisk and copies the site folder out of the bazel symlinked dir.
+      - name: Build the site
+        uses: "docker://mattinsler/bazelisk:latest"
+        with:
+          args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./gh-pages-deploy"
+  
+      # Deploy the site to gh-pages.
+      - name: Deploy the site
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          branch: gh-pages
+          folder: gh-pages-deploy

@@ -1,0 +1,10 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    "object-literal-sort-keys": false,
+    "max-classes-per-file": [false, 1],
+    "no-floating-promises": true,
+    "jsx-no-lambda": false,
+    "no-empty": false
+  }
+}
