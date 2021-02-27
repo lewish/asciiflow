@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - af3
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    container:
+      image: mattinsler/bazelisk:latest
+
+    steps:
+      # Checks out a copy of your repository.
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Builds code and runs the tests using Bazelisk.
+      - name: Build the site
+        run: bazel build site
+      
+      - name: Deploy the site
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          branch: "gh-pages"
+          folder: "bazel-bin/site"

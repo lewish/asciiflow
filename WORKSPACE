@@ -19,12 +19,6 @@ yarn_install(
     yarn_lock = "//:yarn.lock",
 )
 
-# load("@npm//:install_bazel_dependencies.bzl", "install_bazel_dependencies")
-# install_bazel_dependencies()
-
-# load("@npm//@bazeltypescript//:index.bzl", "ts_setup_workspace")
-# ts_setup_workspace()
-
 http_archive(
     name = "io_bazel_rules_sass",
     url = "https://github.com/bazelbuild/rules_sass/archive/1.26.10.zip",

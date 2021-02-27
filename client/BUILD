@@ -4,6 +4,7 @@ load("@npm//webpack-dev-server:index.bzl", "webpack_dev_server")
 load("@npm//webpack:index.bzl", "webpack")
 load("@build_bazel_rules_nodejs//:index.bzl", "npm_package_bin")
 load("//:css_typings.bzl", "css_typings")
+load("//testing:index.bzl", "ts_test_suite")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -54,8 +55,6 @@ ts_library(
         "@npm//uuid",
     ],
 )
-
-load("//testing:index.bzl", "ts_test_suite")
 
 ts_test_suite(
     name = "tests",
@@ -120,4 +119,12 @@ npm_package_bin(
         "@npm//webpack-cli",
     ],
     tool = ":bundler",
+)
+
+filegroup(
+    name = "site",
+    srcs = [
+        ":app.bundle.js",
+        ":assets",
+    ],
 )
