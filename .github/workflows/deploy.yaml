@@ -1,4 +1,4 @@
-name: Test
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  test:
+  deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
 
