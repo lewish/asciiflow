@@ -281,7 +281,7 @@ export function Drawer() {
               <ListItem>
                 <ListItemText>Help</ListItemText>
                 <ListItemSecondaryAction>
-                  <a href="https://github.com/lewish/asciiflow2">
+                  <a href="https://github.com/lewish/asciiflow">
                     <IconButton>
                       <img
                         className={styles.githubMark}
