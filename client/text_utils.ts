@@ -1,4 +1,3 @@
-import { StayCurrentLandscape } from "@material-ui/icons";
 import { Box } from "asciiflow/client/common";
 import { ILayerView, Layer } from "asciiflow/client/layer";
 import { Vector } from "asciiflow/client/vector";
@@ -27,9 +26,12 @@ export function layerToText(layer: ILayerView, box?: Box) {
     [...new Array(box.bottomRight().x - box.topLeft().x + 1)].fill(" ")
   ) as string[][];
 
-  layer.entries().forEach(([key, value]) => {
-    lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
-  });
+  layer
+    .entries()
+    .filter(([key]) => box.contains(key))
+    .forEach(([key, value]) => {
+      lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
+    });
   return lineArrays
     .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
     .map((line) => line.replace(/\s+$/, ""))
