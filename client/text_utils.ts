@@ -1,4 +1,3 @@
-import { StayCurrentLandscape } from "@material-ui/icons";
 import { Box } from "asciiflow/client/common";
 import { ILayerView, Layer } from "asciiflow/client/layer";
 import { Vector } from "asciiflow/client/vector";
