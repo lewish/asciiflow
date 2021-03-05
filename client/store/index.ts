@@ -115,7 +115,7 @@ export class Store {
 
   @observable public freeformCharacter = "x";
 
-  @observable public selectedToolMode = ToolMode.BOX;
+  @observable private selectedToolMode = ToolMode.BOX;
 
   public get toolMode() {
     if (this.route.shareSpec) {
@@ -123,6 +123,7 @@ export class Store {
     }
     return this.selectedToolMode;
   }
+
   @observable public unicode = Persistent.json("unicode", true);
   @observable public controlsOpen = Persistent.json("controlsOpen", true);
   @observable public fileControlsOpen = Persistent.json(
@@ -230,7 +231,10 @@ export class Store {
   }
 
   @action.bound public setToolMode(toolMode: ToolMode) {
-    this.selectedToolMode = toolMode;
+    if (this.selectedToolMode !== toolMode) {
+      this.currentTool.cleanup();
+      this.selectedToolMode = toolMode;
+    }
   }
 
   @action.bound public deleteDrawing(drawingId: DrawingId) {
