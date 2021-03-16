@@ -12,7 +12,6 @@ import {
   Snackbar,
   TextareaAutosize,
 } from "@material-ui/core";
-import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
 import { ASCII, UNICODE } from "asciiflow/client/constants";
 import * as styles from "asciiflow/client/export.css";
 import { DrawingId, store } from "asciiflow/client/store";
@@ -21,7 +20,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash";
+  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -93,6 +92,9 @@ export function ExportDialog({
                 </MenuItem>
                 <MenuItem value={"dash"}>
                   Dashes <CommentTypeChip label="--" />
+                </MenuItem>
+                <MenuItem value={"apostrophe"}>
+                  Apostrophies <CommentTypeChip label="'" />
                 </MenuItem>
               </Select>
             </FormControl>
@@ -198,6 +200,9 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     }
     if (exportConfig.wrapper === "dash") {
       setLines(lines().map((line) => `-- ${line}`));
+    }
+    if (exportConfig.wrapper === "apostrophe") {
+      setLines(lines().map((line) => `' ${line}`));
     }
   }
   return text;
