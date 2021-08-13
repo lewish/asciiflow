@@ -20,7 +20,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe" | "semicolon";
+  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -95,6 +95,12 @@ export function ExportDialog({
                 </MenuItem>
                 <MenuItem value={"apostrophe"}>
                   Apostrophies <CommentTypeChip label="'" />
+                </MenuItem>
+                <MenuItem value={"backticks"}>
+                  Backticks multi-line <CommentTypeChip label="``` ```" />
+                </MenuItem>
+                <MenuItem value={"four-spaces"}>
+                  Four Spaces <CommentTypeChip label="    " />
                 </MenuItem>
                 <MenuItem value={"semicolon"}>
                   Apostrophies <CommentTypeChip label=";" />
@@ -206,6 +212,16 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     }
     if (exportConfig.wrapper === "apostrophe") {
       setLines(lines().map((line) => `' ${line}`));
+    }
+    if (exportConfig.wrapper === "backticks") {
+      setLines([
+        "```",
+        ...lines(),
+        "```",
+      ]);
+    }
+    if (exportConfig.wrapper === "four-spaces") {
+      setLines(lines().map((line) => `    ${line}`));
     }
     if (exportConfig.wrapper === "semicolon") {
       setLines(lines().map((line) => `; ${line}`));
