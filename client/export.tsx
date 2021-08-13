@@ -222,6 +222,7 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     }
     if (exportConfig.wrapper === "four-spaces") {
       setLines(lines().map((line) => `    ${line}`));
+    }
     if (exportConfig.wrapper === "semicolon") {
       setLines(lines().map((line) => `; ${line}`));
     }
