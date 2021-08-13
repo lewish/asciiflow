@@ -20,7 +20,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe" | "backticks" | "four-spaces";
+  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -101,6 +101,8 @@ export function ExportDialog({
                 </MenuItem>
                 <MenuItem value={"four-spaces"}>
                   Four Spaces <CommentTypeChip label="    " />
+                <MenuItem value={"semicolon"}>
+                  Apostrophies <CommentTypeChip label=";" />
                 </MenuItem>
               </Select>
             </FormControl>
@@ -219,6 +221,8 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     }
     if (exportConfig.wrapper === "four-spaces") {
       setLines(lines().map((line) => `    ${line}`));
+    if (exportConfig.wrapper === "semicolon") {
+      setLines(lines().map((line) => `; ${line}`));
     }
   }
   return text;
