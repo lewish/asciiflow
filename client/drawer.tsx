@@ -237,19 +237,19 @@ export function Drawer() {
                     name="Boxes"
                     tool={ToolMode.BOX}
                     icon={<Icons.CheckBoxOutlineBlank />}
-                    shortcut="ALT-1"
+                    shortcut={<ShortcutChip label={'alt + 1'} />}
                   />
                   <ToolControl
                     name="Select & Move"
                     tool={ToolMode.SELECT}
                     icon={<Icons.NearMe />}
-                    shortcut="ALT-2"
+                    shortcut={<ShortcutChip label={'alt + 2'} />}
                   />
                   <ToolControl
                     name="Freeform"
                     tool={ToolMode.FREEFORM}
                     icon={<Icons.Gesture />}
-                    shortcut="ALT-3"
+                    shortcut={<ShortcutChip label={'alt + 3'} />}
                   >
                     <ListItemSecondaryAction>
                       <Chip
@@ -267,20 +267,20 @@ export function Drawer() {
                     name="Arrow"
                     tool={ToolMode.ARROWS}
                     icon={<Icons.TrendingUp />}
-                    shortcut="ALT-4"
+                    shortcut={<ShortcutChip label={'alt + 4'} />}
                   />
 
                   <ToolControl
                     name="Line"
                     tool={ToolMode.LINES}
                     icon={<Icons.ShowChart />}
-                    shortcut="ALT-5"
+                    shortcut={<ShortcutChip label={'alt + 5'} />}
                   />
                   <ToolControl
                     name="Text"
                     tool={ToolMode.TEXT}
                     icon={<Icons.TextFields />}
-                    shortcut="ALT-6"
+                    shortcut={<ShortcutChip label={'alt + 6'} />}
                   />
                 </>
               )}
