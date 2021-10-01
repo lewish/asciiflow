@@ -237,16 +237,19 @@ export function Drawer() {
                     name="Boxes"
                     tool={ToolMode.BOX}
                     icon={<Icons.CheckBoxOutlineBlank />}
+                    shortcut="ALT-1"
                   />
                   <ToolControl
                     name="Select & Move"
                     tool={ToolMode.SELECT}
                     icon={<Icons.NearMe />}
+                    shortcut="ALT-2"
                   />
                   <ToolControl
                     name="Freeform"
                     tool={ToolMode.FREEFORM}
                     icon={<Icons.Gesture />}
+                    shortcut="ALT-3"
                   >
                     <ListItemSecondaryAction>
                       <Chip
@@ -264,17 +267,20 @@ export function Drawer() {
                     name="Arrow"
                     tool={ToolMode.ARROWS}
                     icon={<Icons.TrendingUp />}
+                    shortcut="ALT-4"
                   />
 
                   <ToolControl
                     name="Line"
                     tool={ToolMode.LINES}
                     icon={<Icons.ShowChart />}
+                    shortcut="ALT-5"
                   />
                   <ToolControl
                     name="Text"
                     tool={ToolMode.TEXT}
                     icon={<Icons.TextFields />}
+                    shortcut="ALT-6"
                   />
                 </>
               )}
@@ -420,6 +426,7 @@ function ToolControl(
     tool: ToolMode;
     name: React.ReactNode;
     icon: React.ReactNode;
+    shortcut: React.ReactNode;
   }>
 ) {
   return useObserver(() => {
@@ -430,7 +437,7 @@ function ToolControl(
         onClick={() => store.setToolMode(props.tool)}
       >
         <ListItemIcon>{props.icon}</ListItemIcon>
-        <ListItemText primary={props.name} />
+        <ListItemText primary={props.name} secondary={props.shortcut} />
         {props.children}
       </ListItem>
     );
