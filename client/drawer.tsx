@@ -249,15 +249,7 @@ export function Drawer() {
                     icon={<Icons.Gesture />}
                   >
                     <ListItemSecondaryAction>
-                      <Chip
-                        variant="outlined"
-                        style={{ marginRight: 10 }}
-                        label={
-                          <span className={styles.freeformLabel}>
-                            {store.freeformCharacter}
-                          </span>
-                        }
-                      />
+                      {FreeFormCharacterSelect()}
                     </ListItemSecondaryAction>
                   </ToolControl>
                   <ToolControl
@@ -435,6 +427,93 @@ function ToolControl(
       </ListItem>
     );
   });
+}
+
+
+function FreeFormCharacterSelect() {
+  const [open, setOpen] = React.useState(false);
+	return useObserver(() => {
+    return (
+      <ControlledMenu
+        button={
+          <Chip
+            variant="outlined"
+            style={{ marginRight: 10 }}
+            label={
+              <span className={styles.freeformLabel}>
+                {store.freeformCharacter}
+              </span>
+            }
+          />
+        }
+      >
+        <MenuItem
+          onClick={() => {
+            store.setToolMode(ToolMode.FREEFORM)
+            store.freeformCharacter = 'x'
+          }}
+        >
+          <Chip
+            variant="outlined"
+            style={{ marginRight: 10 }}
+            label={
+              <span className={styles.freeformLabel}>
+                {"x"}
+              </span>
+            }
+            />
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            store.setToolMode(ToolMode.FREEFORM)
+            store.freeformCharacter = '-'
+          }}
+        >
+          <Chip
+            variant="outlined"
+            style={{ marginRight: 10 }}
+            label={
+              <span className={styles.freeformLabel}>
+                {"-"}
+              </span>
+            }
+          />
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            store.setToolMode(ToolMode.FREEFORM)
+            store.freeformCharacter = '┐'
+          }}
+        >
+          <Chip
+            variant="outlined"
+            style={{ marginRight: 10 }}
+            label={
+              <span className={styles.freeformLabel}>
+                {"┐"}
+              </span>
+            }
+          />
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            store.setToolMode(ToolMode.FREEFORM)
+            store.freeformCharacter = '|'
+          }}
+        >
+          <Chip
+            variant="outlined"
+            style={{ marginRight: 10 }}
+            label={
+              <span className={styles.freeformLabel}>
+                {"|"}
+              </span>
+            }
+          />
+        </MenuItem>
+
+      </ControlledMenu>)
+	})
 }
 
 function ToolHelp(
