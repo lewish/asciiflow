@@ -15,7 +15,7 @@ module.exports = (env, argv) => ({
     warnings: true,
   },
   devServer: {
-    host: 0.0.0.0,
+    host: '0.0.0.0',
     port: 9110,
     open: false,
     // Triggers a rebuild when requesting the output filename.
