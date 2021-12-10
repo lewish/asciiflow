@@ -17,6 +17,7 @@ module.exports = (env, argv) => ({
   devServer: {
     host: '0.0.0.0',
     port: 9110,
+    disableHostCheck: true,
     open: false,
     // Triggers a rebuild when requesting the output filename.
     filename: new RegExp(`.*\\/${path.basename(argv.output)}`),
