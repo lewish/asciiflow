@@ -28,7 +28,6 @@ export class Controller {
   private dragOrigin: Vector;
   private dragOriginCell: Vector;
   private lastMoveCell: Vector;
-  public isSpacePressed = false;
 
   startDraw(position: Vector, e: EventWithModifierKeys) {
     this.mode = Mode.DRAW;
@@ -124,7 +123,7 @@ export class Controller {
       specialKeyCode = constants.KEY_RIGHT;
     }
     if (event.keyCode === 32) {
-      this.isSpacePressed = true;
+      store.panning = true;
     }
 
     store.currentTool.handleKey(specialKeyCode, getModifierKeys(event));
@@ -132,7 +131,7 @@ export class Controller {
 
   handleKeyUp(event: KeyboardEvent) {
     if (event.keyCode === 32) {
-      this.isSpacePressed = false;
+      store.panning = false;
     }
   }
 
@@ -193,7 +192,7 @@ export class DesktopController {
 
   handleMouseDown = (e: React.MouseEvent<any>) => {
     // Can drag by holding either the control or meta (Apple) key.
-    if (this.controller.isSpacePressed) {
+    if (store.panning) {
       this.controller.startDrag(Vector.fromMouseEvent(e));
     } else {
       this.controller.startDraw(Vector.fromMouseEvent(e), e);
