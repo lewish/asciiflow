@@ -396,7 +396,8 @@ export function Drawer() {
                     redo.
                   </>
                 )}{" "}
-                You can return to the previous version of ASCIIFlow{" "}
+                View shortcuts by pressing <ShortcutChip label={"alt"} />. You
+                can return to the previous version of ASCIIFlow{" "}
                 <a href="legacy">here</a>.
               </div>
             )}
