@@ -25,7 +25,7 @@
     "chalk": "^2.4.2",
     "css-loader": "^4.2.1",
     "diff": "^5.0.0",
-    "electron": "^9.4.0",
+    "electron": "^11.5.0",
     "js-base64": "^3.6.0",
     "json-stable-stringify": "^1.0.1",
     "mobx": "^5.15.4",
