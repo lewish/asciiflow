@@ -21,6 +21,7 @@ import {
   TextField,
   Snackbar,
   Fab,
+  Popover,
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
@@ -31,6 +32,8 @@ import { ControlledDialog } from "asciiflow/client/components/controlled_dialog"
 import { useHistory } from "react-router";
 import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
 import { ExportDialog } from "asciiflow/client/export";
+import { useState } from "react";
+import { ASCII, UNICODE } from "asciiflow/client/constants";
 
 export function Drawer() {
   const history = useHistory();
@@ -249,15 +252,7 @@ export function Drawer() {
                     icon={<Icons.Gesture />}
                   >
                     <ListItemSecondaryAction>
-                      <Chip
-                        variant="outlined"
-                        style={{ marginRight: 10 }}
-                        label={
-                          <span className={styles.freeformLabel}>
-                            {store.freeformCharacter}
-                          </span>
-                        }
-                      />
+                      <FreeFormCharacterSelect />
                     </ListItemSecondaryAction>
                   </ToolControl>
                   <ToolControl
@@ -362,8 +357,9 @@ export function Drawer() {
                   tool.
                 </ToolHelp>
                 <ToolHelp tool={ToolMode.FREEFORM}>
-                  Click and drag to draw freeform characters. Press any key on
-                  the keyboard to change the character that will be drawn.
+                  Click and drag to draw freeform characters. Select from the
+                  menu, or press any key on the keyboard to change the character
+                  that will be drawn.
                 </ToolHelp>
                 <ToolHelp tool={ToolMode.TEXT}>
                   Click on any square and start typing. Press{" "}
@@ -433,6 +429,56 @@ function ToolControl(
         <ListItemText primary={props.name} />
         {props.children}
       </ListItem>
+    );
+  });
+}
+
+const shortcutKeys = [
+  ...Object.values(UNICODE),
+  ...new Set(Object.values(ASCII)),
+  // All the standard ascii characters.
+  ...Array.from(Array(127 - 33).keys())
+    .map((i) => i + 33)
+    .map((i) => String.fromCharCode(i)),
+];
+function FreeFormCharacterSelect() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  return useObserver(() => {
+    return (
+      <>
+        <Button
+          variant="outlined"
+          className={styles.freeformCharacterButton}
+          onClick={(event) => setAnchorEl(event.currentTarget)}
+        >
+          {store.freeformCharacter}
+        </Button>
+        <Popover
+          open={!!anchorEl}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "right",
+          }}
+          onClose={() => setAnchorEl(null)}
+        >
+          <div style={{ maxWidth: 400 }}>
+            {shortcutKeys.map((key, i) => (
+              <Button
+                onClick={() => {
+                  setAnchorEl(null);
+                  store.setToolMode(ToolMode.FREEFORM);
+                  store.freeformCharacter = key;
+                }}
+                className={styles.freeformCharacterButton}
+                key={i}
+              >
+                {key}
+              </Button>
+            ))}
+          </div>
+        </Popover>
+      </>
     );
   });
 }
