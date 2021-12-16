@@ -65,18 +65,25 @@ export class Controller {
     let specialKeyCode = null;
 
     if (event.altKey) {
-      if (event.key === '1') {
-        store.setToolMode(ToolMode.BOX)
-      } else if (event.key === '2') {
-        store.setToolMode(ToolMode.SELECT)
-      } else if (event.key === '3') {
-        store.setToolMode(ToolMode.FREEFORM)
-      } else if (event.key === '4') {
-        store.setToolMode(ToolMode.ARROWS)
-      } else if (event.key === '5') {
-        store.setToolMode(ToolMode.LINES)
-      } else if (event.key === '6') {
-        store.setToolMode(ToolMode.TEXT)
+      store.altPressed = true;
+      if (event.key === "1") {
+        store.setToolMode(ToolMode.BOX);
+        event.preventDefault();
+      } else if (event.key === "2") {
+        store.setToolMode(ToolMode.SELECT);
+        event.preventDefault();
+      } else if (event.key === "3") {
+        store.setToolMode(ToolMode.FREEFORM);
+        event.preventDefault();
+      } else if (event.key === "4") {
+        store.setToolMode(ToolMode.ARROWS);
+        event.preventDefault();
+      } else if (event.key === "5") {
+        store.setToolMode(ToolMode.LINES);
+        event.preventDefault();
+      } else if (event.key === "6") {
+        store.setToolMode(ToolMode.TEXT);
+        event.preventDefault();
       }
     }
     if (event.ctrlKey || event.metaKey) {
@@ -132,6 +139,9 @@ export class Controller {
   handleKeyUp(event: KeyboardEvent) {
     if (event.keyCode === 32) {
       store.panning = false;
+    }
+    if (!event.altKey) {
+      store.altPressed = false;
     }
   }
 

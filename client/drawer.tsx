@@ -237,19 +237,20 @@ export function Drawer() {
                     name="Boxes"
                     tool={ToolMode.BOX}
                     icon={<Icons.CheckBoxOutlineBlank />}
-                    shortcut={<ShortcutChip label={'alt + 1'} />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 1"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Select & Move"
                     tool={ToolMode.SELECT}
                     icon={<Icons.NearMe />}
-                    shortcut={<ShortcutChip label={'alt + 2'} />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 2"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Freeform"
                     tool={ToolMode.FREEFORM}
                     icon={<Icons.Gesture />}
-                    shortcut={<ShortcutChip label={'alt + 3'} />}
                   >
                     <ListItemSecondaryAction>
                       <Chip
@@ -261,27 +262,31 @@ export function Drawer() {
                           </span>
                         }
                       />
+                      <ShortcutChip label={"alt + 3"} hideUntilAlt={true} />
                     </ListItemSecondaryAction>
                   </ToolControl>
                   <ToolControl
                     name="Arrow"
                     tool={ToolMode.ARROWS}
                     icon={<Icons.TrendingUp />}
-                    shortcut={<ShortcutChip label={'alt + 4'} />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 4"} hideUntilAlt={true} />
+                  </ToolControl>
 
                   <ToolControl
                     name="Line"
                     tool={ToolMode.LINES}
                     icon={<Icons.ShowChart />}
-                    shortcut={<ShortcutChip label={'alt + 5'} />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 5"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Text"
                     tool={ToolMode.TEXT}
                     icon={<Icons.TextFields />}
-                    shortcut={<ShortcutChip label={'alt + 6'} />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
+                  </ToolControl>
                 </>
               )}
               <ListItem>
@@ -409,16 +414,25 @@ function ctrlOrCmd() {
   return "ctrl";
 }
 
-function ShortcutChip({ label }: { label: string }) {
-  return (
-    <Chip
-      icon={<Icons.KeyboardOutlined />}
-      label={
-        <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
-      }
-      size="small"
-    />
-  );
+function ShortcutChip({
+  label,
+  hideUntilAlt,
+}: {
+  label: string;
+  hideUntilAlt?: boolean;
+}) {
+  return useObserver(() => {
+    if (hideUntilAlt && !store.altPressed) return null;
+    return (
+      <Chip
+        icon={<Icons.KeyboardOutlined />}
+        label={
+          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
+        }
+        size="small"
+      />
+    );
+  });
 }
 
 function ToolControl(
@@ -426,7 +440,6 @@ function ToolControl(
     tool: ToolMode;
     name: React.ReactNode;
     icon: React.ReactNode;
-    shortcut: React.ReactNode;
   }>
 ) {
   return useObserver(() => {
@@ -437,7 +450,7 @@ function ToolControl(
         onClick={() => store.setToolMode(props.tool)}
       >
         <ListItemIcon>{props.icon}</ListItemIcon>
-        <ListItemText primary={props.name} secondary={props.shortcut} />
+        <ListItemText primary={props.name} />
         {props.children}
       </ListItem>
     );
