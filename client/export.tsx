@@ -103,7 +103,7 @@ export function ExportDialog({
                   Four Spaces <CommentTypeChip label="    " />
                 </MenuItem>
                 <MenuItem value={"semicolon"}>
-                  Apostrophies <CommentTypeChip label=";" />
+                  Semicolons <CommentTypeChip label=";" />
                 </MenuItem>
               </Select>
             </FormControl>
