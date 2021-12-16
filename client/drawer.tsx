@@ -240,18 +240,23 @@ export function Drawer() {
                     name="Boxes"
                     tool={ToolMode.BOX}
                     icon={<Icons.CheckBoxOutlineBlank />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 1"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Select & Move"
                     tool={ToolMode.SELECT}
                     icon={<Icons.NearMe />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 2"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Freeform"
                     tool={ToolMode.FREEFORM}
                     icon={<Icons.Gesture />}
                   >
                     <ListItemSecondaryAction>
+                      <ShortcutChip label={"alt + 3"} hideUntilAlt={true} />
                       <FreeFormCharacterSelect />
                     </ListItemSecondaryAction>
                   </ToolControl>
@@ -259,18 +264,24 @@ export function Drawer() {
                     name="Arrow"
                     tool={ToolMode.ARROWS}
                     icon={<Icons.TrendingUp />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 4"} hideUntilAlt={true} />
+                  </ToolControl>
 
                   <ToolControl
                     name="Line"
                     tool={ToolMode.LINES}
                     icon={<Icons.ShowChart />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 5"} hideUntilAlt={true} />
+                  </ToolControl>
                   <ToolControl
                     name="Text"
                     tool={ToolMode.TEXT}
                     icon={<Icons.TextFields />}
-                  />
+                  >
+                    <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
+                  </ToolControl>
                 </>
               )}
               <ListItem>
@@ -381,7 +392,8 @@ export function Drawer() {
                     redo.
                   </>
                 )}{" "}
-                You can return to the previous version of ASCIIFlow{" "}
+                View shortcuts by pressing <ShortcutChip label={"alt"} />. You
+                can return to the previous version of ASCIIFlow{" "}
                 <a href="legacy">here</a>.
               </div>
             )}
@@ -399,16 +411,25 @@ function ctrlOrCmd() {
   return "ctrl";
 }
 
-function ShortcutChip({ label }: { label: string }) {
-  return (
-    <Chip
-      icon={<Icons.KeyboardOutlined />}
-      label={
-        <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
-      }
-      size="small"
-    />
-  );
+function ShortcutChip({
+  label,
+  hideUntilAlt,
+}: {
+  label: string;
+  hideUntilAlt?: boolean;
+}) {
+  return useObserver(() => {
+    if (hideUntilAlt && !store.altPressed) return null;
+    return (
+      <Chip
+        icon={<Icons.KeyboardOutlined />}
+        label={
+          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
+        }
+        size="small"
+      />
+    );
+  });
 }
 
 function ToolControl(

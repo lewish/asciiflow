@@ -151,6 +151,8 @@ export class Store {
 
   @observable public panning = false;
 
+  @observable public altPressed = false;
+
   @observable public currentCursor: string = "default";
 
   public readonly darkMode = Persistent.json(

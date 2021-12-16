@@ -1,5 +1,5 @@
 import * as constants from "asciiflow/client/constants";
-import { store, IModifierKeys } from "asciiflow/client/store";
+import { store, IModifierKeys, ToolMode } from "asciiflow/client/store";
 import { Vector } from "asciiflow/client/vector";
 import { screenToCell } from "asciiflow/client/view";
 import { HTMLAttributes } from "react";
@@ -64,6 +64,28 @@ export class Controller {
     // Override some special characters so that they can be handled in one place.
     let specialKeyCode = null;
 
+    if (event.altKey) {
+      store.altPressed = true;
+      if (event.key === "1") {
+        store.setToolMode(ToolMode.BOX);
+        event.preventDefault();
+      } else if (event.key === "2") {
+        store.setToolMode(ToolMode.SELECT);
+        event.preventDefault();
+      } else if (event.key === "3") {
+        store.setToolMode(ToolMode.FREEFORM);
+        event.preventDefault();
+      } else if (event.key === "4") {
+        store.setToolMode(ToolMode.ARROWS);
+        event.preventDefault();
+      } else if (event.key === "5") {
+        store.setToolMode(ToolMode.LINES);
+        event.preventDefault();
+      } else if (event.key === "6") {
+        store.setToolMode(ToolMode.TEXT);
+        event.preventDefault();
+      }
+    }
     if (event.ctrlKey || event.metaKey) {
       if (event.keyCode === 67) {
         specialKeyCode = constants.KEY_COPY;
@@ -117,6 +139,9 @@ export class Controller {
   handleKeyUp(event: KeyboardEvent) {
     if (event.keyCode === 32) {
       store.panning = false;
+    }
+    if (!event.altKey) {
+      store.altPressed = false;
     }
   }
 
