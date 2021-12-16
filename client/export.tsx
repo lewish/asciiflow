@@ -20,7 +20,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "star-filled" | "hash" | "slash" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
+  wrapper?: "star" | "star-filled" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -90,6 +90,9 @@ export function ExportDialog({
                 <MenuItem value={"slash"}>
                   Slashes <CommentTypeChip label="//" />
                 </MenuItem>
+                <MenuItem value={"three-slashes"}>
+                  Three Slashes <CommentTypeChip label="///" />
+                </MenuItem>
                 <MenuItem value={"dash"}>
                   Dashes <CommentTypeChip label="--" />
                 </MenuItem>
@@ -103,7 +106,7 @@ export function ExportDialog({
                   Four Spaces <CommentTypeChip label="    " />
                 </MenuItem>
                 <MenuItem value={"semicolon"}>
-                  Apostrophies <CommentTypeChip label=";" />
+                  Semicolons <CommentTypeChip label=";" />
                 </MenuItem>
               </Select>
             </FormControl>
@@ -206,6 +209,9 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
     }
     if (exportConfig.wrapper === "slash") {
       setLines(lines().map((line) => `// ${line}`));
+    }
+    if (exportConfig.wrapper === "three-slashes") {
+      setLines(lines().map((line) => `/// ${line}`));
     }
     if (exportConfig.wrapper === "dash") {
       setLines(lines().map((line) => `-- ${line}`));

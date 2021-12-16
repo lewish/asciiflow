@@ -61,7 +61,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
         height={document.documentElement.clientHeight}
         style={{
           backgroundColor: colors.background,
-          cursor: store.currentCursor,
+          cursor: store.computedCurrentCursor,
           position: "fixed",
           left: 0,
           top: 0,
