@@ -66,22 +66,22 @@ export class Controller {
 
     if (event.altKey) {
       store.altPressed = true;
-      if (event.key === "1") {
+      if (event.keyCode === "1".charCodeAt(0)) {
         store.setToolMode(ToolMode.BOX);
         event.preventDefault();
-      } else if (event.key === "2") {
+      } else if (event.keyCode === "2".charCodeAt(0)) {
         store.setToolMode(ToolMode.SELECT);
         event.preventDefault();
-      } else if (event.key === "3") {
+      } else if (event.keyCode === "3".charCodeAt(0)) {
         store.setToolMode(ToolMode.FREEFORM);
         event.preventDefault();
-      } else if (event.key === "4") {
+      } else if (event.keyCode === "4".charCodeAt(0)) {
         store.setToolMode(ToolMode.ARROWS);
         event.preventDefault();
-      } else if (event.key === "5") {
+      } else if (event.keyCode === "5".charCodeAt(0)) {
         store.setToolMode(ToolMode.LINES);
         event.preventDefault();
-      } else if (event.key === "6") {
+      } else if (event.keyCode === "6".charCodeAt(0)) {
         store.setToolMode(ToolMode.TEXT);
         event.preventDefault();
       }
