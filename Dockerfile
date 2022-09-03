@@ -22,4 +22,4 @@ FROM nginx:1.23.1-alpine
 COPY ./scripts/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build-stage /asciiflow/pages-deploy /usr/share/nginx/html
 
-EXPOSE 8080
+EXPOSE 80
