@@ -1,0 +1,11 @@
+version: '3.6'
+
+services:
+  asciiflow:
+    build:
+        context: ./
+        dockerfile: Dockerfile
+    container_name: ${CONTAINER_NAME:-asciiflow}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${ASCIIFLOW_WEBPORT:-8080}:80"
