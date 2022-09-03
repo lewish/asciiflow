@@ -1,5 +1,20 @@
 ASCIIFlow is a client-side only web based application for drawing ASCII diagrams. You can use it at [asciiflow.com](https://asciiflow.com).
 
+## Docker Setup
+
+The easiest way to get AsciiFlow running locally is with a recent version of Docker.
+
+Use the `docker-compose.yml`:
+```bash
+git clone https://github.com/lewish/asciiflow.git
+cd asciiflow
+# optional edit environment values
+cp .env.example .env
+docker-compose up -d
+```
+
+Then open your browser at `http://localhost:8080/`.
+
 ## Contributing
 ### Installation
 
@@ -17,7 +32,6 @@ For development, ibazel is also a very useful tool to help with automatic rebuil
 npm install -g @bazel/ibazel
 yarn global add @bazel/ibazel
 ```
-
 
 ### Running ASCIIFlow locally
 
