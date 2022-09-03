@@ -1,8 +1,0 @@
-#!/bin/sh
-
-main() {
-  [ $# -gt 0 ] && exec "$@"
-  exec python -m http.server
-}
-
-main "$@"
