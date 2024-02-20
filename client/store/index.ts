@@ -17,7 +17,7 @@ import {
   JSONStringifier,
   Persistent,
 } from "asciiflow/client/store/persistent";
-import { action, computed, observable } from "mobx";
+import { action, computed, makeAutoObservable, observable } from "mobx";
 import * as uuid from "uuid";
 
 export enum ToolMode {
@@ -93,6 +93,11 @@ export class DrawingId {
 }
 
 export class Store {
+
+  public constructor() {
+    makeAutoObservable(this);
+  }
+
   public readonly boxTool = new DrawBox();
   public readonly lineTool = new DrawLine(false);
   public readonly arrowTool = new DrawLine(true);
@@ -108,6 +113,7 @@ export class Store {
   }
 
   @action.bound public setRoute(value: DrawingId) {
+    console.log(value);
     if (JSON.stringify(value) !== JSON.stringify(store.route)) {
       this._route = value;
     }
@@ -153,7 +159,7 @@ export class Store {
 
   @observable public altPressed = false;
 
-  @observable public currentCursor: string = "default";
+  public currentCursor: string = "default";
 
   public readonly darkMode = Persistent.json(
     "darkMode",
@@ -180,6 +186,10 @@ export class Store {
   @computed
   get computedCurrentCursor() {
     return this.panning ? 'move' : this.currentCursor
+  }
+
+  public setCurrentCursor(value: string) {
+    this.currentCursor = value;
   }
 
   @observable public modifierKeys: IModifierKeys = {};

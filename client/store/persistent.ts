@@ -1,4 +1,10 @@
-import { action, observable } from "mobx";
+import {
+  action,
+  computed,
+  makeAutoObservable,
+  makeObservable,
+  observable,
+} from "mobx";
 
 export interface IStringifier<T> {
   serialize: (value: T) => string;
@@ -44,7 +50,7 @@ export class Persistent<T> {
     return new Persistent<T>(stringifier, key, defaultValue);
   }
 
-  @observable private value: T = null;
+  value: T = null;
 
   private constructor(
     private stringifier: IStringifier<T>,
@@ -64,6 +70,9 @@ export class Persistent<T> {
         this.value = defaultValue;
       }
     }
+    makeObservable(this, {
+      value: observable,
+    });
   }
 
   get() {

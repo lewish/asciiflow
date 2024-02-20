@@ -13,7 +13,7 @@ import {
   TextareaAutosize,
 } from "@material-ui/core";
 import { ASCII, UNICODE } from "asciiflow/client/constants";
-import * as styles from "asciiflow/client/export.css";
+import styles from "asciiflow/client/export.module.css";
 import { DrawingId, store } from "asciiflow/client/store";
 import { layerToText } from "asciiflow/client/text_utils";
 import { useObserver } from "mobx-react";

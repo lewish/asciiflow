@@ -1,6 +1,6 @@
 import * as React from "react";
 import MaterialDrawer from "@material-ui/core/Drawer";
-import * as styles from "asciiflow/client/drawer.css";
+import styles from "asciiflow/client/drawer.module.css";
 import {
   List,
   ListItem,

@@ -62,6 +62,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
         style={{
           backgroundColor: colors.background,
           cursor: store.computedCurrentCursor,
+          touchAction: "none",
           position: "fixed",
           left: 0,
           top: 0,

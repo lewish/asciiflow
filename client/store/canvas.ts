@@ -7,7 +7,7 @@ import {
   Persistent,
 } from "asciiflow/client/store/persistent";
 import { IVector, Vector } from "asciiflow/client/vector";
-import { action, observable } from "mobx";
+import { action, makeAutoObservable, observable } from "mobx";
 import { Characters } from "asciiflow/client/constants";
 import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
 import { RenderLayer } from "asciiflow/client/render_layer";
@@ -17,7 +17,12 @@ import { RenderLayer } from "asciiflow/client/render_layer";
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
-  constructor(public readonly drawingId: DrawingId) {}
+
+  public readonly drawingId: DrawingId = DrawingId.local("");
+  constructor(drawingId: DrawingId) {
+    this.drawingId = drawingId;
+    makeAutoObservable(this);
+  }
 
   public persistentKey(...values: string[]) {
     return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
