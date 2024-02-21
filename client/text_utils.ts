@@ -30,19 +30,16 @@ export function layerToText(layer: ILayerView, box?: Box) {
     .entries()
     .filter(([key]) => box.contains(key))
     .forEach(([key, value]) => {
+      if (value.charCodeAt(0) < 32 || value.charCodeAt(0) == 127) {
+        // Every ascii value below 32 is control, and 127 is DEL.
+        // Allow everything else and any unicode characters if they happen to be in the string.
+        value = " ";
+      }
       lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
     });
-  return (
-    lineArrays
-      .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
-      // Remove trailing spaces.
-      .map((line) => line.replace(/\s+$/, ""))
-      // Remove all carriage returns and newlines.
-      .map((line) => line.replaceAll(/[\r\n]/g, " "))
-      // DEL characters.
-      .map((line) => line.replaceAll(String.fromCharCode(127), " "))
-      .join("\n")
-  );
+  return lineArrays
+    .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
+    .join("\n");
 }
 
 /**
