@@ -15,16 +15,40 @@ import { RenderLayer } from "#asciiflow/client/render_layer";
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
-  public readonly drawingId: DrawingId = DrawingId.local("");
-  constructor(drawingId: DrawingId) {
-    this.drawingId = drawingId;
+  public readonly persistentCommitted: Persistent<Layer>;
+  public readonly undoLayers: Persistent<Layer[]>;
+  public readonly redoLayers: Persistent<Layer[]>;
+  private _zoom: Persistent<number>;
+  private _offset: Persistent<IVector>;
+
+  constructor(public readonly drawingId: DrawingId) {
+    this.persistentCommitted = Persistent.custom(
+      this.persistentKey("committed-layer"),
+      this.drawingId.shareSpec
+        ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
+        : new Layer(),
+      Layer
+    );
+    this.undoLayers = Persistent.custom(
+      this.persistentKey("undo-layers"),
+      [],
+      new ArrayStringifier(Layer)
+    );
+    this.redoLayers = Persistent.custom(
+      this.persistentKey("redo-layers"),
+      [],
+      new ArrayStringifier(Layer)
+    );
+    this._zoom = Persistent.json(this.persistentKey("zoom"), 1);
+    this._offset = Persistent.json<IVector>(this.persistentKey("offset"), {
+      x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
+      y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
+    })
   }
 
   public persistentKey(...values: string[]) {
     return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
   }
-
-  private _zoom = Persistent.json(this.persistentKey("zoom"), 1);
 
   public get zoom() {
     return this._zoom.get();
@@ -33,11 +57,6 @@ export class CanvasStore {
   @action.bound public setZoom(value: number) {
     this._zoom.set(value);
   }
-
-  private _offset = Persistent.json<IVector>(this.persistentKey("offset"), {
-    x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
-    y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
-  });
 
   public get offset() {
     return new Vector(this._offset.get().x, this._offset.get().y);
@@ -50,13 +69,6 @@ export class CanvasStore {
     });
   }
 
-  @observable accessor persistentCommitted = Persistent.custom(
-    this.persistentKey("committed-layer"),
-    this.drawingId.shareSpec
-      ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
-      : new Layer(),
-    Layer
-  );
   @observable accessor scratch = new Layer();
 
   @observable accessor selection: Box;
@@ -79,18 +91,6 @@ export class CanvasStore {
       layer: this.committed,
     });
   }
-
-  @observable accessor undoLayers = Persistent.custom(
-    this.persistentKey("undo-layers"),
-    [],
-    new ArrayStringifier(Layer)
-  );
-
-  @observable accessor redoLayers = Persistent.custom(
-    this.persistentKey("redo-layers"),
-    [],
-    new ArrayStringifier(Layer)
-  );
 
   @action.bound setSelection(box: Box) {
     this.selection = box;
