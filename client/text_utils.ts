@@ -35,7 +35,10 @@ export function layerToText(layer: ILayerView, box?: Box) {
   return (
     lineArrays
       .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
+      // Remove trailing spaces.
       .map((line) => line.replace(/\s+$/, ""))
+      // Remove all carriage returns and newlines.
+      .map((line) => line.replaceAll(/[\r\n]/g, " "))
       .join("\n")
   );
 }
