@@ -1,7 +1,7 @@
-import { AbstractDrawFunction } from "asciiflow/client/draw/function";
-import { Layer } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
+import { Layer } from "#asciiflow/client/layer";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
 
 export class DrawFreeform extends AbstractDrawFunction {
   private currentLayer: Layer;

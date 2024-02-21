@@ -1,11 +1,11 @@
 import {
   IDrawFunction,
   AbstractDrawFunction,
-} from "asciiflow/client/draw/function";
-import { drawLine } from "asciiflow/client/draw/utils";
-import { Layer } from "asciiflow/client/layer";
-import { store, IModifierKeys } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
+} from "#asciiflow/client/draw/function";
+import { drawLine } from "#asciiflow/client/draw/utils";
+import { Layer } from "#asciiflow/client/layer";
+import { store, IModifierKeys } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
 
 export class DrawLine extends AbstractDrawFunction {
   private startPosition: Vector;

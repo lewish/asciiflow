@@ -1,13 +1,13 @@
-load("@npm//electron:index.bzl", "electron")
+load("@npm//:electron/package_json.bzl", electron = "bin")
 
-electron(
+electron.electron_binary(
     name = "electron",
     args = [
-        "$(location :index.js)"
+        "$(location :index.js)",
     ],
     data = [
         ":index.js",
-        "//client:app.bundle.js",
         "//client:assets",
+        "//client:bundle.js",
     ],
 )

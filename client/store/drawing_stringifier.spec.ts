@@ -1,15 +1,14 @@
-import { Layer } from "asciiflow/client/layer";
+import { Layer } from "#asciiflow/client/layer";
 import {
   DrawingStringifier,
   IDrawing,
-} from "asciiflow/client/store/drawing_stringifier";
-import { Vector } from "asciiflow/client/vector";
-import { suite, test } from "asciiflow/testing";
+} from "#asciiflow/client/store/drawing_stringifier";
+import { Vector } from "#asciiflow/client/vector";
 import { expect } from "chai";
-import { basename } from "path";
+import { describe, it } from "mocha";
 
-suite(basename(__filename), () => {
-  test("reserialize", () => {
+describe("drawing_stringifier", () => {
+  it("reserialize", () => {
     const layer = new Layer();
     layer.set(new Vector(5, 10), "X");
     const drawing: IDrawing = {

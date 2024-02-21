@@ -1,8 +1,7 @@
-import { Vector } from "asciiflow/client/vector";
-import { CellContext } from "asciiflow/client/common";
-import * as constants from "asciiflow/client/constants";
-import { IStringifier } from "asciiflow/client/store/persistent";
-import { layerToText, textToLayer } from "asciiflow/client/text_utils";
+import { Vector } from "#asciiflow/client/vector";
+import { CellContext } from "#asciiflow/client/common";
+import * as constants from "#asciiflow/client/constants";
+import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
 
 export interface ILayerView {
   get(position: Vector): string;

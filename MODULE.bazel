@@ -1,0 +1,35 @@
+module(name = "asciiflow", version = "0.1")
+
+bazel_dep(name = "bazel_features", version = "1.4.1")
+
+bazel_dep(name = "rules_nodejs", version = "6.0.3")
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+
+node.toolchain(node_version = "16.14.2")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
+
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+
+use_repo(npm, "npm")
+
+bazel_dep(name = "aspect_bazel_lib", version = "1.40.2")
+
+bazel_dep(name = "aspect_rules_js", version = "1.35.0")
+
+bazel_dep(name = "aspect_rules_ts", version = "2.1.1")
+
+rules_ts_ext = use_extension(
+    "@aspect_rules_ts//ts:extensions.bzl",
+    "ext",
+    dev_dependency = True,
+)
+
+rules_ts_ext.deps()
+
+use_repo(rules_ts_ext, "npm_typescript")

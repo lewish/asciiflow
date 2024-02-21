@@ -1,5 +1,5 @@
-import { Vector } from "asciiflow/client/vector";
-import { IModifierKeys } from "asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import { IModifierKeys } from "#asciiflow/client/store";
 
 /**
  * Common interface for different drawing functions, e.g. box, line, etc.

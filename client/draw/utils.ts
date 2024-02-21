@@ -1,7 +1,7 @@
-import { Box } from "asciiflow/client/common";
-import { SPECIAL_VALUE } from "asciiflow/client/constants";
-import { Layer } from "asciiflow/client/layer";
-import { Vector } from "asciiflow/client/vector";
+import { Box } from "#asciiflow/client/common";
+import { SPECIAL_VALUE } from "#asciiflow/client/constants";
+import { Layer } from "#asciiflow/client/layer";
+import { Vector } from "#asciiflow/client/vector";
 
 /**
  * Draws a line on the diagram state.

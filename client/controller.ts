@@ -1,10 +1,10 @@
-import * as constants from "asciiflow/client/constants";
-import { store, IModifierKeys, ToolMode } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
-import { screenToCell } from "asciiflow/client/view";
+import * as constants from "#asciiflow/client/constants";
+import { store, IModifierKeys, ToolMode } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import { screenToCell } from "#asciiflow/client/view";
 import { HTMLAttributes } from "react";
 
-import React = require("react");
+import * as React from "react";
 
 /**
  * Different modes of control.
@@ -52,6 +52,8 @@ export class Controller {
   }
 
   handleKeyPress(event: KeyboardEvent) {
+    console.log(event.keyCode);
+    
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
       store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
@@ -133,7 +135,9 @@ export class Controller {
       store.panning = true;
     }
 
-    store.currentTool.handleKey(specialKeyCode, getModifierKeys(event));
+    if (specialKeyCode != null) {
+      store.currentTool.handleKey(specialKeyCode, getModifierKeys(event));
+    }
   }
 
   handleKeyUp(event: KeyboardEvent) {
@@ -155,10 +159,10 @@ export class Controller {
 
     // Update the cursor pointer, depending on the draw function.
     if (!moveCell.equals(this.lastMoveCell)) {
-      store.currentCursor = store.currentTool.getCursor(
+      store.setCurrentCursor(store.currentTool.getCursor(
         moveCell,
         getModifierKeys(e)
-      );
+      ));
     }
 
     // In drawing mode, so pass the mouse move on, but remove duplicates.

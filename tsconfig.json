@@ -2,20 +2,22 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "asciiflow/*": ["*", "bazel-bin/*", "bazel-genfiles/*"],
+      "#asciiflow/*": ["*", "bazel-bin/*", "bazel-genfiles/*"],
     },
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "preserveConstEnums": true,
     "removeComments": true,
-    "target": "es6",
+    "target": "ESNext",
     "sourceMap": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
     "jsx": "react",
-    "lib": ["es2017", "dom"],
-    "esModuleInterop": true
+    "lib": ["es2021", "dom"],
+    "esModuleInterop": true,
+    "declaration": true,
+    "strictPropertyInitialization": false
   },
   "exclude": ["bazel-*", "node_modules"]
 }

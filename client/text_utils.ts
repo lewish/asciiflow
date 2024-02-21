@@ -1,6 +1,6 @@
-import { Box } from "asciiflow/client/common";
-import { ILayerView, Layer } from "asciiflow/client/layer";
-import { Vector } from "asciiflow/client/vector";
+import { Box } from "#asciiflow/client/common";
+import { ILayerView, Layer } from "#asciiflow/client/layer";
+import { Vector } from "#asciiflow/client/vector";
 
 export function layerToText(layer: ILayerView, box?: Box) {
   if (layer.keys().length === 0) {
@@ -32,10 +32,12 @@ export function layerToText(layer: ILayerView, box?: Box) {
     .forEach(([key, value]) => {
       lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
     });
-  return lineArrays
-    .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
-    .map((line) => line.replace(/\s+$/, ""))
-    .join("\n");
+  return (
+    lineArrays
+      .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
+      .map((line) => line.replace(/\s+$/, ""))
+      .join("\n")
+  );
 }
 
 /**
