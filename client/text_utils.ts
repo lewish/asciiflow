@@ -39,6 +39,8 @@ export function layerToText(layer: ILayerView, box?: Box) {
       .map((line) => line.replace(/\s+$/, ""))
       // Remove all carriage returns and newlines.
       .map((line) => line.replaceAll(/[\r\n]/g, " "))
+      // DEL characters.
+      .map((line) => line.replaceAll(String.fromCharCode(127), " "))
       .join("\n")
   );
 }
