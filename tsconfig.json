@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "asciiflow/*": ["*", "bazel-bin/*", "bazel-genfiles/*"],
+      "#asciiflow/*": ["*", "bazel-bin/*", "bazel-genfiles/*"],
     },
     "module": "ESNext",
     "moduleResolution": "node",
@@ -13,7 +13,6 @@
     "target": "ESNext",
     "sourceMap": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
     "jsx": "react",
     "lib": ["es2017", "dom"],
     "esModuleInterop": true,

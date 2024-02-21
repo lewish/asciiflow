@@ -1,14 +1,14 @@
 import * as React from "react";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
-import styles from "asciiflow/client/app.module.css";
+import styles from "#asciiflow/client/app.module.css";
 import {
   Controller,
   DesktopController,
   TouchController
-} from "asciiflow/client/controller";
-import { Drawer } from "asciiflow/client/drawer";
-import { DrawingId, store } from "asciiflow/client/store";
-import { View } from "asciiflow/client/view";
+} from "#asciiflow/client/controller";
+import { Drawer } from "#asciiflow/client/drawer";
+import { DrawingId, store } from "#asciiflow/client/store";
+import { View } from "#asciiflow/client/view";
 import { useObserver } from "mobx-react";
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";

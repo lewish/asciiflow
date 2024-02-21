@@ -1,3 +1,4 @@
+import { IStringifier, JSONStringifier } from "#asciiflow/client/store/stringifiers";
 import {
   action,
   computed,
@@ -6,32 +7,6 @@ import {
   observable,
 } from "mobx";
 
-export interface IStringifier<T> {
-  serialize: (value: T) => string;
-  deserialize: (value: string) => T;
-}
-
-export class JSONStringifier<T> implements IStringifier<T> {
-  serialize(value: T) {
-    return JSON.stringify(value);
-  }
-  deserialize(value: string) {
-    return JSON.parse(value) as T;
-  }
-}
-
-export class ArrayStringifier<T> implements IStringifier<T[]> {
-  constructor(private stringifier: IStringifier<T>) {}
-
-  serialize(value: T[]) {
-    return JSON.stringify(value.map((v) => this.stringifier.serialize(v)));
-  }
-  deserialize(value: string) {
-    return (JSON.parse(value) as string[]).map((v) =>
-      this.stringifier.deserialize(v)
-    );
-  }
-}
 
 export class Persistent<T> {
   public static json<T>(key: string, defaultValue: T) {
@@ -50,7 +25,7 @@ export class Persistent<T> {
     return new Persistent<T>(stringifier, key, defaultValue);
   }
 
-  value: T = null;
+  @observable accessor value: T;
 
   private constructor(
     private stringifier: IStringifier<T>,
@@ -70,9 +45,6 @@ export class Persistent<T> {
         this.value = defaultValue;
       }
     }
-    makeObservable(this, {
-      value: observable,
-    });
   }
 
   get() {

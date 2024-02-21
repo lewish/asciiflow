@@ -12,7 +12,7 @@ def ts_library(tsconfig = None, **kwargs):
 
 def ts_mocha_test_suite(srcs, tsconfig = None, **kwargs):
     for src in srcs:
-        if not src.endswith("_test.ts"):
+        if not src.endswith(".spec.ts"):
             break
         test_name = src[:-3]
         lib_name = test_name + "_lib"
@@ -28,12 +28,12 @@ def ts_mocha_test_suite(srcs, tsconfig = None, **kwargs):
             data = [
                 ":" + lib_name,
                 "//:package_json",
-                "//:node_modules/source-map-support",
+                # "//:node_modules/source-map-support",
             ],
             node_options = [
                 "--experimental-specifier-resolution=node",
-                "-r",
-                "source-map-support/register",
+                # "-r",
+                # "source-map-support/register",
             ],
             args = [
                 "**/" + test_name + ".js",

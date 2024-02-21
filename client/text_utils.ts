@@ -1,6 +1,6 @@
-import { Box } from "asciiflow/client/common";
-import { ILayerView, Layer } from "asciiflow/client/layer";
-import { Vector } from "asciiflow/client/vector";
+import { Box } from "#asciiflow/client/common";
+import { ILayerView, Layer } from "#asciiflow/client/layer";
+import { Vector } from "#asciiflow/client/vector";
 
 export function layerToText(layer: ILayerView, box?: Box) {
   if (layer.keys().length === 0) {

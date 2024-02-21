@@ -1,5 +1,5 @@
-import { ALL_SPECIAL_VALUES } from "asciiflow/client/constants";
-import { Vector } from "asciiflow/client/vector";
+import { ALL_SPECIAL_VALUES } from "#asciiflow/client/constants";
+import { Vector } from "#asciiflow/client/vector";
 
 /**
  * Represents a box with normalized position vectors.

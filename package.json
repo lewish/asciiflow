@@ -2,11 +2,17 @@
   "name": "asciiflow2",
   "main": "index.js",
   "icon": "images/favicon.png",
+  "imports": {
+    "#asciiflow/*": "./*"
+  },
   "scripts": {
     "start": "electron ."
   },
   "type": "module",
   "dependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/plugin-proposal-decorators": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
     "@bazel/ibazel": "^0.12.4",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
@@ -15,12 +21,15 @@
     "@types/js-base64": "^3.0.0",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/material-ui": "^0.21.8",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.19",
     "@types/pako": "^1.0.1",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "@types/react-router": "^5.1.5",
     "@types/react-router-dom": "^5.1.4",
     "@types/uuid": "^8.3.0",
+    "babel-loader": "^9.1.3",
     "chai": "^4.3.0",
     "chalk": "^2.4.2",
     "css-loader": "^6.7.3",

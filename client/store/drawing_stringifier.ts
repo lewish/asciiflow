@@ -1,10 +1,10 @@
-import { Layer } from "asciiflow/client/layer";
+import { Layer } from "#asciiflow/client/layer";
 import {
   IStringifier,
   JSONStringifier,
-} from "asciiflow/client/store/persistent";
+} from "#asciiflow/client/store/stringifiers";
 import { Base64 } from "js-base64";
-import * as pako from "pako";
+import pako from "pako";
 
 export interface IDrawing {
   name: string;
@@ -26,7 +26,6 @@ export class DrawingStringifier implements IStringifier<IDrawing> {
     const deflatedBytes = pako.deflate(jsonBytes);
     const base64 = Base64.fromUint8Array(deflatedBytes);
     return base64;
-    
   }
   public deserialize(value: string) {
     const deflatedBytes = Base64.toUint8Array(value);

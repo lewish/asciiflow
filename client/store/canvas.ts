@@ -1,27 +1,23 @@
-import { Box, CellContext } from "asciiflow/client/common";
-import * as constants from "asciiflow/client/constants";
-import { Layer, LayerView } from "asciiflow/client/layer";
-import { DrawingId, store } from "asciiflow/client/store";
-import {
-  ArrayStringifier,
-  Persistent,
-} from "asciiflow/client/store/persistent";
-import { IVector, Vector } from "asciiflow/client/vector";
+import { Box, CellContext } from "#asciiflow/client/common";
+import * as constants from "#asciiflow/client/constants";
+import { Layer, LayerView } from "#asciiflow/client/layer";
+import { DrawingId, store } from "#asciiflow/client/store";
+import { Persistent } from "#asciiflow/client/store/persistent";
+import { ArrayStringifier } from "#asciiflow/client/store/stringifiers";
+import { IVector, Vector } from "#asciiflow/client/vector";
 import { action, makeAutoObservable, observable } from "mobx";
-import { Characters } from "asciiflow/client/constants";
-import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
-import { RenderLayer } from "asciiflow/client/render_layer";
+import { Characters } from "#asciiflow/client/constants";
+import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
+import { RenderLayer } from "#asciiflow/client/render_layer";
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
-
   public readonly drawingId: DrawingId = DrawingId.local("");
   constructor(drawingId: DrawingId) {
     this.drawingId = drawingId;
-    makeAutoObservable(this);
   }
 
   public persistentKey(...values: string[]) {
@@ -54,16 +50,16 @@ export class CanvasStore {
     });
   }
 
-  @observable public persistentCommitted = Persistent.custom(
+  @observable accessor persistentCommitted = Persistent.custom(
     this.persistentKey("committed-layer"),
     this.drawingId.shareSpec
       ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
       : new Layer(),
     Layer
   );
-  @observable public scratch = new Layer();
+  @observable accessor scratch = new Layer();
 
-  @observable public selection: Box;
+  @observable accessor selection: Box;
 
   get committed() {
     return this.persistentCommitted.get();
@@ -84,13 +80,13 @@ export class CanvasStore {
     });
   }
 
-  @observable public undoLayers = Persistent.custom(
+  @observable accessor undoLayers = Persistent.custom(
     this.persistentKey("undo-layers"),
     [],
     new ArrayStringifier(Layer)
   );
 
-  @observable public redoLayers = Persistent.custom(
+  @observable accessor redoLayers = Persistent.custom(
     this.persistentKey("redo-layers"),
     [],
     new ArrayStringifier(Layer)

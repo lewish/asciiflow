@@ -12,10 +12,10 @@ import {
   Snackbar,
   TextareaAutosize,
 } from "@material-ui/core";
-import { ASCII, UNICODE } from "asciiflow/client/constants";
-import styles from "asciiflow/client/export.module.css";
-import { DrawingId, store } from "asciiflow/client/store";
-import { layerToText } from "asciiflow/client/text_utils";
+import { ASCII, UNICODE } from "#asciiflow/client/constants";
+import styles from "#asciiflow/client/export.module.css";
+import { DrawingId, store } from "#asciiflow/client/store";
+import { layerToText } from "#asciiflow/client/text_utils";
 import { useObserver } from "mobx-react";
 import * as React from "react";
 

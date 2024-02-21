@@ -1,28 +1,12 @@
-load("//:ts_library.bzl", "ts_library")
-
-# load("@io_bazel_rules_sass//:defs.bzl", "multi_sass_binary")
-# load("//:node_modules/webpack-dev-server:index.bzl", "webpack_dev_server")
-# load("//:node_modules/webpack:index.bzl", "webpack")
-# load("@build_bazel_rules_nodejs//:index.bzl", "npm_package_bin")
-# load("//:css_typings.bzl", "css_typings")
-# load("//testing:index.bzl", "ts_test_suite")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("//:ts_library.bzl", "ts_library", "ts_mocha_test_suite")
 
 package(default_visibility = ["//visibility:public"])
 
-filegroup(
+js_library(
     name = "assets",
     srcs = glob(["public/**/*.*"]) + [":index.html"],
 )
-
-# multi_sass_binary(
-#     name = "sass",
-#     srcs = glob(["**/*.scss"]),
-# )
-
-# css_typings(
-#     name = "css_typings",
-#     srcs = [":sass"],
-# )
 
 ts_library(
     name = "client",
@@ -37,7 +21,6 @@ ts_library(
         "//:node_modules/@material-ui/core",
         "//:node_modules/@material-ui/icons",
         "//:node_modules/@types/js-base64",
-        # "//:node_modules/@types/node",
         "//:node_modules/@types/pako",
         "//:node_modules/@types/react",
         "//:node_modules/@types/react-dom",
@@ -56,21 +39,17 @@ ts_library(
     ],
 )
 
-# ts_test_suite(
-#     name = "tests",
-#     srcs = glob(["**/*.spec.ts"]),
-#     data = [
-#         "//:node_modules/source-map-support",
-#     ],
-#     templated_args = ["--node_options=--require=source-map-support/register"],
-#     deps = [
-#         ":client",
-#         "//testing",
-#         "//:node_modules/@types/chai",
-#         "//:node_modules/@types/node",
-#         "//:node_modules/chai",
-#     ],
-# )
+ts_mocha_test_suite(
+    srcs = glob(["**/*.spec.ts"]),
+    deps = [
+        ":client",
+        "//:node_modules/@types/chai",
+        "//:node_modules/@types/mocha",
+        "//:node_modules/@types/node",
+        "//:node_modules/chai",
+        "//:node_modules/mocha",
+    ],
+)
 
 load("@aspect_rules_webpack//webpack:defs.bzl", "webpack_bundle", "webpack_devserver")
 
@@ -88,8 +67,8 @@ webpack_bundle(
     data = [
         ":css",
     ],
-    node_modules = "//:node_modules",
     entry_point = ":app.js",
+    node_modules = "//:node_modules",
     output_dir = False,
     # Errors thrown in workers don't currently get propagated back, so turn this off.
     supports_workers = False,
@@ -99,6 +78,10 @@ webpack_bundle(
     webpack_config = ":webpack.config.js",
     deps = [
         ":client",
+        "//:node_modules/@babel/core",
+        "//:node_modules/@babel/plugin-proposal-decorators",
+        "//:node_modules/@babel/preset-env",
+        "//:node_modules/babel-loader",
         "//:node_modules/css-loader",
         "//:node_modules/html-webpack-plugin",
         "//:node_modules/style-loader",
@@ -113,6 +96,10 @@ webpack_devserver(
         ":assets",
         ":client",
         ":css",
+        "//:node_modules/@babel/core",
+        "//:node_modules/@babel/plugin-proposal-decorators",
+        "//:node_modules/@babel/preset-env",
+        "//:node_modules/babel-loader",
         "//:node_modules/css-loader",
         "//:node_modules/html-webpack-plugin",
         "//:node_modules/style-loader",
@@ -136,3 +123,9 @@ filegroup(
         ":bundle.js",
     ],
 )
+
+# js_library(
+#     name = "favicon_png",
+#     srcs = ["favicon.png"],
+#     visibility = ["//electron:__pkg__"],
+# )

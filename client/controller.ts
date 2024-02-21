@@ -1,7 +1,7 @@
-import * as constants from "asciiflow/client/constants";
-import { store, IModifierKeys, ToolMode } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
-import { screenToCell } from "asciiflow/client/view";
+import * as constants from "#asciiflow/client/constants";
+import { store, IModifierKeys, ToolMode } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import { screenToCell } from "#asciiflow/client/view";
 import { HTMLAttributes } from "react";
 
 import * as React from "react";

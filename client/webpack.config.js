@@ -3,13 +3,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { env } = require("process");
 
 module.exports = (env, argv) => ({
-  plugins: argv.mode != "production" ? [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "index.html"),
-    }),
-  ] : [],
+  plugins:
+    argv.mode != "production"
+      ? [
+          new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, "index.html"),
+            inject: false,
+          }),
+        ]
+      : [],
   devServer: {
-    historyApiFallback: true,
     static: {
       directory: path.resolve(__dirname),
     },
@@ -25,7 +28,7 @@ module.exports = (env, argv) => ({
   },
   resolve: {
     alias: {
-      asciiflow: path.resolve("."),
+      "#asciiflow": path.resolve("."),
     },
   },
   module: {
@@ -33,6 +36,24 @@ module.exports = (env, argv) => ({
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [["@babel/preset-env", { targets: "defaults" }]],
+            plugins: [
+              [
+                "@babel/plugin-proposal-decorators",
+                {
+                  version: "2023-05",
+                },
+              ],
+            ],
+          },
+        },
       },
     ],
   },
