@@ -1,75 +1,59 @@
 const path = require("path");
-const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { env } = require("process");
 
 module.exports = (env, argv) => ({
-  mode: argv.mode || "development",
-  entry: [path.resolve(process.env.RUNFILES, "asciiflow/client/app")],
-  output: {
-    path: path.dirname(path.resolve(argv.output)),
-    filename: path.basename(argv.output),
-  },
-  optimization: {
-    minimize: argv.mode === "production",
-  },
-  stats: {
-    warnings: true,
-  },
+  plugins:
+    argv.mode != "production"
+      ? [
+          new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, "index.html"),
+            inject: false,
+          }),
+        ]
+      : [],
   devServer: {
-    port: 9110,
-    open: false,
-    // Triggers a rebuild when requesting the output filename.
-    filename: new RegExp(`.*\\/${path.basename(argv.output)}`),
-    lazy: true,
-    contentBase: path.resolve("./client"),
-    stats: {
-      colors: true,
+    static: {
+      directory: path.resolve(__dirname),
     },
-    watchOptions: {
-      aggregateTimeout: 2000,
-    },
-    historyApiFallback: true,
-    after: (_, socket, compiler) => {
-      // Listen to STDIN, which is written to by ibazel to tell it to reload.
-      // Must check the message so we only bundle after a successful build completes.
-      process.stdin.on("data", (data) => {
-        if (!String(data).includes("IBAZEL_BUILD_COMPLETED SUCCESS")) {
-          return;
-        }
-        // Force compilation and then tell clients to refresh.
-        compiler.run(() => socket.sockWrite(socket.sockets, "content-changed"));
-      });
-    },
+  },
+  entry: {
+    bundle: path.resolve(__dirname, "./app.js"),
+  },
+  devtool: false,
+  output: {
+    path: path.resolve(__dirname),
+    filename: "[name].js",
+    publicPath: "/",
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".css"],
     alias: {
-      asciiflow: path.resolve(process.env.RUNFILES, "asciiflow"),
-    },
-    fallback: {
-      fs: "empty",
-      child_process: "empty",
+      "#asciiflow": path.resolve("."),
     },
   },
-
-  plugins: [
-    new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
-    }),
-  ],
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(?:js|mjs|cjs)$/,
         exclude: /node_modules/,
-        use: [
-          { loader: "style-loader" },
-          {
-            loader: "css-loader",
-            options: {
-              modules: true,
-            },
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [["@babel/preset-env", { targets: "defaults" }]],
+            plugins: [
+              [
+                "@babel/plugin-proposal-decorators",
+                {
+                  version: "2023-05",
+                },
+              ],
+            ],
           },
-        ],
+        },
       },
     ],
   },

@@ -1,4 +1,4 @@
-import { Box } from "asciiflow/client/common";
+import { Box } from "#asciiflow/client/common";
 import {
   isSpecial,
   KEY_BACKSPACE,
@@ -6,35 +6,24 @@ import {
   KEY_CUT,
   KEY_DELETE,
   KEY_PASTE,
-} from "asciiflow/client/constants";
-import { AbstractDrawFunction } from "asciiflow/client/draw/function";
-import { DrawMove } from "asciiflow/client/draw/move";
-import { Layer } from "asciiflow/client/layer";
-import { IModifierKeys, store } from "asciiflow/client/store";
-import { layerToText, textToLayer } from "asciiflow/client/text_utils";
-import { Vector } from "asciiflow/client/vector";
+} from "#asciiflow/client/constants";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
+import { DrawMove } from "#asciiflow/client/draw/move";
+import { Layer } from "#asciiflow/client/layer";
+import { IModifierKeys, store } from "#asciiflow/client/store";
+import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
+import { Vector } from "#asciiflow/client/vector";
 
 export class DrawSelect extends AbstractDrawFunction {
   private moveTool: DrawMove;
 
-  private selectBox: Box;
+  public selectBox: Box;
 
   private dragStart: Vector;
   private dragEnd: Vector;
 
   constructor() {
     super();
-    window.document.addEventListener("paste", (e) => {
-      const clipboardText = e.clipboardData.getData("text");
-      if (this.selectBox) {
-        const pastedLayer = textToLayer(
-          clipboardText,
-          this.selectBox.topLeft()
-        );
-        store.currentCanvas.setScratchLayer(pastedLayer);
-        store.currentCanvas.commitScratch();
-      }
-    });
   }
 
   start(position: Vector, modifierKeys: IModifierKeys) {

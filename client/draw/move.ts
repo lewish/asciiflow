@@ -1,10 +1,10 @@
-import * as constants from "asciiflow/client/constants";
-import { isSpecial } from "asciiflow/client/constants";
-import { AbstractDrawFunction } from "asciiflow/client/draw/function";
-import { drawLine } from "asciiflow/client/draw/utils";
-import { Layer } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
+import * as constants from "#asciiflow/client/constants";
+import { isSpecial } from "#asciiflow/client/constants";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
+import { drawLine } from "#asciiflow/client/draw/utils";
+import { Layer } from "#asciiflow/client/layer";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
 
 interface IEnd {
   position: Vector;

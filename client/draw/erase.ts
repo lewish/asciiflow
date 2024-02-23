@@ -1,7 +1,7 @@
-import { AbstractDrawFunction } from "asciiflow/client/draw/function";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
-import { Layer } from "asciiflow/client/layer";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import { Layer } from "#asciiflow/client/layer";
 
 export class DrawErase extends AbstractDrawFunction {
   private startPosition: Vector;

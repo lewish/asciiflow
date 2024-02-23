@@ -1,8 +1,8 @@
-import { AbstractDrawFunction } from "asciiflow/client/draw/function";
-import { drawLine } from "asciiflow/client/draw/utils";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
-import { Layer } from "asciiflow/client/layer";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
+import { drawLine } from "#asciiflow/client/draw/utils";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import { Layer } from "#asciiflow/client/layer";
 
 export class DrawBox extends AbstractDrawFunction {
   private startPosition: Vector;

@@ -5,21 +5,21 @@
   max-width: 380px;
   z-index: 11;
   border-radius: 8px !important;
-  max-height: calc(100vh - 20px);
+  max-height: calc(100vh - 40px);
   overflow: auto;
+}
 
-  .logo {
-    height: 30px;
-    margin: -3px 10px 0px;
-  }
+.drawer .logo {
+  height: 30px;
+  margin: -3px 10px 0px;
+}
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    padding-right: 16px;
-  }
+.drawer .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  padding-right: 16px;
 }
 
 :global(.MuiButton-root).freeformCharacterButton {
@@ -60,8 +60,7 @@ button.fab {
 .githubMark {
   filter: opacity(80%);
 }
-:global(.dark) {
-  .githubMark {
-    filter: invert(100%);
-  }
+
+:global(.dark) .githubMark {
+  filter: invert(100%);
 }

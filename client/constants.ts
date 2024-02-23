@@ -1,4 +1,4 @@
-import { Vector } from "asciiflow/client/vector";
+import { Vector } from "#asciiflow/client/vector";
 
 export const MAX_GRID_WIDTH = 2000;
 export const MAX_GRID_HEIGHT = 600;

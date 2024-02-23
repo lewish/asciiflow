@@ -1,23 +1,23 @@
-import * as constants from "asciiflow/client/constants";
-import { DrawBox } from "asciiflow/client/draw/box";
-import { DrawFreeform } from "asciiflow/client/draw/freeform";
+import * as constants from "#asciiflow/client/constants";
+import { DrawBox } from "#asciiflow/client/draw/box";
+import { DrawFreeform } from "#asciiflow/client/draw/freeform";
 import {
   AbstractDrawFunction,
   IDrawFunction,
-} from "asciiflow/client/draw/function";
-import { DrawLine } from "asciiflow/client/draw/line";
-import { DrawNull } from "asciiflow/client/draw/null";
-import { DrawSelect } from "asciiflow/client/draw/select";
-import { DrawText } from "asciiflow/client/draw/text";
-import { IExportConfig } from "asciiflow/client/export";
-import { CanvasStore } from "asciiflow/client/store/canvas";
+} from "#asciiflow/client/draw/function";
+import { DrawLine } from "#asciiflow/client/draw/line";
+import { DrawNull } from "#asciiflow/client/draw/null";
+import { DrawSelect } from "#asciiflow/client/draw/select";
+import { DrawText } from "#asciiflow/client/draw/text";
+import { IExportConfig } from "#asciiflow/client/export";
+import { CanvasStore } from "#asciiflow/client/store/canvas";
 import {
   ArrayStringifier,
   IStringifier,
   JSONStringifier,
-  Persistent,
-} from "asciiflow/client/store/persistent";
-import { action, computed, observable } from "mobx";
+} from "#asciiflow/client/store/stringifiers";
+import { Persistent } from "#asciiflow/client/store/persistent";
+import { action, computed, makeAutoObservable, observable } from "mobx";
 import * as uuid from "uuid";
 
 export enum ToolMode {
@@ -101,7 +101,7 @@ export class Store {
   public readonly textTool = new DrawText();
   public readonly nullTool = new DrawNull();
 
-  @observable private _route: DrawingId = DrawingId.local(null);
+  @observable accessor _route: DrawingId = DrawingId.local(null);
 
   public get route() {
     return this._route;
@@ -113,9 +113,9 @@ export class Store {
     }
   }
 
-  @observable public freeformCharacter = "x";
+  @observable accessor freeformCharacter = "x";
 
-  @observable private selectedToolMode = ToolMode.BOX;
+  @observable accessor selectedToolMode = ToolMode.BOX;
 
   public get toolMode() {
     if (this.route.shareSpec) {
@@ -124,36 +124,36 @@ export class Store {
     return this.selectedToolMode;
   }
 
-  @observable public unicode = Persistent.json("unicode", true);
-  @observable public controlsOpen = Persistent.json("controlsOpen", true);
-  @observable public fileControlsOpen = Persistent.json(
+  @observable accessor unicode = Persistent.json("unicode", true);
+  @observable accessor controlsOpen = Persistent.json("controlsOpen", true);
+  @observable accessor fileControlsOpen = Persistent.json(
     "fileControlsOpen",
     true
   );
-  @observable public editControlsOpen = Persistent.json(
+  @observable accessor editControlsOpen = Persistent.json(
     "editControlsOpen",
     true
   );
-  @observable public helpControlsOpen = Persistent.json(
+  @observable accessor helpControlsOpen = Persistent.json(
     "editControlsOpen",
     true
   );
-  @observable public exportConfig = Persistent.json(
+  @observable accessor exportConfig = Persistent.json(
     "exportConfig",
     {} as IExportConfig
   );
 
-  @observable localDrawingIds = Persistent.custom(
+  @observable accessor localDrawingIds = Persistent.custom(
     "localDrawingIds",
     [],
     new ArrayStringifier(DrawingId.STRINGIFIER)
   );
 
-  @observable public panning = false;
+  @observable accessor panning = false;
 
-  @observable public altPressed = false;
+  @observable accessor altPressed = false;
 
-  @observable public currentCursor: string = "default";
+  public currentCursor: string = "default";
 
   public readonly darkMode = Persistent.json(
     "darkMode",
@@ -179,10 +179,14 @@ export class Store {
 
   @computed
   get computedCurrentCursor() {
-    return this.panning ? 'move' : this.currentCursor
+    return this.panning ? "move" : this.currentCursor;
   }
 
-  @observable public modifierKeys: IModifierKeys = {};
+  public setCurrentCursor(value: string) {
+    this.currentCursor = value;
+  }
+
+  @observable accessor modifierKeys: IModifierKeys = {};
 
   get characters() {
     return this.unicode.get() ? constants.UNICODE : constants.ASCII;

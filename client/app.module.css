@@ -1,0 +1,6 @@
+.app a,
+.app a:visited,
+.app a:hover,
+.app a:active {
+  color: inherit;
+}

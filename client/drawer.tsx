@@ -1,6 +1,6 @@
 import * as React from "react";
 import MaterialDrawer from "@material-ui/core/Drawer";
-import * as styles from "asciiflow/client/drawer.css";
+import styles from "#asciiflow/client/drawer.module.css";
 import {
   List,
   ListItem,
@@ -25,15 +25,15 @@ import {
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
-import { DrawingId, store, ToolMode } from "asciiflow/client/store";
-import { ControlledMenu } from "asciiflow/client/components/controlled_menu";
-import { IRouteProps } from "asciiflow/client/app";
-import { ControlledDialog } from "asciiflow/client/components/controlled_dialog";
+import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
+import { ControlledMenu } from "#asciiflow/client/components/controlled_menu";
+import { IRouteProps } from "#asciiflow/client/app";
+import { ControlledDialog } from "#asciiflow/client/components/controlled_dialog";
 import { useHistory } from "react-router";
-import { DrawingStringifier } from "asciiflow/client/store/drawing_stringifier";
-import { ExportDialog } from "asciiflow/client/export";
+import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
+import { ExportDialog } from "#asciiflow/client/export";
 import { useState } from "react";
-import { ASCII, UNICODE } from "asciiflow/client/constants";
+import { ASCII, UNICODE } from "#asciiflow/client/constants";
 
 export function Drawer() {
   const history = useHistory();

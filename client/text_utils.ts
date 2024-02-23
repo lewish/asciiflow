@@ -1,6 +1,6 @@
-import { Box } from "asciiflow/client/common";
-import { ILayerView, Layer } from "asciiflow/client/layer";
-import { Vector } from "asciiflow/client/vector";
+import { Box } from "#asciiflow/client/common";
+import { ILayerView, Layer } from "#asciiflow/client/layer";
+import { Vector } from "#asciiflow/client/vector";
 
 export function layerToText(layer: ILayerView, box?: Box) {
   if (layer.keys().length === 0) {
@@ -28,13 +28,17 @@ export function layerToText(layer: ILayerView, box?: Box) {
 
   layer
     .entries()
-    .filter(([key]) => box.contains(key))
+    .filter(([key, value]) => box.contains(key) && !!value)
     .forEach(([key, value]) => {
+      if (value.charCodeAt(0) < 32 || value.charCodeAt(0) == 127) {
+        // Every ascii value below 32 is control, and 127 is DEL.
+        // Allow everything else and any unicode characters if they happen to be in the string.
+        value = " ";
+      }
       lineArrays[key.y - box.topLeft().y][key.x - box.topLeft().x] = value;
     });
   return lineArrays
     .map((lineValues) => lineValues.reduce((acc, curr) => acc + curr, ""))
-    .map((line) => line.replace(/\s+$/, ""))
     .join("\n");
 }
 

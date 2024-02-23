@@ -1,9 +1,9 @@
-import { CellContext } from "asciiflow/client/common";
-import { Characters } from "asciiflow/client/constants";
-import { AbstractLayer, ILayerView } from "asciiflow/client/layer";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
-import * as constants from "asciiflow/client/constants";
+import { CellContext } from "#asciiflow/client/common";
+import { Characters } from "#asciiflow/client/constants";
+import { AbstractLayer, ILayerView } from "#asciiflow/client/layer";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
+import * as constants from "#asciiflow/client/constants";
 
 /**
  * This is where the "magic" happens. Rules are applied to the underlying drawing to determine what the rendered character should be.

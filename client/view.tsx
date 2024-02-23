@@ -1,6 +1,6 @@
-import * as constants from "asciiflow/client/constants";
-import { store } from "asciiflow/client/store";
-import { Vector } from "asciiflow/client/vector";
+import * as constants from "#asciiflow/client/constants";
+import { store } from "#asciiflow/client/store";
+import { Vector } from "#asciiflow/client/vector";
 import { autorun } from "mobx";
 import { useObserver } from "mobx-react";
 import * as React from "react";
@@ -62,6 +62,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
         style={{
           backgroundColor: colors.background,
           cursor: store.computedCurrentCursor,
+          touchAction: "none",
           position: "fixed",
           left: 0,
           top: 0,
