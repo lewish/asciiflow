@@ -2,10 +2,11 @@ import { Box } from "#asciiflow/client/common";
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
 import { Layer } from "#asciiflow/client/layer";
 import { store, IModifierKeys } from "#asciiflow/client/store";
+import { textToLayer } from "#asciiflow/client/text_utils";
 import { Vector } from "#asciiflow/client/vector";
 
 export class DrawText extends AbstractDrawFunction {
-  private currentPosition: Vector;
+  public currentPosition: Vector;
   private textLayer: Layer;
   private newLineAlignment: Vector;
 
@@ -21,6 +22,28 @@ export class DrawText extends AbstractDrawFunction {
 
   getCursor() {
     return "text";
+  }
+
+  handlePaste(value: string) {
+    let newLayer = new Layer();
+    if (!!this.textLayer) {
+      [newLayer] = newLayer.apply(this.textLayer);
+    }
+    this.textLayer = newLayer;
+
+    // Add the new text to the layer and move to the right.
+    const [pastedLayer] = this.textLayer.apply(textToLayer(value, this.currentPosition));
+    this.textLayer = pastedLayer;
+    console.log(this.textLayer);
+
+    this.currentPosition = new Vector(
+      Math.max(...pastedLayer.keys().map((v) => v.x)) + 1,
+      Math.max(...pastedLayer.keys().map((v) => v.y))
+    );
+    store.currentCanvas.setScratchLayer(this.textLayer);
+    store.currentCanvas.setSelection(
+      new Box(this.currentPosition, this.currentPosition)
+    );
   }
 
   handleKey(value: string, modifierKeys: IModifierKeys) {
