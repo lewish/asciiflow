@@ -79,15 +79,15 @@ window.addEventListener("keyup", (e) => controller.handleKeyUp(e));
 window.document.addEventListener("paste", (e) => {
   e.preventDefault();
   // Text tool manages pasting it's own way.
-  if (store.toolMode === ToolMode.TEXT) {
-    store.textTool.handlePaste(e.clipboardData.getData("text"));
-  }
   const clipboardText = e.clipboardData.getData("text");
   // Default to the center of the screen.
   var position = screenToCell(new Vector(window.innerWidth / 2, window.innerHeight / 2));
   // Use the select tool position if set.
   if (store.selectTool.selectBox) {
     position = store.selectTool.selectBox.topLeft();
+  }
+  if (store.toolMode === ToolMode.TEXT && store.textTool.currentPosition) {
+    position = store.textTool.currentPosition;
   }
   const pastedLayer = textToLayer(clipboardText, position);
   store.currentCanvas.setScratchLayer(pastedLayer);
