@@ -17,24 +17,13 @@ import { Vector } from "#asciiflow/client/vector";
 export class DrawSelect extends AbstractDrawFunction {
   private moveTool: DrawMove;
 
-  private selectBox: Box;
+  public selectBox: Box;
 
   private dragStart: Vector;
   private dragEnd: Vector;
 
   constructor() {
     super();
-    window.document.addEventListener("paste", (e) => {
-      const clipboardText = e.clipboardData.getData("text");
-      if (this.selectBox) {
-        const pastedLayer = textToLayer(
-          clipboardText,
-          this.selectBox.topLeft()
-        );
-        store.currentCanvas.setScratchLayer(pastedLayer);
-        store.currentCanvas.commitScratch();
-      }
-    });
   }
 
   start(position: Vector, modifierKeys: IModifierKeys) {

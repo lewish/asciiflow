@@ -5,7 +5,7 @@ import { store, IModifierKeys } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 
 export class DrawText extends AbstractDrawFunction {
-  private currentPosition: Vector;
+  public currentPosition: Vector;
   private textLayer: Layer;
   private newLineAlignment: Vector;
 

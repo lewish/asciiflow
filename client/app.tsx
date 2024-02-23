@@ -4,14 +4,16 @@ import styles from "#asciiflow/client/app.module.css";
 import {
   Controller,
   DesktopController,
-  TouchController
+  TouchController,
 } from "#asciiflow/client/controller";
 import { Drawer } from "#asciiflow/client/drawer";
-import { DrawingId, store } from "#asciiflow/client/store";
-import { View } from "#asciiflow/client/view";
+import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
+import { screenToCell, View } from "#asciiflow/client/view";
 import { useObserver } from "mobx-react";
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";
+import { Vector } from "#asciiflow/client/vector";
+import { textToLayer } from "#asciiflow/client/text_utils";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -73,3 +75,22 @@ render().catch((e) => console.log(e));
 window.addEventListener("keypress", (e) => controller.handleKeyPress(e));
 window.addEventListener("keydown", (e) => controller.handleKeyDown(e));
 window.addEventListener("keyup", (e) => controller.handleKeyUp(e));
+
+window.document.addEventListener("paste", (e) => {
+  e.preventDefault();
+  // Text tool manages pasting it's own way.
+  const clipboardText = e.clipboardData.getData("text");
+  // Default to the center of the screen.
+  var position = screenToCell(new Vector(window.innerWidth / 2, window.innerHeight / 2));
+  // Use the select tool position if set.
+  if (store.selectTool.selectBox) {
+    position = store.selectTool.selectBox.topLeft();
+  }
+  if (store.toolMode === ToolMode.TEXT && store.textTool.currentPosition) {
+    position = store.textTool.currentPosition;
+  }
+  const pastedLayer = textToLayer(clipboardText, position);
+  store.currentTool.cleanup();
+  store.currentCanvas.setScratchLayer(pastedLayer);
+  store.currentCanvas.commitScratch();
+});
