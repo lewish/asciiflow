@@ -90,6 +90,7 @@ window.document.addEventListener("paste", (e) => {
     position = store.textTool.currentPosition;
   }
   const pastedLayer = textToLayer(clipboardText, position);
+  store.currentTool.cleanup();
   store.currentCanvas.setScratchLayer(pastedLayer);
   store.currentCanvas.commitScratch();
 });
