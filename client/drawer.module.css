@@ -5,6 +5,8 @@
   max-width: 380px;
   z-index: 11;
   border-radius: 8px !important;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
 }
 
 .drawer .logo {
