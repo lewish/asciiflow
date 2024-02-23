@@ -28,7 +28,7 @@ export function layerToText(layer: ILayerView, box?: Box) {
 
   layer
     .entries()
-    .filter(([key]) => box.contains(key))
+    .filter(([key, value]) => box.contains(key) && !!value)
     .forEach(([key, value]) => {
       if (value.charCodeAt(0) < 32 || value.charCodeAt(0) == 127) {
         // Every ascii value below 32 is control, and 127 is DEL.
