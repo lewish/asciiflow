@@ -52,6 +52,10 @@ export class Controller {
   }
 
   handleKeyPress(event: KeyboardEvent) {
+    if (event.keyCode == 8) {
+      // Disable navigation back action on backspace.
+      event.preventDefault();
+    }
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
       store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
@@ -110,6 +114,8 @@ export class Controller {
 
     if (event.keyCode === 8) {
       specialKeyCode = constants.KEY_BACKSPACE;
+      // Disable navigation back action on backspace.
+      event.preventDefault();
     }
     if (event.keyCode === 46) {
       specialKeyCode = constants.KEY_DELETE;
