@@ -101,7 +101,6 @@ export class CanvasStore {
   }
 
   @action.bound setScratchLayer(layer: Layer) {
-    console.trace();
     this.scratch = layer;
   }
 

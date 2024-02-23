@@ -52,8 +52,6 @@ export class Controller {
   }
 
   handleKeyPress(event: KeyboardEvent) {
-    console.log(event.keyCode);
-    
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
       store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
