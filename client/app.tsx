@@ -72,11 +72,11 @@ async function render() {
 // tslint:disable-next-line: no-console
 render().catch((e) => console.log(e));
 
-window.addEventListener("keypress", (e) => controller.handleKeyPress(e));
-window.addEventListener("keydown", (e) => controller.handleKeyDown(e));
-window.addEventListener("keyup", (e) => controller.handleKeyUp(e));
+document.getElementById("root").addEventListener("keypress", (e) => controller.handleKeyPress(e));
+document.getElementById("root").addEventListener("keydown", (e) => controller.handleKeyDown(e));
+document.getElementById("root").addEventListener("keyup", (e) => controller.handleKeyUp(e));
 
-window.document.addEventListener("paste", (e) => {
+document.addEventListener("paste", (e) => {
   e.preventDefault();
   // Text tool manages pasting it's own way.
   const clipboardText = e.clipboardData.getData("text");

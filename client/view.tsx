@@ -59,6 +59,7 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
       <canvas
         width={document.documentElement.clientWidth}
         height={document.documentElement.clientHeight}
+        tabIndex={0}
         style={{
           backgroundColor: colors.background,
           cursor: store.computedCurrentCursor,
