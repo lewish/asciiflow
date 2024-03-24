@@ -5536,8 +5536,8 @@ packages:
       webpack-merge: 5.10.0
     dev: false
 
-  /webpack-dev-middleware@7.0.0(webpack@5.90.3):
-    resolution: {integrity: sha512-tZ5hqsWwww/8DislmrzXE3x+4f+v10H1z57mA2dWFrILb4i3xX+dPhTkcdR0DLyQztrhF2AUmO5nN085UYjd/Q==}
+  /webpack-dev-middleware@7.1.1(webpack@5.90.3):
+    resolution: {integrity: sha512-NmRVq4AvRQs66dFWyDR4GsFDJggtSi2Yn38MXLk0nffgF9n/AIP4TFBg2TQKYaRAN4sHuKOTiz9BnNCENDLEVA==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
       webpack: ^5.0.0
@@ -5548,6 +5548,7 @@ packages:
       colorette: 2.0.20
       memfs: 4.7.7
       mime-types: 2.1.35
+      on-finished: 2.4.1
       range-parser: 1.2.1
       schema-utils: 4.2.0
       webpack: 5.90.3(webpack-cli@5.1.4)
@@ -5596,7 +5597,7 @@ packages:
       spdy: 4.0.2
       webpack: 5.90.3(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack-dev-server@5.0.2)(webpack@5.90.3)
-      webpack-dev-middleware: 7.0.0(webpack@5.90.3)
+      webpack-dev-middleware: 7.1.1(webpack@5.90.3)
       ws: 8.16.0
     transitivePeerDependencies:
       - bufferutil
