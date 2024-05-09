@@ -20,7 +20,7 @@ import { useObserver } from "mobx-react";
 import * as React from "react";
 
 export interface IExportConfig {
-  wrapper?: "star" | "star-filled" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
+  wrapper?: "star" | "star-filled" | "triple-quotes" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
   indent?: number;
   characters?: "basic" | "extended";
 }
@@ -83,6 +83,9 @@ export function ExportDialog({
                 </MenuItem>
                 <MenuItem value={"star-filled"}>
                   Filled multi-line <CommentTypeChip label="/***/" />
+                </MenuItem>
+                <MenuItem value={"triple-quotes"}>
+                  Quotes multi-line <CommentTypeChip label='""" """' />
                 </MenuItem>
                 <MenuItem value={"hash"}>
                   Hashes <CommentTypeChip label="#" />
@@ -202,6 +205,13 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
           exportConfig.wrapper === "star-filled" ? ` * ${line}` : line
         ),
         " */",
+      ]);
+    }
+    if (exportConfig.wrapper === "triple-quotes") {
+      setLines([
+        exportConfig.characters === "basic" ? "\"\"\"" : "u\"\"\"",
+        ...lines(),
+        "\"\"\"",
       ]);
     }
     if (exportConfig.wrapper === "hash") {
