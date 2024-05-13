@@ -7,6 +7,15 @@ export interface IVector {
   y: number;
 }
 export class Vector implements IVector {
+  public static readonly STRINGIFIER = {
+    serialize(value: Vector) {
+      return value.toString();
+    },
+    deserialize(value: string) {
+      return Vector.fromString(value);
+    },
+  };
+
   constructor(public x: number, public y: number) {}
 
   // TODO: These shouldn't be here.

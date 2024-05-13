@@ -5,11 +5,7 @@ import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import * as constants from "#asciiflow/client/constants";
 
-/**
- * This is where the "magic" happens. Rules are applied to the underlying drawing to determine what the rendered character should be.
- * This mostly handles logic such as junctions and arrows so things render correctly and all the lines match up etc.
- */
-export class RenderLayer extends AbstractLayer {
+export class LegacyRenderLayer extends AbstractLayer {
   constructor(private baseLayer: ILayerView) {
     super();
   }

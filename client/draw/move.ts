@@ -1,10 +1,17 @@
 import * as constants from "#asciiflow/client/constants";
 import { isSpecial } from "#asciiflow/client/constants";
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
-import { drawLine } from "#asciiflow/client/draw/utils";
+import { line } from "#asciiflow/client/draw/utils";
 import { Layer } from "#asciiflow/client/layer";
 import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
+
+const DIR_LEFT = new Vector(-1, 0);
+const DIR_RIGHT = new Vector(1, 0);
+const DIR_UP = new Vector(0, -1);
+const DIR_DOWN = new Vector(0, 1);
+
+const DIRECTIONS = [DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN];
 
 interface IEnd {
   position: Vector;
@@ -12,6 +19,11 @@ interface IEnd {
   startIsAlt: boolean;
   midPointIsAlt?: boolean;
   endIsAlt: boolean;
+}
+
+interface IIntersection {
+  position: Vector;
+  direction: Vector;
 }
 export class DrawMove extends AbstractDrawFunction {
   private startPosition: Vector;
@@ -29,11 +41,11 @@ export class DrawMove extends AbstractDrawFunction {
     }
 
     const ends: IEnd[] = [];
-    for (const i of constants.DIRECTIONS) {
-      const midPoints = this.followLine(this.startPosition, i);
+    for (const direction of DIRECTIONS) {
+      const midPoints = this.followLine(this.startPosition, direction);
       for (const midPoint of midPoints) {
         // Clockwise is a lie, it is true if we move vertically first.
-        const clockwise = i.x !== 0;
+        const clockwise = direction.x !== 0;
         const startIsAlt =
           constants.ALT_SPECIAL_VALUES.indexOf(
             store.currentCanvas.committed.get(position)
@@ -55,8 +67,8 @@ export class DrawMove extends AbstractDrawFunction {
           continue;
         }
         // Continue following lines from the midpoint.
-        for (const j of constants.DIRECTIONS) {
-          if (i.add(j).length() === 0 || i.add(j).length() === 2) {
+        for (const j of DIRECTIONS) {
+          if (direction.add(j).length() === 0 || direction.add(j).length() === 2) {
             // Don't go back on ourselves, or don't carry on in same direction.
             continue;
           }
@@ -90,12 +102,12 @@ export class DrawMove extends AbstractDrawFunction {
   move(position: Vector) {
     const layer = new Layer();
     // Clear all the lines so we can draw them afresh.
-    for (const end of this.ends) {
-      drawLine(layer, this.startPosition, end.position, end.clockwise, "");
-    }
-    for (const end of this.ends) {
-      drawLine(layer, position, end.position, end.clockwise);
-    }
+    // for (const end of this.ends) {
+    //   drawLine(layer, this.startPosition, end.position, end.clockwise, "");
+    // }
+    // for (const end of this.ends) {
+    //   drawLine(layer, position, end.position, end.clockwise);
+    // }
     for (const end of this.ends) {
       // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
       if (end.startIsAlt) {
@@ -158,11 +170,11 @@ export class DrawMove extends AbstractDrawFunction {
     if (isSpecial(store.currentCanvas.committed.get(position))) {
       return position;
     }
-    const allDirections = constants.DIRECTIONS.concat([
-      constants.DIR_LEFT.add(constants.DIR_UP),
-      constants.DIR_LEFT.add(constants.DIR_DOWN),
-      constants.DIR_RIGHT.add(constants.DIR_UP),
-      constants.DIR_RIGHT.add(constants.DIR_DOWN),
+    const allDirections = DIRECTIONS.concat([
+      DIR_LEFT.add(DIR_UP),
+      DIR_LEFT.add(DIR_DOWN),
+      DIR_RIGHT.add(DIR_UP),
+      DIR_RIGHT.add(DIR_DOWN),
     ]);
 
     let bestDirection = null;

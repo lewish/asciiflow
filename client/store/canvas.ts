@@ -8,7 +8,7 @@ import { IVector, Vector } from "#asciiflow/client/vector";
 import { action, makeAutoObservable, observable } from "mobx";
 import { Characters } from "#asciiflow/client/constants";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
-import { RenderLayer } from "#asciiflow/client/render_layer";
+
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
@@ -126,7 +126,7 @@ export class CanvasStore {
    */
 
   get rendered() {
-    return new RenderLayer(this.combined);
+    return this.combined;
   }
 
   /**

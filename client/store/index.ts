@@ -153,7 +153,7 @@ export class Store {
 
   @observable accessor altPressed = false;
 
-  public currentCursor: string = "default";
+  @observable accessor currentCursor: string = "default";
 
   public readonly darkMode = Persistent.json(
     "darkMode",
@@ -182,7 +182,7 @@ export class Store {
     return this.panning ? "move" : this.currentCursor;
   }
 
-  public setCurrentCursor(value: string) {
+  @action.bound public setCurrentCursor(value: string) {
     this.currentCursor = value;
   }
 

@@ -7,6 +7,22 @@ import { Vector } from "#asciiflow/client/vector";
 export class Box {
   constructor(public readonly start: Vector, public readonly end: Vector) {}
 
+  left() {
+    return Math.min(this.start.x, this.end.x);
+  }
+
+  right() {
+    return Math.max(this.start.x, this.end.x);
+  }
+
+  top() {
+    return Math.min(this.start.y, this.end.y);
+  }
+
+  bottom() {
+    return Math.max(this.start.y, this.end.y);
+  }
+
   topLeft() {
     return new Vector(
       Math.min(this.start.x, this.end.x),
@@ -14,9 +30,23 @@ export class Box {
     );
   }
 
+  topRight() {
+    return new Vector(
+      Math.max(this.start.x, this.end.x),
+      Math.min(this.start.y, this.end.y)
+    );
+  }
+
   bottomRight() {
     return new Vector(
       Math.max(this.start.x, this.end.x),
+      Math.max(this.start.y, this.end.y)
+    );
+  }
+
+  bottomLeft() {
+    return new Vector(
+      Math.min(this.start.x, this.end.x),
       Math.max(this.start.y, this.end.y)
     );
   }
