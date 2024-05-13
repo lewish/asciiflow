@@ -1,4 +1,9 @@
-import { connect, connects, disconnect } from "#asciiflow/client/characters";
+import {
+  connect,
+  connectable,
+  connects,
+  disconnect,
+} from "#asciiflow/client/characters";
 import { Direction } from "#asciiflow/client/direction";
 import {
   IDrawFunction,
@@ -30,7 +35,7 @@ export class DrawLine extends AbstractDrawFunction {
   }
 
   draw(modifierKeys: IModifierKeys) {
-    let layer = new Layer();
+    const layer = new Layer();
     // Try to infer line orientation.
     // TODO: Split the line into two lines if we can't satisfy both ends.
     const characters = store.characters;
@@ -54,7 +59,7 @@ export class DrawLine extends AbstractDrawFunction {
       (horizontalStart || verticalEnd) !==
       (modifierKeys.ctrl || modifierKeys.shift);
 
-    layer = layer.apply(line(this.startPosition, this.endPosition, horizontalFirst))[0];
+    layer.setFrom(line(this.startPosition, this.endPosition, horizontalFirst));
 
     if (this.isArrow) {
       layer.set(
@@ -81,30 +86,35 @@ export class DrawLine extends AbstractDrawFunction {
           }
         })()
       );
-    } else {
-      // Start or end characters may not just be lines, if adjacent cells have any incoming connections
-      // then we connect to them, and then remove any unnecessary connections (if possible).
-      const combined = new LayerView([store.currentCanvas.committed, layer]);
-      for (const position of [this.startPosition, this.endPosition]) {
-        const incomingConnections = Direction.ALL.filter((direction) =>
-          connects(combined.get(position.add(direction)), direction.opposite())
-        );
-        layer.set(position, connect(layer.get(position), incomingConnections));
-        layer.set(
-          position,
-          disconnect(
-            layer.get(position),
-            Direction.ALL.filter(
-              (direction) => !incomingConnections.includes(direction)
-            )
+    }
+    // Start or end characters may not just be lines, if adjacent cells have any incoming connections
+    // then we connect to them, and then remove any unnecessary connections (if possible).
+    const combined = new LayerView([store.currentCanvas.committed, layer]);
+    for (const position of this.isArrow
+      ? [this.startPosition]
+      : [this.startPosition, this.endPosition]) {
+      const incomingConnections = Direction.ALL.filter(
+        (direction) =>
+          connects(
+            combined.get(position.add(direction)),
+            direction.opposite()
+          ) && connectable(layer.get(position), direction)
+      );
+      layer.set(position, connect(layer.get(position), incomingConnections));
+      layer.set(
+        position,
+        disconnect(
+          layer.get(position),
+          Direction.ALL.filter(
+            (direction) => !incomingConnections.includes(direction)
           )
-        );
-      }
+        )
+      );
     }
 
-    layer = layer.apply(snap(layer, store.currentCanvas.committed))[0];
+    layer.setFrom(snap(layer, store.currentCanvas.committed));
 
-    store.currentCanvas.setScratchLayer(layer);
+    store.currentCanvas.setScratchLayer(layer);       
   }
 
   end() {

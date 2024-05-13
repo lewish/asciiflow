@@ -92,6 +92,12 @@ export class Layer extends AbstractLayer {
     this.map.set(position.toString(), value);
   }
 
+  public setFrom(layer: Layer) {
+    for (const [key, value] of layer.entries()) {
+      this.set(key, value);
+    }
+  }
+
   public get(position: Vector) {
     const key = position.toString();
     return this.map.has(key) ? this.map.get(position.toString()) : null;

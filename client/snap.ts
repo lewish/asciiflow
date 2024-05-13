@@ -1,4 +1,4 @@
-import { connect, connects, isBoxDrawing } from "#asciiflow/client/characters";
+import { connect, connectable, connects, isBoxDrawing } from "#asciiflow/client/characters";
 import { Direction } from "#asciiflow/client/direction";
 import { Layer, LayerView } from "#asciiflow/client/layer";
 
@@ -25,6 +25,7 @@ export function snap(scratch: Layer, committed: Layer) {
       if (
         connects(adjacentValue, direction.opposite()) &&
         !connects(value, direction)
+        && connectable(value, direction)
       ) {
         layer.set(
           position,
@@ -35,6 +36,7 @@ export function snap(scratch: Layer, committed: Layer) {
       if (
         connects(value, direction) &&
         !connects(adjacentValue, direction.opposite())
+        && connectable(adjacentValue, direction.opposite())
       ) {
         layer.set(
           adjacentPosition,
