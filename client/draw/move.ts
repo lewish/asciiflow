@@ -1,26 +1,12 @@
-import { connections, connects } from "#asciiflow/client/characters";
+import { connects, isArrow } from "#asciiflow/client/characters";
 import * as constants from "#asciiflow/client/constants";
 import { isSpecial } from "#asciiflow/client/constants";
 import { Direction } from "#asciiflow/client/direction";
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
-import { line } from "#asciiflow/client/draw/utils";
 import { Layer } from "#asciiflow/client/layer";
 import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
-import { Directions } from "@material-ui/icons";
 
-interface IEnd {
-  position: Vector;
-  horizontalFirst: boolean;
-  startValue: string;
-  endValue: string;
-  midPointValue?: string;
-}
-
-interface IIntersection {
-  position: Vector;
-  direction: Vector;
-}
 export class DrawMove extends AbstractDrawFunction {
   private trace: ILineTrace;
 
@@ -224,21 +210,39 @@ function traceLine(layer: Layer, position: Vector): ILineTrace {
       }
       currentPosition = nextPosition;
       positions.push(currentPosition);
-      // Find any attachments.
-      for (const attachmentDirection of attachmentDirections) {
-        if (
-          !connects(layer.get(currentPosition), attachmentDirection) ||
-          !connects(
-            layer.get(currentPosition.add(attachmentDirection)),
-            attachmentDirection.opposite()
-          )
-        ) {
-          continue;
-        }
+    }
+  }
+
+  for (const currentPosition of positions) {
+    // Find any attachments.
+    for (const attachmentDirection of attachmentDirections) {
+      if (
+        connects(layer.get(currentPosition), attachmentDirection) &&
+        connects(
+          layer.get(currentPosition.add(attachmentDirection)),
+          attachmentDirection.opposite()
+        )
+      ) {
         attachments.push(
           traceAttachment(
             layer,
             currentPosition.add(attachmentDirection),
+            attachmentDirection
+          )
+        );
+      }
+      if (
+        isArrow(layer.get(currentPosition.add(attachmentDirection))) &&
+        connects(
+          layer.get(currentPosition.add(attachmentDirection.scale(2))),
+          attachmentDirection.opposite()
+        )
+      ) {
+        positions.push(currentPosition.add(attachmentDirection));
+        attachments.push(
+          traceAttachment(
+            layer,
+            currentPosition.add(attachmentDirection.scale(2)),
             attachmentDirection
           )
         );
