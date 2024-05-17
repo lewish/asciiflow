@@ -304,7 +304,7 @@ export class Store {
 
 function generateId() {
   const hex = uuid.v4().replace(/\-/g, "");
-  return hex.substr(0, 16);
+  return hex.substring(0, 16);
 }
 
 export const store = new Store();

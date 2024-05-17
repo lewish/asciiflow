@@ -1,4 +1,3 @@
-import { Vector } from "#asciiflow/client/vector";
 
 export const MAX_GRID_WIDTH = 2000;
 export const MAX_GRID_HEIGHT = 600;
@@ -136,10 +135,3 @@ export const KEY_RIGHT = "<right>";
 // http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
 export const TOUCH_ENABLED = () => 
   "ontouchstart" in window || "onmsgesturechange" in window;
-
-export const DIR_LEFT = new Vector(-1, 0);
-export const DIR_RIGHT = new Vector(1, 0);
-export const DIR_UP = new Vector(0, -1);
-export const DIR_DOWN = new Vector(0, 1);
-
-export const DIRECTIONS = [DIR_LEFT, DIR_RIGHT, DIR_UP, DIR_DOWN];

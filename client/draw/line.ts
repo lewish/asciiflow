@@ -6,13 +6,13 @@ import {
 } from "#asciiflow/client/characters";
 import { Direction } from "#asciiflow/client/direction";
 import {
-  IDrawFunction,
-  AbstractDrawFunction,
+  AbstractDrawFunction
 } from "#asciiflow/client/draw/function";
 import { line } from "#asciiflow/client/draw/utils";
 import { Layer, LayerView } from "#asciiflow/client/layer";
+import { cellContext } from "#asciiflow/client/render_layer";
 import { snap } from "#asciiflow/client/snap";
-import { store, IModifierKeys } from "#asciiflow/client/store";
+import { IModifierKeys, store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 
 export class DrawLine extends AbstractDrawFunction {
@@ -37,13 +37,15 @@ export class DrawLine extends AbstractDrawFunction {
   draw(modifierKeys: IModifierKeys) {
     const layer = new Layer();
     // Try to infer line orientation.
-    // TODO: Split the line into two lines if we can't satisfy both ends.
     const characters = store.characters;
-
-    const startContext = store.currentCanvas.committed.context(
-      this.startPosition
+    const startContext = cellContext(
+      this.startPosition,
+      store.currentCanvas.committed
     );
-    const endContext = store.currentCanvas.committed.context(this.endPosition);
+    const endContext = cellContext(
+      this.endPosition,
+      store.currentCanvas.committed
+    );
 
     const horizontalStart =
       (startContext.up && startContext.down) ||
@@ -114,7 +116,7 @@ export class DrawLine extends AbstractDrawFunction {
 
     layer.setFrom(snap(layer, store.currentCanvas.committed));
 
-    store.currentCanvas.setScratchLayer(layer);       
+    store.currentCanvas.setScratchLayer(layer);
   }
 
   end() {

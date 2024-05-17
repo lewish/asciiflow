@@ -10,6 +10,7 @@ import {
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
 import { DrawMove } from "#asciiflow/client/draw/move";
 import { Layer } from "#asciiflow/client/layer";
+import { snap } from "#asciiflow/client/snap";
 import { IModifierKeys, store } from "#asciiflow/client/store";
 import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
 import { Vector } from "#asciiflow/client/vector";
@@ -107,6 +108,8 @@ export class DrawSelect extends AbstractDrawFunction {
       }
     });
 
+    layer.setFrom(snap(layer, store.currentCanvas.committed));
+
     store.currentCanvas.setScratchLayer(layer);
   }
 
@@ -141,7 +144,7 @@ export class DrawSelect extends AbstractDrawFunction {
       // Use the native keyboard for copy pasting.
       if (value === KEY_COPY || value === KEY_CUT) {
         const copiedText = layerToText(
-          store.currentCanvas.rendered,
+          store.currentCanvas.committed,
           this.selectBox
         );
         navigator.clipboard.writeText(copiedText);
@@ -153,6 +156,9 @@ export class DrawSelect extends AbstractDrawFunction {
             layer.set(key, "");
           }
         });
+
+        layer.setFrom(snap(layer, store.currentCanvas.committed));
+
         store.currentCanvas.setScratchLayer(layer);
         store.currentCanvas.commitScratch();
       }
@@ -164,6 +170,9 @@ export class DrawSelect extends AbstractDrawFunction {
           layer.set(key, "");
         }
       });
+
+      layer.setFrom(snap(layer, store.currentCanvas.committed));
+
       store.currentCanvas.setScratchLayer(layer);
       store.currentCanvas.commitScratch();
     }

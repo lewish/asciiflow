@@ -63,28 +63,6 @@ export class Box {
   }
 }
 
-/**
- * An individual cell within the diagram and it's current value.
- */
-export class Cell {
-  constructor(public value?: string, public scratchValue?: string) {}
-
-  getRawValue() {
-    return this.scratchValue != null ? this.scratchValue : this.value;
-  }
-
-  isSpecial() {
-    return ALL_SPECIAL_VALUES.includes(this.getRawValue());
-  }
-
-  isEmpty() {
-    return this.value == null && this.scratchValue == null;
-  }
-
-  hasScratch() {
-    return this.scratchValue != null;
-  }
-}
 
 export class CellContext {
   constructor(
@@ -100,20 +78,5 @@ export class CellContext {
 
   sum() {
     return +this.left + +this.right + +this.up + +this.down;
-  }
-  /**
-   * Returns the total number of surrounding special cells.
-   */
-  extendedSum() {
-    return (
-      +this.left +
-      +this.right +
-      +this.up +
-      +this.down +
-      +this.leftup +
-      +this.leftdown +
-      +this.rightup +
-      +this.rightdown
-    );
   }
 }

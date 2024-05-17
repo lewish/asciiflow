@@ -112,43 +112,6 @@ export class DrawMove extends AbstractDrawFunction {
     store.currentCanvas.commitScratch();
   }
 
-  /**
-   * For a given position, finds the nearest cell that is of any interest to the
-   * move tool, e.g. a corner or a line. Will look up to 1 cell in each direction
-   * including diagonally.
-   */
-  snapToNearest(position: Vector) {
-    if (isSpecial(store.currentCanvas.committed.get(position))) {
-      return position;
-    }
-    const allDirections = (Direction.ALL as Vector[]).concat([
-      Direction.LEFT.add(Direction.UP),
-      Direction.LEFT.add(Direction.DOWN),
-      Direction.RIGHT.add(Direction.UP),
-      Direction.RIGHT.add(Direction.DOWN),
-    ]);
-
-    let bestDirection = null;
-    let bestContextSum = 0;
-    for (const direction of allDirections) {
-      // Find the most connected cell, essentially.
-      const newPos = position.add(direction);
-      const contextSum = store.currentCanvas.committed.context(newPos).sum();
-      if (
-        isSpecial(store.currentCanvas.committed.get(newPos)) &&
-        contextSum > bestContextSum
-      ) {
-        bestDirection = direction;
-        bestContextSum = contextSum;
-      }
-    }
-    if (bestDirection == null) {
-      // Didn't find anything, so just return the current cell.
-      return position;
-    }
-    return position.add(bestDirection);
-  }
-
   getCursor(position: Vector) {
     const value = store.currentCanvas.committed.get(position);
     if (value === constants.UNICODE.lineHorizontal) {

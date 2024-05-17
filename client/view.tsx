@@ -83,7 +83,6 @@ function render(canvas: HTMLCanvasElement) {
   const committed = store.currentCanvas.committed;
   const scratch = store.currentCanvas.scratch;
   const selection = store.currentCanvas.selection;
-  const rendered = store.currentCanvas.rendered;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -173,12 +172,12 @@ function render(canvas: HTMLCanvasElement) {
     if (constants.ALL_SPECIAL_VALUES.includes(value)) {
       // highlight(position, colors.highlight);
     }
-    const cellValue = rendered.get(position);
+    const cellValue = committed.get(position);
     text(position, cellValue);
   }
   for (const [position] of scratch.entries()) {
     highlight(position, colors.highlight);
-    const cellValue = rendered.get(position);
+    const cellValue = committed.get(position);
     text(position, cellValue);
   }
 

@@ -1,13 +1,12 @@
-import { Box, CellContext } from "#asciiflow/client/common";
+import { Box } from "#asciiflow/client/common";
 import * as constants from "#asciiflow/client/constants";
 import { Layer, LayerView } from "#asciiflow/client/layer";
-import { DrawingId, store } from "#asciiflow/client/store";
+import { DrawingId } from "#asciiflow/client/store";
+import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
 import { Persistent } from "#asciiflow/client/store/persistent";
 import { ArrayStringifier } from "#asciiflow/client/store/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
-import { action, makeAutoObservable, observable } from "mobx";
-import { Characters } from "#asciiflow/client/constants";
-import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
+import { action, observable } from "mobx";
 
 
 /**
@@ -119,14 +118,6 @@ export class CanvasStore {
    */
   clearScratch() {
     this.scratch = new Layer();
-  }
-
-  /**
-   * Returns the draw value of a cell at the given position.
-   */
-
-  get rendered() {
-    return this.combined;
   }
 
   /**

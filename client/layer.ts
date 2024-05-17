@@ -1,68 +1,24 @@
-import { Vector } from "#asciiflow/client/vector";
-import { CellContext } from "#asciiflow/client/common";
-import * as constants from "#asciiflow/client/constants";
+import { LegacyRenderLayer } from "#asciiflow/client/render_layer";
 import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
+import { Vector } from "#asciiflow/client/vector";
 
 export interface ILayerView {
   get(position: Vector): string;
-  context(position: Vector): CellContext;
   keys(): Vector[];
   entries(): [Vector, string][];
 }
 
-export abstract class AbstractLayer implements ILayerView {
-  abstract get(position: Vector): string;
-  abstract keys(): Vector[];
-
-  context(position: Vector): CellContext {
-    const left = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.left())
-    );
-    const right = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.right())
-    );
-    const up = constants.ALL_SPECIAL_VALUES.includes(this.get(position.up()));
-    const down = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.down())
-    );
-    const leftup = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.left().up())
-    );
-    const leftdown = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.left().down())
-    );
-    const rightup = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.right().up())
-    );
-    const rightdown = constants.ALL_SPECIAL_VALUES.includes(
-      this.get(position.right().down())
-    );
-    return new CellContext(
-      left,
-      right,
-      up,
-      down,
-      leftup,
-      leftdown,
-      rightup,
-      rightdown
-    );
-  }
-
-  public entries() {
-    return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
-  }
-}
-
 interface ILayerJSON {
+  version: number;
   x: number;
   y: number;
   text: string;
 }
-export class Layer extends AbstractLayer {
-  public static serialize = (value: Layer) => {
+export class Layer implements ILayerView {
+  public static serialize(value: Layer) {
     // Most efficient format seems to be to just store the drawing as plain text with an offset.
     return JSON.stringify({
+      version: 2,
       x: value
         .entries()
         .reduce((acc, [key]) => Math.min(acc, key.x), Number.MAX_SAFE_INTEGER),
@@ -71,13 +27,25 @@ export class Layer extends AbstractLayer {
         .reduce((acc, [key]) => Math.min(acc, key.y), Number.MAX_SAFE_INTEGER),
       text: layerToText(value),
     } as ILayerJSON);
-  };
+  }
 
-  public static deserialize = (value: string) => {
+  public static deserialize(value: string) {
     const object = JSON.parse(value) as ILayerJSON;
+    // Version 1 is the original format.
+    if (!!object.version) {
+      const fixedLayer = new Layer();
+      const legacyRenderedLayer = new LegacyRenderLayer(
+        textToLayer(object.text, new Vector(object.x, object.y))
+      );
+      fixedLayer.setFrom(legacyRenderedLayer);
+      return fixedLayer;
+    }
     return textToLayer(object.text, new Vector(object.x, object.y));
-  };
+  }
 
+  public entries() {
+    return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
+  }
   public map = new Map<string, string>();
 
   public delete(position?: Vector) {
@@ -92,7 +60,7 @@ export class Layer extends AbstractLayer {
     this.map.set(position.toString(), value);
   }
 
-  public setFrom(layer: Layer) {
+  public setFrom(layer: ILayerView) {
     for (const [key, value] of layer.entries()) {
       this.set(key, value);
     }
@@ -138,10 +106,8 @@ export class Layer extends AbstractLayer {
   }
 }
 
-export class LayerView extends AbstractLayer {
-  public constructor(private layers: Layer[]) {
-    super();
-  }
+export class LayerView implements ILayerView {
+  public constructor(private layers: Layer[]) {}
 
   keys(): Vector[] {
     const keys = new Set<string>();
@@ -162,5 +128,9 @@ export class LayerView extends AbstractLayer {
       }
     }
     return null;
+  }
+
+  public entries() {
+    return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
   }
 }
