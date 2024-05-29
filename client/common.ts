@@ -7,6 +7,22 @@ import { Vector } from "#asciiflow/client/vector";
 export class Box {
   constructor(public readonly start: Vector, public readonly end: Vector) {}
 
+  left() {
+    return Math.min(this.start.x, this.end.x);
+  }
+
+  right() {
+    return Math.max(this.start.x, this.end.x);
+  }
+
+  top() {
+    return Math.min(this.start.y, this.end.y);
+  }
+
+  bottom() {
+    return Math.max(this.start.y, this.end.y);
+  }
+
   topLeft() {
     return new Vector(
       Math.min(this.start.x, this.end.x),
@@ -14,9 +30,23 @@ export class Box {
     );
   }
 
+  topRight() {
+    return new Vector(
+      Math.max(this.start.x, this.end.x),
+      Math.min(this.start.y, this.end.y)
+    );
+  }
+
   bottomRight() {
     return new Vector(
       Math.max(this.start.x, this.end.x),
+      Math.max(this.start.y, this.end.y)
+    );
+  }
+
+  bottomLeft() {
+    return new Vector(
+      Math.min(this.start.x, this.end.x),
       Math.max(this.start.y, this.end.y)
     );
   }
@@ -33,28 +63,6 @@ export class Box {
   }
 }
 
-/**
- * An individual cell within the diagram and it's current value.
- */
-export class Cell {
-  constructor(public value?: string, public scratchValue?: string) {}
-
-  getRawValue() {
-    return this.scratchValue != null ? this.scratchValue : this.value;
-  }
-
-  isSpecial() {
-    return ALL_SPECIAL_VALUES.includes(this.getRawValue());
-  }
-
-  isEmpty() {
-    return this.value == null && this.scratchValue == null;
-  }
-
-  hasScratch() {
-    return this.scratchValue != null;
-  }
-}
 
 export class CellContext {
   constructor(
@@ -70,20 +78,5 @@ export class CellContext {
 
   sum() {
     return +this.left + +this.right + +this.up + +this.down;
-  }
-  /**
-   * Returns the total number of surrounding special cells.
-   */
-  extendedSum() {
-    return (
-      +this.left +
-      +this.right +
-      +this.up +
-      +this.down +
-      +this.leftup +
-      +this.leftdown +
-      +this.rightup +
-      +this.rightdown
-    );
   }
 }

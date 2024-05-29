@@ -1,39 +1,33 @@
-import * as React from "react";
-import MaterialDrawer from "@material-ui/core/Drawer";
+import { ControlledDialog } from "#asciiflow/client/components/controlled_dialog";
+import { ControlledMenu } from "#asciiflow/client/components/controlled_menu";
+import { ASCII, UNICODE } from "#asciiflow/client/constants";
 import styles from "#asciiflow/client/drawer.module.css";
+import { ExportDialog } from "#asciiflow/client/export";
+import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
+import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
 import {
+  Button,
+  Chip,
+  DialogContent,
+  DialogTitle,
+  Fab,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
-  IconButton,
-  Collapse,
-  Paper,
   ListItemSecondaryAction,
-  ListSubheader,
-  Chip,
+  ListItemText,
   MenuItem,
-  MenuList,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  Snackbar,
-  Fab,
+  Paper,
   Popover,
+  Snackbar,
+  TextField
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
 import { useObserver } from "mobx-react";
-import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
-import { ControlledMenu } from "#asciiflow/client/components/controlled_menu";
-import { IRouteProps } from "#asciiflow/client/app";
-import { ControlledDialog } from "#asciiflow/client/components/controlled_dialog";
-import { useHistory } from "react-router";
-import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
-import { ExportDialog } from "#asciiflow/client/export";
+import * as React from "react";
 import { useState } from "react";
-import { ASCII, UNICODE } from "#asciiflow/client/constants";
+import { useHistory } from "react-router";
 
 export function Drawer() {
   const history = useHistory();

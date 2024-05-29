@@ -1,113 +1,108 @@
+import { connects, isArrow } from "#asciiflow/client/characters";
 import * as constants from "#asciiflow/client/constants";
 import { isSpecial } from "#asciiflow/client/constants";
+import { Direction } from "#asciiflow/client/direction";
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
-import { drawLine } from "#asciiflow/client/draw/utils";
 import { Layer } from "#asciiflow/client/layer";
 import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 
-interface IEnd {
-  position: Vector;
-  clockwise: boolean;
-  startIsAlt: boolean;
-  midPointIsAlt?: boolean;
-  endIsAlt: boolean;
-}
 export class DrawMove extends AbstractDrawFunction {
-  private startPosition: Vector;
-  private ends: IEnd[] = [];
+  private trace: ILineTrace;
 
   start(position: Vector) {
-    this.startPosition = constants.TOUCH_ENABLED
-      ? this.snapToNearest(position)
-      : position;
-    this.ends = [];
-
-    // If this isn't a special cell then quit, or things get weird.
-    if (!constants.isSpecial(store.currentCanvas.committed.get(position))) {
+    const value = store.currentCanvas.committed.get(position);
+    if (
+      value !== constants.UNICODE.lineHorizontal &&
+      value !== constants.UNICODE.lineVertical
+    ) {
       return;
     }
 
-    const ends: IEnd[] = [];
-    for (const i of constants.DIRECTIONS) {
-      const midPoints = this.followLine(this.startPosition, i);
-      for (const midPoint of midPoints) {
-        // Clockwise is a lie, it is true if we move vertically first.
-        const clockwise = i.x !== 0;
-        const startIsAlt =
-          constants.ALT_SPECIAL_VALUES.indexOf(
-            store.currentCanvas.committed.get(position)
-          ) !== -1;
-        const midPointIsAlt =
-          constants.ALT_SPECIAL_VALUES.indexOf(
-            store.currentCanvas.committed.get(midPoint)
-          ) !== -1;
-
-        const midPointContext = store.currentCanvas.committed.context(midPoint);
-        // Special case, a straight line with no turns.
-        if (midPointContext.sum() === 1) {
-          ends.push({
-            position: midPoint,
-            clockwise,
-            startIsAlt,
-            endIsAlt: midPointIsAlt,
-          });
-          continue;
-        }
-        // Continue following lines from the midpoint.
-        for (const j of constants.DIRECTIONS) {
-          if (i.add(j).length() === 0 || i.add(j).length() === 2) {
-            // Don't go back on ourselves, or don't carry on in same direction.
-            continue;
-          }
-          const secondEnds = this.followLine(midPoint, j);
-          // Ignore any directions that didn't go anywhere.
-          if (secondEnds.length === 0) {
-            continue;
-          }
-          const secondEnd = secondEnds[0];
-          const endIsAlt =
-            constants.ALT_SPECIAL_VALUES.indexOf(
-              store.currentCanvas.committed.get(secondEnd)
-            ) !== -1;
-          // On the second line we don't care about multiple
-          // junctions, just the last.
-          ends.push({
-            position: secondEnd,
-            clockwise,
-            startIsAlt,
-            midPointIsAlt,
-            endIsAlt,
-          });
-        }
-      }
-    }
-    this.ends = ends;
-    // Redraw the new lines after we have cleared the existing ones.
-    this.move(this.startPosition);
+    this.trace = traceLine(store.currentCanvas.committed, position);
+    this.move(position);
   }
 
   move(position: Vector) {
+    if (this.trace == null) {
+      return;
+    }
     const layer = new Layer();
-    // Clear all the lines so we can draw them afresh.
-    for (const end of this.ends) {
-      drawLine(layer, this.startPosition, end.position, end.clockwise, "");
-    }
-    for (const end of this.ends) {
-      drawLine(layer, position, end.position, end.clockwise);
-    }
-    for (const end of this.ends) {
-      // If the ends or midpoint of the line was a alt character (arrow), need to preserve that.
-      if (end.startIsAlt) {
-        layer.set(position, constants.ALT_SPECIAL_VALUE);
+    // Find the min/max x/y that we can move to.
+    const minX = Math.max(
+      ...this.trace.attachments
+        .filter((a) => a.direction === Direction.LEFT)
+        .map((a) => a.end.x)
+    );
+    const maxX = Math.min(
+      ...this.trace.attachments
+        .filter((a) => a.direction === Direction.RIGHT)
+        .map((a) => a.end.x)
+    );
+    const minY = Math.max(
+      ...this.trace.attachments
+        .filter((a) => a.direction === Direction.UP)
+        .map((a) => a.end.y)
+    );
+    const maxY = Math.min(
+      ...this.trace.attachments
+        .filter((a) => a.direction === Direction.DOWN)
+        .map((a) => a.end.y)
+    );
+    console.log(minX, maxX, minY, maxY);
+    console.log(this.trace);
+    // Calculate the effective position after calculating bounds.
+    const effectivePosition = new Vector(
+      Math.min(Math.max(position.x, minX), maxX),
+      Math.min(Math.max(position.y, minY), maxY)
+    );
+    // Work out which direction we're moving in.
+    const moveDirection =
+      this.trace.orientation === "vertical"
+        ? effectivePosition.x < this.trace.positions[0].x
+          ? Direction.LEFT
+          : Direction.RIGHT
+        : effectivePosition.y < this.trace.positions[0].y
+        ? Direction.UP
+        : Direction.DOWN;
+    // Work out how many units/cells we're moving.
+    const moveUnits = Math.abs(
+      moveDirection === Direction.LEFT || moveDirection === Direction.RIGHT
+        ? effectivePosition.x - this.trace.positions[0].x
+        : effectivePosition.y - this.trace.positions[0].y
+    );
+    // Clear any attachments that are in the way.
+    for (const attachment of this.trace.attachments) {
+      if (attachment.direction === moveDirection) {
+        for (let i = 0; i < moveUnits; i++) {
+          layer.set(attachment.source.add(attachment.direction.scale(i)), "");
+        }
       }
-      if (end.endIsAlt) {
-        layer.set(end.position, constants.ALT_SPECIAL_VALUE);
-      }
-      if (end.midPointIsAlt) {
-        const midX = end.clockwise ? end.position.x : position.x;
-        const midY = end.clockwise ? position.y : end.position.y;
-        layer.set(new Vector(midX, midY), constants.ALT_SPECIAL_VALUE);
+    }
+    // Clear the line.
+    for (const position of this.trace.positions) {
+      layer.set(position, "");
+    }
+    // Move the line.
+    for (const position of this.trace.positions) {
+      layer.set(
+        position.add(moveDirection.scale(moveUnits)),
+        store.currentCanvas.committed.get(position)
+      );
+    }
+    // Extend any attachments that need to be extended.
+    for (const attachment of this.trace.attachments) {
+      if (attachment.direction === moveDirection.opposite()) {
+        for (let i = 1; i <= moveUnits; i++) {
+          // TODO: Deal with arrows.
+          layer.set(
+            attachment.source.add(attachment.direction.scale(-i)),
+            attachment.direction === Direction.LEFT ||
+              attachment.direction === Direction.RIGHT
+              ? constants.UNICODE.lineHorizontal
+              : constants.UNICODE.lineVertical
+          );
+        }
       }
     }
     store.currentCanvas.setScratchLayer(layer);
@@ -117,76 +112,14 @@ export class DrawMove extends AbstractDrawFunction {
     store.currentCanvas.commitScratch();
   }
 
-  /**
-   * Follows a line in a given direction from the startPosition.
-   * Returns a list of positions that were line 'junctions'. This is a bit of a
-   * loose definition, but basically means a point around which we resize things.
-   */
-  followLine(startPosition: Vector, direction: Vector) {
-    let endPosition = startPosition.clone();
-    const junctions = [];
-    while (true) {
-      const nextEnd = endPosition.add(direction);
-      const nextEndValue = store.currentCanvas.committed.get(nextEnd);
-      if (!isSpecial(nextEndValue)) {
-        // Junctions: Right angles and end T-Junctions.
-        if (!startPosition.equals(endPosition)) {
-          junctions.push(endPosition);
-        }
-        return junctions;
-      }
-
-      endPosition = nextEnd;
-      const context = store.currentCanvas.committed.context(endPosition);
-      // Junctions: Side T-Junctions.
-      if (context.sum() === 3) {
-        junctions.push(endPosition);
-      }
-      // Fully connected junctions.
-      if (context.sum() === 4) {
-        junctions.push(endPosition);
-      }
-    }
-  }
-
-  /**
-   * For a given position, finds the nearest cell that is of any interest to the
-   * move tool, e.g. a corner or a line. Will look up to 1 cell in each direction
-   * including diagonally.
-   */
-  snapToNearest(position: Vector) {
-    if (isSpecial(store.currentCanvas.committed.get(position))) {
-      return position;
-    }
-    const allDirections = constants.DIRECTIONS.concat([
-      constants.DIR_LEFT.add(constants.DIR_UP),
-      constants.DIR_LEFT.add(constants.DIR_DOWN),
-      constants.DIR_RIGHT.add(constants.DIR_UP),
-      constants.DIR_RIGHT.add(constants.DIR_DOWN),
-    ]);
-
-    let bestDirection = null;
-    let bestContextSum = 0;
-    for (const direction of allDirections) {
-      // Find the most connected cell, essentially.
-      const newPos = position.add(direction);
-      const contextSum = store.currentCanvas.committed.context(newPos).sum();
-      if (
-        isSpecial(store.currentCanvas.committed.get(newPos)) &&
-        contextSum > bestContextSum
-      ) {
-        bestDirection = direction;
-        bestContextSum = contextSum;
-      }
-    }
-    if (bestDirection == null) {
-      // Didn't find anything, so just return the current cell.
-      return position;
-    }
-    return position.add(bestDirection);
-  }
-
   getCursor(position: Vector) {
+    const value = store.currentCanvas.committed.get(position);
+    if (value === constants.UNICODE.lineHorizontal) {
+      return "ns-resize";
+    }
+    if (value === constants.UNICODE.lineVertical) {
+      return "ew-resize";
+    }
     if (isSpecial(store.currentCanvas.committed.get(position))) {
       return "move";
     } else {
@@ -195,4 +128,121 @@ export class DrawMove extends AbstractDrawFunction {
   }
 
   handleKey(value: string) {}
+}
+
+interface ILineAttachmentTrace {
+  source: Vector;
+  end: Vector;
+  sourceValue: string;
+  direction: Direction;
+}
+interface ILineTrace {
+  orientation: "horizontal" | "vertical";
+  positions: Vector[];
+  attachments: ILineAttachmentTrace[];
+}
+
+function traceLine(layer: Layer, position: Vector): ILineTrace {
+  const value = layer.get(position);
+  if (
+    value !== constants.UNICODE.lineHorizontal &&
+    value !== constants.UNICODE.lineVertical
+  ) {
+    throw new Error(`Expected line, got ${value}`);
+  }
+  const directions =
+    value === constants.UNICODE.lineHorizontal
+      ? [Direction.LEFT, Direction.RIGHT]
+      : [Direction.UP, Direction.DOWN];
+  const attachmentDirections =
+    value === constants.UNICODE.lineHorizontal
+      ? [Direction.UP, Direction.DOWN]
+      : [Direction.LEFT, Direction.RIGHT];
+
+  const positions: Vector[] = [position];
+  const attachments: ILineAttachmentTrace[] = [];
+  for (const direction of directions) {
+    let currentPosition = position;
+    while (true) {
+      const nextPosition = currentPosition.add(direction);
+      if (
+        !connects(layer.get(currentPosition), direction) ||
+        !connects(layer.get(nextPosition), direction.opposite())
+      ) {
+        break;
+      }
+      currentPosition = nextPosition;
+      positions.push(currentPosition);
+    }
+  }
+
+  for (const currentPosition of positions) {
+    // Find any attachments.
+    for (const attachmentDirection of attachmentDirections) {
+      if (
+        connects(layer.get(currentPosition), attachmentDirection) &&
+        connects(
+          layer.get(currentPosition.add(attachmentDirection)),
+          attachmentDirection.opposite()
+        )
+      ) {
+        attachments.push(
+          traceAttachment(
+            layer,
+            currentPosition.add(attachmentDirection),
+            attachmentDirection
+          )
+        );
+      }
+      if (
+        isArrow(layer.get(currentPosition.add(attachmentDirection))) &&
+        connects(
+          layer.get(currentPosition.add(attachmentDirection.scale(2))),
+          attachmentDirection.opposite()
+        )
+      ) {
+        positions.push(currentPosition.add(attachmentDirection));
+        attachments.push(
+          traceAttachment(
+            layer,
+            currentPosition.add(attachmentDirection.scale(2)),
+            attachmentDirection
+          )
+        );
+      }
+    }
+  }
+
+  return {
+    orientation:
+      value === constants.UNICODE.lineHorizontal ? "horizontal" : "vertical",
+    positions,
+    attachments,
+  };
+}
+
+function traceAttachment(
+  layer: Layer,
+  position: Vector,
+  direction: Direction
+): ILineAttachmentTrace {
+  const traceValue =
+    direction === Direction.LEFT || direction === Direction.RIGHT
+      ? constants.UNICODE.lineHorizontal
+      : constants.UNICODE.lineVertical;
+  const sourceValue = layer.get(position);
+  let tracePosition = position;
+  while (true) {
+    const nextPosition = tracePosition.add(direction);
+    if (layer.get(nextPosition) !== traceValue) {
+      break;
+    }
+    tracePosition = nextPosition;
+  }
+  return {
+    source: position,
+    end: tracePosition,
+    sourceValue,
+    direction,
+  };
 }
