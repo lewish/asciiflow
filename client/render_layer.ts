@@ -1,24 +1,20 @@
 import { CellContext } from "#asciiflow/client/common";
 import { Characters } from "#asciiflow/client/constants";
-import { AbstractLayer, ILayerView } from "#asciiflow/client/layer";
-import { store } from "#asciiflow/client/store";
+import { ILayerView } from "#asciiflow/client/layer";
 import { Vector } from "#asciiflow/client/vector";
 import * as constants from "#asciiflow/client/constants";
 
-/**
- * This is where the "magic" happens. Rules are applied to the underlying drawing to determine what the rendered character should be.
- * This mostly handles logic such as junctions and arrows so things render correctly and all the lines match up etc.
- */
-export class RenderLayer extends AbstractLayer {
-  constructor(private baseLayer: ILayerView) {
-    super();
-  }
+export class LegacyRenderLayer implements ILayerView {
+  constructor(private baseLayer: ILayerView) {}
   keys(): Vector[] {
     return this.baseLayer.keys();
   }
 
+  public entries() {
+    return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
+  }
   get(position: Vector): string {
-    const characterSet = store.characters;
+    const characterSet = constants.UNICODE;
 
     const combined = this.baseLayer;
     const value = combined.get(position);
@@ -27,7 +23,7 @@ export class RenderLayer extends AbstractLayer {
 
     if (isArrow) {
       // In some situations, we can be certain about arrow orientation.
-      const context = combined.context(position);
+      const context = cellContext(position, combined);
 
       if (context.sum() === 1) {
         if (context.up) {
@@ -91,7 +87,7 @@ export class RenderLayer extends AbstractLayer {
     }
 
     if (isLine) {
-      const context = combined.context(position);
+      const context = cellContext(position, combined);
 
       // Terminating character in a line.
       if (context.sum() === 1) {
@@ -258,7 +254,39 @@ export class RenderLayer extends AbstractLayer {
 
     return value;
   }
-  context(position: Vector): CellContext {
-    return this.baseLayer.context(position);
-  }
+}
+
+export function cellContext(position: Vector, layer: ILayerView): CellContext {
+  const left = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.left())
+  );
+  const right = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.right())
+  );
+  const up = constants.ALL_SPECIAL_VALUES.includes(layer.get(position.up()));
+  const down = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.down())
+  );
+  const leftup = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.left().up())
+  );
+  const leftdown = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.left().down())
+  );
+  const rightup = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.right().up())
+  );
+  const rightdown = constants.ALL_SPECIAL_VALUES.includes(
+    layer.get(position.right().down())
+  );
+  return new CellContext(
+    left,
+    right,
+    up,
+    down,
+    leftup,
+    leftdown,
+    rightup,
+    rightdown
+  );
 }

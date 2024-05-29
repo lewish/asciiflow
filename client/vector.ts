@@ -6,7 +6,15 @@ export interface IVector {
   x: number;
   y: number;
 }
+
 export class Vector implements IVector {
+  public static serialize(value: Vector) {
+    return value.toString();
+  }
+  public static deserialize(value: string) {
+    return Vector.fromString(value);
+  }
+
   constructor(public x: number, public y: number) {}
 
   // TODO: These shouldn't be here.
@@ -38,10 +46,6 @@ export class Vector implements IVector {
 
   add(other: Vector) {
     return new Vector(this.x + other.x, this.y + other.y);
-  }
-
-  clone() {
-    return new Vector(this.x, this.y);
   }
 
   length() {

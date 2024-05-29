@@ -37,7 +37,7 @@ export function ExportDialog({
     const exportConfig = store.exportConfig.get();
     // Only compute the text if the dialog is open.
     const drawingText = open
-      ? applyConfig(layerToText(store.canvas(drawingId).rendered), exportConfig)
+      ? applyConfig(layerToText(store.canvas(drawingId).committed), exportConfig)
       : "";
     return (
       <>

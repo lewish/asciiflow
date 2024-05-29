@@ -1,10 +1,18 @@
 import {
-  IDrawFunction,
-  AbstractDrawFunction,
+  connect,
+  connectable,
+  connects,
+  disconnect,
+} from "#asciiflow/client/characters";
+import { Direction } from "#asciiflow/client/direction";
+import {
+  AbstractDrawFunction
 } from "#asciiflow/client/draw/function";
-import { drawLine } from "#asciiflow/client/draw/utils";
-import { Layer } from "#asciiflow/client/layer";
-import { store, IModifierKeys } from "#asciiflow/client/store";
+import { line } from "#asciiflow/client/draw/utils";
+import { Layer, LayerView } from "#asciiflow/client/layer";
+import { cellContext } from "#asciiflow/client/render_layer";
+import { snap } from "#asciiflow/client/snap";
+import { IModifierKeys, store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 
 export class DrawLine extends AbstractDrawFunction {
@@ -29,11 +37,15 @@ export class DrawLine extends AbstractDrawFunction {
   draw(modifierKeys: IModifierKeys) {
     const layer = new Layer();
     // Try to infer line orientation.
-    // TODO: Split the line into two lines if we can't satisfy both ends.
     const characters = store.characters;
-
-    const startContext = store.currentCanvas.committed.context(this.startPosition);
-    const endContext = store.currentCanvas.committed.context(this.endPosition);
+    const startContext = cellContext(
+      this.startPosition,
+      store.currentCanvas.committed
+    );
+    const endContext = cellContext(
+      this.endPosition,
+      store.currentCanvas.committed
+    );
 
     const horizontalStart =
       (startContext.up && startContext.down) ||
@@ -49,7 +61,7 @@ export class DrawLine extends AbstractDrawFunction {
       (horizontalStart || verticalEnd) !==
       (modifierKeys.ctrl || modifierKeys.shift);
 
-    drawLine(layer, this.startPosition, this.endPosition, horizontalFirst);
+    layer.setFrom(line(this.startPosition, this.endPosition, horizontalFirst));
 
     if (this.isArrow) {
       layer.set(
@@ -77,6 +89,33 @@ export class DrawLine extends AbstractDrawFunction {
         })()
       );
     }
+    // Start or end characters may not just be lines, if adjacent cells have any incoming connections
+    // then we connect to them, and then remove any unnecessary connections (if possible).
+    const combined = new LayerView([store.currentCanvas.committed, layer]);
+    for (const position of this.isArrow
+      ? [this.startPosition]
+      : [this.startPosition, this.endPosition]) {
+      const incomingConnections = Direction.ALL.filter(
+        (direction) =>
+          connects(
+            combined.get(position.add(direction)),
+            direction.opposite()
+          ) && connectable(layer.get(position), direction)
+      );
+      layer.set(position, connect(layer.get(position), incomingConnections));
+      layer.set(
+        position,
+        disconnect(
+          layer.get(position),
+          Direction.ALL.filter(
+            (direction) => !incomingConnections.includes(direction)
+          )
+        )
+      );
+    }
+
+    layer.setFrom(snap(layer, store.currentCanvas.committed));
+
     store.currentCanvas.setScratchLayer(layer);
   }
 
