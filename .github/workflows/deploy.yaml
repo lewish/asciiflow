@@ -9,6 +9,7 @@ jobs:
   deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
+    environment: deploy
 
     steps:
       # Checks out a copy of your repository.
