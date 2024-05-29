@@ -1,7 +1,6 @@
 import { CellContext } from "#asciiflow/client/common";
 import { Characters } from "#asciiflow/client/constants";
 import { ILayerView } from "#asciiflow/client/layer";
-import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import * as constants from "#asciiflow/client/constants";
 
@@ -15,7 +14,7 @@ export class LegacyRenderLayer implements ILayerView {
     return this.keys().map((key) => [key, this.get(key)] as [Vector, string]);
   }
   get(position: Vector): string {
-    const characterSet = store.characters;
+    const characterSet = constants.UNICODE;
 
     const combined = this.baseLayer;
     const value = combined.get(position);
