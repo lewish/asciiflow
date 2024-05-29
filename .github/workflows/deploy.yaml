@@ -3,12 +3,14 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
+      - beta
 
 jobs:
   deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
+    environment: deploy
 
     steps:
       # Checks out a copy of your repository.
@@ -19,11 +21,14 @@ jobs:
       - name: Build the site
         uses: "docker://mattinsler/bazelisk:latest"
         with:
-          args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./gh-pages-deploy"
+          args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./deploy"
   
-      # Deploy the site to gh-pages.
-      - name: Deploy the site
-        uses: JamesIves/github-pages-deploy-action@4.0.0
+      # Deploy the site to Cloudflare.
+      - name: Publish
+        uses: cloudflare/pages-action@1
         with:
-          branch: gh-pages
-          folder: gh-pages-deploy
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4aa13cc00192d0927df8194260cb2ce8
+          projectName: asciiflow
+          directory: ./deploy
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
