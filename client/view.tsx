@@ -169,15 +169,12 @@ function render(canvas: HTMLCanvasElement) {
     }
   }
   for (const [position, value] of committed.entries()) {
-    if (constants.ALL_SPECIAL_VALUES.includes(value)) {
-      // highlight(position, colors.highlight);
-    }
     const cellValue = committed.get(position);
     text(position, cellValue);
   }
   for (const [position] of scratch.entries()) {
     highlight(position, colors.highlight);
-    const cellValue = committed.get(position);
+    const cellValue = scratch.get(position);
     text(position, cellValue);
   }
 
