@@ -103,9 +103,13 @@ export class Controller {
         } else {
           store.currentCanvas.undo();
         }
+        // Disable browser-specific behavior on Cmd/Ctrl+Z: https://github.com/lewish/asciiflow/issues/189
+        event.preventDefault();
       }
       if (event.keyCode === 89) {
         store.currentCanvas.redo();
+        // Disable browser-specific behavior on Cmd/Ctrl+Y: https://github.com/lewish/asciiflow/issues/189
+        event.preventDefault();
       }
       if (event.keyCode === 88) {
         specialKeyCode = constants.KEY_CUT;
