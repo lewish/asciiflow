@@ -4,10 +4,9 @@ import {
   connects,
   disconnect,
 } from "#asciiflow/client/characters";
+import { UNICODE } from "#asciiflow/client/constants";
 import { Direction } from "#asciiflow/client/direction";
-import {
-  AbstractDrawFunction
-} from "#asciiflow/client/draw/function";
+import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
 import { line } from "#asciiflow/client/draw/utils";
 import { Layer, LayerView } from "#asciiflow/client/layer";
 import { cellContext } from "#asciiflow/client/render_layer";
@@ -35,9 +34,12 @@ export class DrawLine extends AbstractDrawFunction {
   }
 
   draw(modifierKeys: IModifierKeys) {
+    if (!this.startPosition || !this.endPosition) {
+      return;
+    }
     const layer = new Layer();
     // Try to infer line orientation.
-    const characters = store.characters;
+    const characters = UNICODE;
     const startContext = cellContext(
       this.startPosition,
       store.currentCanvas.committed

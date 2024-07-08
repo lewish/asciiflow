@@ -9,11 +9,12 @@ import {
 import { Drawer } from "#asciiflow/client/drawer";
 import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
 import { screenToCell, View } from "#asciiflow/client/view";
-import { useObserver } from "mobx-react";
+
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import { Vector } from "#asciiflow/client/vector";
 import { textToLayer } from "#asciiflow/client/text_utils";
+import { useWatchable } from "#asciiflow/common/watchable";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -25,7 +26,7 @@ export interface IRouteProps {
 }
 
 export const App = () => {
-  return useObserver(() => {
+  return useWatchable(() => {
     const routeProps = useParams<IRouteProps>();
     store.setRoute(
       routeProps.share
@@ -86,7 +87,7 @@ document.addEventListener("paste", (e) => {
   if (store.selectTool.selectBox) {
     position = store.selectTool.selectBox.topLeft();
   }
-  if (store.toolMode === ToolMode.TEXT && store.textTool.currentPosition) {
+  if (store.toolMode.get() === ToolMode.TEXT && store.textTool.currentPosition) {
     position = store.textTool.currentPosition;
   }
   const pastedLayer = textToLayer(clipboardText, position);

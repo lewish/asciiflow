@@ -1924,7 +1924,7 @@
       "general": {
         "bzlTransitiveDigest": "1AgLnqJKLQ3oVnMjCFAnZu9xkVBlccfPNkYRAnC0R10=",
         "accumulatedFileDigests": {
-          "@@//:pnpm-lock.yaml": "2a671c3fe710ca9773224102fe1f414af7e8ac030f73569cb12ecee281e8d5ae"
+          "@@//:pnpm-lock.yaml": "6aba6df0ea3b6c452d7afaf56acd5f6cee8b3961b12a115d72483ea540ff43af"
         },
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -5774,6 +5774,31 @@
               ]
             }
           },
+          "npm__at_sinonjs_commons__3.0.1": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_commons__3.0.1",
+              "package": "@sinonjs/commons",
+              "version": "3.0.1",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ==",
+              "url": "https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.1.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__ws__8.16.0__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -8167,6 +8192,40 @@
                 ],
                 "yallist": [
                   "3.1.1"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
+          "npm__at_sinonjs_fake-timers__11.2.2__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_fake-timers__11.2.2__links",
+              "package": "@sinonjs/fake-timers",
+              "version": "11.2.2",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {
+                "@sinonjs/commons": "3.0.1"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "3.0.1"
+                ],
+                "@sinonjs/fake-timers": [
+                  "11.2.2"
+                ],
+                "type-detect": [
+                  "4.0.8"
                 ]
               },
               "lifecycle_build_target": false,
@@ -10865,6 +10924,31 @@
               "generate_bzl_library_targets": false
             }
           },
+          "npm__path-to-regexp__6.2.2": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__path-to-regexp__6.2.2",
+              "package": "path-to-regexp",
+              "version": "6.2.2",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-GQX3SSMokngb36+whdpRXE+3f9V8UzyAorlYvOGx87ufGHehNTn5lCxrKtLyZ4Yl/wEKnNnr98ZzOwwDZV5ogw==",
+              "url": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-6.2.2.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__resolve-alpn__1.2.1": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -11150,6 +11234,45 @@
               "lifecycle_hooks": [],
               "extra_build_content": "",
               "generate_bzl_library_targets": false
+            }
+          },
+          "npm__at_sinonjs_samsam__8.0.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_samsam__8.0.0__links",
+              "package": "@sinonjs/samsam",
+              "version": "8.0.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {
+                "@sinonjs/commons": "2.0.0",
+                "lodash.get": "4.4.2",
+                "type-detect": "4.0.8"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "2.0.0"
+                ],
+                "@sinonjs/samsam": [
+                  "8.0.0"
+                ],
+                "lodash.get": [
+                  "4.4.2"
+                ],
+                "type-detect": [
+                  "4.0.8"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
             }
           },
           "npm__at_babel_highlight__7.23.4": {
@@ -12120,6 +12243,32 @@
               ]
             }
           },
+          "npm__lodash.get__4.4.2__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__lodash.get__4.4.2__links",
+              "package": "lodash.get",
+              "version": "4.4.2",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {},
+              "transitive_closure": {
+                "lodash.get": [
+                  "4.4.2"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__deep-eql__4.1.3": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -12301,6 +12450,31 @@
               "package_visibility": [
                 "//visibility:public"
               ]
+            }
+          },
+          "npm__at_types_sinonjs__fake-timers__8.1.5": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_sinonjs__fake-timers__8.1.5",
+              "package": "@types/sinonjs__fake-timers",
+              "version": "8.1.5",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==",
+              "url": "https://registry.npmjs.org/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.5.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
             }
           },
           "npm__es-module-lexer__1.4.1__links": {
@@ -13670,6 +13844,31 @@
               "link_packages": {},
               "integrity": "sha512-8Q3veQEDGe14dTYuwagbRtwxQDnytyg1JFu4/HwEMETeofocrB0U0ejBJIXoeG/t2oXZ8kzCyI0ZZfbT80VFNQ==",
               "url": "https://registry.npmjs.org/@babel/plugin-transform-async-generator-functions/-/plugin-transform-async-generator-functions-7.23.9.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
+          "npm__diff__5.2.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__diff__5.2.0",
+              "package": "diff",
+              "version": "5.2.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==",
+              "url": "https://registry.npmjs.org/diff/-/diff-5.2.0.tgz",
               "commit": "",
               "patch_args": [],
               "patches": [],
@@ -16236,6 +16435,37 @@
               "generate_bzl_library_targets": false
             }
           },
+          "npm__at_sinonjs_commons__3.0.1__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_commons__3.0.1__links",
+              "package": "@sinonjs/commons",
+              "version": "3.0.1",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {
+                "type-detect": "4.0.8"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "3.0.1"
+                ],
+                "type-detect": [
+                  "4.0.8"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__http-errors__2.0.0__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -17127,6 +17357,31 @@
               "package_visibility": [
                 "//visibility:public"
               ]
+            }
+          },
+          "npm__at_sinonjs_commons__2.0.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_commons__2.0.0",
+              "package": "@sinonjs/commons",
+              "version": "2.0.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-uLa0j859mMrg2slwQYdO/AkrOfmH+X6LTVmNTS9CqexuE2IvVORIkSpJLqePAbEnKJ77aMmCwr1NUZ57120Xcg==",
+              "url": "https://registry.npmjs.org/@sinonjs/commons/-/commons-2.0.0.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
             }
           },
           "npm__react-dom__16.14.0__react_16.14.0": {
@@ -19921,29 +20176,30 @@
               ]
             }
           },
-          "npm__use-sync-external-store__1.2.0__react_16.14.0": {
+          "npm__at_types_sinonjs__fake-timers__8.1.5__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_rule",
+            "ruleClassName": "npm_import_links",
             "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__use-sync-external-store__1.2.0__react_16.14.0",
-              "package": "use-sync-external-store",
-              "version": "1.2.0_react_16.14.0",
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_sinonjs__fake-timers__8.1.5__links",
+              "package": "@types/sinonjs__fake-timers",
+              "version": "8.1.5",
+              "dev": false,
               "root_package": "",
-              "link_workspace": "",
               "link_packages": {},
-              "integrity": "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==",
-              "url": "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz",
-              "commit": "",
-              "patch_args": [],
-              "patches": [],
-              "custom_postinstall": "",
-              "npm_auth": "",
-              "npm_auth_basic": "",
-              "npm_auth_username": "",
-              "npm_auth_password": "",
-              "lifecycle_hooks": [],
-              "extra_build_content": "",
-              "generate_bzl_library_targets": false
+              "deps": {},
+              "transitive_closure": {
+                "@types/sinonjs__fake-timers": [
+                  "8.1.5"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
             }
           },
           "npm__entities__2.2.0": {
@@ -20641,6 +20897,32 @@
               "lifecycle_hooks": [],
               "extra_build_content": "",
               "generate_bzl_library_targets": false
+            }
+          },
+          "npm__diff__5.2.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__diff__5.2.0__links",
+              "package": "diff",
+              "version": "5.2.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {},
+              "transitive_closure": {
+                "diff": [
+                  "5.2.0"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
             }
           },
           "npm__ms__2.0.0__links": {
@@ -21430,6 +21712,31 @@
               "package_visibility": [
                 "//visibility:public"
               ]
+            }
+          },
+          "npm__at_sinonjs_samsam__8.0.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_samsam__8.0.0",
+              "package": "@sinonjs/samsam",
+              "version": "8.0.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-Bp8KUVlLp8ibJZrnvq2foVhP0IVX2CIprMJPK0vqGqgrDa0OHVKeZyBykqskkrdxV6yKBPmGasO8LVjAKR3Gew==",
+              "url": "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-8.0.0.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
             }
           },
           "npm__brace-expansion__2.0.1__links": {
@@ -23436,35 +23743,6 @@
               "generate_bzl_library_targets": false
             }
           },
-          "npm__mobx__6.12.0": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_rule",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx__6.12.0",
-              "package": "mobx",
-              "version": "6.12.0",
-              "root_package": "",
-              "link_workspace": "",
-              "link_packages": {
-                "": [
-                  "mobx"
-                ]
-              },
-              "integrity": "sha512-Mn6CN6meXEnMa0a5u6a5+RKrqRedHBhZGd15AWLk9O6uFY4KYHzImdt8JI8WODo1bjTSRnwXhJox+FCUZhCKCQ==",
-              "url": "https://registry.npmjs.org/mobx/-/mobx-6.12.0.tgz",
-              "commit": "",
-              "patch_args": [],
-              "patches": [],
-              "custom_postinstall": "",
-              "npm_auth": "",
-              "npm_auth_basic": "",
-              "npm_auth_username": "",
-              "npm_auth_password": "",
-              "lifecycle_hooks": [],
-              "extra_build_content": "",
-              "generate_bzl_library_targets": false
-            }
-          },
           "npm__at_babel_plugin-syntax-import-assertions__7.23.3__at_babel_core_7.23.9__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -24600,31 +24878,6 @@
               "package_visibility": [
                 "//visibility:public"
               ]
-            }
-          },
-          "npm__mobx-react-lite__4.0.5__-901741053": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_rule",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx-react-lite__4.0.5__-901741053",
-              "package": "mobx-react-lite",
-              "version": "4.0.5_-901741053",
-              "root_package": "",
-              "link_workspace": "",
-              "link_packages": {},
-              "integrity": "sha512-StfB2wxE8imKj1f6T8WWPf4lVMx3cYH9Iy60bbKXEs21+HQ4tvvfIBZfSmMXgQAefi8xYEwQIz4GN9s0d2h7dg==",
-              "url": "https://registry.npmjs.org/mobx-react-lite/-/mobx-react-lite-4.0.5.tgz",
-              "commit": "",
-              "patch_args": [],
-              "patches": [],
-              "custom_postinstall": "",
-              "npm_auth": "",
-              "npm_auth_basic": "",
-              "npm_auth_username": "",
-              "npm_auth_password": "",
-              "lifecycle_hooks": [],
-              "extra_build_content": "",
-              "generate_bzl_library_targets": false
             }
           },
           "npm__glob-to-regexp__0.4.1": {
@@ -34055,6 +34308,37 @@
               ]
             }
           },
+          "npm__at_sinonjs_commons__2.0.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_commons__2.0.0__links",
+              "package": "@sinonjs/commons",
+              "version": "2.0.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {
+                "type-detect": "4.0.8"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "2.0.0"
+                ],
+                "type-detect": [
+                  "4.0.8"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__call-bind__1.0.7__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -36235,6 +36519,35 @@
               ]
             }
           },
+          "npm__sinon__18.0.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__sinon__18.0.0",
+              "package": "sinon",
+              "version": "18.0.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {
+                "": [
+                  "sinon"
+                ]
+              },
+              "integrity": "sha512-+dXDXzD1sBO6HlmZDd7mXZCR/y5ECiEiGCBSGuFD/kZ0bDTofPYc6JaeGmPSF+1j1MejGUWkORbYOLDyvqCWpA==",
+              "url": "https://registry.npmjs.org/sinon/-/sinon-18.0.0.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__postcss-modules-values__4.0.0__postcss_8.4.35__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -37843,6 +38156,31 @@
               "generate_bzl_library_targets": false
             }
           },
+          "npm__at_sinonjs_fake-timers__11.2.2": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_fake-timers__11.2.2",
+              "package": "@sinonjs/fake-timers",
+              "version": "11.2.2",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-G2piCSxQ7oWOxwGSAyFHfPIsyeJGXYtc6mFbnFA+kRXkiEnTl8c/8jul2S329iFBnDI9HGoeWWAZvuvOkZccgw==",
+              "url": "https://registry.npmjs.org/@sinonjs/fake-timers/-/fake-timers-11.2.2.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__at_types_express__4.17.21": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -38423,6 +38761,31 @@
               ]
             }
           },
+          "npm__just-extend__6.2.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__just-extend__6.2.0",
+              "package": "just-extend",
+              "version": "6.2.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-cYofQu2Xpom82S6qD778jBDpwvvy39s1l/hrYij2u9AMdQcGRpaBu6kY4mVhuno5kJVi1DAz4aiphA2WI1/OAw==",
+              "url": "https://registry.npmjs.org/just-extend/-/just-extend-6.2.0.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__flat__5.0.2": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -38869,35 +39232,6 @@
               "generate_bzl_library_targets": false
             }
           },
-          "npm__mobx-react__9.1.0__-901741053": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_rule",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx-react__9.1.0__-901741053",
-              "package": "mobx-react",
-              "version": "9.1.0_-901741053",
-              "root_package": "",
-              "link_workspace": "",
-              "link_packages": {
-                "": [
-                  "mobx-react"
-                ]
-              },
-              "integrity": "sha512-DeDRTYw4AlgHw8xEXtiZdKKEnp+c5/jeUgTbTQXEqnAzfkrgYRWP3p3Nv3Whc2CEcM/mDycbDWGjxKokQdlffg==",
-              "url": "https://registry.npmjs.org/mobx-react/-/mobx-react-9.1.0.tgz",
-              "commit": "",
-              "patch_args": [],
-              "patches": [],
-              "custom_postinstall": "",
-              "npm_auth": "",
-              "npm_auth_basic": "",
-              "npm_auth_username": "",
-              "npm_auth_password": "",
-              "lifecycle_hooks": [],
-              "extra_build_content": "",
-              "generate_bzl_library_targets": false
-            }
-          },
           "npm__punycode__2.3.1": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -39302,36 +39636,6 @@
               ]
             }
           },
-          "npm__mobx__6.12.0__links": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_links",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx__6.12.0__links",
-              "package": "mobx",
-              "version": "6.12.0",
-              "dev": false,
-              "root_package": "",
-              "link_packages": {
-                "": [
-                  "mobx"
-                ]
-              },
-              "deps": {},
-              "transitive_closure": {
-                "mobx": [
-                  "6.12.0"
-                ]
-              },
-              "lifecycle_build_target": false,
-              "lifecycle_hooks_env": [],
-              "lifecycle_hooks_execution_requirements": [],
-              "bins": {},
-              "npm_translate_lock_repo": "npm",
-              "package_visibility": [
-                "//visibility:public"
-              ]
-            }
-          },
           "npm__find-up__4.1.0": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -39465,6 +39769,41 @@
                 ],
                 "wrappy": [
                   "1.0.2"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
+          "npm__at_types_sinon__17.0.3__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_sinon__17.0.3__links",
+              "package": "@types/sinon",
+              "version": "17.0.3",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {
+                "": [
+                  "@types/sinon"
+                ]
+              },
+              "deps": {
+                "@types/sinonjs__fake-timers": "8.1.5"
+              },
+              "transitive_closure": {
+                "@types/sinon": [
+                  "17.0.3"
+                ],
+                "@types/sinonjs__fake-timers": [
+                  "8.1.5"
                 ]
               },
               "lifecycle_build_target": false,
@@ -41858,6 +42197,32 @@
               "lifecycle_hooks": [],
               "extra_build_content": "",
               "generate_bzl_library_targets": false
+            }
+          },
+          "npm__at_sinonjs_text-encoding__0.7.2__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_text-encoding__0.7.2__links",
+              "package": "@sinonjs/text-encoding",
+              "version": "0.7.2",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {},
+              "transitive_closure": {
+                "@sinonjs/text-encoding": [
+                  "0.7.2"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
             }
           },
           "npm__fast-json-stable-stringify__2.1.0": {
@@ -46678,41 +47043,6 @@
               ]
             }
           },
-          "npm__at_types_js-base64__3.3.1__links": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_links",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_js-base64__3.3.1__links",
-              "package": "@types/js-base64",
-              "version": "3.3.1",
-              "dev": false,
-              "root_package": "",
-              "link_packages": {
-                "": [
-                  "@types/js-base64"
-                ]
-              },
-              "deps": {
-                "js-base64": "3.7.7"
-              },
-              "transitive_closure": {
-                "@types/js-base64": [
-                  "3.3.1"
-                ],
-                "js-base64": [
-                  "3.7.7"
-                ]
-              },
-              "lifecycle_build_target": false,
-              "lifecycle_hooks_env": [],
-              "lifecycle_hooks_execution_requirements": [],
-              "bins": {},
-              "npm_translate_lock_repo": "npm",
-              "package_visibility": [
-                "//visibility:public"
-              ]
-            }
-          },
           "npm__at_babel_helper-member-expression-to-functions__7.23.0__links": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_links",
@@ -46857,74 +47187,6 @@
               "lifecycle_hooks": [],
               "extra_build_content": "",
               "generate_bzl_library_targets": false
-            }
-          },
-          "npm__mobx-react__9.1.0__-901741053__links": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_links",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx-react__9.1.0__-901741053__links",
-              "package": "mobx-react",
-              "version": "9.1.0_-901741053",
-              "dev": false,
-              "root_package": "",
-              "link_packages": {
-                "": [
-                  "mobx-react"
-                ]
-              },
-              "deps": {
-                "mobx": "6.12.0",
-                "mobx-react-lite": "4.0.5_-901741053",
-                "react": "16.14.0",
-                "react-dom": "16.14.0_react_16.14.0"
-              },
-              "transitive_closure": {
-                "js-tokens": [
-                  "4.0.0"
-                ],
-                "loose-envify": [
-                  "1.4.0"
-                ],
-                "mobx": [
-                  "6.12.0"
-                ],
-                "mobx-react": [
-                  "9.1.0_-901741053"
-                ],
-                "mobx-react-lite": [
-                  "4.0.5_-901741053"
-                ],
-                "object-assign": [
-                  "4.1.1"
-                ],
-                "prop-types": [
-                  "15.8.1"
-                ],
-                "react": [
-                  "16.14.0"
-                ],
-                "react-dom": [
-                  "16.14.0_react_16.14.0"
-                ],
-                "react-is": [
-                  "16.13.1"
-                ],
-                "scheduler": [
-                  "0.19.1"
-                ],
-                "use-sync-external-store": [
-                  "1.2.0_react_16.14.0"
-                ]
-              },
-              "lifecycle_build_target": false,
-              "lifecycle_hooks_env": [],
-              "lifecycle_hooks_execution_requirements": [],
-              "bins": {},
-              "npm_translate_lock_repo": "npm",
-              "package_visibility": [
-                "//visibility:public"
-              ]
             }
           },
           "npm__core-util-is__1.0.3": {
@@ -51027,6 +51289,35 @@
               "link_packages": {},
               "integrity": "sha512-k0zdNgqWTGA6aeIRVpvfVob4fL52dTfaehylg0Y4UvSySvOq/Y+BOyPrgpUrA7HylqvU8vIZGsRuXmspskV0Tg==",
               "url": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-4.0.1.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
+          "npm__at_types_sinon__17.0.3": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_sinon__17.0.3",
+              "package": "@types/sinon",
+              "version": "17.0.3",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {
+                "": [
+                  "@types/sinon"
+                ]
+              },
+              "integrity": "sha512-j3uovdn8ewky9kRBG19bOwaZbexJu/XjtkHyjvUgt4xfPFz18dcORIMqnYh66Fx3Powhcr85NT5+er3+oViapw==",
+              "url": "https://registry.npmjs.org/@types/sinon/-/sinon-17.0.3.tgz",
               "commit": "",
               "patch_args": [],
               "patches": [],
@@ -60863,6 +61154,32 @@
               "generate_bzl_library_targets": false
             }
           },
+          "npm__just-extend__6.2.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__just-extend__6.2.0__links",
+              "package": "just-extend",
+              "version": "6.2.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {},
+              "transitive_closure": {
+                "just-extend": [
+                  "6.2.0"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__qs__6.11.0": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -64572,6 +64889,31 @@
               ]
             }
           },
+          "npm__nise__6.0.0": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__nise__6.0.0",
+              "package": "nise",
+              "version": "6.0.0",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-K8ePqo9BFvN31HXwEtTNGzgrPpmvgciDsFz8aztFjt4LqKO/JeFD8tBOeuDiCMXrIl/m1YvfH8auSpxfaD09wg==",
+              "url": "https://registry.npmjs.org/nise/-/nise-6.0.0.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__websocket-extensions__0.1.4": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -65256,6 +65598,32 @@
               ]
             }
           },
+          "npm__path-to-regexp__6.2.2__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__path-to-regexp__6.2.2__links",
+              "package": "path-to-regexp",
+              "version": "6.2.2",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {},
+              "transitive_closure": {
+                "path-to-regexp": [
+                  "6.2.2"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__regjsparser__0.9.1": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -65737,6 +66105,31 @@
               "link_packages": {},
               "integrity": "sha512-8PiZgZNIB4q/Lw4AhOvAfB/ityHAd2bli3lESSWmWSzSsl5dKpy5N1d1Rfkd2teq/g9xN90lc6o98DOjMeYHpg==",
               "url": "https://registry.npmjs.org/envinfo/-/envinfo-7.11.1.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
+          "npm__at_sinonjs_text-encoding__0.7.2": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__at_sinonjs_text-encoding__0.7.2",
+              "package": "@sinonjs/text-encoding",
+              "version": "0.7.2",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==",
+              "url": "https://registry.npmjs.org/@sinonjs/text-encoding/-/text-encoding-0.7.2.tgz",
               "commit": "",
               "patch_args": [],
               "patches": [],
@@ -68135,6 +68528,31 @@
               ]
             }
           },
+          "npm__lodash.get__4.4.2": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_rule",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__lodash.get__4.4.2",
+              "package": "lodash.get",
+              "version": "4.4.2",
+              "root_package": "",
+              "link_workspace": "",
+              "link_packages": {},
+              "integrity": "sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==",
+              "url": "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz",
+              "commit": "",
+              "patch_args": [],
+              "patches": [],
+              "custom_postinstall": "",
+              "npm_auth": "",
+              "npm_auth_basic": "",
+              "npm_auth_username": "",
+              "npm_auth_password": "",
+              "lifecycle_hooks": [],
+              "extra_build_content": "",
+              "generate_bzl_library_targets": false
+            }
+          },
           "npm__yauzl__2.10.0": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -68379,52 +68797,6 @@
                 ],
                 "yallist": [
                   "4.0.0"
-                ]
-              },
-              "lifecycle_build_target": false,
-              "lifecycle_hooks_env": [],
-              "lifecycle_hooks_execution_requirements": [],
-              "bins": {},
-              "npm_translate_lock_repo": "npm",
-              "package_visibility": [
-                "//visibility:public"
-              ]
-            }
-          },
-          "npm__use-sync-external-store__1.2.0__react_16.14.0__links": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_links",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__use-sync-external-store__1.2.0__react_16.14.0__links",
-              "package": "use-sync-external-store",
-              "version": "1.2.0_react_16.14.0",
-              "dev": false,
-              "root_package": "",
-              "link_packages": {},
-              "deps": {
-                "react": "16.14.0"
-              },
-              "transitive_closure": {
-                "js-tokens": [
-                  "4.0.0"
-                ],
-                "loose-envify": [
-                  "1.4.0"
-                ],
-                "object-assign": [
-                  "4.1.1"
-                ],
-                "prop-types": [
-                  "15.8.1"
-                ],
-                "react": [
-                  "16.14.0"
-                ],
-                "react-is": [
-                  "16.13.1"
-                ],
-                "use-sync-external-store": [
-                  "1.2.0_react_16.14.0"
                 ]
               },
               "lifecycle_build_target": false,
@@ -68926,6 +69298,56 @@
               "lifecycle_hooks": [],
               "extra_build_content": "",
               "generate_bzl_library_targets": false
+            }
+          },
+          "npm__nise__6.0.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__nise__6.0.0__links",
+              "package": "nise",
+              "version": "6.0.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {},
+              "deps": {
+                "@sinonjs/commons": "3.0.1",
+                "@sinonjs/fake-timers": "11.2.2",
+                "@sinonjs/text-encoding": "0.7.2",
+                "just-extend": "6.2.0",
+                "path-to-regexp": "6.2.2"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "3.0.1"
+                ],
+                "@sinonjs/fake-timers": [
+                  "11.2.2"
+                ],
+                "@sinonjs/text-encoding": [
+                  "0.7.2"
+                ],
+                "just-extend": [
+                  "6.2.0"
+                ],
+                "nise": [
+                  "6.0.0"
+                ],
+                "path-to-regexp": [
+                  "6.2.2"
+                ],
+                "type-detect": [
+                  "4.0.8"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
             }
           },
           "npm__unicode-match-property-ecmascript__2.0.0": {
@@ -72143,6 +72565,80 @@
               "generate_bzl_library_targets": false
             }
           },
+          "npm__sinon__18.0.0__links": {
+            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
+            "ruleClassName": "npm_import_links",
+            "attributes": {
+              "name": "aspect_rules_js~1.35.0~npm~npm__sinon__18.0.0__links",
+              "package": "sinon",
+              "version": "18.0.0",
+              "dev": false,
+              "root_package": "",
+              "link_packages": {
+                "": [
+                  "sinon"
+                ]
+              },
+              "deps": {
+                "@sinonjs/commons": "3.0.1",
+                "@sinonjs/fake-timers": "11.2.2",
+                "@sinonjs/samsam": "8.0.0",
+                "diff": "5.2.0",
+                "nise": "6.0.0",
+                "supports-color": "7.2.0"
+              },
+              "transitive_closure": {
+                "@sinonjs/commons": [
+                  "2.0.0",
+                  "3.0.1"
+                ],
+                "@sinonjs/fake-timers": [
+                  "11.2.2"
+                ],
+                "@sinonjs/samsam": [
+                  "8.0.0"
+                ],
+                "@sinonjs/text-encoding": [
+                  "0.7.2"
+                ],
+                "diff": [
+                  "5.2.0"
+                ],
+                "has-flag": [
+                  "4.0.0"
+                ],
+                "just-extend": [
+                  "6.2.0"
+                ],
+                "lodash.get": [
+                  "4.4.2"
+                ],
+                "nise": [
+                  "6.0.0"
+                ],
+                "path-to-regexp": [
+                  "6.2.2"
+                ],
+                "sinon": [
+                  "18.0.0"
+                ],
+                "supports-color": [
+                  "7.2.0"
+                ],
+                "type-detect": [
+                  "4.0.8"
+                ]
+              },
+              "lifecycle_build_target": false,
+              "lifecycle_hooks_env": [],
+              "lifecycle_hooks_execution_requirements": [],
+              "bins": {},
+              "npm_translate_lock_repo": "npm",
+              "package_visibility": [
+                "//visibility:public"
+              ]
+            }
+          },
           "npm__loose-envify__1.4.0": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -72514,67 +73010,6 @@
               ]
             }
           },
-          "npm__mobx-react-lite__4.0.5__-901741053__links": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_links",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__mobx-react-lite__4.0.5__-901741053__links",
-              "package": "mobx-react-lite",
-              "version": "4.0.5_-901741053",
-              "dev": false,
-              "root_package": "",
-              "link_packages": {},
-              "deps": {
-                "mobx": "6.12.0",
-                "react": "16.14.0",
-                "react-dom": "16.14.0_react_16.14.0",
-                "use-sync-external-store": "1.2.0_react_16.14.0"
-              },
-              "transitive_closure": {
-                "js-tokens": [
-                  "4.0.0"
-                ],
-                "loose-envify": [
-                  "1.4.0"
-                ],
-                "mobx": [
-                  "6.12.0"
-                ],
-                "mobx-react-lite": [
-                  "4.0.5_-901741053"
-                ],
-                "object-assign": [
-                  "4.1.1"
-                ],
-                "prop-types": [
-                  "15.8.1"
-                ],
-                "react": [
-                  "16.14.0"
-                ],
-                "react-dom": [
-                  "16.14.0_react_16.14.0"
-                ],
-                "react-is": [
-                  "16.13.1"
-                ],
-                "scheduler": [
-                  "0.19.1"
-                ],
-                "use-sync-external-store": [
-                  "1.2.0_react_16.14.0"
-                ]
-              },
-              "lifecycle_build_target": false,
-              "lifecycle_hooks_env": [],
-              "lifecycle_hooks_execution_requirements": [],
-              "bins": {},
-              "npm_translate_lock_repo": "npm",
-              "package_visibility": [
-                "//visibility:public"
-              ]
-            }
-          },
           "npm__es6-error__4.1.1": {
             "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
             "ruleClassName": "npm_import_rule",
@@ -72666,35 +73101,6 @@
               "link_packages": {},
               "integrity": "sha512-GJgLTZ7vYb/JtPSSZ10hsOYIvEYsjbNU+zPdIHcUaWVNUEPivzxku31865sSSud0Da0W4lEeOPlmw93zLQchuQ==",
               "url": "https://registry.npmjs.org/sockjs/-/sockjs-0.3.24.tgz",
-              "commit": "",
-              "patch_args": [],
-              "patches": [],
-              "custom_postinstall": "",
-              "npm_auth": "",
-              "npm_auth_basic": "",
-              "npm_auth_username": "",
-              "npm_auth_password": "",
-              "lifecycle_hooks": [],
-              "extra_build_content": "",
-              "generate_bzl_library_targets": false
-            }
-          },
-          "npm__at_types_js-base64__3.3.1": {
-            "bzlFile": "@@aspect_rules_js~1.35.0//npm/private:npm_import.bzl",
-            "ruleClassName": "npm_import_rule",
-            "attributes": {
-              "name": "aspect_rules_js~1.35.0~npm~npm__at_types_js-base64__3.3.1",
-              "package": "@types/js-base64",
-              "version": "3.3.1",
-              "root_package": "",
-              "link_workspace": "",
-              "link_packages": {
-                "": [
-                  "@types/js-base64"
-                ]
-              },
-              "integrity": "sha512-Zw33oQNAvDdAN9b0IE5stH0y2MylYvtU7VVTKEJPxhyM2q57CVaNJhtJW258ah24NRtaiA23tptUmVn3dmTKpw==",
-              "url": "https://registry.npmjs.org/@types/js-base64/-/js-base64-3.3.1.tgz",
               "commit": "",
               "patch_args": [],
               "patches": [],

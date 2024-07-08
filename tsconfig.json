@@ -14,7 +14,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "jsx": "react",
-    "lib": ["es2021", "dom"],
+    "lib": ["es2022", "dom"],
     "esModuleInterop": true,
     "declaration": true,
     "strictPropertyInitialization": false
