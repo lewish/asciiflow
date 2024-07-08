@@ -124,7 +124,7 @@ export function Drawer() {
                         />
                       )}
                     </ListItemIcon>
-                    <ListItemText>
+                    <ListItemText className={styles.filenameText}>
                       {drawingId.localId
                         ? drawingId.localId
                         : drawingId.shareSpec
@@ -556,6 +556,7 @@ function NewDrawingButton() {
       <DialogContent>
         <TextField
           error={!validDrawingName}
+          autoFocus={true}
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name must be unique."}
           defaultValue={defaultNewDrawingName}
@@ -600,6 +601,7 @@ function RenameDrawingButton({ drawingId }: { drawingId: DrawingId }) {
       <DialogContent>Provide a new name for the drawing.</DialogContent>
       <DialogContent>
         <TextField
+          autoFocus={true}
           error={!validDrawingName}
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name already exists."}
@@ -661,6 +663,7 @@ function ForkDrawingButton({
       <DialogContent>
         <TextField
           error={!validDrawingName}
+          autoFocus={true}
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name already exists."}
           defaultValue={defaultNewDrawingName}
