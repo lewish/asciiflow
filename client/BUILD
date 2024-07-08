@@ -20,7 +20,6 @@ ts_library(
     deps = [
         "//:node_modules/@material-ui/core",
         "//:node_modules/@material-ui/icons",
-        "//:node_modules/@types/js-base64",
         "//:node_modules/@types/pako",
         "//:node_modules/@types/react",
         "//:node_modules/@types/react-dom",
@@ -28,14 +27,13 @@ ts_library(
         "//:node_modules/@types/react-router-dom",
         "//:node_modules/@types/uuid",
         "//:node_modules/js-base64",
-        "//:node_modules/mobx",
-        "//:node_modules/mobx-react",
         "//:node_modules/pako",
         "//:node_modules/react",
         "//:node_modules/react-dom",
         "//:node_modules/react-router",
         "//:node_modules/react-router-dom",
         "//:node_modules/uuid",
+        "//common",
     ],
 )
 

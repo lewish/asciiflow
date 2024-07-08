@@ -17,8 +17,8 @@ import {
   JSONStringifier,
 } from "#asciiflow/client/store/stringifiers";
 import { Persistent } from "#asciiflow/client/store/persistent";
-import { action, computed, makeAutoObservable, observable } from "mobx";
 import * as uuid from "uuid";
+import { watchableAdapter, watchableValue } from "#asciiflow/common/watchable";
 
 export enum ToolMode {
   BOX = 1,
@@ -101,106 +101,95 @@ export class Store {
   public readonly textTool = new DrawText();
   public readonly nullTool = new DrawNull();
 
-  @observable accessor _route: DrawingId = DrawingId.local(null);
+  private readonly _route = watchableValue(DrawingId.local(null));
 
   public get route() {
     return this._route;
   }
 
-  @action.bound public setRoute(value: DrawingId) {
-    if (JSON.stringify(value) !== JSON.stringify(store.route)) {
-      this._route = value;
-    }
+  public setRoute(value: DrawingId) {
+    
+      this._route.set(value);
+    
   }
 
-  @observable accessor freeformCharacter = "x";
+  public readonly freeformCharacter = watchableValue("x");
 
-  @observable accessor selectedToolMode = ToolMode.BOX;
+  public readonly selectedToolMode = watchableValue(ToolMode.BOX);
 
   public get toolMode() {
-    if (this.route.shareSpec) {
+    if (this.route.get().shareSpec) {
       return null;
     }
     return this.selectedToolMode;
   }
 
-  @observable accessor unicode = Persistent.json("unicode", true);
-  @observable accessor controlsOpen = Persistent.json("controlsOpen", true);
-  @observable accessor fileControlsOpen = Persistent.json(
-    "fileControlsOpen",
-    true
+  public readonly unicode = watchableAdapter(Persistent.json("unicode", true));
+  public readonly controlsOpen = watchableAdapter(
+    Persistent.json("controlsOpen", true)
   );
-  @observable accessor editControlsOpen = Persistent.json(
-    "editControlsOpen",
-    true
+  public readonly fileControlsOpen = watchableAdapter(
+    Persistent.json("fileControlsOpen", true)
   );
-  @observable accessor helpControlsOpen = Persistent.json(
-    "editControlsOpen",
-    true
+  public readonly editControlsOpen = watchableAdapter(
+    Persistent.json("editControlsOpen", true)
   );
-  @observable accessor exportConfig = Persistent.json(
-    "exportConfig",
-    {} as IExportConfig
+  public readonly helpControlsOpen = watchableAdapter(
+    Persistent.json("editControlsOpen", true)
+  );
+  public readonly exportConfig = watchableAdapter(
+    Persistent.json("exportConfig", {} as IExportConfig)
   );
 
-  @observable accessor localDrawingIds = Persistent.custom(
-    "localDrawingIds",
-    [],
-    new ArrayStringifier(DrawingId.STRINGIFIER)
+  public readonly localDrawingIds = watchableAdapter(
+    Persistent.custom(
+      "localDrawingIds",
+      [],
+      new ArrayStringifier(DrawingId.STRINGIFIER)
+    )
   );
 
-  @observable accessor panning = false;
+  public readonly panning = watchableValue(false);
 
-  @observable accessor altPressed = false;
+  public readonly altPressed = watchableValue(false);
 
-  @observable accessor currentCursor: string = "default";
+  public readonly currentCursor = watchableValue("default");
 
-  public readonly darkMode = Persistent.json(
-    "darkMode",
-    window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+  public readonly darkMode = watchableAdapter(
+    Persistent.json(
+      "darkMode",
+      window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+    )
   );
 
   get currentTool(): IDrawFunction {
-    return this.toolMode === ToolMode.BOX
+    return this.toolMode.get() === ToolMode.BOX
       ? this.boxTool
-      : this.toolMode === ToolMode.LINES
+      : this.toolMode.get() === ToolMode.LINES
       ? this.lineTool
-      : this.toolMode === ToolMode.ARROWS
+      : this.toolMode.get() === ToolMode.ARROWS
       ? this.arrowTool
-      : this.toolMode === ToolMode.FREEFORM
+      : this.toolMode.get() === ToolMode.FREEFORM
       ? this.freeformTool
-      : this.toolMode === ToolMode.TEXT
+      : this.toolMode.get() === ToolMode.TEXT
       ? this.textTool
-      : this.toolMode === ToolMode.SELECT
+      : this.toolMode.get() === ToolMode.SELECT
       ? this.selectTool
       : this.nullTool;
   }
 
-  @computed
-  get computedCurrentCursor() {
-    return this.panning ? "move" : this.currentCursor;
-  }
-
-  @action.bound public setCurrentCursor(value: string) {
-    this.currentCursor = value;
-  }
-
-  @observable accessor modifierKeys: IModifierKeys = {};
-
-  get characters() {
-    return this.unicode.get() ? constants.UNICODE : constants.ASCII;
-  }
+  public readonly modifierKeys = watchableValue<IModifierKeys>({});
 
   private canvases = new Map<string, CanvasStore>();
 
   get currentCanvas() {
-    return this.canvas(this._route);
+    return this.canvas(this._route.get());
   }
 
-  get drawings() {
-    if (this.route.shareSpec) {
-      return [this.route, ...this.localDrawingIds.get()];
+  get drawings(): DrawingId[] {
+    if (this.route.get().shareSpec) {
+      return [this.route.get(), ...this.localDrawingIds.get()];
     }
 
     const localDrawingIds = this.localDrawingIds.get();
@@ -235,22 +224,18 @@ export class Store {
     return canvas;
   }
 
-  @action.bound public setFreeformCharacter(value: string) {
-    this.freeformCharacter = value;
-  }
-
-  @action.bound public setUnicode(value: boolean) {
+  public setUnicode(value: boolean) {
     this.unicode.set(value);
   }
 
-  @action.bound public setToolMode(toolMode: ToolMode) {
-    if (this.selectedToolMode !== toolMode) {
+  public setToolMode(toolMode: ToolMode) {
+    if (this.selectedToolMode.get() !== toolMode) {
       this.currentTool.cleanup();
-      this.selectedToolMode = toolMode;
+      this.selectedToolMode.set(toolMode);
     }
   }
 
-  @action.bound public deleteDrawing(drawingId: DrawingId) {
+  public deleteDrawing(drawingId: DrawingId) {
     this.localDrawingIds.set(
       this.localDrawingIds
         .get()
@@ -264,10 +249,7 @@ export class Store {
       .forEach((key) => localStorage.removeItem(key));
   }
 
-  @action.bound public renameDrawing(
-    originalLocalId: string,
-    newLocalId: string
-  ) {
+  public renameDrawing(originalLocalId: string, newLocalId: string) {
     const originalId = DrawingId.local(originalLocalId);
     const newId = DrawingId.local(newLocalId);
     this.localDrawingIds.set(
@@ -293,7 +275,7 @@ export class Store {
     this.canvases.delete(newId.toString());
   }
 
-  @action.bound public saveDrawing(shareDrawingId: DrawingId, name: string) {
+  public saveDrawing(shareDrawingId: DrawingId, name: string) {
     const sharedDrawing = this.canvas(shareDrawingId);
     const localDrawing = this.canvas(DrawingId.local(name));
     localDrawing.persistentCommitted.set(

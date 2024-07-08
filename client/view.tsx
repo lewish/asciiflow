@@ -1,8 +1,7 @@
 import * as constants from "#asciiflow/client/constants";
 import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
-import { autorun } from "mobx";
-import { useObserver } from "mobx-react";
+import { autorun, useWatchable } from "#asciiflow/common/watchable";
 import * as React from "react";
 import { useEffect } from "react";
 
@@ -28,8 +27,16 @@ function getColors() {
     selection: "#DEF",
   };
 }
+
+export function setCanvasCursor(cursor: string) {
+  const element = document.getElementById("ascii-canvas");
+  if (element) {
+    element.style.cursor = cursor;
+  }
+}
+
 export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
-  useObserver(() => {
+  useWatchable(() => {
     const colors = getColors();
     useEffect(() => {
       const canvas = document.getElementById(
@@ -62,7 +69,6 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
         tabIndex={0}
         style={{
           backgroundColor: colors.background,
-          cursor: store.computedCurrentCursor,
           touchAction: "none",
           position: "fixed",
           left: 0,
@@ -81,8 +87,8 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
  */
 function render(canvas: HTMLCanvasElement) {
   const committed = store.currentCanvas.committed;
-  const scratch = store.currentCanvas.scratch;
-  const selection = store.currentCanvas.selection;
+  const scratch = store.currentCanvas.scratch.get();
+  const selection = store.currentCanvas.selection.get();
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);

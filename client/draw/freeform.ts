@@ -8,13 +8,13 @@ export class DrawFreeform extends AbstractDrawFunction {
 
   start(position: Vector) {
     this.currentLayer = new Layer();
-    this.currentLayer.set(position, store.freeformCharacter);
+    this.currentLayer.set(position, store.freeformCharacter.get());
     store.currentCanvas.setScratchLayer(this.currentLayer);
   }
 
   move(position: Vector) {
     [this.currentLayer] = new Layer().apply(this.currentLayer);
-    this.currentLayer.set(position, store.freeformCharacter);
+    this.currentLayer.set(position, store.freeformCharacter.get());
     store.currentCanvas.setScratchLayer(this.currentLayer);
   }
 
@@ -29,7 +29,7 @@ export class DrawFreeform extends AbstractDrawFunction {
   handleKey(value: string) {
     if (value && value.length === 1) {
       // The value is not a special character, so lets use it.
-      store.freeformCharacter = value;
+      store.freeformCharacter.set(value);
     }
   }
 }

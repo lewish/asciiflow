@@ -49,8 +49,6 @@ export class DrawMove extends AbstractDrawFunction {
         .filter((a) => a.direction === Direction.DOWN)
         .map((a) => a.end.y)
     );
-    console.log(minX, maxX, minY, maxY);
-    console.log(this.trace);
     // Calculate the effective position after calculating bounds.
     const effectivePosition = new Vector(
       Math.min(Math.max(position.x, minX), maxX),
