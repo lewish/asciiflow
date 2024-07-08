@@ -559,6 +559,7 @@ function NewDrawingButton() {
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name must be unique."}
           defaultValue={defaultNewDrawingName}
+          onKeyDown={(e) => e.stopPropagation()}
           onChange={(e) => setNewDrawingName(e.target.value)}
         />
       </DialogContent>
@@ -603,6 +604,7 @@ function RenameDrawingButton({ drawingId }: { drawingId: DrawingId }) {
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name already exists."}
           defaultValue={defaultNewDrawingName}
+          onKeyDown={e => e.stopPropagation()}
           onChange={(e) => setNewDrawingName(e.target.value)}
         />
       </DialogContent>
@@ -662,6 +664,7 @@ function ForkDrawingButton({
           label="Drawing name"
           helperText={!validDrawingName && "Drawing name already exists."}
           defaultValue={defaultNewDrawingName}
+          onKeyDown={(e) => e.stopPropagation()}
           onChange={(e) => setNewDrawingName(e.target.value)}
         />
       </DialogContent>
