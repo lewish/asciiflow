@@ -1,7 +1,7 @@
 import * as constants from "#asciiflow/client/constants";
 import { store, IModifierKeys, ToolMode } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
-import { screenToCell } from "#asciiflow/client/view";
+import { screenToCell, setCanvasCursor } from "#asciiflow/client/view";
 import { HTMLAttributes } from "react";
 
 import * as React from "react";
@@ -69,7 +69,7 @@ export class Controller {
     let specialKeyCode = null;
 
     if (event.altKey) {
-      store.altPressed = true;
+      store.altPressed.set(true);
       if (event.keyCode === "1".charCodeAt(0)) {
         store.setToolMode(ToolMode.BOX);
         event.preventDefault();
@@ -136,7 +136,7 @@ export class Controller {
       specialKeyCode = constants.KEY_RIGHT;
     }
     if (event.keyCode === 32) {
-      store.panning = true;
+      store.panning.set(true);
     }
 
     if (specialKeyCode != null) {
@@ -146,10 +146,10 @@ export class Controller {
 
   handleKeyUp(event: KeyboardEvent) {
     if (event.keyCode === 32) {
-      store.panning = false;
+      store.panning.set(false);
     }
     if (!event.altKey) {
-      store.altPressed = false;
+      store.altPressed.set(false);
     }
   }
 
@@ -163,10 +163,9 @@ export class Controller {
 
     // Update the cursor pointer, depending on the draw function.
     if (!moveCell.equals(this.lastMoveCell)) {
-      store.setCurrentCursor(store.currentTool.getCursor(
-        moveCell,
-        getModifierKeys(e)
-      ));
+      setCanvasCursor(
+        store.currentTool.getCursor(moveCell, getModifierKeys(e))
+      );
     }
 
     // In drawing mode, so pass the mouse move on, but remove duplicates.
@@ -210,7 +209,7 @@ export class DesktopController {
 
   handleMouseDown = (e: React.MouseEvent<any>) => {
     // Can drag by holding either the control or meta (Apple) key.
-    if (store.panning) {
+    if (store.panning.get()) {
       this.controller.startDrag(Vector.fromMouseEvent(e));
     } else {
       this.controller.startDraw(Vector.fromMouseEvent(e), e);

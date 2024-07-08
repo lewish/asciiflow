@@ -1,11 +1,4 @@
 import { IStringifier, JSONStringifier } from "#asciiflow/client/store/stringifiers";
-import {
-  action,
-  computed,
-  makeAutoObservable,
-  makeObservable,
-  observable,
-} from "mobx";
 
 
 export class Persistent<T> {
@@ -25,7 +18,7 @@ export class Persistent<T> {
     return new Persistent<T>(stringifier, key, defaultValue);
   }
 
-  @observable accessor value: T;
+  private value: T;
 
   private constructor(
     private stringifier: IStringifier<T>,
@@ -54,12 +47,5 @@ export class Persistent<T> {
   set(value: T) {
     this.value = value;
     localStorage.setItem(this.key, this.stringifier.serialize(value));
-  }
-
-  /**
-   * Call after mutations to the object itself to synchronize value to storage.
-   */
-  sync() {
-    this.set(this.get());
   }
 }

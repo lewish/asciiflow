@@ -5,6 +5,7 @@ import styles from "#asciiflow/client/drawer.module.css";
 import { ExportDialog } from "#asciiflow/client/export";
 import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
+import { useWatchable } from "#asciiflow/common/watchable";
 import {
   Button,
   Chip,
@@ -21,17 +22,16 @@ import {
   Paper,
   Popover,
   Snackbar,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import * as Icons from "@material-ui/icons";
-import { useObserver } from "mobx-react";
 import * as React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router";
 
 export function Drawer() {
   const history = useHistory();
-  return useObserver(() => {
+  return useWatchable(() => {
     if (!store.controlsOpen.get()) {
       return (
         <Fab
@@ -77,7 +77,7 @@ export function Drawer() {
                         <Icons.GetApp />
                       </IconButton>
                     }
-                    drawingId={store.route}
+                    drawingId={store.route.get()}
                   />
 
                   <NewDrawingButton />
@@ -218,14 +218,15 @@ export function Drawer() {
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
-              {!store.editControlsOpen.get() ? null : store.route.shareSpec ? (
+              {!store.editControlsOpen.get() ? null : store.route.get()
+                  .shareSpec ? (
                 <>
                   <div className={styles.helpText}>
                     This is a shared drawing. To make edits fork it so it can be
                     saved locally.
                   </div>
                   <div className={styles.helpText}>
-                    <ForkDrawingButton drawingId={store.route} />
+                    <ForkDrawingButton drawingId={store.route.get()} />
                   </div>
                 </>
               ) : (
@@ -375,7 +376,7 @@ export function Drawer() {
                   <ShortcutChip label={"arrow keys"} /> to move around.
                 </ToolHelp>{" "}
                 Pan around the canvas by holding <ShortcutChip label="space" />
-                {store.route.shareSpec ? (
+                {store.route.get().shareSpec ? (
                   "."
                 ) : (
                   <>
@@ -410,8 +411,8 @@ function ShortcutChip({
   label: string;
   hideUntilAlt?: boolean;
 }) {
-  return useObserver(() => {
-    if (hideUntilAlt && !store.altPressed) return null;
+  return useWatchable(() => {
+    if (hideUntilAlt && !store.altPressed.get()) return null;
     return (
       <Chip
         icon={<Icons.KeyboardOutlined />}
@@ -431,10 +432,10 @@ function ToolControl(
     icon: React.ReactNode;
   }>
 ) {
-  return useObserver(() => {
+  return useWatchable(() => {
     return (
       <ListItem
-        selected={store.toolMode === props.tool}
+        selected={store.toolMode.get() === props.tool}
         button={true}
         onClick={() => store.setToolMode(props.tool)}
       >
@@ -456,7 +457,7 @@ const shortcutKeys = [
 ];
 function FreeFormCharacterSelect() {
   const [anchorEl, setAnchorEl] = useState(null);
-  return useObserver(() => {
+  return useWatchable(() => {
     return (
       <>
         <Button
@@ -464,7 +465,7 @@ function FreeFormCharacterSelect() {
           className={styles.freeformCharacterButton}
           onClick={(event) => setAnchorEl(event.currentTarget)}
         >
-          {store.freeformCharacter}
+          {store.freeformCharacter.get()}
         </Button>
         <Popover
           open={!!anchorEl}
@@ -481,7 +482,7 @@ function FreeFormCharacterSelect() {
                 onClick={() => {
                   setAnchorEl(null);
                   store.setToolMode(ToolMode.FREEFORM);
-                  store.freeformCharacter = key;
+                  store.freeformCharacter.set(key);
                 }}
                 className={styles.freeformCharacterButton}
                 key={i}
@@ -501,8 +502,8 @@ function ToolHelp(
     tool: ToolMode;
   }>
 ) {
-  return useObserver(() => {
-    return store.toolMode === props.tool ? <>{props.children}</> : null;
+  return useWatchable(() => {
+    return store.toolMode.get() === props.tool ? <>{props.children}</> : null;
   });
 }
 

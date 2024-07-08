@@ -16,8 +16,8 @@ import { ASCII, UNICODE } from "#asciiflow/client/constants";
 import styles from "#asciiflow/client/export.module.css";
 import { DrawingId, store } from "#asciiflow/client/store";
 import { layerToText } from "#asciiflow/client/text_utils";
-import { useObserver } from "mobx-react";
 import * as React from "react";
+import { useWatchable } from "#asciiflow/common/watchable";
 
 export interface IExportConfig {
   wrapper?: "star" | "star-filled" | "triple-quotes" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
@@ -32,7 +32,7 @@ export function ExportDialog({
   button: React.ReactNode;
   drawingId: DrawingId;
 }) {
-  return useObserver(() => {
+  return useWatchable(() => {
     const [open, setOpen] = React.useState(false);
     const exportConfig = store.exportConfig.get();
     // Only compute the text if the dialog is open.

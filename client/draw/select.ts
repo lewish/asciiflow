@@ -11,7 +11,7 @@ import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
 import { DrawMove } from "#asciiflow/client/draw/move";
 import { Layer } from "#asciiflow/client/layer";
 import { snap } from "#asciiflow/client/snap";
-import { IModifierKeys, store } from "#asciiflow/client/store";
+import { IModifierKeys, store, ToolMode } from "#asciiflow/client/store";
 import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
 import { Vector } from "#asciiflow/client/vector";
 
@@ -139,7 +139,7 @@ export class DrawSelect extends AbstractDrawFunction {
     return "default";
   }
 
-  handleKey(value: string) {
+  handleKey(value: string, modifierKeys: IModifierKeys) {
     if (this.selectBox != null) {
       // Use the native keyboard for copy pasting.
       if (value === KEY_COPY || value === KEY_CUT) {
@@ -176,5 +176,8 @@ export class DrawSelect extends AbstractDrawFunction {
       store.currentCanvas.setScratchLayer(layer);
       store.currentCanvas.commitScratch();
     }
+
+    // store.setToolMode(ToolMode.TEXT);
+    // store.currentTool.handleKey(value, modifierKeys);
   }
 }
