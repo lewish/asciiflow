@@ -87,7 +87,7 @@ document.addEventListener("paste", (e) => {
   if (store.selectTool.selectBox) {
     position = store.selectTool.selectBox.topLeft();
   }
-  if (store.toolMode.get() === ToolMode.TEXT && store.textTool.currentPosition) {
+  if (store.toolMode() === ToolMode.TEXT && store.textTool.currentPosition) {
     position = store.textTool.currentPosition;
   }
   const pastedLayer = textToLayer(clipboardText, position);

@@ -109,7 +109,7 @@ export function Drawer() {
                       {drawingId.shareSpec ? (
                         <Icons.Share
                           color={
-                            store.route.toString() === drawingId.toString()
+                            store.route.get().toString() === drawingId.toString()
                               ? "primary"
                               : "inherit"
                           }
@@ -117,7 +117,7 @@ export function Drawer() {
                       ) : (
                         <Icons.FileCopy
                           color={
-                            store.route.toString() === drawingId.toString()
+                            store.route.get().toString() === drawingId.toString()
                               ? "primary"
                               : "inherit"
                           }
@@ -435,7 +435,7 @@ function ToolControl(
   return useWatchable(() => {
     return (
       <ListItem
-        selected={store.toolMode.get() === props.tool}
+        selected={store.toolMode() === props.tool}
         button={true}
         onClick={() => store.setToolMode(props.tool)}
       >
@@ -503,7 +503,7 @@ function ToolHelp(
   }>
 ) {
   return useWatchable(() => {
-    return store.toolMode.get() === props.tool ? <>{props.children}</> : null;
+    return store.toolMode() === props.tool ? <>{props.children}</> : null;
   });
 }
 
@@ -538,7 +538,13 @@ function NewDrawingButton() {
       }
       confirmButton={
         <Button
-          onClick={() => history.push(DrawingId.local(newDrawingName).href)}
+          onClick={() => {
+            store.localDrawingIds.set([
+              ...store.localDrawingIds.get(),
+              DrawingId.local(newDrawingName),
+            ]);
+            history.push(DrawingId.local(newDrawingName).href);
+          }}
           color="primary"
         >
           Create

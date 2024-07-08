@@ -108,20 +108,18 @@ export class Store {
   }
 
   public setRoute(value: DrawingId) {
-    
-      this._route.set(value);
-    
+    this._route.set(value);
   }
 
   public readonly freeformCharacter = watchableValue("x");
 
   public readonly selectedToolMode = watchableValue(ToolMode.BOX);
 
-  public get toolMode() {
+  public toolMode(): ToolMode | undefined {
     if (this.route.get().shareSpec) {
-      return null;
+      return undefined;
     }
-    return this.selectedToolMode;
+    return this.selectedToolMode.get();
   }
 
   public readonly unicode = watchableAdapter(Persistent.json("unicode", true));
@@ -164,17 +162,17 @@ export class Store {
   );
 
   get currentTool(): IDrawFunction {
-    return this.toolMode.get() === ToolMode.BOX
+    return this.toolMode() === ToolMode.BOX
       ? this.boxTool
-      : this.toolMode.get() === ToolMode.LINES
+      : this.toolMode() === ToolMode.LINES
       ? this.lineTool
-      : this.toolMode.get() === ToolMode.ARROWS
+      : this.toolMode() === ToolMode.ARROWS
       ? this.arrowTool
-      : this.toolMode.get() === ToolMode.FREEFORM
+      : this.toolMode() === ToolMode.FREEFORM
       ? this.freeformTool
-      : this.toolMode.get() === ToolMode.TEXT
+      : this.toolMode() === ToolMode.TEXT
       ? this.textTool
-      : this.toolMode.get() === ToolMode.SELECT
+      : this.toolMode() === ToolMode.SELECT
       ? this.selectTool
       : this.nullTool;
   }
@@ -207,17 +205,17 @@ export class Store {
     let canvas = this.canvases.get(drawingId.toString());
     if (!canvas) {
       // Add the drawing ID to the list of all drawing IDs if it's a local one.
-      if (
-        !!drawingId.localId &&
-        !this.localDrawingIds
-          .get()
-          .some(
-            (otherDrawingId) =>
-              otherDrawingId.toString() === drawingId.toString()
-          )
-      ) {
-        this.localDrawingIds.set([...this.localDrawingIds.get(), drawingId]);
-      }
+      // if (
+      //   !!drawingId.localId &&
+      //   !this.localDrawingIds
+      //     .get()
+      //     .some(
+      //       (otherDrawingId) =>
+      //         otherDrawingId.toString() === drawingId.toString()
+      //     )
+      // ) {
+      //   this.localDrawingIds.set([...this.localDrawingIds.get(), drawingId]);
+      // }
       canvas = new CanvasStore(drawingId);
       this.canvases.set(drawingId.toString(), canvas);
     }
@@ -252,18 +250,11 @@ export class Store {
   public renameDrawing(originalLocalId: string, newLocalId: string) {
     const originalId = DrawingId.local(originalLocalId);
     const newId = DrawingId.local(newLocalId);
-    this.localDrawingIds.set(
-      this.localDrawingIds
-        .get()
-        .map((drawingId) =>
-          drawingId.toString() === originalId.toString() ? newId : drawingId
-        )
-    );
-
     Object.keys(localStorage)
-      .filter((key) => key.startsWith(this.canvas(originalId).persistentKey()))
+      .filter((key) =>
+        key.startsWith(this.canvas(originalId).persistentKey() + "/")
+      )
       .forEach((key) => {
-        localStorage.removeItem(key);
         localStorage.setItem(
           key.replace(
             this.canvas(originalId).persistentKey(),
@@ -271,8 +262,17 @@ export class Store {
           ),
           localStorage.getItem(key)
         );
+        localStorage.removeItem(key);
       });
     this.canvases.delete(newId.toString());
+    this.canvases.delete(originalId.toString());
+    this.localDrawingIds.set([
+      ...this.localDrawingIds
+        .get()
+        .filter((drawingId) => drawingId.toString() !== originalId.toString()),
+      newId,
+    ]);
+    window.location.hash = newId.href;
   }
 
   public saveDrawing(shareDrawingId: DrawingId, name: string) {
@@ -281,6 +281,10 @@ export class Store {
     localDrawing.persistentCommitted.set(
       sharedDrawing.persistentCommitted.get()
     );
+    this.localDrawingIds.set([
+      ...this.localDrawingIds.get(),
+      DrawingId.local(name),
+    ]);
   }
 }
 
