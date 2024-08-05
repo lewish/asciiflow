@@ -1,9 +1,7 @@
-import * as constants from "#asciiflow/client/constants";
 import { DrawBox } from "#asciiflow/client/draw/box";
 import { DrawFreeform } from "#asciiflow/client/draw/freeform";
 import {
-  AbstractDrawFunction,
-  IDrawFunction,
+  IDrawFunction
 } from "#asciiflow/client/draw/function";
 import { DrawLine } from "#asciiflow/client/draw/line";
 import { DrawNull } from "#asciiflow/client/draw/null";
@@ -11,14 +9,13 @@ import { DrawSelect } from "#asciiflow/client/draw/select";
 import { DrawText } from "#asciiflow/client/draw/text";
 import { IExportConfig } from "#asciiflow/client/export";
 import { CanvasStore } from "#asciiflow/client/store/canvas";
+import { Persistent } from "#asciiflow/client/store/persistent";
 import {
   ArrayStringifier,
   IStringifier,
   JSONStringifier,
-} from "#asciiflow/client/store/stringifiers";
-import { Persistent } from "#asciiflow/client/store/persistent";
-import * as uuid from "uuid";
-import { watchableAdapter, watchableValue } from "#asciiflow/common/watchable";
+} from "#asciiflow/common/stringifiers";
+import { watchableValue } from "#asciiflow/common/watchable";
 
 export enum ToolMode {
   BOX = 1,
@@ -122,29 +119,20 @@ export class Store {
     return this.selectedToolMode.get();
   }
 
-  public readonly unicode = watchableAdapter(Persistent.json("unicode", true));
-  public readonly controlsOpen = watchableAdapter(
-    Persistent.json("controlsOpen", true)
-  );
-  public readonly fileControlsOpen = watchableAdapter(
-    Persistent.json("fileControlsOpen", true)
-  );
-  public readonly editControlsOpen = watchableAdapter(
-    Persistent.json("editControlsOpen", true)
-  );
-  public readonly helpControlsOpen = watchableAdapter(
-    Persistent.json("editControlsOpen", true)
-  );
-  public readonly exportConfig = watchableAdapter(
-    Persistent.json("exportConfig", {} as IExportConfig)
+  public readonly unicode = Persistent.json("unicode", true);
+  public readonly controlsOpen = Persistent.json("controlsOpen", true);
+  public readonly fileControlsOpen = Persistent.json("fileControlsOpen", true);
+  public readonly editControlsOpen = Persistent.json("editControlsOpen", true);
+  public readonly helpControlsOpen = Persistent.json("editControlsOpen", true);
+  public readonly exportConfig = Persistent.json(
+    "exportConfig",
+    {} as IExportConfig
   );
 
-  public readonly localDrawingIds = watchableAdapter(
-    Persistent.custom(
-      "localDrawingIds",
-      [],
-      new ArrayStringifier(DrawingId.STRINGIFIER)
-    )
+  public readonly localDrawingIds = Persistent.custom(
+    "localDrawingIds",
+    [],
+    new ArrayStringifier(DrawingId.STRINGIFIER)
   );
 
   public readonly panning = watchableValue(false);
@@ -153,13 +141,13 @@ export class Store {
 
   public readonly currentCursor = watchableValue("default");
 
-  public readonly darkMode = watchableAdapter(
+  public readonly darkMode = 
     Persistent.json(
       "darkMode",
       window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches
     )
-  );
+  ;
 
   get currentTool(): IDrawFunction {
     return this.toolMode() === ToolMode.BOX
@@ -243,35 +231,30 @@ export class Store {
     );
     // Also delete other local storage.
     Object.keys(localStorage)
-      .filter((key) => key.startsWith(this.canvas(drawingId).persistentKey()))
+      .filter((key) => key.startsWith(storagePrefix(drawingId)))
       .forEach((key) => localStorage.removeItem(key));
+    this.canvases.delete(drawingId.toString());
   }
 
   public renameDrawing(originalLocalId: string, newLocalId: string) {
     const originalId = DrawingId.local(originalLocalId);
     const newId = DrawingId.local(newLocalId);
     Object.keys(localStorage)
-      .filter((key) =>
-        key.startsWith(this.canvas(originalId).persistentKey() + "/")
-      )
+      .filter((key) => key.startsWith(storagePrefix(originalId)))
       .forEach((key) => {
         localStorage.setItem(
-          key.replace(
-            this.canvas(originalId).persistentKey(),
-            this.canvas(newId).persistentKey()
-          ),
+          key.replace(storagePrefix(originalId), storagePrefix(newId)),
           localStorage.getItem(key)
         );
         localStorage.removeItem(key);
       });
-    this.canvases.delete(newId.toString());
-    this.canvases.delete(originalId.toString());
     this.localDrawingIds.set([
       ...this.localDrawingIds
         .get()
         .filter((drawingId) => drawingId.toString() !== originalId.toString()),
       newId,
     ]);
+    this.canvases.delete(originalId.toString());
     window.location.hash = newId.href;
   }
 
@@ -288,9 +271,12 @@ export class Store {
   }
 }
 
-function generateId() {
-  const hex = uuid.v4().replace(/\-/g, "");
-  return hex.substring(0, 16);
+export function storagePrefix(drawingId: DrawingId) {
+  return `drawing/${encodeURIComponent(drawingId.persistentKey)}/`;
+}
+
+export function storageKey(drawingId: DrawingId, key: string) {
+  return storagePrefix(drawingId) + key;
 }
 
 export const store = new Store();
