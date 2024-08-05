@@ -10,7 +10,7 @@ jobs:
     steps:
       # Checks out a copy of your repository.
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Builds code and runs the tests using Bazelisk.
       - name: Run tests
