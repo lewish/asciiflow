@@ -15,14 +15,14 @@ jobs:
     steps:
       # Checks out a copy of your repository.
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Builds code using bazelisk and copies the site folder out of the bazel symlinked dir.
       - name: Build the site
         uses: "docker://mattinsler/bazelisk:latest"
         with:
           args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./deploy"
-  
+
       # Deploy the site to Cloudflare.
       - name: Publish
         uses: cloudflare/pages-action@1
