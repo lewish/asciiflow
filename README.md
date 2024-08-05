@@ -1,11 +1,14 @@
 ASCIIFlow is a client-side only web based application for drawing ASCII diagrams. You can use it at [asciiflow.com](https://asciiflow.com).
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/asciiflow-scr-dark.png">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/asciiflow-scr-light.png">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/asciiflow-scr-dark.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/asciiflow-scr-light.png">
+  </picture>
+</p>
 
 ## Contributing
+
 ### Installation
 
 ASCIIFlow is built with [Bazel](https://docs.bazel.build/versions/4.0.0/getting-started.html).
@@ -22,7 +25,6 @@ For development, ibazel is also a very useful tool to help with automatic rebuil
 npm install -g @bazel/ibazel
 yarn global add @bazel/ibazel
 ```
-
 
 ### Running ASCIIFlow locally
 
