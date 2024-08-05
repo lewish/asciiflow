@@ -1,5 +1,10 @@
 ASCIIFlow is a client-side only web based application for drawing ASCII diagrams. You can use it at [asciiflow.com](https://asciiflow.com).
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/asciiflow-scr-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/asciiflow-scr-light.png">
+</picture>
+
 ## Contributing
 ### Installation
 
