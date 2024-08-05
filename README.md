@@ -3,7 +3,7 @@ ASCIIFlow is a client-side only web based application for drawing ASCII diagrams
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/asciiflow-scr-dark.png">
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/asciiflow-scr-light.png">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/asciiflow-scr-light.png">
   </picture>
 </p>
 
