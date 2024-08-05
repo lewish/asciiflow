@@ -47,7 +47,7 @@ export class Reference<T> {
   constructor(public value: T) {}
 }
 
-export function watchableAdapter<T>(obj: {
+export function watchable<T>(obj: {
   get: () => T;
   set: (value: T) => any;
 }): WatchableAdapter<T> {

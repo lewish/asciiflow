@@ -2,7 +2,7 @@ import { Layer } from "#asciiflow/client/layer";
 import {
   IStringifier,
   JSONStringifier,
-} from "#asciiflow/client/store/stringifiers";
+} from "#asciiflow/common/stringifiers";
 import { Base64 } from "js-base64";
 import pako from "pako";
 

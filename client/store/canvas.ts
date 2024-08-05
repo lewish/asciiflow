@@ -1,16 +1,12 @@
 import { Box } from "#asciiflow/client/common";
 import * as constants from "#asciiflow/client/constants";
 import { Layer, LayerView } from "#asciiflow/client/layer";
-import { DrawingId } from "#asciiflow/client/store";
+import { DrawingId, storageKey } from "#asciiflow/client/store";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
 import { Persistent } from "#asciiflow/client/store/persistent";
-import { ArrayStringifier } from "#asciiflow/client/store/stringifiers";
+import { ArrayStringifier } from "#asciiflow/common/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
-import {
-  WatchableAdapter,
-  watchableAdapter,
-  watchableValue,
-} from "#asciiflow/common/watchable";
+import { WatchableAdapter, watchableValue } from "#asciiflow/common/watchable";
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
@@ -24,42 +20,28 @@ export class CanvasStore {
   private _offset: WatchableAdapter<IVector>;
 
   constructor(public readonly drawingId: DrawingId) {
-    this.persistentCommitted = watchableAdapter(
-      Persistent.custom(
-        this.persistentKey("committed-layer"),
-        this.drawingId.shareSpec
-          ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
-          : new Layer(),
-        Layer
-      )
+    this.persistentCommitted = Persistent.custom(
+      storageKey(drawingId, "committed-layer"),
+      this.drawingId.shareSpec
+        ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
+        : new Layer(),
+      Layer
     );
-    this.undoLayers = watchableAdapter(
-      Persistent.custom(
-        this.persistentKey("undo-layers"),
-        [],
-        new ArrayStringifier(Layer)
-      )
+    this.undoLayers = Persistent.custom(
+      storageKey(drawingId, "undo-layers"),
+      [],
+      new ArrayStringifier(Layer)
     );
-    this.redoLayers = watchableAdapter(
-      Persistent.custom(
-        this.persistentKey("redo-layers"),
-        [],
-        new ArrayStringifier(Layer)
-      )
+    this.redoLayers = Persistent.custom(
+      storageKey(drawingId, "redo-layers"),
+      [],
+      new ArrayStringifier(Layer)
     );
-    this._zoom = watchableAdapter(
-      Persistent.json(this.persistentKey("zoom"), 1)
-    );
-    this._offset = watchableAdapter(
-      Persistent.json<IVector>(this.persistentKey("offset"), {
-        x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
-        y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
-      })
-    );
-  }
-
-  public persistentKey(...values: string[]) {
-    return Persistent.key("drawing", this.drawingId.persistentKey, ...values);
+    this._zoom = Persistent.json(storageKey(drawingId, "zoom"), 1);
+    this._offset = Persistent.json<IVector>(storageKey(drawingId, "offset"), {
+      x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
+      y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
+    });
   }
 
   public get zoom() {
