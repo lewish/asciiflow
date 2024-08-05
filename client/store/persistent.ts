@@ -1,9 +1,9 @@
-import { IStringifier, JSONStringifier } from "#asciiflow/client/store/stringifiers";
-
+import { IStringifier, JSONStringifier } from "#asciiflow/common/stringifiers";
+import { watchable } from "#asciiflow/common/watchable";
 
 export class Persistent<T> {
   public static json<T>(key: string, defaultValue: T) {
-    return new Persistent<T>(new JSONStringifier(), key, defaultValue);
+    return watchable(new Persistent<T>(new JSONStringifier(), key, defaultValue));
   }
 
   public static key(...parts: string[]) {
@@ -15,7 +15,7 @@ export class Persistent<T> {
     defaultValue: T,
     stringifier: IStringifier<T>
   ) {
-    return new Persistent<T>(stringifier, key, defaultValue);
+    return watchable(new Persistent<T>(stringifier, key, defaultValue));
   }
 
   private value: T;

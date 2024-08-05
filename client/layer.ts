@@ -31,8 +31,8 @@ export class Layer implements ILayerView {
 
   public static deserialize(value: string) {
     const object = JSON.parse(value) as ILayerJSON;
-    // Version 1 is the original format.
-    if (!!object.version) {
+    // The original version of the serialized layer did not have a version number.
+    if (!object.version) {
       const fixedLayer = new Layer();
       const legacyRenderedLayer = new LegacyRenderLayer(
         textToLayer(object.text, new Vector(object.x, object.y))
