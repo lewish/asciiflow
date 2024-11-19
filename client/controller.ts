@@ -56,7 +56,7 @@ export class Controller {
       // Disable navigation back action on backspace.
       event.preventDefault();
     }
-    if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
+    if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13 && this.mode != Mode.DRAG) {
       store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
         getModifierKeys(event)
@@ -70,26 +70,21 @@ export class Controller {
 
     if (event.altKey) {
       store.altPressed.set(true);
-      if (event.keyCode === "1".charCodeAt(0)) {
-        store.setToolMode(ToolMode.BOX);
-        event.preventDefault();
-      } else if (event.keyCode === "2".charCodeAt(0)) {
-        store.setToolMode(ToolMode.SELECT);
-        event.preventDefault();
-      } else if (event.keyCode === "3".charCodeAt(0)) {
-        store.setToolMode(ToolMode.FREEFORM);
-        event.preventDefault();
-      } else if (event.keyCode === "4".charCodeAt(0)) {
-        store.setToolMode(ToolMode.ARROWS);
-        event.preventDefault();
-      } else if (event.keyCode === "5".charCodeAt(0)) {
-        store.setToolMode(ToolMode.LINES);
-        event.preventDefault();
-      } else if (event.keyCode === "6".charCodeAt(0)) {
-        store.setToolMode(ToolMode.TEXT);
-        event.preventDefault();
+      const toolMap = {
+        "1": ToolMode.BOX,
+        "2": ToolMode.SELECT,
+        "3": ToolMode.FREEFORM,
+        "4": ToolMode.ARROWS,
+        "5": ToolMode.LINES,
+        "6": ToolMode.TEXT,
+      }
+      if (Object.keys(toolMap).find( it => it == event.key)) {
+        event.stopPropagation()
+        event.preventDefault()
+        store.setToolMode(toolMap[event.key as keyof (typeof toolMap)])
       }
     }
+
     if (event.ctrlKey || event.metaKey) {
       if (event.keyCode === 67) {
         specialKeyCode = constants.KEY_COPY;

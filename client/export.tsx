@@ -12,18 +12,27 @@ import {
   Snackbar,
   TextareaAutosize,
 } from "@material-ui/core";
-import { ASCII, UNICODE } from "#asciiflow/client/constants";
+import { ASCII, UNICODE, DOUBLE_STRUCK, ARROWED, DOTTED, STRONG_STRUCK, STRONG_SIDE } from "#asciiflow/client/constants";
 import styles from "#asciiflow/client/export.module.css";
 import { DrawingId, store } from "#asciiflow/client/store";
 import { layerToText } from "#asciiflow/client/text_utils";
 import * as React from "react";
-import { useWatchable } from "#asciiflow/common/watchable";
-
+import { useWatchable } from "#asciiflow/common/watchable"; 
 export interface IExportConfig {
   wrapper?: "star" | "star-filled" | "triple-quotes" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
   indent?: number;
   characters?: "basic" | "extended";
 }
+
+const CharMap = [
+  {"key":"double_struck", "title": "Double Struck", "chartset": DOUBLE_STRUCK},
+  {"key":"arrowed", "title": "Arrowed", "chartset": ARROWED},
+  {"key":"dotted", "title": "Dotted", "chartset": DOTTED},
+  {"key":"strong_struck", "title": "Strong Struck", "chartset": STRONG_STRUCK},
+  {"key":"strong_side", "title": "Strong Side", "chartset": STRONG_SIDE},
+  {"key":"extended", "title": "ASCII Extended", "chartset": UNICODE},
+  {"key":"basic", "title": "ASCII Basic", "chartset": ASCII},
+]
 
 export function ExportDialog({
   button,
@@ -60,8 +69,7 @@ export function ExportDialog({
                   })
                 }
               >
-                <MenuItem value={"extended"}>ASCII Extended</MenuItem>
-                <MenuItem value={"basic"}>ASCII Basic</MenuItem>
+                {CharMap.map( (it) => (<MenuItem key={it.key} value={it.key}>{it.title}</MenuItem>))}
               </Select>
             </FormControl>
           </DialogContent>
@@ -178,17 +186,16 @@ function applyConfig(text: string, exportConfig: IExportConfig) {
   function setLines(lines: string[]) {
     text = lines.join("\n");
   }
-  if (exportConfig.characters === "basic") {
-    const unicodeToAscii = new Map(
-      Object.entries(UNICODE).map(([key, value]) => [
-        value,
-        (ASCII as any)[key],
-      ])
-    );
-    text = [...text]
-      .map((value) => unicodeToAscii.get(value) || value)
-      .join("");
+
+  const preset = CharMap.find(it => it.key == exportConfig.characters)
+
+  console.log({preset, exportConfig})
+  if ("extended" != exportConfig.characters && preset) {
+    const charmap = new Map(Object.entries(preset.chartset).map( 
+      ([key, value]) =>[UNICODE[key], preset.chartset[key]]))
+    text = [...text].map((value) => charmap.get(value) || value).join("")
   }
+
   if (exportConfig.indent) {
     setLines(
       lines().map((line) => `${Array(exportConfig.indent).fill(" ")}${line}`)

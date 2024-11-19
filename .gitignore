@@ -2,3 +2,6 @@ node_modules
 bazel-*
 yarn-error.log
 user.bazelrc
+dist
+*.code-workspace
+package-lock.json

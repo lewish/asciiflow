@@ -3,6 +3,7 @@ export const MAX_GRID_WIDTH = 2000;
 export const MAX_GRID_HEIGHT = 600;
 
 export interface ICharacterSet {
+  [index: string ]: string
   cornerTopLeft: string;
   cornerTopRight: string;
   cornerBottomRight: string;
@@ -54,6 +55,96 @@ export const ASCII: ICharacterSet = {
   junctionLeft: "+",
   junctionRight: "+",
   junctionAll: "+",
+};
+
+export const ARROWED: ICharacterSet = {
+  arrowLeft: "←",
+  arrowRight: "→",
+  arrowUp: "↑",
+  arrowDown: "↓",
+  cornerTopLeft: "┌",
+  cornerTopRight: "┐",
+  cornerBottomLeft: "└",
+  cornerBottomRight: "┘",
+  lineVertical: "│",
+  lineHorizontal: "─",
+  junctionDown: "┬",
+  junctionUp: "┴",
+  junctionLeft: "┤",
+  junctionRight: "├",
+  junctionAll: "┼",
+};
+
+export const DOUBLE_STRUCK: ICharacterSet = {
+  arrowLeft: "⇦",
+  arrowRight: "⇨",
+  arrowUp: "⇧",
+  arrowDown: "⇩",
+  cornerTopLeft: "╔",
+  cornerTopRight: "╗",
+  cornerBottomLeft: "╚",
+  cornerBottomRight: "╝",
+  lineVertical: "║",
+  lineHorizontal: "═",
+  junctionDown: "╦",
+  junctionUp: "╩",
+  junctionLeft: "╣",
+  junctionRight: "╠",
+  junctionAll: "╬",
+};
+
+export const DOTTED: ICharacterSet = {
+  arrowLeft: "←",
+  arrowRight: "→",
+  arrowUp: "↑",
+  arrowDown: "↓",
+  cornerTopLeft: "╒",
+  cornerTopRight: "╕",
+  cornerBottomLeft: "╘",
+  cornerBottomRight: "╛",
+  lineVertical: "┊",
+  lineHorizontal: "┄",
+  junctionDown: "╤",
+  junctionUp: "╧",
+  junctionLeft: "╡",
+  junctionRight: "╞",
+  junctionAll: "┼",
+};
+
+export const STRONG_STRUCK: ICharacterSet = {
+  arrowLeft: "⇦",
+  arrowRight: "⇨",
+  arrowUp: "⇧",
+  arrowDown: "⇩",
+  cornerTopLeft: "┏",
+  cornerTopRight: "┓",
+  cornerBottomLeft: "┗",
+  cornerBottomRight: "┛",
+  lineVertical: "┃",
+  lineHorizontal: "━",
+  junctionDown: "┳",
+  junctionUp: "┻",
+  junctionLeft: "┫",
+  junctionRight: "┣",
+  junctionAll: "╋",
+};
+
+export const STRONG_SIDE: ICharacterSet = {
+  arrowLeft: "⇦",
+  arrowRight: "⇨",
+  arrowUp: "⇧",
+  arrowDown: "⇩",
+  cornerTopLeft: "┎",
+  cornerTopRight: "┒",
+  cornerBottomLeft: "┖",
+  cornerBottomRight: "┚",
+  lineVertical: "┃",
+  lineHorizontal: "─",
+  junctionDown: "┰",
+  junctionUp: "┸",
+  junctionLeft: "┨",
+  junctionRight: "┠",
+  junctionAll: "╂",
 };
 
 export const SPECIAL_VALUE = UNICODE.junctionAll;

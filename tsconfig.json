@@ -5,6 +5,7 @@
       "#asciiflow/*": ["*", "bazel-bin/*", "bazel-genfiles/*"],
     },
     "module": "ESNext",
+    // "module": "NONE",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitThis": true,

@@ -38,7 +38,7 @@ export function Drawer() {
           className={styles.fab}
           onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
         >
-          <img src={"/public/logo_min.svg"} />
+          <img src={(VSCPATH || "") + "/public/logo_min.svg"} />
         </Fab>
       );
     }
@@ -48,8 +48,8 @@ export function Drawer() {
           <img
             src={
               store.controlsOpen.get()
-                ? "/public/logo_full.svg"
-                : "/public/logo_min.svg"
+                ? (VSCPATH || "") + "/public/logo_full.svg"
+                : (VSCPATH || "") + "/public/logo_min.svg"
             }
             className={styles.logo}
           />
@@ -288,7 +288,7 @@ export function Drawer() {
                         className={styles.githubMark}
                         width="24"
                         height="24"
-                        src="public/github_mark.png"
+                        src={(VSCPATH || "") + "/public/github_mark.png"}
                       />
                     </IconButton>
                   </a>
