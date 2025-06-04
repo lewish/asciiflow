@@ -8,6 +8,7 @@ import { DrawNull } from "#asciiflow/client/draw/null";
 import { DrawSelect } from "#asciiflow/client/draw/select";
 import { DrawText } from "#asciiflow/client/draw/text";
 import { IExportConfig } from "#asciiflow/client/export";
+import { DrawCircle } from "#asciiflow/client/draw/circle";
 import { CanvasStore } from "#asciiflow/client/store/canvas";
 import { Persistent } from "#asciiflow/client/store/persistent";
 import {
@@ -24,6 +25,7 @@ export enum ToolMode {
   ARROWS = 6,
   LINES = 4,
   TEXT = 7,
+  CIRCLE = 8, // Added new CIRCLE tool mode
 }
 
 export interface IModifierKeys {
@@ -97,6 +99,7 @@ export class Store {
   public readonly freeformTool = new DrawFreeform();
   public readonly textTool = new DrawText();
   public readonly nullTool = new DrawNull();
+  public readonly circleTool = new DrawCircle();
 
   private readonly _route = watchableValue(DrawingId.local(null));
 
@@ -162,6 +165,8 @@ export class Store {
       ? this.textTool
       : this.toolMode() === ToolMode.SELECT
       ? this.selectTool
+        : this.toolMode() === ToolMode.CIRCLE // Added this line
+        ? this.circleTool                  // Added this line
       : this.nullTool;
   }
 

@@ -277,6 +277,14 @@ export function Drawer() {
                   >
                     <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
                   </ToolControl>
+            {/* Add the new Circle tool here */}
+            <ToolControl
+              name="Circle"
+              tool={ToolMode.CIRCLE}
+              icon={<Icons.RadioButtonUnchecked />} // Using RadioButtonUnchecked
+            >
+              <ShortcutChip label={"alt + 7"} hideUntilAlt={true} />
+            </ToolControl>
                 </>
               )}
               <ListItem>
@@ -374,6 +382,10 @@ export function Drawer() {
                   <ShortcutChip label={`${ctrlOrCmd()} + enter`} /> to start a
                   new line without committing your changes. Use the{" "}
                   <ShortcutChip label={"arrow keys"} /> to move around.
+                </ToolHelp>
+                {/* Add new ToolHelp for Circle here */}
+                <ToolHelp tool={ToolMode.CIRCLE}>
+                  Draw circles by dragging from the center point to a point on the circle.
                 </ToolHelp>{" "}
                 Pan around the canvas by holding <ShortcutChip label="space" />
                 {store.route.get().shareSpec ? (
