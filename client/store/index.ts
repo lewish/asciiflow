@@ -25,7 +25,7 @@ export enum ToolMode {
   ARROWS = 6,
   LINES = 4,
   TEXT = 7,
-  CIRCLE = 8, // Added new CIRCLE tool mode
+  CIRCLE = 8,
 }
 
 export interface IModifierKeys {
@@ -165,8 +165,8 @@ export class Store {
       ? this.textTool
       : this.toolMode() === ToolMode.SELECT
       ? this.selectTool
-        : this.toolMode() === ToolMode.CIRCLE // Added this line
-        ? this.circleTool                  // Added this line
+        : this.toolMode() === ToolMode.CIRCLE
+        ? this.circleTool
       : this.nullTool;
   }
 
