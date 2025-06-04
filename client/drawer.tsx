@@ -238,6 +238,14 @@ export function Drawer() {
                   >
                     <ShortcutChip label={"alt + 1"} hideUntilAlt={true} />
                   </ToolControl>
+            {/* Circle tool moved here and renamed */}
+            <ToolControl
+              name="Circles"
+              tool={ToolMode.CIRCLE}
+              icon={<Icons.RadioButtonUnchecked />} // Using RadioButtonUnchecked
+            >
+              <ShortcutChip label={"alt + 7"} hideUntilAlt={true} />
+            </ToolControl>
                   <ToolControl
                     name="Select & Move"
                     tool={ToolMode.SELECT}
@@ -277,14 +285,6 @@ export function Drawer() {
                   >
                     <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
                   </ToolControl>
-            {/* Add the new Circle tool here */}
-            <ToolControl
-              name="Circle"
-              tool={ToolMode.CIRCLE}
-              icon={<Icons.RadioButtonUnchecked />} // Using RadioButtonUnchecked
-            >
-              <ShortcutChip label={"alt + 7"} hideUntilAlt={true} />
-            </ToolControl>
                 </>
               )}
               <ListItem>
