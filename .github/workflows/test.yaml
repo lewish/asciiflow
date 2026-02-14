@@ -17,4 +17,4 @@ jobs:
           sudo chmod +x /usr/local/bin/bazel
 
       - name: Run tests and build
-        run: bazel test //common:all //client:all && bazel build //client:site
+        run: bazel test //common:all //client:all --noremote_cache && bazel build //client:site --noremote_cache
