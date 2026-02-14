@@ -4,27 +4,42 @@ on:
   push:
     branches:
       - main
-      - beta
+  release:
+    types: [published]
 
 jobs:
-  deploy:
-    name: Build and deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    environment: deploy
-
     steps:
-      # Checks out a copy of your repository.
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Builds code using bazelisk and copies the site folder out of the bazel symlinked dir.
       - name: Build the site
         uses: "docker://mattinsler/bazelisk:latest"
         with:
           args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./deploy"
 
-      # Deploy the site to Cloudflare.
-      - name: Publish
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./deploy
+
+  deploy-beta:
+    name: Deploy to beta
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: deploy
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: ./deploy
+
+      - name: Publish to Cloudflare (beta)
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -32,3 +47,27 @@ jobs:
           projectName: asciiflow
           directory: ./deploy
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+  deploy-prod:
+    name: Deploy to production
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: ./deploy
+
+      - name: Publish to Cloudflare (production)
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 4aa13cc00192d0927df8194260cb2ce8
+          projectName: asciiflow
+          directory: ./deploy
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: production
