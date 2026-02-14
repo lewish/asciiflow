@@ -82,6 +82,7 @@ async function render() {
   getCommittedSize: () => store.currentCanvas.committed.size(),
   setDarkMode: (v: boolean) => store.setDarkMode(v),
   getZoom: () => store.currentCanvas.zoom,
+  getOffset: () => ({ x: store.currentCanvas.offset.x, y: store.currentCanvas.offset.y }),
 };
 
 // tslint:disable-next-line: no-console
@@ -90,6 +91,14 @@ render().catch((e) => console.log(e));
 document.getElementById("root").addEventListener("keypress", (e) => controller.handleKeyPress(e));
 document.getElementById("root").addEventListener("keydown", (e) => controller.handleKeyDown(e));
 document.getElementById("root").addEventListener("keyup", (e) => controller.handleKeyUp(e));
+
+// Register wheel handler with { passive: false } so preventDefault() can
+// suppress browser page zoom on Ctrl+scroll / pinch-to-zoom.
+document.getElementById("root").addEventListener(
+  "wheel",
+  (e) => desktopController.handleWheel(e),
+  { passive: false }
+);
 
 document.addEventListener("paste", (e) => {
   e.preventDefault();

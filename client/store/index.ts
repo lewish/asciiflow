@@ -123,7 +123,6 @@ export interface AppState {
   // Tool state
   selectedToolMode: ToolMode;
   freeformCharacter: string;
-  panning: boolean;
   altPressed: boolean;
   currentCursor: string;
   modifierKeys: IModifierKeys;
@@ -147,7 +146,6 @@ function initialState(): AppState {
     route: DrawingId.local(null),
     selectedToolMode: ToolMode.BOX,
     freeformCharacter: "x",
-    panning: false,
     altPressed: false,
     currentCursor: "default",
     modifierKeys: {},
@@ -286,14 +284,6 @@ export const store = {
       : mode === ToolMode.SELECT
       ? selectTool
       : nullTool;
-  },
-
-  // Panning
-  get panning() {
-    return useAppStore.getState().panning;
-  },
-  setPanning(value: boolean) {
-    useAppStore.setState({ panning: value });
   },
 
   // Alt pressed

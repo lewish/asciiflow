@@ -13,7 +13,6 @@ describe("store facade", () => {
       route: DrawingId.local(null),
       selectedToolMode: ToolMode.BOX,
       freeformCharacter: "x",
-      panning: false,
       altPressed: false,
       currentCursor: "default",
       modifierKeys: {},
@@ -55,19 +54,6 @@ describe("store facade", () => {
     it("should update via setFreeformCharacter", () => {
       store.setFreeformCharacter("o");
       assert.equal(store.freeformCharacter, "o");
-    });
-  });
-
-  describe("panning", () => {
-    it("should default to false", () => {
-      assert.isFalse(store.panning);
-    });
-
-    it("should toggle via setPanning", () => {
-      store.setPanning(true);
-      assert.isTrue(store.panning);
-      store.setPanning(false);
-      assert.isFalse(store.panning);
     });
   });
 

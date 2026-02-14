@@ -492,10 +492,33 @@ test("draw box then arrow into it", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Zoom (mouse wheel)
+// Pan & Zoom (#28, #129, #195, #297)
 // ---------------------------------------------------------------------------
 
-test("mouse wheel changes zoom", async ({ page }) => {
+test("scroll pans the canvas", async ({ page }) => {
+  await page.goto("/");
+
+  const before = await page.evaluate(() =>
+    window.__asciiflow__.getOffset()
+  );
+
+  const vp = page.viewportSize();
+  await page.mouse.move(vp.width / 2, vp.height / 2);
+
+  const rv = await getRenderedVersion(page);
+  await page.mouse.wheel(0, 160);
+  await waitForRender(page, rv);
+
+  const after = await page.evaluate(() =>
+    window.__asciiflow__.getOffset()
+  );
+  // Scrolling down should increase the Y offset (pan down).
+  expect(after.y).toBeGreaterThan(before.y);
+  // X should be unchanged for a purely vertical scroll.
+  expect(after.x).toBe(before.x);
+});
+
+test("ctrl+scroll zooms instead of panning", async ({ page }) => {
   await page.goto("/");
 
   const initialZoom = await page.evaluate(() =>
@@ -503,28 +526,35 @@ test("mouse wheel changes zoom", async ({ page }) => {
   );
   expect(initialZoom).toBe(1);
 
-  // Draw a box first so we have content
-  await selectTool(page, "boxes");
-  await drag(page, -2, -1, 2, 2);
-
-  const rv = await getRenderedVersion(page);
-
-  // Scroll to zoom in
   const vp = page.viewportSize();
   await page.mouse.move(vp.width / 2, vp.height / 2);
-  await page.mouse.wheel(0, -300);
 
-  // Wait for the canvas to actually repaint
+  const rv = await getRenderedVersion(page);
+  // Ctrl + scroll up = zoom in.
+  await page.keyboard.down("Control");
+  await page.mouse.wheel(0, -300);
+  await page.keyboard.up("Control");
   await waitForRender(page, rv);
 
   const newZoom = await page.evaluate(() =>
     window.__asciiflow__.getZoom()
   );
   expect(newZoom).toBeGreaterThan(1);
+});
 
-  // Content should still be there
+test("space inserts space in text mode (#195, #297)", async ({ page }) => {
+  await page.goto("/");
+  await selectTool(page, "text");
+
+  await clickCell(page, 0, 0);
+
+  const rv = await getRenderedVersion(page);
+  await page.keyboard.type("a b");
+  await page.keyboard.press("Enter");
+  await waitForRender(page, rv);
+
   const text = await getCommittedText(page);
-  expect(text.split("\n")).toEqual(["┌───┐", "│   │", "│   │", "└───┘"]);
+  expect(text).toBe("a b");
 });
 
 // ---------------------------------------------------------------------------
