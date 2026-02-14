@@ -211,6 +211,7 @@ export class DesktopController {
       onMouseDown: this.handleMouseDown,
       onMouseUp: this.handleMouseUp,
       onMouseMove: this.handleMouseMove,
+      onAuxClick: this.handleAuxClick,
     };
   }
 
@@ -221,6 +222,13 @@ export class DesktopController {
       this.controller.startDrag(Vector.fromMouseEvent(e));
     } else {
       this.controller.startDraw(Vector.fromMouseEvent(e), e);
+    }
+  };
+
+  // Suppress middle-click paste (X11 primary selection) on Linux.
+  handleAuxClick = (e: React.MouseEvent<any>) => {
+    if (e.button === 1) {
+      e.preventDefault();
     }
   };
 

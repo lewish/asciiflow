@@ -404,6 +404,7 @@ export function Drawer() {
               </ToolHelp>{" "}
               Scroll to pan.{" "}
               <ShortcutChip label="shift + scroll" /> to pan horizontally.{" "}
+              <ShortcutChip label="middle-click drag" /> to pan freely.{" "}
               <ShortcutChip label={`${ctrlOrCmd()} + scroll`} /> to zoom.
               {!route.shareSpec && (
                 <>
