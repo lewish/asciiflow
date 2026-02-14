@@ -428,6 +428,9 @@ export const store = {
       .filter((key) => key.startsWith(storagePrefix(drawingId)))
       .forEach((key) => localStorage.removeItem(key));
     canvases.delete(drawingId.toString());
+    // Force re-render so the UI updates even if the route doesn't change
+    // (e.g. deleting the default drawing navigates back to the same route).
+    notifyCanvas();
   },
 
   renameDrawing(originalLocalId: string, newLocalId: string) {

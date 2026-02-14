@@ -56,8 +56,9 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
       const canvas = document.getElementById(
         "ascii-canvas"
       ) as HTMLCanvasElement;
-      canvas.width = document.documentElement.clientWidth;
-      canvas.height = document.documentElement.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = document.documentElement.clientWidth * dpr;
+      canvas.height = document.documentElement.clientHeight * dpr;
       render(canvas);
     };
     window.addEventListener("resize", handler);
@@ -66,10 +67,12 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
     };
   }, []);
 
+  const dpr = (typeof window !== "undefined" && window.devicePixelRatio) || 1;
+
   return (
     <canvas
-      width={document.documentElement.clientWidth}
-      height={document.documentElement.clientHeight}
+      width={document.documentElement.clientWidth * dpr}
+      height={document.documentElement.clientHeight * dpr}
       tabIndex={0}
       style={{
         backgroundColor: colors.background,
@@ -77,6 +80,8 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
         position: "fixed",
         left: 0,
         top: 0,
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
       }}
       id="ascii-canvas"
       {...rest}
@@ -94,6 +99,7 @@ function render(canvas: HTMLCanvasElement) {
   const scratch = store.currentCanvas.scratch;
   const selection = store.currentCanvas.selection;
 
+  const dpr = window.devicePixelRatio || 1;
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);
   // Clear the visible area.
@@ -102,14 +108,18 @@ function render(canvas: HTMLCanvasElement) {
   const zoom = store.currentCanvas.zoom;
   const offset = store.currentCanvas.offset;
 
-  context.scale(zoom, zoom);
-  context.translate(canvas.width / 2 / zoom, canvas.height / 2 / zoom);
+  // Scale for device pixel ratio first, then apply zoom.
+  context.scale(dpr * zoom, dpr * zoom);
+  // Use CSS dimensions (not canvas.width which includes DPR) for centering.
+  const cssWidth = canvas.width / dpr;
+  const cssHeight = canvas.height / dpr;
+  context.translate(cssWidth / 2 / zoom, cssHeight / 2 / zoom);
 
   // Only render grid lines and cells that are visible.
   const startOffset = screenToCell(new Vector(0, 0)).subtract(
     new Vector(constants.RENDER_PADDING_CELLS, constants.RENDER_PADDING_CELLS)
   );
-  const endOffset = screenToCell(new Vector(canvas.width, canvas.height)).add(
+  const endOffset = screenToCell(new Vector(cssWidth, cssHeight)).add(
     new Vector(constants.RENDER_PADDING_CELLS, constants.RENDER_PADDING_CELLS)
   );
 

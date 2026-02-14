@@ -57,6 +57,9 @@ export class Controller {
       event.preventDefault();
     }
     if (!event.ctrlKey && !event.metaKey && event.keyCode !== 13) {
+      // Prevent browser default for all printable characters we handle
+      // (e.g. ' and / trigger Firefox Quick Find: #202).
+      event.preventDefault();
       store.currentTool.handleKey(
         String.fromCharCode(event.keyCode),
         getModifierKeys(event)
@@ -101,7 +104,15 @@ export class Controller {
         if (event.shiftKey) {
           store.currentCanvas.redo();
         } else {
-          store.currentCanvas.undo();
+          // If there's active scratch content (e.g. text being typed), discard it
+          // instead of undoing the previous committed action (#332).
+          if (store.currentCanvas.scratch.size() > 0) {
+            store.currentTool.cleanup();
+            store.currentCanvas.clearScratch();
+            store.currentCanvas.clearSelection();
+          } else {
+            store.currentCanvas.undo();
+          }
         }
         // Disable browser-specific behavior on Cmd/Ctrl+Z: https://github.com/lewish/asciiflow/issues/189
         event.preventDefault();
@@ -229,7 +240,10 @@ export class DesktopController {
   };
 
   handleWheel = (e: React.WheelEvent<any>) => {
-    const delta = -e.deltaY;
+    // Use deltaY for vertical scroll, fallback to deltaX for horizontal scroll wheels.
+    const rawDelta = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    if (rawDelta === 0) return;
+    const delta = -rawDelta;
     const newZoom = store.currentCanvas.zoom * (delta > 0 ? 1.1 : 0.9);
     store.currentCanvas.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
   };

@@ -48,7 +48,8 @@ export class DrawText extends AbstractDrawFunction {
       }
       if (value === "<backspace>") {
         this.currentPosition = this.currentPosition.left();
-        this.textLayer.delete(this.currentPosition);
+        // Write a space instead of deleting, so it overwrites committed text underneath.
+        this.textLayer.set(this.currentPosition, " ");
         store.currentCanvas.setScratchLayer(this.textLayer);
       }
       if (value === "<left>") {
