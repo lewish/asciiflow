@@ -554,3 +554,34 @@ test("sidebar can be collapsed and expanded", async ({ page }) => {
   // "File" should be visible again
   await expect(page.getByText("File")).toBeVisible();
 });
+
+// ---------------------------------------------------------------------------
+// Backspace clears committed text (#193)
+// ---------------------------------------------------------------------------
+
+test("backspace erases committed text underneath", async ({ page }) => {
+  await page.goto("/");
+  await selectTool(page, "text");
+
+  // Type and commit "ABC"
+  await clickCell(page, 0, 0);
+  await page.keyboard.type("ABC");
+  await page.keyboard.press("Enter");
+
+  let text = await getCommittedText(page);
+  expect(text).toBe("ABC");
+
+  // Click at the position after "C" (3 cells right of start)
+  await clickCell(page, 3, 0);
+
+  // Backspace 3 times to erase all characters
+  const rv = await getRenderedVersion(page);
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("Enter");
+  await waitForRender(page, rv);
+
+  text = await getCommittedText(page);
+  expect(text).toBe("");
+});
