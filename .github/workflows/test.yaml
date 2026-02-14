@@ -8,12 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks out a copy of your repository.
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Builds code and runs the tests using Bazelisk.
-      - name: Run tests
-        uses: docker://mattinsler/bazelisk:latest
+      - name: Run tests and build
+        uses: "docker://mattinsler/bazelisk:latest"
         with:
-          args: bazel test ...
+          args: bash -c "bazel test //common:all //client:all && bazel build //client:site"
