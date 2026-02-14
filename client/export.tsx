@@ -46,6 +46,7 @@ export function ExportDialog({
           open={Boolean(open)}
           onClose={() => setOpen(null)}
           className={store.darkMode.get() ? "dark" : ""}
+          data-testid="export-dialog"
         >
           <DialogTitle>Export drawing</DialogTitle>
           <DialogContent>
@@ -115,7 +116,7 @@ export function ExportDialog({
             </FormControl>
           </DialogContent>
           <DialogContent>
-            <TextareaAutosize value={drawingText} className={styles.textArea} />
+            <TextareaAutosize value={drawingText} className={styles.textArea} data-testid="export-text" />
           </DialogContent>
           <DialogActions>
             <CopyToClipboardButton text={drawingText} />
@@ -145,6 +146,7 @@ function CopyToClipboardButton({ text }: { text: string }) {
     <>
       <Button
         color="primary"
+        data-testid="copy-to-clipboard"
         onClick={async () => {
           await navigator.clipboard.writeText(text);
           setOpen(true);

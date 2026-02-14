@@ -73,7 +73,7 @@ export function Drawer() {
                 <ListItemSecondaryAction>
                   <ExportDialog
                     button={
-                      <IconButton>
+                      <IconButton data-testid="export-button">
                         <Icons.GetApp />
                       </IconButton>
                     }
@@ -433,11 +433,15 @@ function ToolControl(
   }>
 ) {
   return useWatchable(() => {
+    const testId = typeof props.name === "string"
+      ? `tool-${props.name.toLowerCase().replace(/[^a-z]/g, "-")}`
+      : undefined;
     return (
       <ListItem
         selected={store.toolMode() === props.tool}
         button={true}
         onClick={() => store.setToolMode(props.tool)}
+        data-testid={testId}
       >
         <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.name} />
