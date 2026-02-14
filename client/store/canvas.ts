@@ -3,9 +3,32 @@ import * as constants from "#asciiflow/client/constants";
 import { Layer, LayerView } from "#asciiflow/client/layer";
 import { DrawingId, storageKey } from "#asciiflow/client/store";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
-import { readPersistent, writePersistent } from "#asciiflow/client/store/persistent";
-import { ArrayStringifier } from "#asciiflow/common/stringifiers";
+import { ArrayStringifier, IStringifier, JSONStringifier } from "#asciiflow/common/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
+
+function readPersistent<T>(
+  key: string,
+  defaultValue: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): T {
+  const raw = localStorage.getItem(key);
+  if (raw === null || raw === undefined) {
+    return defaultValue;
+  }
+  try {
+    return stringifier.deserialize(raw);
+  } catch {
+    return defaultValue;
+  }
+}
+
+function writePersistent<T>(
+  key: string,
+  value: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): void {
+  localStorage.setItem(key, stringifier.serialize(value));
+}
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells

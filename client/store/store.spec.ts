@@ -1,5 +1,5 @@
 // Must be first import: shims localStorage and window for Node.js.
-import "#asciiflow/client/store/test_setup";
+import "#asciiflow/testing/test_setup";
 
 import { assert } from "chai";
 import { Layer } from "#asciiflow/client/layer";

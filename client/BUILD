@@ -44,6 +44,7 @@ ts_mocha_test_suite(
     srcs = glob(["**/*.spec.ts"]),
     deps = [
         ":client",
+        "//testing",
         "//:node_modules/@types/chai",
         "//:node_modules/@types/mocha",
         "//:node_modules/@types/node",

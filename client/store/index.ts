@@ -8,11 +8,6 @@ import { DrawText } from "#asciiflow/client/draw/text";
 import { IExportConfig } from "#asciiflow/client/export";
 import { CanvasStore } from "#asciiflow/client/store/canvas";
 import {
-  persistentKey,
-  readPersistent,
-  writePersistent,
-} from "#asciiflow/client/store/persistent";
-import {
   ArrayStringifier,
   IStringifier,
   JSONStringifier,
@@ -55,10 +50,8 @@ export class DrawingId {
   ) {}
 
   public get persistentKey() {
-    return persistentKey(
-      this.type,
-      this.type === "local" ? this.localId : this.shareSpec
-    );
+    const parts = [this.type, this.type === "local" ? this.localId : this.shareSpec];
+    return parts.map((part) => encodeURIComponent(part)).join("/");
   }
 
   public get href() {
@@ -89,6 +82,34 @@ export class DrawingId {
       return new JSONStringifier().serialize(value);
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// localStorage helpers
+// ---------------------------------------------------------------------------
+
+function readPersistent<T>(
+  key: string,
+  defaultValue: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): T {
+  const raw = localStorage.getItem(key);
+  if (raw === null || raw === undefined) {
+    return defaultValue;
+  }
+  try {
+    return stringifier.deserialize(raw);
+  } catch {
+    return defaultValue;
+  }
+}
+
+function writePersistent<T>(
+  key: string,
+  value: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): void {
+  localStorage.setItem(key, stringifier.serialize(value));
 }
 
 // ---------------------------------------------------------------------------
