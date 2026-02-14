@@ -54,7 +54,7 @@ jobs:
     needs: build
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
-    environment: production
+    environment: deploy
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
