@@ -29,7 +29,7 @@
     "@types/sinon": "^17.0.3",
     "@types/uuid": "^8.3.4",
     "chai": "^4.4.1",
-    "electron": "^29.0.1",
+    "electron": "^35.7.5",
     "http-server": "^14.1.1",
     "js-base64": "^3.7.7",
     "json-stable-stringify": "^1.1.1",
