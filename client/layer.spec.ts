@@ -2,7 +2,6 @@ import { Layer } from "#asciiflow/client/layer";
 import { layerToText } from "#asciiflow/client/text_utils";
 import { Vector } from "#asciiflow/client/vector";
 import { expect } from "chai";
-import { describe, it } from "mocha";
 
 describe("layer", () => {
 

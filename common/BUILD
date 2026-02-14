@@ -10,6 +10,7 @@ ts_library(
             "**/*.tsx",
         ],
         exclude = ["**/*.spec.ts"],
+        allow_empty = True,
     ),
     deps = [
         "//:node_modules/@types/react",

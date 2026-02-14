@@ -1,4 +1,6 @@
-load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_devserver")
+load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
+load("@npm//:http-server/package_json.bzl", http_server_bin = "bin")
 load("//:ts_library.bzl", "ts_library", "ts_mocha_test_suite")
 
 package(default_visibility = ["//visibility:public"])
@@ -49,81 +51,58 @@ ts_mocha_test_suite(
     ],
 )
 
-load("@aspect_rules_webpack//webpack:defs.bzl", "webpack_bundle", "webpack_devserver")
-
 filegroup(
     name = "css",
     srcs = glob(["**/*.css"]),
 )
 
-webpack_bundle(
+js_library(
+    name = "esbuild_config",
+    srcs = ["esbuild.config.mjs"],
+)
+
+esbuild(
     name = "bundle",
     srcs = glob(["**/*.css"]),
-    args = [
-        "--mode=production",
+    entry_point = "app.js",
+    output_css = "bundle.css",
+    platform = "browser",
+    target = ["es2020"],
+    define = {
+        "process.env.NODE_ENV": "\"production\"",
+    },
+    deps = [
+        ":client",
     ],
-    data = [
-        ":css",
-    ],
-    entry_point = ":app.js",
-    node_modules = "//:node_modules",
-    output_dir = False,
-    # Errors thrown in workers don't currently get propagated back, so turn this off.
-    supports_workers = False,
+    config = ":esbuild_config",
+    minify = True,
+    sourcemap = "linked",
     tags = [
         "ibazel_notify_changes",
     ],
-    webpack_config = ":webpack.config.js",
-    deps = [
-        ":client",
-        "//:node_modules/@babel/core",
-        "//:node_modules/@babel/plugin-proposal-decorators",
-        "//:node_modules/@babel/preset-env",
-        "//:node_modules/babel-loader",
-        "//:node_modules/css-loader",
-        "//:node_modules/html-webpack-plugin",
-        "//:node_modules/style-loader",
-        "//:node_modules/webpack-cli",
-    ],
 )
 
-webpack_devserver(
+http_server_bin.http_server_binary(
+    name = "http_server_bin",
+)
+
+js_run_devserver(
     name = "devserver",
+    chdir = package_name(),
     data = [
         "index.html",
         ":assets",
-        ":client",
-        ":css",
-        "//:node_modules/@babel/core",
-        "//:node_modules/@babel/plugin-proposal-decorators",
-        "//:node_modules/@babel/preset-env",
-        "//:node_modules/babel-loader",
-        "//:node_modules/css-loader",
-        "//:node_modules/html-webpack-plugin",
-        "//:node_modules/style-loader",
-        "//:node_modules/webpack-cli",
+        ":bundle",
+        ":bundle.css",
     ],
-    node_modules = "//:node_modules",
-    webpack_config = ":webpack.config.js",
+    tool = ":http_server_bin",
 )
-
-# build_test(
-#     name = "build_test",
-#     targets = [
-#         ":bundle",
-#     ],
-# )
 
 filegroup(
     name = "site",
     srcs = [
         ":assets",
         ":bundle.js",
+        ":bundle.css",
     ],
 )
-
-# js_library(
-#     name = "favicon_png",
-#     srcs = ["favicon.png"],
-#     visibility = ["//electron:__pkg__"],
-# )

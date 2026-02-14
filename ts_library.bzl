@@ -6,7 +6,6 @@ def ts_library(tsconfig = None, **kwargs):
         tsconfig = tsconfig if tsconfig else "//:tsconfig",
         declaration = True,
         source_map = True,
-        transpiler = "tsc",
         **kwargs
     )
 
@@ -28,12 +27,11 @@ def ts_mocha_test_suite(srcs, tsconfig = None, **kwargs):
             data = [
                 ":" + lib_name,
                 "//:package_json",
-                # "//:node_modules/source-map-support",
+                "//bazel:resolve_extensions_loader",
             ],
             node_options = [
-                "--experimental-specifier-resolution=node",
-                # "-r",
-                # "source-map-support/register",
+                "--loader",
+                "./bazel/resolve-extensions-loader.mjs",
             ],
             args = [
                 "**/" + test_name + ".js",

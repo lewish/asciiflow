@@ -2,3 +2,5 @@ node_modules
 bazel-*
 yarn-error.log
 user.bazelrc
+test-results/
+worktrees/

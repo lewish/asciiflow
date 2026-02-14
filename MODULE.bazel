@@ -1,12 +1,12 @@
 module(name = "asciiflow", version = "0.1")
 
-bazel_dep(name = "bazel_features", version = "1.4.1")
+bazel_dep(name = "bazel_features", version = "1.41.0")
 
-bazel_dep(name = "rules_nodejs", version = "6.0.3")
+bazel_dep(name = "rules_nodejs", version = "6.7.3")
 
 node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
 
-node.toolchain(node_version = "16.14.2")
+node.toolchain(node_version = "22.12.0")
 
 npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
 
@@ -18,11 +18,11 @@ npm.npm_translate_lock(
 
 use_repo(npm, "npm")
 
-bazel_dep(name = "aspect_bazel_lib", version = "1.40.2")
+bazel_dep(name = "aspect_bazel_lib", version = "2.14.0")
 
-bazel_dep(name = "aspect_rules_js", version = "1.35.0")
+bazel_dep(name = "aspect_rules_js", version = "2.3.7")
 
-bazel_dep(name = "aspect_rules_ts", version = "2.1.1")
+bazel_dep(name = "aspect_rules_ts", version = "3.5.1")
 
 rules_ts_ext = use_extension(
     "@aspect_rules_ts//ts:extensions.bzl",
@@ -33,3 +33,5 @@ rules_ts_ext = use_extension(
 rules_ts_ext.deps()
 
 use_repo(rules_ts_ext, "npm_typescript")
+
+bazel_dep(name = "aspect_rules_esbuild", version = "0.24.0")

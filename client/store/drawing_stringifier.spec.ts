@@ -6,7 +6,6 @@ import {
 import { layerToText } from "#asciiflow/client/text_utils";
 import { Vector } from "#asciiflow/client/vector";
 import { expect } from "chai";
-import { describe, it } from "mocha";
 
 describe("drawing_stringifier", () => {
   it("reserialize", () => {
