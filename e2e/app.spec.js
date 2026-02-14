@@ -227,6 +227,24 @@ test("type multiline text", async ({ page }) => {
   expect(text.split("\n")).toEqual(["AB", "CD"]);
 });
 
+test("special chars in text mode are not swallowed (#202)", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await selectTool(page, "text");
+
+  await clickCell(page, 0, 0);
+
+  // Apostrophe and slash trigger Firefox Quick Find if not preventDefault'd.
+  const rv = await getRenderedVersion(page);
+  await page.keyboard.type("it's/ok");
+  await page.keyboard.press("Enter");
+  await waitForRender(page, rv);
+
+  const text = await getCommittedText(page);
+  expect(text).toBe("it's/ok");
+});
+
 // ---------------------------------------------------------------------------
 // Select tool
 // ---------------------------------------------------------------------------
