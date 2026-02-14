@@ -17,4 +17,5 @@ jobs:
           sudo chmod +x /usr/local/bin/bazel
 
       - name: Run tests and build
-        run: bazel test //common:all //client:all --remote_cache= && bazel build //client:site --remote_cache=
+        run: bazel test //common:all //client:all --remote_cache= --bes_backend= --bes_results_url= && bazel build //client:site --remote_cache= --bes_backend= --bes_results_url=
+        timeout-minutes: 10
