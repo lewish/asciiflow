@@ -77,6 +77,7 @@ esbuild(
     config = ":esbuild_config",
     minify = True,
     sourcemap = "linked",
+    bazel_sandbox_plugin = False,
     tags = [
         "ibazel_notify_changes",
     ],
