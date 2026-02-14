@@ -554,3 +554,26 @@ test("sidebar can be collapsed and expanded", async ({ page }) => {
   // "File" should be visible again
   await expect(page.getByText("File")).toBeVisible();
 });
+
+// ---------------------------------------------------------------------------
+// HiDPI canvas scaling (#258)
+// ---------------------------------------------------------------------------
+
+test("canvas backing store is scaled for devicePixelRatio", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(() => {
+    const canvas = document.getElementById("ascii-canvas");
+    const dpr = window.devicePixelRatio || 1;
+    const cssWidth = canvas.clientWidth;
+    const cssHeight = canvas.clientHeight;
+    return {
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height,
+      expectedWidth: Math.round(cssWidth * dpr),
+      expectedHeight: Math.round(cssHeight * dpr),
+      dpr,
+    };
+  });
+  expect(result.canvasWidth).toBe(result.expectedWidth);
+  expect(result.canvasHeight).toBe(result.expectedHeight);
+});
