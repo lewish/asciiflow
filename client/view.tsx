@@ -8,6 +8,9 @@ import { useEffect } from "react";
  * Handles view operations, state and management of the screen.
  */
 
+/** Counter incremented after each actual canvas paint. */
+export let renderedVersion = 0;
+
 function getColors() {
   if (store.darkMode) {
     return {
@@ -214,6 +217,7 @@ function render(canvas: HTMLCanvasElement) {
     );
     context.stroke();
   }
+  renderedVersion++;
 }
 
 /**

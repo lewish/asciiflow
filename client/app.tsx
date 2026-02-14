@@ -8,12 +8,12 @@ import {
 } from "#asciiflow/client/controller";
 import { Drawer } from "#asciiflow/client/drawer";
 import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
-import { screenToCell, View } from "#asciiflow/client/view";
+import { renderedVersion, screenToCell, View } from "#asciiflow/client/view";
 
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import { Vector } from "#asciiflow/client/vector";
-import { textToLayer } from "#asciiflow/client/text_utils";
+import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -72,6 +72,17 @@ async function render() {
     document.getElementById("root")
   );
 }
+
+// Expose a test bridge for e2e tests to query store and render state.
+(window as any).__asciiflow__ = {
+  getCommittedText: () => layerToText(store.currentCanvas.committed),
+  getRenderedVersion: () => renderedVersion,
+  getToolMode: () => store.toolMode(),
+  getDarkMode: () => store.darkMode,
+  getCommittedSize: () => store.currentCanvas.committed.size(),
+  setDarkMode: (v: boolean) => store.setDarkMode(v),
+  getZoom: () => store.currentCanvas.zoom,
+};
 
 // tslint:disable-next-line: no-console
 render().catch((e) => console.log(e));
