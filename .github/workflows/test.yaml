@@ -11,7 +11,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Bazelisk
+        run: |
+          curl -fsSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+          chmod +x /usr/local/bin/bazel
+
       - name: Run tests and build
-        uses: "docker://mattinsler/bazelisk:latest"
-        with:
-          args: bash -c "bazel test //common:all //client:all && bazel build //client:site"
+        run: bazel test //common:all //client:all && bazel build //client:site

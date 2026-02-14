@@ -15,10 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Bazelisk
+        run: |
+          curl -fsSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+          chmod +x /usr/local/bin/bazel
+
       - name: Build the site
-        uses: "docker://mattinsler/bazelisk:latest"
-        with:
-          args: bash -c "bazel build site/... && cp -r --dereference bazel-bin/site ./deploy"
+        run: bazel build site/... && cp -r --dereference bazel-bin/site ./deploy
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
