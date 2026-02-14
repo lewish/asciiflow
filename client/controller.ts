@@ -88,6 +88,9 @@ export class Controller {
       } else if (event.keyCode === "6".charCodeAt(0)) {
         store.setToolMode(ToolMode.TEXT);
         event.preventDefault();
+      } else if (event.keyCode === "7".charCodeAt(0)) {
+        store.setToolMode(ToolMode.CIRCLE);
+        event.preventDefault();
       }
     }
     if (event.ctrlKey || event.metaKey) {
