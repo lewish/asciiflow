@@ -42,7 +42,8 @@
     "sinon": "^18.0.0",
     "source-map-support": "^0.5.21",
     "typescript": "^5.7.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zustand": "^4.5.5"
   },
   "pnpm": {
     "overrides": {

@@ -3,80 +3,101 @@ import * as constants from "#asciiflow/client/constants";
 import { Layer, LayerView } from "#asciiflow/client/layer";
 import { DrawingId, storageKey } from "#asciiflow/client/store";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
-import { Persistent } from "#asciiflow/client/store/persistent";
+import { readPersistent, writePersistent } from "#asciiflow/client/store/persistent";
 import { ArrayStringifier } from "#asciiflow/common/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
-import { WatchableAdapter, watchableValue } from "#asciiflow/common/watchable";
 
 /**
  * Holds the entire state of the diagram as a 2D array of cells
  * and provides methods to modify the current state.
  */
 export class CanvasStore {
-  public readonly persistentCommitted: WatchableAdapter<Layer>;
-  public readonly undoLayers: WatchableAdapter<Layer[]>;
-  public readonly redoLayers: WatchableAdapter<Layer[]>;
-  private _zoom: WatchableAdapter<number>;
-  private _offset: WatchableAdapter<IVector>;
+  private _committed: Layer;
+  private _undoLayers: Layer[];
+  private _redoLayers: Layer[];
+  private _zoom: number;
+  private _offset: IVector;
+  private _scratch: Layer = new Layer();
+  private _selection: Box | undefined = undefined;
 
-  constructor(public readonly drawingId: DrawingId) {
-    this.persistentCommitted = Persistent.custom(
-      storageKey(drawingId, "committed-layer"),
-      this.drawingId.shareSpec
-        ? new DrawingStringifier().deserialize(this.drawingId.shareSpec).layer
-        : new Layer(),
-      Layer
-    );
-    this.undoLayers = Persistent.custom(
-      storageKey(drawingId, "undo-layers"),
+  // Keys for localStorage persistence.
+  private committedKey: string;
+  private undoKey: string;
+  private redoKey: string;
+  private zoomKey: string;
+  private offsetKey: string;
+
+  constructor(
+    public readonly drawingId: DrawingId,
+    private notify: () => void
+  ) {
+    this.committedKey = storageKey(drawingId, "committed-layer");
+    this.undoKey = storageKey(drawingId, "undo-layers");
+    this.redoKey = storageKey(drawingId, "redo-layers");
+    this.zoomKey = storageKey(drawingId, "zoom");
+    this.offsetKey = storageKey(drawingId, "offset");
+
+    this._committed = drawingId.shareSpec
+      ? new DrawingStringifier().deserialize(drawingId.shareSpec).layer
+      : readPersistent(this.committedKey, new Layer(), Layer);
+
+    this._undoLayers = readPersistent(
+      this.undoKey,
       [],
       new ArrayStringifier(Layer)
     );
-    this.redoLayers = Persistent.custom(
-      storageKey(drawingId, "redo-layers"),
+    this._redoLayers = readPersistent(
+      this.redoKey,
       [],
       new ArrayStringifier(Layer)
     );
-    this._zoom = Persistent.json(storageKey(drawingId, "zoom"), 1);
-    this._offset = Persistent.json<IVector>(storageKey(drawingId, "offset"), {
+    this._zoom = readPersistent(this.zoomKey, 1);
+    this._offset = readPersistent<IVector>(this.offsetKey, {
       x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
       y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
     });
   }
 
   public get zoom() {
-    return this._zoom.get();
+    return this._zoom;
   }
 
   public setZoom(value: number) {
-    this._zoom.set(value);
+    this._zoom = value;
+    writePersistent(this.zoomKey, value);
+    this.notify();
   }
 
   public get offset() {
-    return new Vector(this._offset.get().x, this._offset.get().y);
+    return new Vector(this._offset.x, this._offset.y);
   }
 
   public setOffset(value: Vector) {
-    this._offset.set({
-      x: value.x,
-      y: value.y,
-    });
+    this._offset = { x: value.x, y: value.y };
+    writePersistent(this.offsetKey, this._offset);
+    this.notify();
   }
 
-  public readonly scratch = watchableValue(new Layer());
+  get scratch() {
+    return this._scratch;
+  }
 
-  public readonly selection = watchableValue<Box>(undefined);
+  get selection() {
+    return this._selection;
+  }
 
   get committed() {
-    return this.persistentCommitted.get();
+    return this._committed;
   }
 
   set committed(value: Layer) {
-    this.persistentCommitted.set(value);
+    this._committed = value;
+    writePersistent(this.committedKey, value, Layer);
+    this.notify();
   }
 
   get combined() {
-    return new LayerView([this.committed, this.scratch.get()]);
+    return new LayerView([this.committed, this._scratch]);
   }
 
   get shareSpec() {
@@ -87,7 +108,8 @@ export class CanvasStore {
   }
 
   setSelection(box: Box) {
-    this.selection.set(box);
+    this._selection = box;
+    this.notify();
   }
 
   clearSelection() {
@@ -95,67 +117,72 @@ export class CanvasStore {
   }
 
   setScratchLayer(layer: Layer) {
-    this.scratch.set(layer);
+    this._scratch = layer;
+    this.notify();
   }
 
-  /**
-   * This clears the entire state, but is undoable.
-   */
   clear() {
-    this.undoLayers.set([...this.undoLayers.get(), this.committed]);
-    this.persistentCommitted.set(new Layer());
-    this.redoLayers.set([]);
+    this._undoLayers = [...this._undoLayers, this.committed];
+    writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
+    this._committed = new Layer();
+    writePersistent(this.committedKey, this._committed, Layer);
+    this._redoLayers = [];
+    writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this.notify();
   }
 
-  /**
-   * Clears the current drawing scratchpad.
-   */
   clearScratch() {
-    this.scratch.set(new Layer());
+    this._scratch = new Layer();
+    this.notify();
   }
 
-  /**
-   * Ends the current draw, commiting anything currently drawn on the scratch layer.
-   */
   commitScratch() {
-    const [newLayer, undoLayer] = this.committed.apply(this.scratch.get());
-    this.committed = newLayer;
+    const [newLayer, undoLayer] = this.committed.apply(this._scratch);
+    this._committed = newLayer;
+    writePersistent(this.committedKey, this._committed, Layer);
     if (undoLayer.size() > 0) {
-      // Don't push a no-op to the undo stack.
-      this.undoLayers.set([...this.undoLayers.get(), undoLayer]);
+      this._undoLayers = [...this._undoLayers, undoLayer];
+      writePersistent(
+        this.undoKey,
+        this._undoLayers,
+        new ArrayStringifier(Layer)
+      );
     }
-    // If you commit something new, delete the redo stack.
-    this.redoLayers.set([]);
-    this.scratch.set(new Layer());
+    this._redoLayers = [];
+    writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this._scratch = new Layer();
+    this.notify();
   }
 
-  /**
-   * Undoes the last committed state.
-   */
   undo() {
-    if (this.undoLayers.get().length === 0) {
+    if (this._undoLayers.length === 0) {
       return;
     }
     const [newLayer, redoLayer] = this.committed.apply(
-      this.undoLayers.get().at(-1)
+      this._undoLayers.at(-1)
     );
-    this.committed = newLayer;
-    this.redoLayers.set([...this.redoLayers.get(), redoLayer]);
-    this.undoLayers.set(this.undoLayers.get().slice(0, -1));
+    this._committed = newLayer;
+    writePersistent(this.committedKey, this._committed, Layer);
+    this._redoLayers = [...this._redoLayers, redoLayer];
+    writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this._undoLayers = this._undoLayers.slice(0, -1);
+    writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
+    this.notify();
   }
 
-  /**
-   * Redoes the last undone.
-   */
   redo() {
-    if (this.redoLayers.get().length === 0) {
+    if (this._redoLayers.length === 0) {
       return;
     }
     const [newLayer, undoLayer] = this.committed.apply(
-      this.redoLayers.get().at(-1)
+      this._redoLayers.at(-1)
     );
-    this.committed = newLayer;
-    this.undoLayers.set([...this.undoLayers.get(), undoLayer]);
-    this.redoLayers.set(this.redoLayers.get().slice(0, -1));
+    this._committed = newLayer;
+    writePersistent(this.committedKey, this._committed, Layer);
+    this._undoLayers = [...this._undoLayers, undoLayer];
+    writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
+    this._redoLayers = this._redoLayers.slice(0, -1);
+    writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this.notify();
   }
 }

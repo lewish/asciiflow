@@ -14,10 +14,9 @@ import {
 } from "@material-ui/core";
 import { ASCII, UNICODE } from "#asciiflow/client/constants";
 import styles from "#asciiflow/client/export.module.css";
-import { DrawingId, store } from "#asciiflow/client/store";
+import { DrawingId, store, useAppStore } from "#asciiflow/client/store";
 import { layerToText } from "#asciiflow/client/text_utils";
 import * as React from "react";
-import { useWatchable } from "#asciiflow/common/watchable";
 
 export interface IExportConfig {
   wrapper?: "star" | "star-filled" | "triple-quotes" | "hash" | "slash" | "three-slashes" | "dash" | "apostrophe" | "semicolon" | "backticks" | "four-spaces";
@@ -32,100 +31,101 @@ export function ExportDialog({
   button: React.ReactNode;
   drawingId: DrawingId;
 }) {
-  return useWatchable(() => {
-    const [open, setOpen] = React.useState(false);
-    const exportConfig = store.exportConfig.get();
-    // Only compute the text if the dialog is open.
-    const drawingText = open
-      ? applyConfig(layerToText(store.canvas(drawingId).committed), exportConfig)
-      : "";
-    return (
-      <>
-        <span onClick={(e) => setOpen(true)}>{button}</span>
-        <Dialog
-          open={Boolean(open)}
-          onClose={() => setOpen(null)}
-          className={store.darkMode.get() ? "dark" : ""}
-          data-testid="export-dialog"
-        >
-          <DialogTitle>Export drawing</DialogTitle>
-          <DialogContent>
-            <FormControl className={styles.formControl}>
-              <InputLabel>Character set</InputLabel>
-              <Select
-                value={exportConfig.characters ?? "extended"}
-                onChange={(e) =>
-                  store.exportConfig.set({
-                    ...exportConfig,
-                    characters: e.target.value as any,
-                  })
-                }
-              >
-                <MenuItem value={"extended"}>ASCII Extended</MenuItem>
-                <MenuItem value={"basic"}>ASCII Basic</MenuItem>
-              </Select>
-            </FormControl>
-          </DialogContent>
-          <DialogContent>
-            <FormControl className={styles.formControl}>
-              <InputLabel>Comment type</InputLabel>
-              <Select
-                value={exportConfig.wrapper || "none"}
-                onChange={(e) =>
-                  store.exportConfig.set({
-                    ...exportConfig,
-                    wrapper: e.target.value as any,
-                  })
-                }
-              >
-                <MenuItem value={"none"}>None</MenuItem>
-                <MenuItem value={"star"}>
-                  Standard multi-line <CommentTypeChip label="/* */" />
-                </MenuItem>
-                <MenuItem value={"star-filled"}>
-                  Filled multi-line <CommentTypeChip label="/***/" />
-                </MenuItem>
-                <MenuItem value={"triple-quotes"}>
-                  Quotes multi-line <CommentTypeChip label='""" """' />
-                </MenuItem>
-                <MenuItem value={"hash"}>
-                  Hashes <CommentTypeChip label="#" />
-                </MenuItem>
-                <MenuItem value={"slash"}>
-                  Slashes <CommentTypeChip label="//" />
-                </MenuItem>
-                <MenuItem value={"three-slashes"}>
-                  Three Slashes <CommentTypeChip label="///" />
-                </MenuItem>
-                <MenuItem value={"dash"}>
-                  Dashes <CommentTypeChip label="--" />
-                </MenuItem>
-                <MenuItem value={"apostrophe"}>
-                  Apostrophies <CommentTypeChip label="'" />
-                </MenuItem>
-                <MenuItem value={"backticks"}>
-                  Backticks multi-line <CommentTypeChip label="``` ```" />
-                </MenuItem>
-                <MenuItem value={"four-spaces"}>
-                  Four Spaces <CommentTypeChip label="    " />
-                </MenuItem>
-                <MenuItem value={"semicolon"}>
-                  Semicolons <CommentTypeChip label=";" />
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </DialogContent>
-          <DialogContent>
-            <TextareaAutosize value={drawingText} className={styles.textArea} data-testid="export-text" />
-          </DialogContent>
-          <DialogActions>
-            <CopyToClipboardButton text={drawingText} />
-            <Button onClick={() => setOpen(false)}>Close</Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-  });
+  const [open, setOpen] = React.useState(false);
+  const exportConfig = useAppStore((s) => s.exportConfig);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const canvasVersion = useAppStore((s) => s.canvasVersion);
+
+  // Only compute the text if the dialog is open.
+  const drawingText = open
+    ? applyConfig(layerToText(store.canvas(drawingId).committed), exportConfig)
+    : "";
+  return (
+    <>
+      <span onClick={(e) => setOpen(true)}>{button}</span>
+      <Dialog
+        open={Boolean(open)}
+        onClose={() => setOpen(null)}
+        className={darkMode ? "dark" : ""}
+        data-testid="export-dialog"
+      >
+        <DialogTitle>Export drawing</DialogTitle>
+        <DialogContent>
+          <FormControl className={styles.formControl}>
+            <InputLabel>Character set</InputLabel>
+            <Select
+              value={exportConfig.characters ?? "extended"}
+              onChange={(e) =>
+                store.setExportConfig({
+                  ...exportConfig,
+                  characters: e.target.value as any,
+                })
+              }
+            >
+              <MenuItem value={"extended"}>ASCII Extended</MenuItem>
+              <MenuItem value={"basic"}>ASCII Basic</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogContent>
+          <FormControl className={styles.formControl}>
+            <InputLabel>Comment type</InputLabel>
+            <Select
+              value={exportConfig.wrapper || "none"}
+              onChange={(e) =>
+                store.setExportConfig({
+                  ...exportConfig,
+                  wrapper: e.target.value as any,
+                })
+              }
+            >
+              <MenuItem value={"none"}>None</MenuItem>
+              <MenuItem value={"star"}>
+                Standard multi-line <CommentTypeChip label="/* */" />
+              </MenuItem>
+              <MenuItem value={"star-filled"}>
+                Filled multi-line <CommentTypeChip label="/***/" />
+              </MenuItem>
+              <MenuItem value={"triple-quotes"}>
+                Quotes multi-line <CommentTypeChip label='""" """' />
+              </MenuItem>
+              <MenuItem value={"hash"}>
+                Hashes <CommentTypeChip label="#" />
+              </MenuItem>
+              <MenuItem value={"slash"}>
+                Slashes <CommentTypeChip label="//" />
+              </MenuItem>
+              <MenuItem value={"three-slashes"}>
+                Three Slashes <CommentTypeChip label="///" />
+              </MenuItem>
+              <MenuItem value={"dash"}>
+                Dashes <CommentTypeChip label="--" />
+              </MenuItem>
+              <MenuItem value={"apostrophe"}>
+                Apostrophies <CommentTypeChip label="'" />
+              </MenuItem>
+              <MenuItem value={"backticks"}>
+                Backticks multi-line <CommentTypeChip label="``` ```" />
+              </MenuItem>
+              <MenuItem value={"four-spaces"}>
+                Four Spaces <CommentTypeChip label="    " />
+              </MenuItem>
+              <MenuItem value={"semicolon"}>
+                Semicolons <CommentTypeChip label=";" />
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogContent>
+          <TextareaAutosize value={drawingText} className={styles.textArea} data-testid="export-text" />
+        </DialogContent>
+        <DialogActions>
+          <CopyToClipboardButton text={drawingText} />
+          <Button onClick={() => setOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 }
 
 function CommentTypeChip({ label }: { label: React.ReactNode }) {

@@ -1,51 +1,39 @@
 import { IStringifier, JSONStringifier } from "#asciiflow/common/stringifiers";
-import { watchable } from "#asciiflow/common/watchable";
 
-export class Persistent<T> {
-  public static json<T>(key: string, defaultValue: T) {
-    return watchable(new Persistent<T>(new JSONStringifier(), key, defaultValue));
+/**
+ * Reads a value from localStorage, deserializing with the given stringifier.
+ * Returns defaultValue if the key is missing or deserialization fails.
+ */
+export function readPersistent<T>(
+  key: string,
+  defaultValue: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): T {
+  const raw = localStorage.getItem(key);
+  if (raw === null || raw === undefined) {
+    return defaultValue;
   }
-
-  public static key(...parts: string[]) {
-    return parts.map((part) => encodeURIComponent(part)).join("/");
+  try {
+    return stringifier.deserialize(raw);
+  } catch {
+    return defaultValue;
   }
+}
 
-  public static custom<T>(
-    key: string,
-    defaultValue: T,
-    stringifier: IStringifier<T>
-  ) {
-    return watchable(new Persistent<T>(stringifier, key, defaultValue));
-  }
+/**
+ * Writes a value to localStorage, serializing with the given stringifier.
+ */
+export function writePersistent<T>(
+  key: string,
+  value: T,
+  stringifier: IStringifier<T> = new JSONStringifier() as any
+): void {
+  localStorage.setItem(key, stringifier.serialize(value));
+}
 
-  private value: T;
-
-  private constructor(
-    private stringifier: IStringifier<T>,
-    public readonly key: string,
-    defaultValue: T
-  ) {
-    const localStorageValue = localStorage.getItem(key);
-    if (
-      typeof localStorageValue === "undefined" ||
-      localStorageValue === null
-    ) {
-      this.value = defaultValue;
-    } else {
-      try {
-        this.value = this.stringifier.deserialize(localStorageValue);
-      } catch (e) {
-        this.value = defaultValue;
-      }
-    }
-  }
-
-  get() {
-    return this.value;
-  }
-
-  set(value: T) {
-    this.value = value;
-    localStorage.setItem(this.key, this.stringifier.serialize(value));
-  }
+/**
+ * Build a localStorage key from parts.
+ */
+export function persistentKey(...parts: string[]) {
+  return parts.map((part) => encodeURIComponent(part)).join("/");
 }

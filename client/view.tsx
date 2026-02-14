@@ -1,7 +1,6 @@
 import * as constants from "#asciiflow/client/constants";
-import { store } from "#asciiflow/client/store";
+import { store, useAppStore } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
-import { autorun, useWatchable } from "#asciiflow/common/watchable";
 import * as React from "react";
 import { useEffect } from "react";
 
@@ -10,7 +9,7 @@ import { useEffect } from "react";
  */
 
 function getColors() {
-  if (store.darkMode.get()) {
+  if (store.darkMode) {
     return {
       background: "#333",
       grid: "#444",
@@ -35,50 +34,52 @@ export function setCanvasCursor(cursor: string) {
   }
 }
 
-export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
-  useWatchable(() => {
-    const colors = getColors();
-    useEffect(() => {
+export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
+  const darkMode = useAppStore((s) => s.darkMode);
+  const canvasVersion = useAppStore((s) => s.canvasVersion);
+  const route = useAppStore((s) => s.route);
+
+  const colors = getColors();
+
+  useEffect(() => {
+    const canvas = document.getElementById(
+      "ascii-canvas"
+    ) as HTMLCanvasElement;
+    render(canvas);
+  });
+
+  useEffect(() => {
+    const handler = () => {
       const canvas = document.getElementById(
         "ascii-canvas"
       ) as HTMLCanvasElement;
-      const disposer = autorun(() => render(canvas));
-      return () => disposer();
-    });
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight;
+      render(canvas);
+    };
+    window.addEventListener("resize", handler);
+    return () => {
+      window.removeEventListener("resize", handler);
+    };
+  }, []);
 
-    // Add an cleanup an event listener on the window.
-    useEffect(() => {
-      const handler = () => {
-        const canvas = document.getElementById(
-          "ascii-canvas"
-        ) as HTMLCanvasElement;
-        canvas.width = document.documentElement.clientWidth;
-        canvas.height = document.documentElement.clientHeight;
-        render(canvas);
-      };
-      window.addEventListener("resize", handler);
-      return () => {
-        window.removeEventListener("resize", handler);
-      };
-    });
-
-    return (
-      <canvas
-        width={document.documentElement.clientWidth}
-        height={document.documentElement.clientHeight}
-        tabIndex={0}
-        style={{
-          backgroundColor: colors.background,
-          touchAction: "none",
-          position: "fixed",
-          left: 0,
-          top: 0,
-        }}
-        id="ascii-canvas"
-        {...rest}
-      />
-    );
-  });
+  return (
+    <canvas
+      width={document.documentElement.clientWidth}
+      height={document.documentElement.clientHeight}
+      tabIndex={0}
+      style={{
+        backgroundColor: colors.background,
+        touchAction: "none",
+        position: "fixed",
+        left: 0,
+        top: 0,
+      }}
+      id="ascii-canvas"
+      {...rest}
+    />
+  );
+};
 
 /**
  * Renders the given state to the canvas.
@@ -87,8 +88,8 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) =>
  */
 function render(canvas: HTMLCanvasElement) {
   const committed = store.currentCanvas.committed;
-  const scratch = store.currentCanvas.scratch.get();
-  const selection = store.currentCanvas.selection.get();
+  const scratch = store.currentCanvas.scratch;
+  const selection = store.currentCanvas.selection;
 
   const context = canvas.getContext("2d");
   context.setTransform(1, 0, 0, 1, 0, 0);

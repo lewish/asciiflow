@@ -12,14 +12,14 @@ ts_library(
         exclude = ["**/*.spec.ts"],
         allow_empty = True,
     ),
-    deps = [
-        "//:node_modules/@types/react",
-        "//:node_modules/react",
-    ],
+    deps = [],
 )
 
 ts_mocha_test_suite(
-    srcs = glob(["**/*.spec.ts"]),
+    srcs = glob(
+        ["**/*.spec.ts"],
+        allow_empty = True,
+    ),
     deps = [
         ":common",
         "//:node_modules/@types/chai",

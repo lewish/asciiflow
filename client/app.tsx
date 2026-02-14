@@ -7,14 +7,13 @@ import {
   TouchController,
 } from "#asciiflow/client/controller";
 import { Drawer } from "#asciiflow/client/drawer";
-import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
+import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
 import { screenToCell, View } from "#asciiflow/client/view";
 
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import { Vector } from "#asciiflow/client/vector";
 import { textToLayer } from "#asciiflow/client/text_utils";
-import { useWatchable } from "#asciiflow/common/watchable";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -26,37 +25,41 @@ export interface IRouteProps {
 }
 
 export const App = () => {
-  return useWatchable(() => {
-    const routeProps = useParams<IRouteProps>();
+  const routeProps = useParams<IRouteProps>();
+  const darkMode = useAppStore((s) => s.darkMode);
+
+  // Sync route params into the store.
+  React.useEffect(() => {
     store.setRoute(
       routeProps.share
         ? DrawingId.share(decodeURIComponent(routeProps.share))
         : DrawingId.local(routeProps.local || null)
     );
+  }, [routeProps.share, routeProps.local]);
 
-    const theme = React.useMemo(
-      () =>
-        createTheme({
-          palette: {
-            type: store.darkMode.get() ? "dark" : "light",
-          },
-        }),
-      [store.darkMode.get()]
-    );
-    return (
-      <ThemeProvider theme={theme}>
-        <div
-          className={[styles.app, store.darkMode.get() ? "dark" : ""].join(" ")}
-        >
-          <Drawer />
-          <View
-            {...desktopController.getHandlerProps()}
-            {...touchController.getHandlerProps()}
-          />
-        </div>
-      </ThemeProvider>
-    );
-  });
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          type: darkMode ? "dark" : "light",
+        },
+      }),
+    [darkMode]
+  );
+
+  return (
+    <ThemeProvider theme={theme}>
+      <div
+        className={[styles.app, darkMode ? "dark" : ""].join(" ")}
+      >
+        <Drawer />
+        <View
+          {...desktopController.getHandlerProps()}
+          {...touchController.getHandlerProps()}
+        />
+      </div>
+    </ThemeProvider>
+  );
 };
 
 async function render() {

@@ -69,7 +69,7 @@ export class Controller {
     let specialKeyCode = null;
 
     if (event.altKey) {
-      store.altPressed.set(true);
+      store.setAltPressed(true);
       if (event.keyCode === "1".charCodeAt(0)) {
         store.setToolMode(ToolMode.BOX);
         event.preventDefault();
@@ -140,7 +140,7 @@ export class Controller {
       specialKeyCode = constants.KEY_RIGHT;
     }
     if (event.keyCode === 32) {
-      store.panning.set(true);
+      store.setPanning(true);
     }
 
     if (specialKeyCode != null) {
@@ -150,10 +150,10 @@ export class Controller {
 
   handleKeyUp(event: KeyboardEvent) {
     if (event.keyCode === 32) {
-      store.panning.set(false);
+      store.setPanning(false);
     }
     if (!event.altKey) {
-      store.altPressed.set(false);
+      store.setAltPressed(false);
     }
   }
 
@@ -213,7 +213,7 @@ export class DesktopController {
 
   handleMouseDown = (e: React.MouseEvent<any>) => {
     // Can drag by holding either the control or meta (Apple) key.
-    if (store.panning.get()) {
+    if (store.panning) {
       this.controller.startDrag(Vector.fromMouseEvent(e));
     } else {
       this.controller.startDraw(Vector.fromMouseEvent(e), e);

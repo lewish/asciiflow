@@ -3,9 +3,8 @@ import { ControlledMenu } from "#asciiflow/client/components/controlled_menu";
 import { ASCII, UNICODE } from "#asciiflow/client/constants";
 import styles from "#asciiflow/client/drawer.module.css";
 import { ExportDialog } from "#asciiflow/client/export";
-import { DrawingId, store, ToolMode } from "#asciiflow/client/store";
+import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
 import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier";
-import { useWatchable } from "#asciiflow/common/watchable";
 import {
   Button,
   Chip,
@@ -50,370 +49,378 @@ import { useHistory } from "react-router";
 
 export function Drawer() {
   const history = useHistory();
-  return useWatchable(() => {
-    if (!store.controlsOpen.get()) {
-      return (
-        <Fab
-          className={styles.fab}
-          onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
-        >
-          <img src={"/public/logo_min.svg"} />
-        </Fab>
-      );
-    }
+  const controlsOpen = useAppStore((s) => s.controlsOpen);
+  const fileControlsOpen = useAppStore((s) => s.fileControlsOpen);
+  const editControlsOpen = useAppStore((s) => s.editControlsOpen);
+  const helpControlsOpen = useAppStore((s) => s.helpControlsOpen);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const route = useAppStore((s) => s.route);
+  const selectedToolMode = useAppStore((s) => s.selectedToolMode);
+  const localDrawingIds = useAppStore((s) => s.localDrawingIds);
+  const canvasVersion = useAppStore((s) => s.canvasVersion);
+
+  if (!controlsOpen) {
     return (
-      <Paper elevation={3} className={styles.drawer}>
-        <div className={styles.header}>
-          <img
-            src={
-              store.controlsOpen.get()
-                ? "/public/logo_full.svg"
-                : "/public/logo_min.svg"
-            }
-            className={styles.logo}
-          />
+      <Fab
+        className={styles.fab}
+        onClick={() => store.setControlsOpen(!controlsOpen)}
+      >
+        <img src={"/public/logo_min.svg"} />
+      </Fab>
+    );
+  }
+  return (
+    <Paper elevation={3} className={styles.drawer}>
+      <div className={styles.header}>
+        <img
+          src={
+            controlsOpen
+              ? "/public/logo_full.svg"
+              : "/public/logo_min.svg"
+          }
+          className={styles.logo}
+        />
 
-          <IconButton
-            onClick={() => store.controlsOpen.set(!store.controlsOpen.get())}
-          >
-            {store.controlsOpen.get() ? (
-              <ChevronLeft />
-            ) : (
-              <ChevronRight />
-            )}
-          </IconButton>
-        </div>
+        <IconButton
+          onClick={() => store.setControlsOpen(!controlsOpen)}
+        >
+          {controlsOpen ? (
+            <ChevronLeft />
+          ) : (
+            <ChevronRight />
+          )}
+        </IconButton>
+      </div>
 
-        {store.controlsOpen.get() && (
-          <>
-            <List>
-              <ListItem>
-                <ListItemText>File</ListItemText>
-                <ListItemSecondaryAction>
-                  <ExportDialog
-                    button={
-                      <IconButton data-testid="export-button">
-                        <GetApp />
-                      </IconButton>
-                    }
-                    drawingId={store.route.get()}
-                  />
+      {controlsOpen && (
+        <>
+          <List>
+            <ListItem>
+              <ListItemText>File</ListItemText>
+              <ListItemSecondaryAction>
+                <ExportDialog
+                  button={
+                    <IconButton data-testid="export-button">
+                      <GetApp />
+                    </IconButton>
+                  }
+                  drawingId={route}
+                />
 
-                  <NewDrawingButton />
-                  <IconButton
-                    onClick={() =>
-                      store.fileControlsOpen.set(!store.fileControlsOpen.get())
-                    }
-                  >
-                    {store.fileControlsOpen.get() ? (
-                      <ExpandLess />
+                <NewDrawingButton />
+                <IconButton
+                  onClick={() =>
+                    store.setFileControlsOpen(!fileControlsOpen)
+                  }
+                >
+                  {fileControlsOpen ? (
+                    <ExpandLess />
+                  ) : (
+                    <ExpandMore />
+                  )}
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+            {fileControlsOpen &&
+              store.drawings.map((drawingId) => (
+                <ListItem
+                  key={drawingId.toString()}
+                  component="a"
+                  href={drawingId.href}
+                  onClick={(e: React.MouseEvent) => {
+                    history.push(drawingId.href);
+                    e.preventDefault();
+                  }}
+                >
+                  <ListItemIcon>
+                    {drawingId.shareSpec ? (
+                      <Share
+                        color={
+                          route.toString() === drawingId.toString()
+                            ? "primary"
+                            : "inherit"
+                        }
+                      />
                     ) : (
-                      <ExpandMore />
+                      <FileCopy
+                        color={
+                          route.toString() === drawingId.toString()
+                            ? "primary"
+                            : "inherit"
+                        }
+                      />
                     )}
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              {store.fileControlsOpen.get() &&
-                store.drawings.map((drawingId) => (
-                  <ListItem
-                    key={drawingId.toString()}
-                    component="a"
-                    href={drawingId.href}
-                    onClick={(e: React.MouseEvent) => {
-                      history.push(drawingId.href);
-                      e.preventDefault();
-                    }}
-                  >
-                    <ListItemIcon>
+                  </ListItemIcon>
+                  <ListItemText className={styles.filenameText}>
+                    {drawingId.localId
+                      ? drawingId.localId
+                      : drawingId.shareSpec
+                      ? new DrawingStringifier().deserialize(
+                          drawingId.shareSpec
+                        ).name
+                      : "Default drawing"}{" "}
+                    <span className={styles.bytesLabel}>
+                      ({store.canvas(drawingId).committed.size()}B)
+                    </span>
+                  </ListItemText>
+                  <ListItemSecondaryAction>
+                    <ControlledMenu
+                      button={
+                        <IconButton>
+                          <MoreHoriz />
+                        </IconButton>
+                      }
+                    >
                       {drawingId.shareSpec ? (
-                        <Share
-                          color={
-                            store.route.get().toString() === drawingId.toString()
-                              ? "primary"
-                              : "inherit"
-                          }
+                        <ForkDrawingButton
+                          drawingId={drawingId}
+                          menu={true}
                         />
                       ) : (
-                        <FileCopy
-                          color={
-                            store.route.get().toString() === drawingId.toString()
-                              ? "primary"
-                              : "inherit"
-                          }
-                        />
+                        <>
+                          <ControlledDialog
+                            button={
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <Delete />
+                                </ListItemIcon>
+                                Delete
+                              </MenuItem>
+                            }
+                            confirmButton={
+                              <Button
+                                onClick={() => {
+                                  store.deleteDrawing(drawingId);
+                                  history.push(
+                                    store.drawings.length > 0
+                                      ? store.drawings[0].href
+                                      : DrawingId.local(null).href
+                                  );
+                                }}
+                                color="secondary"
+                              >
+                                Delete
+                              </Button>
+                            }
+                          >
+                            <DialogTitle>Delete drawing</DialogTitle>
+                            <DialogContent>
+                              Are you sure you want to delete this drawing?
+                            </DialogContent>
+                          </ControlledDialog>
+
+                          <RenameDrawingButton drawingId={drawingId} />
+                          <ShareButton drawingId={drawingId} />
+                        </>
                       )}
-                    </ListItemIcon>
-                    <ListItemText className={styles.filenameText}>
-                      {drawingId.localId
-                        ? drawingId.localId
-                        : drawingId.shareSpec
-                        ? new DrawingStringifier().deserialize(
-                            drawingId.shareSpec
-                          ).name
-                        : "Default drawing"}{" "}
-                      <span className={styles.bytesLabel}>
-                        ({store.canvas(drawingId).committed.size()}B)
-                      </span>
-                    </ListItemText>
-                    <ListItemSecondaryAction>
-                      <ControlledMenu
+                      <ExportDialog
                         button={
-                          <IconButton>
-                            <MoreHoriz />
-                          </IconButton>
+                          <MenuItem>
+                            <ListItemIcon>
+                              <GetApp />
+                            </ListItemIcon>
+                            Export
+                          </MenuItem>
                         }
-                      >
-                        {drawingId.shareSpec ? (
-                          <ForkDrawingButton
-                            drawingId={drawingId}
-                            menu={true}
-                          />
-                        ) : (
-                          <>
-                            <ControlledDialog
-                              button={
-                                <MenuItem>
-                                  <ListItemIcon>
-                                    <Delete />
-                                  </ListItemIcon>
-                                  Delete
-                                </MenuItem>
-                              }
-                              confirmButton={
-                                <Button
-                                  onClick={() => {
-                                    store.deleteDrawing(drawingId);
-                                    history.push(
-                                      store.drawings.length > 0
-                                        ? store.drawings[0].href
-                                        : DrawingId.local(null).href
-                                    );
-                                  }}
-                                  color="secondary"
-                                >
-                                  Delete
-                                </Button>
-                              }
-                            >
-                              <DialogTitle>Delete drawing</DialogTitle>
-                              <DialogContent>
-                                Are you sure you want to delete this drawing?
-                              </DialogContent>
-                            </ControlledDialog>
+                        drawingId={drawingId}
+                      />
+                    </ControlledMenu>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
 
-                            <RenameDrawingButton drawingId={drawingId} />
-                            <ShareButton drawingId={drawingId} />
-                          </>
-                        )}
-                        <ExportDialog
-                          button={
-                            <MenuItem>
-                              <ListItemIcon>
-                                <GetApp />
-                              </ListItemIcon>
-                              Export
-                            </MenuItem>
-                          }
-                          drawingId={drawingId}
-                        />
-                      </ControlledMenu>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
+            <ListItem>
+              <ListItemText>Edit</ListItemText>
+              <ListItemSecondaryAction>
+                <IconButton
+                  onClick={() =>
+                    store.setEditControlsOpen(!editControlsOpen)
+                  }
+                >
+                  {editControlsOpen ? (
+                    <ExpandLess />
+                  ) : (
+                    <ExpandMore />
+                  )}
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+            {!editControlsOpen ? null : route
+                .shareSpec ? (
+              <>
+                <div className={styles.helpText}>
+                  This is a shared drawing. To make edits fork it so it can be
+                  saved locally.
+                </div>
+                <div className={styles.helpText}>
+                  <ForkDrawingButton drawingId={route} />
+                </div>
+              </>
+            ) : (
+              <>
+                <ToolControl
+                  name="Boxes"
+                  tool={ToolMode.BOX}
+                  icon={<CheckBoxOutlineBlank />}
+                >
+                  <ShortcutChip label={"alt + 1"} hideUntilAlt={true} />
+                </ToolControl>
+                <ToolControl
+                  name="Select & Move"
+                  tool={ToolMode.SELECT}
+                  icon={<NearMe />}
+                >
+                  <ShortcutChip label={"alt + 2"} hideUntilAlt={true} />
+                </ToolControl>
+                <ToolControl
+                  name="Freeform"
+                  tool={ToolMode.FREEFORM}
+                  icon={<Gesture />}
+                >
+                  <ListItemSecondaryAction>
+                    <ShortcutChip label={"alt + 3"} hideUntilAlt={true} />
+                    <FreeFormCharacterSelect />
+                  </ListItemSecondaryAction>
+                </ToolControl>
+                <ToolControl
+                  name="Arrow"
+                  tool={ToolMode.ARROWS}
+                  icon={<TrendingUp />}
+                >
+                  <ShortcutChip label={"alt + 4"} hideUntilAlt={true} />
+                </ToolControl>
 
-              <ListItem>
-                <ListItemText>Edit</ListItemText>
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() =>
-                      store.editControlsOpen.set(!store.editControlsOpen.get())
-                    }
-                  >
-                    {store.editControlsOpen.get() ? (
-                      <ExpandLess />
-                    ) : (
-                      <ExpandMore />
-                    )}
+                <ToolControl
+                  name="Line"
+                  tool={ToolMode.LINES}
+                  icon={<ShowChart />}
+                >
+                  <ShortcutChip label={"alt + 5"} hideUntilAlt={true} />
+                </ToolControl>
+                <ToolControl
+                  name="Text"
+                  tool={ToolMode.TEXT}
+                  icon={<TextFields />}
+                >
+                  <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
+                </ToolControl>
+              </>
+            )}
+            <ListItem>
+              <ListItemText>Help</ListItemText>
+              <ListItemSecondaryAction>
+                <a href="https://github.com/lewish/asciiflow">
+                  <IconButton>
+                    <img
+                      className={styles.githubMark}
+                      width="24"
+                      height="24"
+                      src="public/github_mark.png"
+                    />
                   </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              {!store.editControlsOpen.get() ? null : store.route.get()
-                  .shareSpec ? (
-                <>
-                  <div className={styles.helpText}>
-                    This is a shared drawing. To make edits fork it so it can be
-                    saved locally.
-                  </div>
-                  <div className={styles.helpText}>
-                    <ForkDrawingButton drawingId={store.route.get()} />
-                  </div>
-                </>
+                </a>
+                <IconButton
+                  onClick={() => store.setDarkMode(!darkMode)}
+                >
+                  {darkMode ? (
+                    <WbIncandescent />
+                  ) : (
+                    <Brightness2Outlined />
+                  )}
+                </IconButton>
+                <IconButton
+                  onClick={() =>
+                    store.setHelpControlsOpen(!helpControlsOpen)
+                  }
+                >
+                  {helpControlsOpen ? (
+                    <ExpandLess />
+                  ) : (
+                    <ExpandMore />
+                  )}
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </List>
+
+          {helpControlsOpen && (
+            <div className={styles.helpText}>
+              <ToolHelp tool={ToolMode.BOX}>
+                Draw boxes by dragging from one corner to another. Boxes can
+                be resized and moved with the{" "}
+                <Chip
+                  icon={<NearMe />}
+                  label="Select & Move"
+                  size="small"
+                />{" "}
+                tool.
+              </ToolHelp>
+              <ToolHelp tool={ToolMode.SELECT}>
+                Click and drag on any boxes, lines, or arrows to resize and
+                move them. Select any area and then drag to move it, or use{" "}
+                <ShortcutChip label={`${ctrlOrCmd()} + c`} /> to copy,{" "}
+                <ShortcutChip label={`${ctrlOrCmd()} + v`} /> to paste, and{" "}
+                <ShortcutChip label="delete" /> or{" "}
+                <ShortcutChip label="backspace" /> to erase. Hold{" "}
+                <ShortcutChip label="shift" /> to force selection mode instead
+                of resize mode.
+              </ToolHelp>
+              <ToolHelp tool={ToolMode.LINES}>
+                Draw a line from dragging from the start to the end point.
+                Hold <ShortcutChip label={"shift"} /> to change the
+                orientation of the line. Lines can be resized and moved with
+                the{" "}
+                <Chip
+                  icon={<NearMe />}
+                  label="Select & Move"
+                  size="small"
+                />{" "}
+                tool.
+              </ToolHelp>
+              <ToolHelp tool={ToolMode.ARROWS}>
+                Draw an arrow from dragging from the start to the end point.
+                Hold <ShortcutChip label={"shift"} /> to change the
+                orientation of the line. Lines can be resized and moved with
+                the{" "}
+                <Chip
+                  icon={<NearMe />}
+                  label="Select & Move"
+                  size="small"
+                />{" "}
+                tool.
+              </ToolHelp>
+              <ToolHelp tool={ToolMode.FREEFORM}>
+                Click and drag to draw freeform characters. Select from the
+                menu, or press any key on the keyboard to change the character
+                that will be drawn.
+              </ToolHelp>
+              <ToolHelp tool={ToolMode.TEXT}>
+                Click on any square and start typing. Press{" "}
+                <ShortcutChip label={"enter"} /> to save your changes. Press
+                either <ShortcutChip label={"shift + enter"} /> or{" "}
+                <ShortcutChip label={`${ctrlOrCmd()} + enter`} /> to start a
+                new line without committing your changes. Use the{" "}
+                <ShortcutChip label={"arrow keys"} /> to move around.
+              </ToolHelp>{" "}
+              Pan around the canvas by holding <ShortcutChip label="space" />
+              {route.shareSpec ? (
+                "."
               ) : (
                 <>
-                  <ToolControl
-                    name="Boxes"
-                    tool={ToolMode.BOX}
-                    icon={<CheckBoxOutlineBlank />}
-                  >
-                    <ShortcutChip label={"alt + 1"} hideUntilAlt={true} />
-                  </ToolControl>
-                  <ToolControl
-                    name="Select & Move"
-                    tool={ToolMode.SELECT}
-                    icon={<NearMe />}
-                  >
-                    <ShortcutChip label={"alt + 2"} hideUntilAlt={true} />
-                  </ToolControl>
-                  <ToolControl
-                    name="Freeform"
-                    tool={ToolMode.FREEFORM}
-                    icon={<Gesture />}
-                  >
-                    <ListItemSecondaryAction>
-                      <ShortcutChip label={"alt + 3"} hideUntilAlt={true} />
-                      <FreeFormCharacterSelect />
-                    </ListItemSecondaryAction>
-                  </ToolControl>
-                  <ToolControl
-                    name="Arrow"
-                    tool={ToolMode.ARROWS}
-                    icon={<TrendingUp />}
-                  >
-                    <ShortcutChip label={"alt + 4"} hideUntilAlt={true} />
-                  </ToolControl>
-
-                  <ToolControl
-                    name="Line"
-                    tool={ToolMode.LINES}
-                    icon={<ShowChart />}
-                  >
-                    <ShortcutChip label={"alt + 5"} hideUntilAlt={true} />
-                  </ToolControl>
-                  <ToolControl
-                    name="Text"
-                    tool={ToolMode.TEXT}
-                    icon={<TextFields />}
-                  >
-                    <ShortcutChip label={"alt + 6"} hideUntilAlt={true} />
-                  </ToolControl>
+                  {" "}
+                  and dragging with the mouse. Use{" "}
+                  <ShortcutChip label={`${ctrlOrCmd()} + z`} /> to undo and{" "}
+                  <ShortcutChip label={`${ctrlOrCmd()} + shift + z`} /> to
+                  redo.
                 </>
-              )}
-              <ListItem>
-                <ListItemText>Help</ListItemText>
-                <ListItemSecondaryAction>
-                  <a href="https://github.com/lewish/asciiflow">
-                    <IconButton>
-                      <img
-                        className={styles.githubMark}
-                        width="24"
-                        height="24"
-                        src="public/github_mark.png"
-                      />
-                    </IconButton>
-                  </a>
-                  <IconButton
-                    onClick={() => store.darkMode.set(!store.darkMode.get())}
-                  >
-                    {store.darkMode.get() ? (
-                      <WbIncandescent />
-                    ) : (
-                      <Brightness2Outlined />
-                    )}
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
-                      store.helpControlsOpen.set(!store.helpControlsOpen.get())
-                    }
-                  >
-                    {store.helpControlsOpen.get() ? (
-                      <ExpandLess />
-                    ) : (
-                      <ExpandMore />
-                    )}
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </List>
-
-            {store.helpControlsOpen.get() && (
-              <div className={styles.helpText}>
-                <ToolHelp tool={ToolMode.BOX}>
-                  Draw boxes by dragging from one corner to another. Boxes can
-                  be resized and moved with the{" "}
-                  <Chip
-                    icon={<NearMe />}
-                    label="Select & Move"
-                    size="small"
-                  />{" "}
-                  tool.
-                </ToolHelp>
-                <ToolHelp tool={ToolMode.SELECT}>
-                  Click and drag on any boxes, lines, or arrows to resize and
-                  move them. Select any area and then drag to move it, or use{" "}
-                  <ShortcutChip label={`${ctrlOrCmd()} + c`} /> to copy,{" "}
-                  <ShortcutChip label={`${ctrlOrCmd()} + v`} /> to paste, and{" "}
-                  <ShortcutChip label="delete" /> or{" "}
-                  <ShortcutChip label="backspace" /> to erase. Hold{" "}
-                  <ShortcutChip label="shift" /> to force selection mode instead
-                  of resize mode.
-                </ToolHelp>
-                <ToolHelp tool={ToolMode.LINES}>
-                  Draw a line from dragging from the start to the end point.
-                  Hold <ShortcutChip label={"shift"} /> to change the
-                  orientation of the line. Lines can be resized and moved with
-                  the{" "}
-                  <Chip
-                    icon={<NearMe />}
-                    label="Select & Move"
-                    size="small"
-                  />{" "}
-                  tool.
-                </ToolHelp>
-                <ToolHelp tool={ToolMode.ARROWS}>
-                  Draw an arrow from dragging from the start to the end point.
-                  Hold <ShortcutChip label={"shift"} /> to change the
-                  orientation of the line. Lines can be resized and moved with
-                  the{" "}
-                  <Chip
-                    icon={<NearMe />}
-                    label="Select & Move"
-                    size="small"
-                  />{" "}
-                  tool.
-                </ToolHelp>
-                <ToolHelp tool={ToolMode.FREEFORM}>
-                  Click and drag to draw freeform characters. Select from the
-                  menu, or press any key on the keyboard to change the character
-                  that will be drawn.
-                </ToolHelp>
-                <ToolHelp tool={ToolMode.TEXT}>
-                  Click on any square and start typing. Press{" "}
-                  <ShortcutChip label={"enter"} /> to save your changes. Press
-                  either <ShortcutChip label={"shift + enter"} /> or{" "}
-                  <ShortcutChip label={`${ctrlOrCmd()} + enter`} /> to start a
-                  new line without committing your changes. Use the{" "}
-                  <ShortcutChip label={"arrow keys"} /> to move around.
-                </ToolHelp>{" "}
-                Pan around the canvas by holding <ShortcutChip label="space" />
-                {store.route.get().shareSpec ? (
-                  "."
-                ) : (
-                  <>
-                    {" "}
-                    and dragging with the mouse. Use{" "}
-                    <ShortcutChip label={`${ctrlOrCmd()} + z`} /> to undo and{" "}
-                    <ShortcutChip label={`${ctrlOrCmd()} + shift + z`} /> to
-                    redo.
-                  </>
-                )}{" "}
-                View shortcuts by pressing <ShortcutChip label={"alt"} />.
-              </div>
-            )}
-          </>
-        )}
-      </Paper>
-    );
-  });
+              )}{" "}
+              View shortcuts by pressing <ShortcutChip label={"alt"} />.
+            </div>
+          )}
+        </>
+      )}
+    </Paper>
+  );
 }
 
 function ctrlOrCmd() {
@@ -430,18 +437,17 @@ function ShortcutChip({
   label: string;
   hideUntilAlt?: boolean;
 }) {
-  return useWatchable(() => {
-    if (hideUntilAlt && !store.altPressed.get()) return null;
-    return (
-      <Chip
-        icon={<KeyboardOutlined />}
-        label={
-          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
-        }
-        size="small"
-      />
-    );
-  });
+  const altPressed = useAppStore((s) => s.altPressed);
+  if (hideUntilAlt && !altPressed) return null;
+  return (
+    <Chip
+      icon={<KeyboardOutlined />}
+      label={
+        <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
+      }
+      size="small"
+    />
+  );
 }
 
 function ToolControl(
@@ -451,23 +457,24 @@ function ToolControl(
     icon: React.ReactNode;
   }>
 ) {
-  return useWatchable(() => {
-    const testId = typeof props.name === "string"
-      ? `tool-${props.name.toLowerCase().replace(/[^a-z]/g, "-")}`
-      : undefined;
-    return (
-      <ListItem
-        selected={store.toolMode() === props.tool}
-        button={true}
-        onClick={() => store.setToolMode(props.tool)}
-        data-testid={testId}
-      >
-        <ListItemIcon>{props.icon}</ListItemIcon>
-        <ListItemText primary={props.name} />
-        {props.children}
-      </ListItem>
-    );
-  });
+  const selectedToolMode = useAppStore((s) => s.selectedToolMode);
+  const route = useAppStore((s) => s.route);
+  const toolMode = route.shareSpec ? undefined : selectedToolMode;
+  const testId = typeof props.name === "string"
+    ? `tool-${props.name.toLowerCase().replace(/[^a-z]/g, "-")}`
+    : undefined;
+  return (
+    <ListItem
+      selected={toolMode === props.tool}
+      button={true}
+      onClick={() => store.setToolMode(props.tool)}
+      data-testid={testId}
+    >
+      <ListItemIcon>{props.icon}</ListItemIcon>
+      <ListItemText primary={props.name} />
+      {props.children}
+    </ListItem>
+  );
 }
 
 const shortcutKeys = [
@@ -480,44 +487,43 @@ const shortcutKeys = [
 ];
 function FreeFormCharacterSelect() {
   const [anchorEl, setAnchorEl] = useState(null);
-  return useWatchable(() => {
-    return (
-      <>
-        <Button
-          variant="outlined"
-          className={styles.freeformCharacterButton}
-          onClick={(event) => setAnchorEl(event.currentTarget)}
-        >
-          {store.freeformCharacter.get()}
-        </Button>
-        <Popover
-          open={!!anchorEl}
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "center",
-            horizontal: "right",
-          }}
-          onClose={() => setAnchorEl(null)}
-        >
-          <div style={{ maxWidth: 400 }}>
-            {shortcutKeys.map((key, i) => (
-              <Button
-                onClick={() => {
-                  setAnchorEl(null);
-                  store.setToolMode(ToolMode.FREEFORM);
-                  store.freeformCharacter.set(key);
-                }}
-                className={styles.freeformCharacterButton}
-                key={i}
-              >
-                {key}
-              </Button>
-            ))}
-          </div>
-        </Popover>
-      </>
-    );
-  });
+  const freeformCharacter = useAppStore((s) => s.freeformCharacter);
+  return (
+    <>
+      <Button
+        variant="outlined"
+        className={styles.freeformCharacterButton}
+        onClick={(event) => setAnchorEl(event.currentTarget)}
+      >
+        {freeformCharacter}
+      </Button>
+      <Popover
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "center",
+          horizontal: "right",
+        }}
+        onClose={() => setAnchorEl(null)}
+      >
+        <div style={{ maxWidth: 400 }}>
+          {shortcutKeys.map((key, i) => (
+            <Button
+              onClick={() => {
+                setAnchorEl(null);
+                store.setToolMode(ToolMode.FREEFORM);
+                store.setFreeformCharacter(key);
+              }}
+              className={styles.freeformCharacterButton}
+              key={i}
+            >
+              {key}
+            </Button>
+          ))}
+        </div>
+      </Popover>
+    </>
+  );
 }
 
 function ToolHelp(
@@ -525,14 +531,14 @@ function ToolHelp(
     tool: ToolMode;
   }>
 ) {
-  return useWatchable(() => {
-    return store.toolMode() === props.tool ? <>{props.children}</> : null;
-  });
+  const selectedToolMode = useAppStore((s) => s.selectedToolMode);
+  const route = useAppStore((s) => s.route);
+  const toolMode = route.shareSpec ? undefined : selectedToolMode;
+  return toolMode === props.tool ? <>{props.children}</> : null;
 }
 
 function isValidDrawingName(name: string) {
   return !store.localDrawingIds
-    .get()
     .some(
       (drawingId) => DrawingId.local(name).toString() === drawingId.toString()
     );
@@ -562,8 +568,8 @@ function NewDrawingButton() {
       confirmButton={
         <Button
           onClick={() => {
-            store.localDrawingIds.set([
-              ...store.localDrawingIds.get(),
+            store.setLocalDrawingIds([
+              ...store.localDrawingIds,
               DrawingId.local(newDrawingName),
             ]);
             history.push(DrawingId.local(newDrawingName).href);

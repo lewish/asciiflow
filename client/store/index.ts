@@ -1,21 +1,23 @@
 import { DrawBox } from "#asciiflow/client/draw/box";
 import { DrawFreeform } from "#asciiflow/client/draw/freeform";
-import {
-  IDrawFunction
-} from "#asciiflow/client/draw/function";
+import { IDrawFunction } from "#asciiflow/client/draw/function";
 import { DrawLine } from "#asciiflow/client/draw/line";
 import { DrawNull } from "#asciiflow/client/draw/null";
 import { DrawSelect } from "#asciiflow/client/draw/select";
 import { DrawText } from "#asciiflow/client/draw/text";
 import { IExportConfig } from "#asciiflow/client/export";
 import { CanvasStore } from "#asciiflow/client/store/canvas";
-import { Persistent } from "#asciiflow/client/store/persistent";
+import {
+  persistentKey,
+  readPersistent,
+  writePersistent,
+} from "#asciiflow/client/store/persistent";
 import {
   ArrayStringifier,
   IStringifier,
   JSONStringifier,
 } from "#asciiflow/common/stringifiers";
-import { watchableValue } from "#asciiflow/common/watchable";
+import create from "zustand";
 
 export enum ToolMode {
   BOX = 1,
@@ -53,7 +55,7 @@ export class DrawingId {
   ) {}
 
   public get persistentKey() {
-    return Persistent.key(
+    return persistentKey(
       this.type,
       this.type === "local" ? this.localId : this.shareSpec
     );
@@ -89,96 +91,299 @@ export class DrawingId {
   };
 }
 
-export class Store {
-  public readonly boxTool = new DrawBox();
-  public readonly lineTool = new DrawLine(false);
-  public readonly arrowTool = new DrawLine(true);
-  public readonly selectTool = new DrawSelect();
-  public readonly freeformTool = new DrawFreeform();
-  public readonly textTool = new DrawText();
-  public readonly nullTool = new DrawNull();
+// ---------------------------------------------------------------------------
+// Zustand store
+// ---------------------------------------------------------------------------
 
-  private readonly _route = watchableValue(DrawingId.local(null));
+export interface AppState {
+  // Routing
+  route: DrawingId;
 
-  public get route() {
-    return this._route;
+  // Tool state
+  selectedToolMode: ToolMode;
+  freeformCharacter: string;
+  panning: boolean;
+  altPressed: boolean;
+  currentCursor: string;
+  modifierKeys: IModifierKeys;
+
+  // Persistent UI state (synced to localStorage)
+  unicode: boolean;
+  controlsOpen: boolean;
+  fileControlsOpen: boolean;
+  editControlsOpen: boolean;
+  helpControlsOpen: boolean;
+  exportConfig: IExportConfig;
+  localDrawingIds: DrawingId[];
+  darkMode: boolean;
+
+  // Bumped whenever a CanvasStore mutates, so React can re-render.
+  canvasVersion: number;
+}
+
+function initialState(): AppState {
+  return {
+    route: DrawingId.local(null),
+    selectedToolMode: ToolMode.BOX,
+    freeformCharacter: "x",
+    panning: false,
+    altPressed: false,
+    currentCursor: "default",
+    modifierKeys: {},
+    unicode: readPersistent("unicode", true),
+    controlsOpen: readPersistent("controlsOpen", true),
+    fileControlsOpen: readPersistent("fileControlsOpen", true),
+    editControlsOpen: readPersistent("editControlsOpen", true),
+    helpControlsOpen: readPersistent("editControlsOpen", true),
+    exportConfig: readPersistent("exportConfig", {} as IExportConfig),
+    localDrawingIds: readPersistent(
+      "localDrawingIds",
+      [],
+      new ArrayStringifier(DrawingId.STRINGIFIER)
+    ),
+    darkMode: readPersistent(
+      "darkMode",
+      typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+    ),
+    canvasVersion: 0,
+  };
+}
+
+export const useAppStore = create<AppState>(() => initialState());
+
+// ---------------------------------------------------------------------------
+// Tool instances (singletons, stateless enough to live outside the store)
+// ---------------------------------------------------------------------------
+
+const boxTool = new DrawBox();
+const lineTool = new DrawLine(false);
+const arrowTool = new DrawLine(true);
+const selectTool = new DrawSelect();
+const freeformTool = new DrawFreeform();
+const textTool = new DrawText();
+const nullTool = new DrawNull();
+
+// ---------------------------------------------------------------------------
+// Canvas map (per-drawing CanvasStore instances)
+// ---------------------------------------------------------------------------
+
+const canvases = new Map<string, CanvasStore>();
+
+function notifyCanvas() {
+  useAppStore.setState((s) => ({ canvasVersion: s.canvasVersion + 1 }));
+}
+
+function getCanvas(drawingId: DrawingId): CanvasStore {
+  const key = drawingId.toString();
+  let canvas = canvases.get(key);
+  if (!canvas) {
+    canvas = new CanvasStore(drawingId, notifyCanvas);
+    canvases.set(key, canvas);
   }
+  return canvas;
+}
 
-  public setRoute(value: DrawingId) {
-    this._route.set(value);
-  }
+// ---------------------------------------------------------------------------
+// Helper: persist a value to localStorage whenever it's set in the store
+// ---------------------------------------------------------------------------
 
-  public readonly freeformCharacter = watchableValue("x");
+function setPersistent<K extends keyof AppState>(
+  key: K,
+  value: AppState[K],
+  storageKey: string = key,
+  stringifier?: any
+) {
+  useAppStore.setState({ [key]: value } as any);
+  writePersistent(storageKey, value, stringifier);
+}
 
-  public readonly selectedToolMode = watchableValue(ToolMode.BOX);
+// ---------------------------------------------------------------------------
+// Imperative store facade (used by controllers, draw tools, and non-React code)
+// ---------------------------------------------------------------------------
 
-  public toolMode(): ToolMode | undefined {
-    if (this.route.get().shareSpec) {
+export const store = {
+  // Tool instances
+  boxTool,
+  lineTool,
+  arrowTool,
+  selectTool,
+  freeformTool,
+  textTool,
+  nullTool,
+
+  // Route
+  get route() {
+    return useAppStore.getState().route;
+  },
+  setRoute(value: DrawingId) {
+    useAppStore.setState({ route: value });
+  },
+
+  // Freeform character
+  get freeformCharacter() {
+    return useAppStore.getState().freeformCharacter;
+  },
+  setFreeformCharacter(value: string) {
+    useAppStore.setState({ freeformCharacter: value });
+  },
+
+  // Selected tool mode
+  get selectedToolMode() {
+    return useAppStore.getState().selectedToolMode;
+  },
+
+  toolMode(): ToolMode | undefined {
+    if (useAppStore.getState().route.shareSpec) {
       return undefined;
     }
-    return this.selectedToolMode.get();
-  }
+    return useAppStore.getState().selectedToolMode;
+  },
 
-  public readonly unicode = Persistent.json("unicode", true);
-  public readonly controlsOpen = Persistent.json("controlsOpen", true);
-  public readonly fileControlsOpen = Persistent.json("fileControlsOpen", true);
-  public readonly editControlsOpen = Persistent.json("editControlsOpen", true);
-  public readonly helpControlsOpen = Persistent.json("editControlsOpen", true);
-  public readonly exportConfig = Persistent.json(
-    "exportConfig",
-    {} as IExportConfig
-  );
+  setToolMode(toolMode: ToolMode) {
+    const state = useAppStore.getState();
+    if (state.selectedToolMode !== toolMode) {
+      store.currentTool.cleanup();
+      useAppStore.setState({ selectedToolMode: toolMode });
+    }
+  },
 
-  public readonly localDrawingIds = Persistent.custom(
-    "localDrawingIds",
-    [],
-    new ArrayStringifier(DrawingId.STRINGIFIER)
-  );
-
-  public readonly panning = watchableValue(false);
-
-  public readonly altPressed = watchableValue(false);
-
-  public readonly currentCursor = watchableValue("default");
-
-  public readonly darkMode = 
-    Persistent.json(
-      "darkMode",
-      window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-    )
-  ;
-
+  // Current tool (derived)
   get currentTool(): IDrawFunction {
-    return this.toolMode() === ToolMode.BOX
-      ? this.boxTool
-      : this.toolMode() === ToolMode.LINES
-      ? this.lineTool
-      : this.toolMode() === ToolMode.ARROWS
-      ? this.arrowTool
-      : this.toolMode() === ToolMode.FREEFORM
-      ? this.freeformTool
-      : this.toolMode() === ToolMode.TEXT
-      ? this.textTool
-      : this.toolMode() === ToolMode.SELECT
-      ? this.selectTool
-      : this.nullTool;
-  }
+    const mode = store.toolMode();
+    return mode === ToolMode.BOX
+      ? boxTool
+      : mode === ToolMode.LINES
+      ? lineTool
+      : mode === ToolMode.ARROWS
+      ? arrowTool
+      : mode === ToolMode.FREEFORM
+      ? freeformTool
+      : mode === ToolMode.TEXT
+      ? textTool
+      : mode === ToolMode.SELECT
+      ? selectTool
+      : nullTool;
+  },
 
-  public readonly modifierKeys = watchableValue<IModifierKeys>({});
+  // Panning
+  get panning() {
+    return useAppStore.getState().panning;
+  },
+  setPanning(value: boolean) {
+    useAppStore.setState({ panning: value });
+  },
 
-  private canvases = new Map<string, CanvasStore>();
+  // Alt pressed
+  get altPressed() {
+    return useAppStore.getState().altPressed;
+  },
+  setAltPressed(value: boolean) {
+    useAppStore.setState({ altPressed: value });
+  },
+
+  // Cursor
+  get currentCursor() {
+    return useAppStore.getState().currentCursor;
+  },
+  setCurrentCursor(value: string) {
+    useAppStore.setState({ currentCursor: value });
+  },
+
+  // Modifier keys
+  get modifierKeys() {
+    return useAppStore.getState().modifierKeys;
+  },
+  setModifierKeys(value: IModifierKeys) {
+    useAppStore.setState({ modifierKeys: value });
+  },
+
+  // Dark mode (persistent)
+  get darkMode() {
+    return useAppStore.getState().darkMode;
+  },
+  setDarkMode(value: boolean) {
+    setPersistent("darkMode", value);
+  },
+
+  // Unicode (persistent)
+  get unicode() {
+    return useAppStore.getState().unicode;
+  },
+  setUnicode(value: boolean) {
+    setPersistent("unicode", value);
+  },
+
+  // Controls open (persistent)
+  get controlsOpen() {
+    return useAppStore.getState().controlsOpen;
+  },
+  setControlsOpen(value: boolean) {
+    setPersistent("controlsOpen", value);
+  },
+
+  // File controls open (persistent)
+  get fileControlsOpen() {
+    return useAppStore.getState().fileControlsOpen;
+  },
+  setFileControlsOpen(value: boolean) {
+    setPersistent("fileControlsOpen", value);
+  },
+
+  // Edit controls open (persistent)
+  get editControlsOpen() {
+    return useAppStore.getState().editControlsOpen;
+  },
+  setEditControlsOpen(value: boolean) {
+    setPersistent("editControlsOpen", value);
+  },
+
+  // Help controls open (persistent)
+  get helpControlsOpen() {
+    return useAppStore.getState().helpControlsOpen;
+  },
+  setHelpControlsOpen(value: boolean) {
+    setPersistent("helpControlsOpen", value);
+  },
+
+  // Export config (persistent)
+  get exportConfig() {
+    return useAppStore.getState().exportConfig;
+  },
+  setExportConfig(value: IExportConfig) {
+    setPersistent("exportConfig", value);
+  },
+
+  // Local drawing IDs (persistent with custom stringifier)
+  get localDrawingIds() {
+    return useAppStore.getState().localDrawingIds;
+  },
+  setLocalDrawingIds(value: DrawingId[]) {
+    setPersistent(
+      "localDrawingIds",
+      value,
+      "localDrawingIds",
+      new ArrayStringifier(DrawingId.STRINGIFIER)
+    );
+  },
+
+  // Canvas access
+  canvas(drawingId: DrawingId) {
+    return getCanvas(drawingId);
+  },
 
   get currentCanvas() {
-    return this.canvas(this._route.get());
-  }
+    return getCanvas(useAppStore.getState().route);
+  },
 
+  // Derived: drawings list
   get drawings(): DrawingId[] {
-    if (this.route.get().shareSpec) {
-      return [this.route.get(), ...this.localDrawingIds.get()];
+    const state = useAppStore.getState();
+    if (state.route.shareSpec) {
+      return [state.route, ...state.localDrawingIds];
     }
-
-    const localDrawingIds = this.localDrawingIds.get();
+    const localDrawingIds = state.localDrawingIds;
     if (
       !localDrawingIds.some(
         (drawingId) => !drawingId.localId && !drawingId.shareSpec
@@ -187,56 +392,24 @@ export class Store {
       return [DrawingId.local(null), ...localDrawingIds];
     }
     return localDrawingIds;
-  }
+  },
 
-  public canvas(drawingId: DrawingId) {
-    let canvas = this.canvases.get(drawingId.toString());
-    if (!canvas) {
-      // Add the drawing ID to the list of all drawing IDs if it's a local one.
-      // if (
-      //   !!drawingId.localId &&
-      //   !this.localDrawingIds
-      //     .get()
-      //     .some(
-      //       (otherDrawingId) =>
-      //         otherDrawingId.toString() === drawingId.toString()
-      //     )
-      // ) {
-      //   this.localDrawingIds.set([...this.localDrawingIds.get(), drawingId]);
-      // }
-      canvas = new CanvasStore(drawingId);
-      this.canvases.set(drawingId.toString(), canvas);
-    }
-    return canvas;
-  }
-
-  public setUnicode(value: boolean) {
-    this.unicode.set(value);
-  }
-
-  public setToolMode(toolMode: ToolMode) {
-    if (this.selectedToolMode.get() !== toolMode) {
-      this.currentTool.cleanup();
-      this.selectedToolMode.set(toolMode);
-    }
-  }
-
-  public deleteDrawing(drawingId: DrawingId) {
-    this.localDrawingIds.set(
-      this.localDrawingIds
-        .get()
-        .filter(
-          (subDrawingId) => subDrawingId.toString() !== drawingId.toString()
-        )
-    );
+  // Actions
+  deleteDrawing(drawingId: DrawingId) {
+    const filtered = useAppStore
+      .getState()
+      .localDrawingIds.filter(
+        (subDrawingId) => subDrawingId.toString() !== drawingId.toString()
+      );
+    store.setLocalDrawingIds(filtered);
     // Also delete other local storage.
     Object.keys(localStorage)
       .filter((key) => key.startsWith(storagePrefix(drawingId)))
       .forEach((key) => localStorage.removeItem(key));
-    this.canvases.delete(drawingId.toString());
-  }
+    canvases.delete(drawingId.toString());
+  },
 
-  public renameDrawing(originalLocalId: string, newLocalId: string) {
+  renameDrawing(originalLocalId: string, newLocalId: string) {
     const originalId = DrawingId.local(originalLocalId);
     const newId = DrawingId.local(newLocalId);
     Object.keys(localStorage)
@@ -248,28 +421,29 @@ export class Store {
         );
         localStorage.removeItem(key);
       });
-    this.localDrawingIds.set([
-      ...this.localDrawingIds
-        .get()
-        .filter((drawingId) => drawingId.toString() !== originalId.toString()),
+    const updated = [
+      ...useAppStore
+        .getState()
+        .localDrawingIds.filter(
+          (drawingId) => drawingId.toString() !== originalId.toString()
+        ),
       newId,
-    ]);
-    this.canvases.delete(originalId.toString());
+    ];
+    store.setLocalDrawingIds(updated);
+    canvases.delete(originalId.toString());
     window.location.hash = newId.href;
-  }
+  },
 
-  public saveDrawing(shareDrawingId: DrawingId, name: string) {
-    const sharedDrawing = this.canvas(shareDrawingId);
-    const localDrawing = this.canvas(DrawingId.local(name));
-    localDrawing.persistentCommitted.set(
-      sharedDrawing.persistentCommitted.get()
-    );
-    this.localDrawingIds.set([
-      ...this.localDrawingIds.get(),
+  saveDrawing(shareDrawingId: DrawingId, name: string) {
+    const sharedDrawing = getCanvas(shareDrawingId);
+    const localDrawing = getCanvas(DrawingId.local(name));
+    localDrawing.committed = sharedDrawing.committed;
+    store.setLocalDrawingIds([
+      ...useAppStore.getState().localDrawingIds,
       DrawingId.local(name),
     ]);
-  }
-}
+  },
+};
 
 export function storagePrefix(drawingId: DrawingId) {
   return `drawing/${encodeURIComponent(drawingId.persistentKey)}/`;
@@ -278,5 +452,3 @@ export function storagePrefix(drawingId: DrawingId) {
 export function storageKey(drawingId: DrawingId, key: string) {
   return storagePrefix(drawingId) + key;
 }
-
-export const store = new Store();
