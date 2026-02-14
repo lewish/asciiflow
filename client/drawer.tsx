@@ -24,28 +24,26 @@ import {
   Snackbar,
   TextField,
 } from "@material-ui/core";
-import {
-  Add,
-  Brightness2Outlined,
-  CheckBoxOutlineBlank,
-  ChevronLeft,
-  ChevronRight,
-  Delete,
-  Edit,
-  ExpandLess,
-  ExpandMore,
-  FileCopy,
-  Gesture,
-  GetApp,
-  KeyboardOutlined,
-  MoreHoriz,
-  NearMe,
-  Share,
-  ShowChart,
-  TextFields,
-  TrendingUp,
-  WbIncandescent,
-} from "@material-ui/icons";
+import Add from "@material-ui/icons/Add";
+import Brightness2Outlined from "@material-ui/icons/Brightness2Outlined";
+import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
+import Delete from "@material-ui/icons/Delete";
+import Edit from "@material-ui/icons/Edit";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import FileCopy from "@material-ui/icons/FileCopy";
+import Gesture from "@material-ui/icons/Gesture";
+import GetApp from "@material-ui/icons/GetApp";
+import KeyboardOutlined from "@material-ui/icons/KeyboardOutlined";
+import MoreHoriz from "@material-ui/icons/MoreHoriz";
+import NearMe from "@material-ui/icons/NearMe";
+import Share from "@material-ui/icons/Share";
+import ShowChart from "@material-ui/icons/ShowChart";
+import TextFields from "@material-ui/icons/TextFields";
+import TrendingUp from "@material-ui/icons/TrendingUp";
+import WbIncandescent from "@material-ui/icons/WbIncandescent";
 import * as React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router";
