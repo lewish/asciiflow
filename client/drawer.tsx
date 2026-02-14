@@ -403,6 +403,7 @@ export function Drawer() {
                 <ShortcutChip label={"arrow keys"} /> to move around.
               </ToolHelp>{" "}
               Scroll to pan.{" "}
+              <ShortcutChip label="shift + scroll" /> to pan horizontally.{" "}
               <ShortcutChip label={`${ctrlOrCmd()} + scroll`} /> to zoom.
               {!route.shareSpec && (
                 <>

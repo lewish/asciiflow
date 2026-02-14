@@ -250,12 +250,16 @@ export class DesktopController {
       store.currentCanvas.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
     } else {
       // Pan: plain scroll moves the canvas.
+      // Shift+scroll converts vertical scroll to horizontal pan, for mice
+      // without a horizontal scroll wheel.
       const zoom = store.currentCanvas.zoom;
       const offset = store.currentCanvas.offset;
+      const dx = e.shiftKey ? (e.deltaX || e.deltaY) : e.deltaX;
+      const dy = e.shiftKey ? 0 : e.deltaY;
       store.currentCanvas.setOffset(
         new Vector(
-          offset.x + e.deltaX / zoom,
-          offset.y + e.deltaY / zoom
+          offset.x + dx / zoom,
+          offset.y + dy / zoom
         )
       );
     }

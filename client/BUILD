@@ -91,6 +91,7 @@ http_server_bin.http_server_binary(
 
 js_run_devserver(
     name = "devserver",
+    args = ["."],
     chdir = package_name(),
     data = [
         "index.html",
