@@ -27,10 +27,9 @@ Requires Node 22.x (managed by Bazel toolchain) and Bazel 8.x (via Bazelisk).
 
 ```
 client/                # Main frontend app
-  store/               # State management (Watchable pattern)
+  store/               # State management (Zustand)
     index.ts           # Store singleton, ToolMode enum, tool instances
     canvas.ts          # Per-drawing state (layers, undo/redo, zoom)
-    persistent.ts      # localStorage wrapper with serialization
     drawing_stringifier.ts  # Compress/share drawings via URL
   draw/                # Drawing tool implementations (IDrawFunction interface)
     box.ts, line.ts, text.ts, select.ts, freeform.ts, erase.ts, move.ts
@@ -44,8 +43,9 @@ client/                # Main frontend app
   drawer.tsx           # Sidebar UI (tools, file management, export)
   export.tsx           # Export (SVG, HTML, PNG, Markdown, JSON)
 common/                # Shared utilities
-  watchable.ts         # Reactive state: WatchableAdapter, useWatchable hook, autorun
   stringifiers.ts      # Serialization interfaces
+testing/               # Test infrastructure
+  test_setup.ts        # localStorage/window shim for Node.js tests
 bazel/                 # Bazel build infrastructure
   playwright.bzl       # playwright_test() rule for e2e tests
   playwright-runner.mjs # Playwright test runner with static server
@@ -59,10 +59,10 @@ site/                  # Static site assets
 
 ## Architecture
 
-- **State:** Custom reactive system (`Watchable` pattern in `common/watchable.ts`). `Store` is a singleton with `WatchableAdapter` values. React components subscribe via `useWatchable()` hook. `autorun()` for side effects.
+- **State:** Zustand store (`client/store/index.ts`). `Store` is a singleton. React components subscribe via Zustand's `useStore()` hook with selectors.
 - **Drawing:** Command pattern — Controller dispatches input to the active `IDrawFunction` tool. Tools write to a scratch `Layer`, which is applied on commit.
 - **Layers:** Sparse grid (`Map<string, string>` keyed by Vector). `LayerView` composes multiple layers for rendering.
-- **Persistence:** `Persistent<T>` wraps `WatchableAdapter` with automatic localStorage sync.
+- **Persistence:** Direct `localStorage.getItem`/`setItem` with `IStringifier` serialization (in store/index.ts and store/canvas.ts).
 - **Sharing:** Drawing → JSON → pako deflate → base64 → URL param at `/share/:encoded`.
 - **Routes:** `/` (new), `/local/:id` (saved), `/share/:encoded` (shared read-only).
 
@@ -76,3 +76,74 @@ site/                  # Static site assets
 - Path alias: `#asciiflow/*` maps to repo root
 - CSS modules for component styling
 - Drawing tools implement `IDrawFunction` with: `start()`, `move()`, `end()`, `handleKey()`, `getCursor()`
+
+## Issue Priority List
+
+Triaged February 2025 with help from Claude. See GitHub issues for full details.
+
+### Bugs — Quick Fixes
+
+| Issue | Summary |
+|-------|---------|
+| #258 | Blurry canvas on HiDPI/Retina displays (canvas DPI scaling) |
+| #189 | Ctrl+Z triggers browser undo instead of app undo (missing preventDefault) |
+| #202 | Apostrophe/slash in text mode triggers Firefox Quick Find (missing preventDefault) |
+| #193 | Backspace in text mode doesn't move cursor |
+| #332 | Undo while entering text reverts previous drawing action instead of text |
+| #307 | Delete doesn't work for first scene |
+| #321 | Side-scroll wheel only zooms out (horizontal scroll event handling) |
+
+### Bugs — Moderate Effort
+
+| Issue | Summary |
+|-------|---------|
+| #28 | Pan/zoom UX overhaul: scroll should pan, require modifier for zoom. Trackpad/touchpad issues across platforms |
+| #129 | Two-finger swipe should pan, not zoom (related to #28) |
+| #195 | Space-to-pan conflicts with space-to-insert in text mode |
+| #297 | Space and Delete stop working in text mode in certain states |
+| #187 | Line breaks handled incorrectly when pasting (also #211 — broken spaces in export) |
+| #338 | Copy/paste not working on macOS Tahoe Safari and Firefox |
+
+### Feature Requests — High Priority
+
+| Issue | Summary |
+|-------|---------|
+| #241 | Customisable line/border/corner styles (Unicode box-drawing variants, rounded corners, ASCII mode, dashed lines) |
+| #43 | Diagonal lines |
+| #54 | Export selected area only |
+| #190 | Mobile device support |
+| #346 | PWA support for offline/installable use (replaces Electron) |
+| #85 | CJK character support (fullwidth characters, IME input) |
+| #339 | Emoji support (wide character rendering) |
+
+### Feature Requests — Moderate Priority
+
+| Issue | Summary |
+|-------|---------|
+| #162 | Vertical/horizontal flip and 90-degree rotation |
+| #76 | Auto-centre text within boxes |
+| #73 | Show x,y dimensions when drawing boxes |
+| #324 | Remember cursor position across select/text tool switches |
+| #240 | Text tool insert mode (in addition to overwrite) |
+| #303 | Ctrl+arrow for word navigation in text mode |
+| #337 | Distinguishing crossing arrows (╫ or similar) |
+| #259 | Table generator with specified rows/columns |
+| #200 | Drag/move with arrow keys |
+| #197 | Set exact size for lines/boxes |
+
+### Feature Requests — Lower Priority / Longer Term
+
+| Issue | Summary |
+|-------|---------|
+| #58 | Object model for manipulating individual elements |
+| #44 | Configurable/limited drawing area |
+| #229 | Circle/ellipse support |
+| #134 | Trapezoid/mux shapes |
+| #336 | Colour support |
+| #246 | Visible gridlines |
+| #228 | Block elements (▀▄█░▒▓) in freeform mode |
+| #273 | Pixel-perfect freeform lines |
+| #274 | Auto-hide/show sidebar on hover |
+| #219 | Copy/paste characters in freeform mode |
+| #296 | VS Code extension (community — ASCIIFlow is MIT) |
+| #238 | Usability review (comprehensive feedback, many items tracked elsewhere) |
