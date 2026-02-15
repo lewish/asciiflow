@@ -5,15 +5,17 @@
 .topBar {
   position: fixed;
   top: var(--space-xl);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
   z-index: 20;
   font-family: var(--font-mono);
   font-size: var(--font-size);
   background: var(--color-bg);
   border: var(--border);
   user-select: none;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   white-space: nowrap;
   max-width: calc(100vw - 2 * var(--space-xl));
@@ -24,11 +26,10 @@
 .topRow {
   display: flex;
   align-items: center;
-  height: 36px;
+  min-height: 36px;
   padding: 0 var(--space-md);
   gap: 0;
   flex-wrap: wrap;
-  overflow: hidden;
 }
 
 /* --- Secondary row (contextual: file list, help, export, freeform chars) --- */
@@ -528,14 +529,15 @@
 
 @media (max-width: 768px) {
   .topBar {
-    top: var(--space-md);
-    max-width: calc(100vw - 2 * var(--space-md));
+    top: var(--space-sm);
+    max-width: calc(100vw - 2 * var(--space-sm));
   }
 
-  .topRow {
-    height: auto;
-    min-height: 36px;
+  .exportOptions {
     flex-wrap: wrap;
-    gap: 0;
+  }
+
+  .exportActions {
+    margin-left: 0;
   }
 }

@@ -3,7 +3,7 @@ import { FONT_SPEC, CHAR_BASELINE } from "#asciiflow/client/font";
 import { store, useAppStore } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 /**
  * Handles view operations, state and management of the screen.
@@ -36,6 +36,12 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
   const canvasVersion = useAppStore((s) => s.canvasVersion);
   const route = useAppStore((s) => s.route);
 
+  const dpr = (typeof window !== "undefined" && window.devicePixelRatio) || 1;
+  const [dims, setDims] = useState({
+    w: document.documentElement.clientWidth,
+    h: document.documentElement.clientHeight,
+  });
+
   const colors = getColors();
 
   useEffect(() => {
@@ -47,13 +53,10 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
 
   useEffect(() => {
     const handler = () => {
-      const canvas = document.getElementById(
-        "ascii-canvas"
-      ) as HTMLCanvasElement;
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = document.documentElement.clientWidth * dpr;
-      canvas.height = document.documentElement.clientHeight * dpr;
-      render(canvas);
+      setDims({
+        w: document.documentElement.clientWidth,
+        h: document.documentElement.clientHeight,
+      });
     };
     window.addEventListener("resize", handler);
     return () => {
@@ -61,12 +64,10 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
     };
   }, []);
 
-  const dpr = (typeof window !== "undefined" && window.devicePixelRatio) || 1;
-
   return (
     <canvas
-      width={document.documentElement.clientWidth * dpr}
-      height={document.documentElement.clientHeight * dpr}
+      width={dims.w * dpr}
+      height={dims.h * dpr}
       tabIndex={0}
       style={{
         backgroundColor: colors.background,
@@ -74,8 +75,8 @@ export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
         position: "fixed",
         left: 0,
         top: 0,
-        width: document.documentElement.clientWidth,
-        height: document.documentElement.clientHeight,
+        width: dims.w,
+        height: dims.h,
       }}
       id="ascii-canvas"
       {...rest}
