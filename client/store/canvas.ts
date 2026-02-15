@@ -6,10 +6,10 @@ import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier"
 import { ArrayStringifier, IStringifier, JSONStringifier } from "#asciiflow/common/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
 
-// Old hardcoded character cell sizes (before dynamic font measurement).
-// Used to migrate pixel-based offsets saved by earlier versions.
-const LEGACY_CHAR_PIXELS_H = 9;
-const LEGACY_CHAR_PIXELS_V = 16;
+// localStorage always stores offsets in the original pixel format (H=9, V=16).
+// We convert to/from current pixel sizes on read/write so existing data just works.
+const STORED_CHAR_PIXELS_H = 9;
+const STORED_CHAR_PIXELS_V = 16;
 
 function readPersistent<T>(
   key: string,
@@ -82,34 +82,15 @@ export class CanvasStore {
     this._zoom = readPersistent(this.zoomKey, 1);
 
     const defaultOffset: IVector = {
-      x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
-      y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
+      x: (constants.MAX_GRID_WIDTH * STORED_CHAR_PIXELS_H) / 2,
+      y: (constants.MAX_GRID_HEIGHT * STORED_CHAR_PIXELS_V) / 2,
     };
-    const storedOffset = readPersistent<IVector & { v?: number }>(
-      this.offsetKey,
-      null
-    );
-    if (storedOffset === null) {
-      // No persisted offset — use the default center.
-      this._offset = defaultOffset;
-    } else if (!storedOffset.v) {
-      // Legacy offset stored in old pixel coords (H=9, V=16).
-      // Convert to cell coords for persistence, and to pixels for runtime.
-      const cellX = storedOffset.x / LEGACY_CHAR_PIXELS_H;
-      const cellY = storedOffset.y / LEGACY_CHAR_PIXELS_V;
-      this._offset = {
-        x: cellX * constants.CHAR_PIXELS_H,
-        y: cellY * constants.CHAR_PIXELS_V,
-      };
-      // Persist in cell coords so it's stable across font measurement changes.
-      writePersistent(this.offsetKey, { x: cellX, y: cellY, v: 2 });
-    } else {
-      // v:2 format stores cell-based coords — convert to pixels for runtime.
-      this._offset = {
-        x: storedOffset.x * constants.CHAR_PIXELS_H,
-        y: storedOffset.y * constants.CHAR_PIXELS_V,
-      };
-    }
+    const storedOffset = readPersistent<IVector>(this.offsetKey, defaultOffset);
+    // Convert from stored pixel format (H=9, V=16) to current pixel sizes.
+    this._offset = {
+      x: (storedOffset.x / STORED_CHAR_PIXELS_H) * constants.CHAR_PIXELS_H,
+      y: (storedOffset.y / STORED_CHAR_PIXELS_V) * constants.CHAR_PIXELS_V,
+    };
   }
 
   public get zoom() {
@@ -128,11 +109,10 @@ export class CanvasStore {
 
   public setOffset(value: Vector) {
     this._offset = { x: value.x, y: value.y };
-    // Persist in cell coords so offset is stable across font measurement changes.
+    // Convert back to stored pixel format (H=9, V=16).
     writePersistent(this.offsetKey, {
-      x: value.x / constants.CHAR_PIXELS_H,
-      y: value.y / constants.CHAR_PIXELS_V,
-      v: 2,
+      x: (value.x / constants.CHAR_PIXELS_H) * STORED_CHAR_PIXELS_H,
+      y: (value.y / constants.CHAR_PIXELS_V) * STORED_CHAR_PIXELS_V,
     });
     this.notify();
   }

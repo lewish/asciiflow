@@ -174,10 +174,11 @@ describe("CanvasStore", () => {
   });
 });
 
-describe("CanvasStore offset migration", () => {
-  // The old hardcoded pixel sizes before dynamic font measurement.
-  const LEGACY_H = 9;
-  const LEGACY_V = 16;
+describe("CanvasStore offset serialization", () => {
+  // Offsets are always stored in the original pixel format (H=9, V=16)
+  // and converted to/from current pixel sizes on read/write.
+  const STORED_H = 9;
+  const STORED_V = 16;
 
   let version: number;
   function notify() { version++; }
@@ -190,63 +191,56 @@ describe("CanvasStore offset migration", () => {
   it("should use default center offset when nothing is stored", () => {
     const canvas = new CanvasStore(DrawingId.local("fresh"), notify);
     const offset = canvas.offset;
+    // Default is grid center, converted from stored format to current pixels.
     assert.equal(offset.x, (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2);
     assert.equal(offset.y, (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2);
   });
 
-  it("should migrate legacy offset (no v field) to cell-based coords", () => {
-    const id = DrawingId.local("legacy");
+  it("should convert stored offset (H=9, V=16) to current pixel sizes on read", () => {
+    const id = DrawingId.local("read-test");
     const key = storageKey(id, "offset");
 
-    // Simulate old-format offset stored with H=9, V=16.
-    const legacyOffset = { x: 900, y: 1600 };
-    localStorage.setItem(key, JSON.stringify(legacyOffset));
+    // Stored in original pixel format: cell (100, 100) at H=9, V=16.
+    localStorage.setItem(key, JSON.stringify({ x: 900, y: 1600 }));
 
     const canvas = new CanvasStore(id, notify);
     const offset = canvas.offset;
 
-    // Legacy offset in cell coords: (900/9, 1600/16) = (100, 100).
-    // Runtime offset is in pixels: (100 * CHAR_PIXELS_H, 100 * CHAR_PIXELS_V).
-    const expectedCellX = legacyOffset.x / LEGACY_H;
-    const expectedCellY = legacyOffset.y / LEGACY_V;
-    assert.equal(offset.x, expectedCellX * constants.CHAR_PIXELS_H);
-    assert.equal(offset.y, expectedCellY * constants.CHAR_PIXELS_V);
-
-    // Should have persisted in cell coords with v: 2.
-    const stored = JSON.parse(localStorage.getItem(key)!);
-    assert.equal(stored.v, 2);
-    assert.equal(stored.x, expectedCellX);
-    assert.equal(stored.y, expectedCellY);
+    // Runtime offset should be cell coords * current pixel sizes.
+    assert.equal(offset.x, 100 * constants.CHAR_PIXELS_H);
+    assert.equal(offset.y, 100 * constants.CHAR_PIXELS_V);
   });
 
-  it("should convert v:2 cell-based coords to pixels at runtime", () => {
-    const id = DrawingId.local("migrated");
-    const key = storageKey(id, "offset");
-
-    // v:2 stores cell-based coordinates.
-    const migratedOffset = { x: 50, y: 70, v: 2 };
-    localStorage.setItem(key, JSON.stringify(migratedOffset));
-
-    const canvas = new CanvasStore(id, notify);
-    const offset = canvas.offset;
-
-    // Runtime offset should be cells * pixel size.
-    assert.equal(offset.x, 50 * constants.CHAR_PIXELS_H);
-    assert.equal(offset.y, 70 * constants.CHAR_PIXELS_V);
-  });
-
-  it("should persist cell-based coords on setOffset", () => {
+  it("should convert back to stored pixel format (H=9, V=16) on write", () => {
     const id = DrawingId.local("write-test");
     const key = storageKey(id, "offset");
 
     const canvas = new CanvasStore(id, notify);
-    // setOffset receives pixel coords (as used at runtime).
-    canvas.setOffset(new Vector(123, 456));
+    // setOffset receives current pixel coords.
+    // Cell (10, 20) in current pixels:
+    const pixelX = 10 * constants.CHAR_PIXELS_H;
+    const pixelY = 20 * constants.CHAR_PIXELS_V;
+    canvas.setOffset(new Vector(pixelX, pixelY));
 
-    // Persisted values should be cell-based.
+    // Should be stored as cell (10, 20) in original pixel format.
     const stored = JSON.parse(localStorage.getItem(key)!);
-    assert.equal(stored.v, 2);
-    assert.equal(stored.x, 123 / constants.CHAR_PIXELS_H);
-    assert.equal(stored.y, 456 / constants.CHAR_PIXELS_V);
+    assert.equal(stored.x, 10 * STORED_H);
+    assert.equal(stored.y, 20 * STORED_V);
+  });
+
+  it("should round-trip: read then write preserves stored value", () => {
+    const id = DrawingId.local("roundtrip");
+    const key = storageKey(id, "offset");
+
+    const original = { x: 450, y: 800 };
+    localStorage.setItem(key, JSON.stringify(original));
+
+    const canvas = new CanvasStore(id, notify);
+    // Re-persist the loaded offset.
+    canvas.setOffset(canvas.offset);
+
+    const stored = JSON.parse(localStorage.getItem(key)!);
+    assert.equal(stored.x, original.x);
+    assert.equal(stored.y, original.y);
   });
 });
