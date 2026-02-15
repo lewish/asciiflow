@@ -9,11 +9,13 @@ import {
 import { Drawer } from "#asciiflow/client/drawer";
 import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
 import { renderedVersion, screenToCell, View } from "#asciiflow/client/view";
+import { initFont } from "#asciiflow/client/font";
 
 import { HashRouter, Route, useParams } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import { Vector } from "#asciiflow/client/vector";
 import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
+import { CHAR_PIXELS_H, CHAR_PIXELS_V } from "#asciiflow/client/constants";
 
 const controller = new Controller();
 const touchController = new TouchController(controller);
@@ -83,10 +85,11 @@ async function render() {
   setDarkMode: (v: boolean) => store.setDarkMode(v),
   getZoom: () => store.currentCanvas.zoom,
   getOffset: () => ({ x: store.currentCanvas.offset.x, y: store.currentCanvas.offset.y }),
+  getCellSize: () => ({ w: CHAR_PIXELS_H, h: CHAR_PIXELS_V }),
 };
 
 // tslint:disable-next-line: no-console
-render().catch((e) => console.log(e));
+initFont().then(() => render()).catch((e) => console.log(e));
 
 document.getElementById("root").addEventListener("keypress", (e) => controller.handleKeyPress(e));
 document.getElementById("root").addEventListener("keydown", (e) => controller.handleKeyDown(e));

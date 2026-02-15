@@ -35,3 +35,20 @@ rules_ts_ext.deps()
 use_repo(rules_ts_ext, "npm_typescript")
 
 bazel_dep(name = "aspect_rules_esbuild", version = "0.24.0")
+
+# Source Code Pro font (self-hosted, no CDN dependency at runtime).
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "font_source_code_pro_regular",
+    urls = ["https://raw.githubusercontent.com/adobe-fonts/source-code-pro/release/WOFF2/TTF/SourceCodePro-Regular.ttf.woff2"],
+    sha256 = "714eee29b70d191f5bf4b3a06b68f2c50522b1303d31c7d44dcefdcc5f9defd0",
+    downloaded_file_path = "SourceCodePro-Regular.woff2",
+)
+
+http_file(
+    name = "font_source_code_pro_medium",
+    urls = ["https://raw.githubusercontent.com/adobe-fonts/source-code-pro/release/WOFF2/TTF/SourceCodePro-Medium.ttf.woff2"],
+    sha256 = "924641f3612b80982d2d32350d4bed27fad682d7220b3dcf2f3370c94b949c34",
+    downloaded_file_path = "SourceCodePro-Medium.woff2",
+)

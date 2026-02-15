@@ -1,4 +1,5 @@
 import * as constants from "#asciiflow/client/constants";
+import { snapZoom } from "#asciiflow/client/font";
 import { store, IModifierKeys, ToolMode } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import { screenToCell, setCanvasCursor } from "#asciiflow/client/view";
@@ -248,8 +249,9 @@ export class DesktopController {
       const rawDelta = e.deltaY !== 0 ? e.deltaY : e.deltaX;
       if (rawDelta === 0) return;
       const delta = -rawDelta;
-      const newZoom = store.currentCanvas.zoom * (delta > 0 ? 1.1 : 0.9);
-      store.currentCanvas.setZoom(Math.max(Math.min(newZoom, 5), 0.2));
+      const rawZoom = store.currentCanvas.zoom * (delta > 0 ? 1.1 : 0.9);
+      const newZoom = snapZoom(Math.max(Math.min(rawZoom, 5), 0.2));
+      store.currentCanvas.setZoom(newZoom);
     } else {
       // Pan: plain scroll moves the canvas.
       // Shift+scroll converts vertical scroll to horizontal pan, for mice
@@ -334,7 +336,7 @@ export class TouchController {
       let newZoom =
         (this.originalZoom * positionOne.subtract(positionTwo).length()) /
         this.zoomLength;
-      newZoom = Math.max(Math.min(newZoom, 5), 0.5);
+      newZoom = snapZoom(Math.max(Math.min(newZoom, 5), 0.5));
       store.currentCanvas.setZoom(newZoom);
     }
   }

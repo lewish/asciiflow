@@ -84,7 +84,7 @@ async function waitForServer(url, timeoutMs = 60000) {
 /**
  * Start a simple static file server serving from the given directory.
  */
-function startStaticServer(dir, port = 8080) {
+function startStaticServer(dir) {
   console.log(`Static server root: ${dir}`)
 
   return new Promise((resolvePromise) => {
@@ -112,7 +112,10 @@ function startStaticServer(dir, port = 8080) {
       }
     })
 
-    server.listen(port, "127.0.0.1", () => {
+    // Use port 0 to let the OS assign a free port, avoiding conflicts
+    // with devservers or other test runs.
+    server.listen(0, "127.0.0.1", () => {
+      const port = server.address().port
       console.log(`Static server listening on http://127.0.0.1:${port}`)
       resolvePromise(server)
     })
@@ -158,15 +161,10 @@ try {
       await new Promise(r => setTimeout(r, 2000))
     }
   } else if (args.staticDir) {
-    // Serve static files from the specified directory within runfiles
+    // Serve static files from the specified directory within runfiles.
+    // Port is auto-assigned (0) to avoid conflicts with devservers.
     const serveDir = resolve(runfilesMain, args.staticDir)
     staticServer = await startStaticServer(serveDir)
-
-    if (args.healthUrl) {
-      console.log(`Waiting for static server at ${args.healthUrl}...`)
-      await waitForServer(args.healthUrl)
-      console.log("Static server is ready!")
-    }
   }
 
   // Config path is relative to runfiles root
@@ -262,6 +260,8 @@ Module.prototype._compile = function(content, filename) {
           ...process.env,
           CI: "true",
           PLAYWRIGHT_SERVER_RUNNING: "true",
+          // Pass the auto-assigned port so the Playwright config can use it.
+          ...(staticServer ? { TEST_SERVER_PORT: String(staticServer.address().port) } : {}),
           // Use userInfo().homedir which reads from /etc/passwd, not HOME env var.
           // Bazel overrides HOME to the sandbox/runfiles root, so process.env.HOME
           // would point to the wrong location for browser binaries.

@@ -1,3 +1,4 @@
+load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
 load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_devserver")
 load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("@npm//:http-server/package_json.bzl", http_server_bin = "bin")
@@ -5,9 +6,25 @@ load("//:ts_library.bzl", "ts_library", "ts_mocha_test_suite")
 
 package(default_visibility = ["//visibility:public"])
 
+copy_file(
+    name = "font_regular",
+    src = "@font_source_code_pro_regular//file",
+    out = "public/fonts/SourceCodePro-Regular.woff2",
+)
+
+copy_file(
+    name = "font_medium",
+    src = "@font_source_code_pro_medium//file",
+    out = "public/fonts/SourceCodePro-Medium.woff2",
+)
+
 js_library(
     name = "assets",
-    srcs = glob(["public/**/*.*"]) + [":index.html"],
+    srcs = glob(["public/**/*.*"]) + [
+        ":index.html",
+        ":font_regular",
+        ":font_medium",
+    ],
 )
 
 ts_library(

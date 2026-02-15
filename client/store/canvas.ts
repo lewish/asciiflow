@@ -6,6 +6,11 @@ import { DrawingStringifier } from "#asciiflow/client/store/drawing_stringifier"
 import { ArrayStringifier, IStringifier, JSONStringifier } from "#asciiflow/common/stringifiers";
 import { IVector, Vector } from "#asciiflow/client/vector";
 
+// Old hardcoded character cell sizes (before dynamic font measurement).
+// Used to migrate pixel-based offsets saved by earlier versions.
+const LEGACY_CHAR_PIXELS_H = 9;
+const LEGACY_CHAR_PIXELS_V = 16;
+
 function readPersistent<T>(
   key: string,
   defaultValue: T,
@@ -75,10 +80,31 @@ export class CanvasStore {
       new ArrayStringifier(Layer)
     );
     this._zoom = readPersistent(this.zoomKey, 1);
-    this._offset = readPersistent<IVector>(this.offsetKey, {
+
+    const defaultOffset: IVector = {
       x: (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
       y: (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
-    });
+    };
+    const storedOffset = readPersistent<IVector & { v?: number }>(
+      this.offsetKey,
+      null
+    );
+    if (storedOffset === null) {
+      // No persisted offset — use the default center.
+      this._offset = defaultOffset;
+    } else if (!storedOffset.v) {
+      // Legacy offset stored in old pixel coords (H=9, V=16).
+      // Convert to cell coords, then back to new pixel coords.
+      this._offset = {
+        x: (storedOffset.x / LEGACY_CHAR_PIXELS_H) * constants.CHAR_PIXELS_H,
+        y: (storedOffset.y / LEGACY_CHAR_PIXELS_V) * constants.CHAR_PIXELS_V,
+      };
+      // Persist the migrated offset so this only happens once.
+      writePersistent(this.offsetKey, { ...this._offset, v: 2 });
+    } else {
+      // Already in current format.
+      this._offset = { x: storedOffset.x, y: storedOffset.y };
+    }
   }
 
   public get zoom() {
@@ -97,7 +123,7 @@ export class CanvasStore {
 
   public setOffset(value: Vector) {
     this._offset = { x: value.x, y: value.y };
-    writePersistent(this.offsetKey, this._offset);
+    writePersistent(this.offsetKey, { ...this._offset, v: 2 });
     this.notify();
   }
 

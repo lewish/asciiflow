@@ -23,7 +23,7 @@
 }
 
 :global(.MuiButton-root).freeformCharacterButton {
-  font-family: monospace;
+  font-family: "Source Code Pro", monospace;
   padding: 5px;
   min-width: 40px;
   border-radius: 10px;

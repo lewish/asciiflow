@@ -5,13 +5,27 @@ import { test, expect } from "@playwright/test";
 // ---------------------------------------------------------------------------
 
 /**
- * Convert a cell offset (relative to grid center) to a screen pixel coordinate.
- * The canvas centers the grid in the viewport; each cell is 9px wide, 16px tall.
+ * Query the measured character cell dimensions from the app's test bridge.
+ * Cached per page after the first call.
  */
-function cellToPixel(viewport, cellDx, cellDy) {
+const cellSizeCache = new WeakMap();
+async function getCellSize(page) {
+  if (cellSizeCache.has(page)) return cellSizeCache.get(page);
+  const size = await page.evaluate(() => window.__asciiflow__.getCellSize());
+  cellSizeCache.set(page, size);
+  return size;
+}
+
+/**
+ * Convert a cell offset (relative to grid center) to a screen pixel coordinate.
+ * The canvas centers the grid in the viewport; cell size is measured dynamically.
+ */
+async function cellToPixel(page, cellDx, cellDy) {
+  const vp = page.viewportSize();
+  const { w, h } = await getCellSize(page);
   return {
-    x: viewport.width / 2 + cellDx * 9,
-    y: viewport.height / 2 + cellDy * 16,
+    x: vp.width / 2 + cellDx * w,
+    y: vp.height / 2 + cellDy * h,
   };
 }
 
@@ -39,9 +53,8 @@ async function waitForRender(page, previousRenderedVersion) {
 
 /** Drag on the canvas from one cell offset to another. */
 async function drag(page, fromDx, fromDy, toDx, toDy) {
-  const vp = page.viewportSize();
-  const start = cellToPixel(vp, fromDx, fromDy);
-  const end = cellToPixel(vp, toDx, toDy);
+  const start = await cellToPixel(page, fromDx, fromDy);
+  const end = await cellToPixel(page, toDx, toDy);
   await page.mouse.move(start.x, start.y);
   await page.mouse.down();
   await page.mouse.move(end.x, end.y, { steps: 5 });
@@ -50,8 +63,7 @@ async function drag(page, fromDx, fromDy, toDx, toDy) {
 
 /** Click on a specific cell offset. */
 async function clickCell(page, cellDx, cellDy) {
-  const vp = page.viewportSize();
-  const pos = cellToPixel(vp, cellDx, cellDy);
+  const pos = await cellToPixel(page, cellDx, cellDy);
   await page.mouse.click(pos.x, pos.y);
 }
 

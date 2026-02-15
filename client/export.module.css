@@ -1,6 +1,6 @@
 .textArea {
   padding: 10px;
-  font-family: "Courier New", Courier, monospace;
+  font-family: "Source Code Pro", monospace;
   white-space: pre;
   overflow: auto !important;
   min-width: 500px;

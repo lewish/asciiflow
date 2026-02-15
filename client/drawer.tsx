@@ -443,7 +443,7 @@ function ShortcutChip({
     <Chip
       icon={<KeyboardOutlined />}
       label={
-        <span style={{ fontFamily: "monospace", fontSize: 12 }}>{label}</span>
+        <span style={{ fontFamily: "'Source Code Pro', monospace", fontSize: 12 }}>{label}</span>
       }
       size="small"
     />

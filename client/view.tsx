@@ -1,4 +1,5 @@
 import * as constants from "#asciiflow/client/constants";
+import { FONT_SPEC, CHAR_BASELINE } from "#asciiflow/client/font";
 import { store, useAppStore } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import * as React from "react";
@@ -155,7 +156,7 @@ function render(canvas: HTMLCanvasElement) {
     );
   }
   context.stroke();
-  context.font = "15px Courier New";
+  context.font = FONT_SPEC;
 
   function highlight(position: Vector, color: string) {
     context.fillStyle = color;
@@ -173,7 +174,7 @@ function render(canvas: HTMLCanvasElement) {
       context.fillText(
         value,
         position.x * constants.CHAR_PIXELS_H - offset.x,
-        position.y * constants.CHAR_PIXELS_V - offset.y - 3
+        (position.y - 1) * constants.CHAR_PIXELS_V - offset.y + CHAR_BASELINE
       );
     }
   }
