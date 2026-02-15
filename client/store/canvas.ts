@@ -94,16 +94,21 @@ export class CanvasStore {
       this._offset = defaultOffset;
     } else if (!storedOffset.v) {
       // Legacy offset stored in old pixel coords (H=9, V=16).
-      // Convert to cell coords, then back to new pixel coords.
+      // Convert to cell coords for persistence, and to pixels for runtime.
+      const cellX = storedOffset.x / LEGACY_CHAR_PIXELS_H;
+      const cellY = storedOffset.y / LEGACY_CHAR_PIXELS_V;
       this._offset = {
-        x: (storedOffset.x / LEGACY_CHAR_PIXELS_H) * constants.CHAR_PIXELS_H,
-        y: (storedOffset.y / LEGACY_CHAR_PIXELS_V) * constants.CHAR_PIXELS_V,
+        x: cellX * constants.CHAR_PIXELS_H,
+        y: cellY * constants.CHAR_PIXELS_V,
       };
-      // Persist the migrated offset so this only happens once.
-      writePersistent(this.offsetKey, { ...this._offset, v: 2 });
+      // Persist in cell coords so it's stable across font measurement changes.
+      writePersistent(this.offsetKey, { x: cellX, y: cellY, v: 2 });
     } else {
-      // Already in current format.
-      this._offset = { x: storedOffset.x, y: storedOffset.y };
+      // v:2 format stores cell-based coords — convert to pixels for runtime.
+      this._offset = {
+        x: storedOffset.x * constants.CHAR_PIXELS_H,
+        y: storedOffset.y * constants.CHAR_PIXELS_V,
+      };
     }
   }
 
@@ -123,7 +128,12 @@ export class CanvasStore {
 
   public setOffset(value: Vector) {
     this._offset = { x: value.x, y: value.y };
-    writePersistent(this.offsetKey, { ...this._offset, v: 2 });
+    // Persist in cell coords so offset is stable across font measurement changes.
+    writePersistent(this.offsetKey, {
+      x: value.x / constants.CHAR_PIXELS_H,
+      y: value.y / constants.CHAR_PIXELS_V,
+      v: 2,
+    });
     this.notify();
   }
 

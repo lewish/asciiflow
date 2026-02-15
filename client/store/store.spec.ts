@@ -194,7 +194,7 @@ describe("CanvasStore offset migration", () => {
     assert.equal(offset.y, (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2);
   });
 
-  it("should migrate legacy offset (no v field) to new pixel coords", () => {
+  it("should migrate legacy offset (no v field) to cell-based coords", () => {
     const id = DrawingId.local("legacy");
     const key = storageKey(id, "offset");
 
@@ -206,42 +206,47 @@ describe("CanvasStore offset migration", () => {
     const offset = canvas.offset;
 
     // Legacy offset in cell coords: (900/9, 1600/16) = (100, 100).
-    // New offset: (100 * CHAR_PIXELS_H, 100 * CHAR_PIXELS_V).
-    assert.equal(offset.x, (legacyOffset.x / LEGACY_H) * constants.CHAR_PIXELS_H);
-    assert.equal(offset.y, (legacyOffset.y / LEGACY_V) * constants.CHAR_PIXELS_V);
+    // Runtime offset is in pixels: (100 * CHAR_PIXELS_H, 100 * CHAR_PIXELS_V).
+    const expectedCellX = legacyOffset.x / LEGACY_H;
+    const expectedCellY = legacyOffset.y / LEGACY_V;
+    assert.equal(offset.x, expectedCellX * constants.CHAR_PIXELS_H);
+    assert.equal(offset.y, expectedCellY * constants.CHAR_PIXELS_V);
 
-    // Should have persisted the migrated offset with v: 2.
+    // Should have persisted in cell coords with v: 2.
     const stored = JSON.parse(localStorage.getItem(key)!);
     assert.equal(stored.v, 2);
-    assert.equal(stored.x, offset.x);
-    assert.equal(stored.y, offset.y);
+    assert.equal(stored.x, expectedCellX);
+    assert.equal(stored.y, expectedCellY);
   });
 
-  it("should not re-migrate an already-migrated offset (v: 2)", () => {
+  it("should convert v:2 cell-based coords to pixels at runtime", () => {
     const id = DrawingId.local("migrated");
     const key = storageKey(id, "offset");
 
-    const migratedOffset = { x: 500, y: 700, v: 2 };
+    // v:2 stores cell-based coordinates.
+    const migratedOffset = { x: 50, y: 70, v: 2 };
     localStorage.setItem(key, JSON.stringify(migratedOffset));
 
     const canvas = new CanvasStore(id, notify);
     const offset = canvas.offset;
 
-    // Should use the stored values as-is.
-    assert.equal(offset.x, 500);
-    assert.equal(offset.y, 700);
+    // Runtime offset should be cells * pixel size.
+    assert.equal(offset.x, 50 * constants.CHAR_PIXELS_H);
+    assert.equal(offset.y, 70 * constants.CHAR_PIXELS_V);
   });
 
-  it("should write v: 2 on setOffset", () => {
+  it("should persist cell-based coords on setOffset", () => {
     const id = DrawingId.local("write-test");
     const key = storageKey(id, "offset");
 
     const canvas = new CanvasStore(id, notify);
+    // setOffset receives pixel coords (as used at runtime).
     canvas.setOffset(new Vector(123, 456));
 
+    // Persisted values should be cell-based.
     const stored = JSON.parse(localStorage.getItem(key)!);
     assert.equal(stored.v, 2);
-    assert.equal(stored.x, 123);
-    assert.equal(stored.y, 456);
+    assert.equal(stored.x, 123 / constants.CHAR_PIXELS_H);
+    assert.equal(stored.y, 456 / constants.CHAR_PIXELS_V);
   });
 });
