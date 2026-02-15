@@ -32,6 +32,7 @@ export function setCanvasCursor(cursor: string) {
 
 export const View = ({ ...rest }: React.HTMLAttributes<HTMLCanvasElement>) => {
   const darkMode = useAppStore((s) => s.darkMode);
+  const showGrid = useAppStore((s) => s.showGrid);
   const canvasVersion = useAppStore((s) => s.canvasVersion);
   const route = useAppStore((s) => s.route);
 

@@ -695,7 +695,7 @@ function NewDrawingRow() {
           style={{ color: "var(--color-accent)" }}
           onClick={() => setCreating(true)}
         >
-          [+ new drawing]
+          [new drawing]
         </button>
       )}
     </div>

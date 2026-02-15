@@ -19,13 +19,13 @@ export interface IExportConfig {
 
 function TermSelect({
   label,
-  chevronColor,
+  color,
   value,
   options,
   onChange,
 }: {
   label: string;
-  chevronColor?: string;
+  color?: string;
   value: string;
   options: Array<{ value: string; label: string }>;
   onChange: (value: string) => void;
@@ -52,10 +52,11 @@ function TermSelect({
       <div className={styles.customSelect} ref={ref}>
         <button
           className={styles.customSelectTrigger}
+          style={color ? { color } : undefined}
           onClick={() => setOpen(!open)}
         >
-          {current ? current.label : value}
-          <span className={styles.customSelectChevron} style={chevronColor ? { color: chevronColor } : undefined}>{open ? "\u25b2" : "\u25bc"}</span>
+          {current ? current.label : value}{" "}
+          <span className={styles.customSelectChevron} style={color ? { color } : undefined}>{open ? "\u25b2" : "\u25bc"}</span>
         </button>
         {open && (
           <div className={styles.customSelectPanel}>
@@ -107,7 +108,7 @@ export function ExportPanel({
           <div className={styles.exportOptions}>
             <TermSelect
               label="character set:"
-              chevronColor="var(--color-cyan)"
+              color="var(--color-cyan)"
               value={exportConfig.characters ?? "extended"}
               options={[
                 { value: "extended", label: "extended" },
@@ -122,7 +123,7 @@ export function ExportPanel({
             />
             <TermSelect
               label="wrap:"
-              chevronColor="var(--color-purple)"
+              color="var(--color-purple)"
               value={exportConfig.wrapper || "none"}
               options={[
                 { value: "none", label: "none" },

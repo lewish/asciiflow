@@ -42,7 +42,6 @@
   flex-wrap: wrap;
   white-space: normal;
   min-width: 0;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
@@ -176,6 +175,7 @@
   padding: 0;
   text-align: left;
   outline: none;
+  white-space: pre;
 }
 
 .fileRowName:hover {
@@ -241,7 +241,6 @@
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
 }
 
 .drawHint {
@@ -377,7 +376,7 @@
 }
 
 .customSelectTrigger:hover {
-  color: var(--color-accent);
+  opacity: 0.7;
 }
 
 .customSelectChevron {
@@ -431,13 +430,12 @@
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
 }
 
 .exportRow {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   width: 100%;
   flex-wrap: wrap;
 }
@@ -445,7 +443,7 @@
 .exportOptions {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .exportSelect {
@@ -511,9 +509,10 @@
 .viewPanel {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-sm);
   width: 100%;
   color: var(--color-text-muted);
+  flex-wrap: wrap;
 }
 
 .viewLabel {
