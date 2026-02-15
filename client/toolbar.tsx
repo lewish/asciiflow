@@ -110,6 +110,7 @@ export function Toolbar() {
   const showSecondRow = panel !== null || showFreeformPicker;
 
   return (
+    <div className={styles.topBarWrapper}>
     <div className={styles.topBar} ref={topBarRef}>
       {/* ── Primary row ── */}
       <div className={styles.topRow} ref={topRowRef}>
@@ -216,6 +217,7 @@ export function Toolbar() {
           {showFreeformPicker && <DrawPanel />}
         </div>
       )}
+    </div>
     </div>
   );
 }

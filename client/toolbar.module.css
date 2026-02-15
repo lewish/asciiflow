@@ -2,23 +2,30 @@
    Top bar — floating, content-fit, terminal aesthetic with box-drawing
    ========================================================================== */
 
-.topBar {
+.topBarWrapper {
   position: fixed;
   top: var(--space-xl);
   left: 0;
   right: 0;
-  margin: 0 auto;
-  width: fit-content;
   z-index: 20;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 var(--space-xl);
+  box-sizing: border-box;
+}
+
+.topBar {
   font-family: var(--font-mono);
   font-size: var(--font-size);
   background: var(--color-bg);
   border: var(--border);
   user-select: none;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   white-space: nowrap;
-  max-width: calc(100vw - 2 * var(--space-xl));
+  pointer-events: auto;
+  max-width: 100%;
 }
 
 /* --- Primary row --- */
@@ -528,9 +535,9 @@
 /* --- Mobile: responsive top bar --- */
 
 @media (max-width: 768px) {
-  .topBar {
+  .topBarWrapper {
     top: var(--space-sm);
-    max-width: calc(100vw - 2 * var(--space-sm));
+    padding: 0 var(--space-sm);
   }
 
   .exportOptions {
