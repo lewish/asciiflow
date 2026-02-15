@@ -39,11 +39,6 @@ export const App = () => {
     );
   }, [routeProps.share, routeProps.local]);
 
-  // Apply dark mode class to <html> for CSS custom properties.
-  React.useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
-
   return (
     <div className={[styles.app, darkMode ? "dark" : ""].join(" ")}>
       <Toolbar />

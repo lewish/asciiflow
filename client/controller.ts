@@ -7,6 +7,15 @@ import { HTMLAttributes } from "react";
 
 import * as React from "react";
 
+function isInputTarget(event: KeyboardEvent) {
+  const t = event.target;
+  return (
+    t instanceof HTMLInputElement ||
+    t instanceof HTMLTextAreaElement ||
+    (t instanceof HTMLElement && t.isContentEditable)
+  );
+}
+
 /**
  * Different modes of control.
  */
@@ -53,6 +62,8 @@ export class Controller {
   }
 
   handleKeyPress(event: KeyboardEvent) {
+    // Don't intercept keypresses when an input or textarea is focused.
+    if (isInputTarget(event)) return;
     if (event.keyCode == 8) {
       // Disable navigation back action on backspace.
       event.preventDefault();
@@ -69,6 +80,8 @@ export class Controller {
   }
 
   handleKeyDown(event: KeyboardEvent) {
+    // Don't intercept keypresses when an input or textarea is focused.
+    if (isInputTarget(event)) return;
     // Override some special characters so that they can be handled in one place.
     let specialKeyCode = null;
 

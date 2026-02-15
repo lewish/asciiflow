@@ -1,11 +1,8 @@
 import { ASCII, UNICODE } from "#asciiflow/client/constants";
-import styles from "#asciiflow/client/export.module.css";
+import styles from "#asciiflow/client/toolbar.module.css";
 import { DrawingId, store, useAppStore } from "#asciiflow/client/store";
 import { layerToText } from "#asciiflow/client/text_utils";
 import {
-  Button,
-  Dialog,
-  Select,
   Toast,
 } from "#asciiflow/client/ui/components";
 import * as React from "react";
@@ -16,104 +13,174 @@ export interface IExportConfig {
   characters?: "basic" | "extended";
 }
 
-export function ExportDialog({
-  button,
-  drawingId,
+// ---------------------------------------------------------------------------
+// Custom terminal-style dropdown
+// ---------------------------------------------------------------------------
+
+function TermSelect({
+  label,
+  chevronColor,
+  value,
+  options,
+  onChange,
 }: {
-  button: React.ReactNode;
-  drawingId: DrawingId;
+  label: string;
+  chevronColor?: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onChange: (value: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const exportConfig = useAppStore((s) => s.exportConfig);
-  const darkMode = useAppStore((s) => s.darkMode);
-  const canvasVersion = useAppStore((s) => s.canvasVersion);
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  const drawingText = open
-    ? applyConfig(layerToText(store.canvas(drawingId).committed), exportConfig)
-    : "";
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const current = options.find((o) => o.value === value);
+
   return (
-    <>
-      <span onClick={() => setOpen(true)}>{button}</span>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Export drawing"
-        testId="export-dialog"
-        actions={
-          <>
-            <CopyToClipboardButton text={drawingText} />
-            <Button onClick={() => setOpen(false)}>Close</Button>
-          </>
-        }
-      >
-        <div className={styles.formRow}>
-          <Select
-            label="Character set"
-            value={exportConfig.characters ?? "extended"}
-            onChange={(v) =>
-              store.setExportConfig({
-                ...exportConfig,
-                characters: v as any,
-              })
-            }
-          >
-            <option value="extended">ASCII Extended</option>
-            <option value="basic">ASCII Basic</option>
-          </Select>
-        </div>
-        <div className={styles.formRow}>
-          <Select
-            label="Comment type"
-            value={exportConfig.wrapper || "none"}
-            onChange={(v) =>
-              store.setExportConfig({
-                ...exportConfig,
-                wrapper: v === "none" ? undefined : (v as any),
-              })
-            }
-          >
-            <option value="none">None</option>
-            <option value="star">/* */ standard multi-line</option>
-            <option value="star-filled">/***/ filled multi-line</option>
-            <option value="triple-quotes">{`""" """`} quotes</option>
-            <option value="hash"># hashes</option>
-            <option value="slash">// slashes</option>
-            <option value="three-slashes">/// three slashes</option>
-            <option value="dash">-- dashes</option>
-            <option value="apostrophe">' apostrophe</option>
-            <option value="backticks">``` backticks</option>
-            <option value="four-spaces">{"    "} four spaces</option>
-            <option value="semicolon">; semicolons</option>
-          </Select>
-        </div>
-        <textarea
-          readOnly
-          value={drawingText}
-          className={styles.textArea}
-          data-testid="export-text"
-        />
-      </Dialog>
-    </>
+    <div className={styles.exportSelect}>
+      <span className={styles.exportSelectLabel}>{label}</span>
+      <div className={styles.customSelect} ref={ref}>
+        <button
+          className={styles.customSelectTrigger}
+          onClick={() => setOpen(!open)}
+        >
+          {current ? current.label : value}
+          <span className={styles.customSelectChevron} style={chevronColor ? { color: chevronColor } : undefined}>{open ? "\u25b2" : "\u25bc"}</span>
+        </button>
+        {open && (
+          <div className={styles.customSelectPanel}>
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                className={[
+                  styles.customSelectOption,
+                  opt.value === value ? styles.customSelectOptionActive : "",
+                ].filter(Boolean).join(" ")}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+              >
+                {opt.value === value ? "> " : "  "}{opt.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
-function CopyToClipboardButton({ text }: { text: string }) {
+// ---------------------------------------------------------------------------
+// Export panel
+// ---------------------------------------------------------------------------
+
+export function ExportPanel({
+  drawingId,
+}: {
+  drawingId: DrawingId;
+}) {
+  const [previewOpen, setPreviewOpen] = React.useState(false);
   const [toastOpen, setToastOpen] = React.useState(false);
+  const exportConfig = useAppStore((s) => s.exportConfig);
+  const canvasVersion = useAppStore((s) => s.canvasVersion);
+
+  const drawingText = applyConfig(
+    layerToText(store.canvas(drawingId).committed),
+    exportConfig
+  );
+
   return (
     <>
-      <Button
-        variant="primary"
-        data-testid="copy-to-clipboard"
-        onClick={async () => {
-          await navigator.clipboard.writeText(text);
-          setToastOpen(true);
-        }}
-      >
-        Copy to clipboard
-      </Button>
+      <div className={styles.exportPanel} data-testid="export-dialog">
+        <div className={styles.exportRow}>
+          <div className={styles.exportOptions}>
+            <TermSelect
+              label="character set:"
+              chevronColor="var(--color-cyan)"
+              value={exportConfig.characters ?? "extended"}
+              options={[
+                { value: "extended", label: "extended" },
+                { value: "basic", label: "basic" },
+              ]}
+              onChange={(v) =>
+                store.setExportConfig({
+                  ...exportConfig,
+                  characters: v as any,
+                })
+              }
+            />
+            <TermSelect
+              label="wrap:"
+              chevronColor="var(--color-purple)"
+              value={exportConfig.wrapper || "none"}
+              options={[
+                { value: "none", label: "none" },
+                { value: "star", label: "/* */" },
+                { value: "star-filled", label: "/***/" },
+                { value: "triple-quotes", label: '""" """' },
+                { value: "hash", label: "# hash" },
+                { value: "slash", label: "// slash" },
+                { value: "three-slashes", label: "/// triple" },
+                { value: "dash", label: "-- dash" },
+                { value: "apostrophe", label: "' apostrophe" },
+                { value: "backticks", label: "``` backticks" },
+                { value: "four-spaces", label: "    indent" },
+                { value: "semicolon", label: "; semicolon" },
+              ]}
+              onChange={(v) =>
+                store.setExportConfig({
+                  ...exportConfig,
+                  wrapper: v === "none" ? undefined : (v as any),
+                })
+              }
+            />
+          </div>
+          <div className={styles.exportActions}>
+            <button
+              className={styles.actionBtn}
+              style={{ color: "var(--color-success)" }}
+              data-testid="copy-to-clipboard"
+              onClick={async () => {
+                await navigator.clipboard.writeText(drawingText);
+                setToastOpen(true);
+              }}
+            >
+              [copy to clipboard]
+            </button>
+            <button
+              className={styles.actionBtn}
+              style={{ color: "var(--color-accent)" }}
+              onClick={() => setPreviewOpen(!previewOpen)}
+            >
+              [{previewOpen ? "close preview" : "preview"}]
+            </button>
+          </div>
+        </div>
+        {previewOpen && (
+          <div className={styles.exportPreview}>
+            <pre
+              className={styles.exportPreviewText}
+              data-testid="export-text"
+            >
+              {drawingText}
+            </pre>
+          </div>
+        )}
+      </div>
       <Toast
         open={toastOpen}
-        message="Copied to clipboard"
+        message="copied to clipboard"
         onClose={() => setToastOpen(false)}
       />
     </>

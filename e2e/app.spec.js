@@ -359,7 +359,8 @@ test("toggle dark mode", async ({ page }) => {
 
   const canvas = page.locator("canvas");
   const bgBefore = await canvas.evaluate((el) => el.style.backgroundColor);
-  expect(bgBefore).toBe("rgb(255, 255, 255)");
+  // Nord Snow Storm: #eceff4
+  expect(bgBefore).toBe("rgb(236, 239, 244)");
 
   // Toggle dark mode via bridge
   const rv = await getRenderedVersion(page);
@@ -371,9 +372,9 @@ test("toggle dark mode", async ({ page }) => {
   );
   expect(darkAfter).toBe(true);
 
-  // Canvas background should be dark (#333 = rgb(51, 51, 51))
+  // Nord Polar Night: #2e3440
   const bgAfter = await canvas.evaluate((el) => el.style.backgroundColor);
-  expect(bgAfter).toBe("rgb(51, 51, 51)");
+  expect(bgAfter).toBe("rgb(46, 52, 64)");
 });
 
 // ---------------------------------------------------------------------------
@@ -398,13 +399,17 @@ test("draw box, export, and copy to clipboard", async ({ page, context }) => {
     "└───┘",
   ]);
 
-  // Verify via export dialog
+  // Verify via export panel
   await page.getByTestId("export-button").click();
   const dialog = page.getByTestId("export-dialog");
   await expect(dialog).toBeVisible();
 
-  const textarea = page.getByTestId("export-text");
-  const exportedText = await textarea.inputValue();
+  // Open the preview to see the export text
+  await page.getByText("[preview]").click();
+
+  const exportText = page.getByTestId("export-text");
+  await expect(exportText).toBeVisible();
+  const exportedText = await exportText.textContent();
   expect(exportedText.split("\n")).toEqual([
     "┌───┐",
     "│   │",
@@ -671,12 +676,12 @@ test("cut removes selection and puts text on clipboard", async ({
 // Top bar menu items
 // ---------------------------------------------------------------------------
 
-test("top bar shows File, Export, and Help buttons", async ({ page }) => {
+test("top bar shows files, export, and help buttons", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByText("File")).toBeVisible();
-  await expect(page.getByText("Export")).toBeVisible();
-  await expect(page.getByText("Help")).toBeVisible();
+  await expect(page.getByTestId("file-button")).toBeVisible();
+  await expect(page.getByTestId("export-button")).toBeVisible();
+  await expect(page.getByTestId("help-button")).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------

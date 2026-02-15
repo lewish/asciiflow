@@ -257,15 +257,35 @@ export function Toast({
   onClose: () => void;
   duration?: number;
 }) {
+  const [visible, setVisible] = React.useState(false);
+  const [closing, setClosing] = React.useState(false);
+
+  React.useEffect(() => {
+    if (open) {
+      setVisible(true);
+      setClosing(false);
+    } else if (visible) {
+      setClosing(true);
+      const timer = setTimeout(() => {
+        setVisible(false);
+        setClosing(false);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+
   React.useEffect(() => {
     if (!open) return;
-    const timer = setTimeout(onClose, duration);
+    const timer = setTimeout(() => onClose(), duration);
     return () => clearTimeout(timer);
-  }, [open, duration, onClose]);
+  }, [open, duration]);
 
-  if (!open) return null;
+  if (!visible) return null;
   return (
-    <div className={styles.toast} onClick={onClose}>
+    <div
+      className={[styles.toast, closing ? styles.toastClosing : ""].filter(Boolean).join(" ")}
+      onClick={onClose}
+    >
       {message}
     </div>
   );

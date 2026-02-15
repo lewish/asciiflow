@@ -13,21 +13,13 @@ import { useEffect } from "react";
 export let renderedVersion = 0;
 
 function getColors() {
-  if (store.darkMode) {
-    return {
-      background: "#333",
-      grid: "#444",
-      text: "#DDD",
-      highlight: "#444",
-      selection: "#456",
-    };
-  }
+  const style = getComputedStyle(document.documentElement);
   return {
-    background: "#FFF",
-    grid: "#EEE",
-    text: "#333",
-    highlight: "#F6F6F6",
-    selection: "#DEF",
+    background: style.getPropertyValue("--color-canvas-bg").trim() || "#eceff4",
+    grid: style.getPropertyValue("--color-canvas-grid").trim() || "#d8dee9",
+    text: style.getPropertyValue("--color-canvas-text").trim() || "#2e3440",
+    highlight: style.getPropertyValue("--color-canvas-highlight").trim() || "#e5e9f0",
+    selection: style.getPropertyValue("--color-canvas-selection").trim() || "#81a1c1",
   };
 }
 
@@ -99,6 +91,7 @@ function render(canvas: HTMLCanvasElement) {
   const committed = store.currentCanvas.committed;
   const scratch = store.currentCanvas.scratch;
   const selection = store.currentCanvas.selection;
+  const showGrid = store.showGrid;
 
   const dpr = window.devicePixelRatio || 1;
   const context = canvas.getContext("2d");
@@ -138,24 +131,26 @@ function render(canvas: HTMLCanvasElement) {
   const colors = getColors();
 
   // Render the grid.
-  context.lineWidth = 1;
-  context.strokeStyle = colors.grid;
-  context.beginPath();
-  for (let i = startOffset.x; i < endOffset.x; i++) {
-    context.moveTo(i * constants.CHAR_PIXELS_H - offset.x, 0 - offset.y);
-    context.lineTo(
-      i * constants.CHAR_PIXELS_H - offset.x,
-      2000 * constants.CHAR_PIXELS_V - offset.y
-    );
+  if (showGrid) {
+    context.lineWidth = 1;
+    context.strokeStyle = colors.grid;
+    context.beginPath();
+    for (let i = startOffset.x; i < endOffset.x; i++) {
+      context.moveTo(i * constants.CHAR_PIXELS_H - offset.x, 0 - offset.y);
+      context.lineTo(
+        i * constants.CHAR_PIXELS_H - offset.x,
+        2000 * constants.CHAR_PIXELS_V - offset.y
+      );
+    }
+    for (let j = startOffset.y; j < endOffset.y; j++) {
+      context.moveTo(0 - offset.x, j * constants.CHAR_PIXELS_V - offset.y);
+      context.lineTo(
+        2000 * constants.CHAR_PIXELS_H - offset.x,
+        j * constants.CHAR_PIXELS_V - offset.y
+      );
+    }
+    context.stroke();
   }
-  for (let j = startOffset.y; j < endOffset.y; j++) {
-    context.moveTo(0 - offset.x, j * constants.CHAR_PIXELS_V - offset.y);
-    context.lineTo(
-      2000 * constants.CHAR_PIXELS_H - offset.x,
-      j * constants.CHAR_PIXELS_V - offset.y
-    );
-  }
-  context.stroke();
   context.font = FONT_SPEC;
 
   function highlight(position: Vector, color: string) {

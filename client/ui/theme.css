@@ -1,51 +1,82 @@
 /* ==========================================================================
-   ASCIIFlow Terminal Theme
-   Base CSS custom properties, reset, and dark mode.
+   ASCIIFlow Terminal Theme — Nord palette
+   https://www.nordtheme.com/docs/colors-and-palettes/
+
+   Polar Night:  #2e3440  #3b4252  #434c5e  #4c566a
+   Snow Storm:   #d8dee9  #e5e9f0  #eceff4
+   Frost:        #8fbcbb  #88c0d0  #81a1c1  #5e81ac
+   Aurora:       #bf616a  #d08770  #ebcb8b  #a3be8c  #b48ead
    ========================================================================== */
 
 :root {
-  /* Colors — light mode */
-  --color-bg: #ffffff;
-  --color-bg-raised: #f5f5f5;
-  --color-bg-hover: #eaeaea;
-  --color-bg-active: #d4e7ff;
-  --color-border: #888;
-  --color-border-light: #ccc;
-  --color-text: #1a1a1a;
-  --color-text-muted: #777;
-  --color-accent: #3b82f6;
-  --color-danger: #d44;
-  --color-overlay: rgba(0, 0, 0, 0.4);
+  /* Colors — light (Snow Storm base) */
+  --color-bg: #eceff4;
+  --color-bg-raised: #e5e9f0;
+  --color-bg-hover: #d8dee9;
+  --color-bg-active: #5e81ac;
+  --color-bg-active-text: #eceff4;
+  --color-border: #b0b8c8;
+  --color-border-light: #d8dee9;
+  --color-text: #2e3440;
+  --color-text-muted: #4c566a;
+  --color-accent: #5e81ac;
+  --color-brand: #5e81ac;
+  --color-success: #6a8e3f;
+  --color-warning: #b58900;
+  --color-danger: #bf616a;
+  --color-purple: #9c6992;
+  --color-orange: #c45a2d;
+  --color-cyan: #2e8b8b;
+  --color-overlay: rgba(46, 52, 64, 0.4);
+
+  /* Canvas */
+  --color-canvas-bg: #eceff4;
+  --color-canvas-grid: #d8dee9;
+  --color-canvas-text: #2e3440;
+  --color-canvas-highlight: #e5e9f0;
+  --color-canvas-selection: #81a1c1;
 
   /* Spacing */
   --space-xs: 2px;
   --space-sm: 4px;
   --space-md: 8px;
   --space-lg: 12px;
-  --space-xl: 16px;
+  --space-xl: 24px;
 
   /* Typography */
   --font-mono: "Source Code Pro", monospace;
-  --font-size-sm: 12px;
-  --font-size-base: 13px;
-  --font-size-lg: 14px;
+  --font-size: 15px;
 
-  /* Borders */
-  --radius: 3px;
+  /* Borders — 1px solid, no rounded corners */
   --border: 1px solid var(--color-border);
   --border-light: 1px solid var(--color-border-light);
 }
 
 :root.dark {
-  --color-bg: #1e1e1e;
-  --color-bg-raised: #2a2a2a;
-  --color-bg-hover: #3a3a3a;
-  --color-bg-active: #2a4060;
-  --color-border: #666;
-  --color-border-light: #444;
-  --color-text: #ddd;
-  --color-text-muted: #999;
-  --color-accent: #5b9cf6;
-  --color-danger: #f66;
-  --color-overlay: rgba(0, 0, 0, 0.6);
+  /* Colors — dark (Polar Night base) */
+  --color-bg: #2e3440;
+  --color-bg-raised: #3b4252;
+  --color-bg-hover: #434c5e;
+  --color-bg-active: #5e81ac;
+  --color-bg-active-text: #eceff4;
+  --color-border: #4c566a;
+  --color-border-light: #3b4252;
+  --color-text: #d8dee9;
+  --color-text-muted: #7b88a1;
+  --color-accent: #88c0d0;
+  --color-brand: #88c0d0;
+  --color-success: #a3be8c;
+  --color-warning: #ebcb8b;
+  --color-danger: #bf616a;
+  --color-purple: #b48ead;
+  --color-orange: #d08770;
+  --color-cyan: #88c0d0;
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Canvas */
+  --color-canvas-bg: #2e3440;
+  --color-canvas-grid: #3b4252;
+  --color-canvas-text: #d8dee9;
+  --color-canvas-highlight: #3b4252;
+  --color-canvas-selection: #434c5e;
 }

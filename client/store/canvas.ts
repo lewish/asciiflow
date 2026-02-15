@@ -103,6 +103,34 @@ export class CanvasStore {
     this.notify();
   }
 
+  public resetZoom() {
+    this.setZoom(1);
+  }
+
+  public recenter() {
+    const cells = this._committed.keys();
+    if (cells.length === 0) {
+      // Nothing drawn — reset to grid center.
+      this.setOffset(new Vector(
+        (constants.MAX_GRID_WIDTH * constants.CHAR_PIXELS_H) / 2,
+        (constants.MAX_GRID_HEIGHT * constants.CHAR_PIXELS_V) / 2,
+      ));
+      return;
+    }
+    let sumX = 0;
+    let sumY = 0;
+    for (const cell of cells) {
+      sumX += cell.x;
+      sumY += cell.y;
+    }
+    const avgX = sumX / cells.length;
+    const avgY = sumY / cells.length;
+    this.setOffset(new Vector(
+      avgX * constants.CHAR_PIXELS_H,
+      avgY * constants.CHAR_PIXELS_V,
+    ));
+  }
+
   public get offset() {
     return new Vector(this._offset.x, this._offset.y);
   }

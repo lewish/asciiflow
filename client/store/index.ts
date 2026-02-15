@@ -12,7 +12,7 @@ import {
   IStringifier,
   JSONStringifier,
 } from "#asciiflow/common/stringifiers";
-import create from "zustand";
+import { create } from "zustand";
 
 export enum ToolMode {
   BOX = 1,
@@ -136,6 +136,7 @@ export interface AppState {
   exportConfig: IExportConfig;
   localDrawingIds: DrawingId[];
   darkMode: boolean;
+  showGrid: boolean;
 
   // Bumped whenever a CanvasStore mutates, so React can re-render.
   canvasVersion: number;
@@ -166,11 +167,18 @@ function initialState(): AppState {
         window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches
     ),
+    showGrid: readPersistent("showGrid", true),
     canvasVersion: 0,
   };
 }
 
 export const useAppStore = create<AppState>(() => initialState());
+
+// Apply the dark class on initial load so CSS custom properties are correct
+// before the first React render.
+if (typeof document !== "undefined") {
+  document.documentElement.classList.toggle("dark", useAppStore.getState().darkMode);
+}
 
 // ---------------------------------------------------------------------------
 // Tool instances (singletons, stateless enough to live outside the store)
@@ -315,7 +323,20 @@ export const store = {
     return useAppStore.getState().darkMode;
   },
   setDarkMode(value: boolean) {
+    // Toggle the class synchronously so CSS custom properties are available
+    // before React re-renders (getColors() reads them during render).
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle("dark", value);
+    }
     setPersistent("darkMode", value);
+  },
+
+  // Show grid (persistent)
+  get showGrid() {
+    return useAppStore.getState().showGrid;
+  },
+  setShowGrid(value: boolean) {
+    setPersistent("showGrid", value);
   },
 
   // Unicode (persistent)

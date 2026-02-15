@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Terminal-style component library
+   Terminal-style component library — no rounded corners, uniform text
    ========================================================================== */
 
 /* ---------------------------------------------------------------------------
@@ -8,10 +8,9 @@
 
 .btn {
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
   padding: var(--space-sm) var(--space-md);
   border: var(--border);
-  border-radius: var(--radius);
   background: var(--color-bg);
   color: var(--color-text);
   cursor: pointer;
@@ -25,6 +24,7 @@
 
 .btn:active {
   background: var(--color-bg-active);
+  color: var(--color-bg-active-text);
 }
 
 .btn:disabled {
@@ -39,7 +39,7 @@
 
 .btn-primary:hover {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-bg);
 }
 
 .btn-danger {
@@ -49,7 +49,7 @@
 
 .btn-danger:hover {
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-bg);
 }
 
 .btn-ghost {
@@ -77,33 +77,31 @@
 
 .dialog {
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
   background: var(--color-bg);
   color: var(--color-text);
   border: var(--border);
-  border-radius: var(--radius);
   min-width: 320px;
   max-width: 90vw;
   max-height: 80vh;
   overflow: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dialogTitle {
-  padding: var(--space-lg) var(--space-xl);
-  font-weight: 500;
-  font-size: var(--font-size-lg);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: var(--border-light);
 }
 
 .dialogContent {
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
 }
 
 .dialogActions {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-md);
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
   border-top: var(--border-light);
 }
 
@@ -124,9 +122,9 @@
   min-width: 160px;
   background: var(--color-bg);
   border: var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-xs) 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: var(--space-sm) 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  margin-top: 0;
 }
 
 .menuRight {
@@ -141,7 +139,7 @@
   width: 100%;
   padding: var(--space-sm) var(--space-lg);
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
   background: none;
   border: none;
   color: var(--color-text);
@@ -167,22 +165,20 @@
 .selectLabel {
   display: block;
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
 }
 
 .selectLabelText {
   display: block;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
   margin-bottom: var(--space-xs);
 }
 
 .select {
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
   padding: var(--space-sm) var(--space-md);
   border: var(--border);
-  border-radius: var(--radius);
   background: var(--color-bg);
   color: var(--color-text);
   width: 100%;
@@ -196,22 +192,20 @@
 .textFieldLabel {
   display: block;
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
 }
 
 .textFieldLabelText {
   display: block;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
   margin-bottom: var(--space-xs);
 }
 
 .textField {
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size);
   padding: var(--space-sm) var(--space-md);
   border: var(--border);
-  border-radius: var(--radius);
   background: var(--color-bg);
   color: var(--color-text);
   width: 100%;
@@ -229,7 +223,6 @@
 
 .textFieldHelper {
   display: block;
-  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin-top: var(--space-xs);
 }
@@ -249,12 +242,40 @@
   transform: translateX(-50%);
   z-index: 200;
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
-  padding: var(--space-md) var(--space-xl);
-  background: var(--color-text);
-  color: var(--color-bg);
-  border-radius: var(--radius);
+  font-size: var(--font-size);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-raised);
+  color: var(--color-text);
+  border: var(--border);
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: toastIn 0.2s ease-out;
+}
+
+.toastClosing {
+  animation: toastOut 0.2s ease-in forwards;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -262,14 +283,10 @@
    --------------------------------------------------------------------------- */
 
 .kbd {
-  display: inline-block;
+  display: inline;
   font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  padding: 1px var(--space-sm);
-  border: var(--border-light);
-  border-radius: var(--radius);
-  background: var(--color-bg-raised);
-  color: var(--color-text-muted);
+  font-size: var(--font-size);
+  color: var(--color-text);
+  font-weight: bold;
   white-space: nowrap;
-  line-height: 1.4;
 }
