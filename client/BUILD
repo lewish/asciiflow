@@ -37,8 +37,6 @@ ts_library(
         exclude = ["**/*.spec.ts"],
     ),
     deps = [
-        "//:node_modules/@material-ui/core",
-        "//:node_modules/@material-ui/icons",
         "//:node_modules/@types/pako",
         "//:node_modules/@types/react",
         "//:node_modules/@types/react-dom",

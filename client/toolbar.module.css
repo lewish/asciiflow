@@ -1,0 +1,246 @@
+/* ==========================================================================
+   Top bar + Toolbar
+   ========================================================================== */
+
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  background: var(--color-bg);
+  border-bottom: var(--border);
+  user-select: none;
+}
+
+/* --- Menu bar (first row) --- */
+
+.menuBar {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--space-md);
+  gap: var(--space-xs);
+}
+
+.logo {
+  height: 18px;
+  margin-right: var(--space-md);
+}
+
+:global(.dark) .logo {
+  filter: invert(1);
+}
+
+.menuBarSpacer {
+  flex: 1;
+}
+
+.menuBarBtn {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-xs) var(--space-md);
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.menuBarBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.menuBarBtnActive {
+  background: var(--color-bg-hover);
+}
+
+.iconBtn {
+  composes: menuBarBtn;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* --- Tool bar (second row) --- */
+
+.toolBar {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 var(--space-md);
+  gap: var(--space-xs);
+  border-top: var(--border-light);
+}
+
+.toolBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-xs) var(--space-md);
+  background: none;
+  border: 1px solid transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.toolBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.toolBtnActive {
+  background: var(--color-bg-active);
+  border-color: var(--color-accent);
+}
+
+.toolIcon {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+}
+
+.toolSpacer {
+  flex: 1;
+}
+
+.toolBarRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* --- Shared drawing banner --- */
+
+.sharedBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xs) var(--space-md);
+  border-top: var(--border-light);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* --- File list in dropdown --- */
+
+.fileList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.fileItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.fileItemActive {
+  background: var(--color-bg-active);
+}
+
+.fileItemName {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileItemSize {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* --- Character picker --- */
+
+.charPicker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  max-width: 360px;
+  padding: var(--space-sm);
+  background: var(--color-bg);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.charBtn {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.charBtn:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-light);
+}
+
+/* --- Help panel --- */
+
+.helpPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  max-width: 90vw;
+  z-index: 30;
+  background: var(--color-bg);
+  border-left: var(--border);
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  padding: var(--space-xl);
+  line-height: 1.8;
+}
+
+.helpPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.helpPanelTitle {
+  font-weight: 500;
+  font-size: var(--font-size-lg);
+}
+
+.helpOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  background: var(--color-overlay);
+}

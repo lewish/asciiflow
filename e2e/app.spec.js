@@ -668,31 +668,15 @@ test("cut removes selection and puts text on clipboard", async ({
 });
 
 // ---------------------------------------------------------------------------
-// Sidebar collapse / expand
+// Top bar menu items
 // ---------------------------------------------------------------------------
 
-test("sidebar can be collapsed and expanded", async ({ page }) => {
+test("top bar shows File, Export, and Help buttons", async ({ page }) => {
   await page.goto("/");
 
-  // The "File" text should be visible when controls are open
   await expect(page.getByText("File")).toBeVisible();
-
-  // Click the collapse button — it's the IconButton with ChevronLeft SVG
-  // in the drawer header. Find it by the logo image's sibling button.
-  await page.locator('img[src="/public/logo_full.svg"]').locator("..").locator("button").click();
-
-  // After collapsing, "File" should not be visible
-  await expect(page.getByText("File")).not.toBeVisible();
-
-  // The FAB button with the small logo should now be visible
-  const fab = page.locator('img[src="/public/logo_min.svg"]');
-  await expect(fab).toBeVisible();
-
-  // Click the FAB to re-open
-  await fab.click();
-
-  // "File" should be visible again
-  await expect(page.getByText("File")).toBeVisible();
+  await expect(page.getByText("Export")).toBeVisible();
+  await expect(page.getByText("Help")).toBeVisible();
 });
 
 // ---------------------------------------------------------------------------

@@ -1,12 +1,12 @@
+import "#asciiflow/client/ui/theme.css";
 import * as React from "react";
-import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import styles from "#asciiflow/client/app.module.css";
 import {
   Controller,
   DesktopController,
   TouchController,
 } from "#asciiflow/client/controller";
-import { Drawer } from "#asciiflow/client/drawer";
+import { Toolbar } from "#asciiflow/client/toolbar";
 import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
 import { renderedVersion, screenToCell, View } from "#asciiflow/client/view";
 import { initFont } from "#asciiflow/client/font";
@@ -39,28 +39,19 @@ export const App = () => {
     );
   }, [routeProps.share, routeProps.local]);
 
-  const theme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          type: darkMode ? "dark" : "light",
-        },
-      }),
-    [darkMode]
-  );
+  // Apply dark mode class to <html> for CSS custom properties.
+  React.useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <div
-        className={[styles.app, darkMode ? "dark" : ""].join(" ")}
-      >
-        <Drawer />
-        <View
-          {...desktopController.getHandlerProps()}
-          {...touchController.getHandlerProps()}
-        />
-      </div>
-    </ThemeProvider>
+    <div className={[styles.app, darkMode ? "dark" : ""].join(" ")}>
+      <Toolbar />
+      <View
+        {...desktopController.getHandlerProps()}
+        {...touchController.getHandlerProps()}
+      />
+    </div>
   );
 };
 

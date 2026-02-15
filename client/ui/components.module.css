@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Terminal-style component library
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Button
+   --------------------------------------------------------------------------- */
+
+.btn {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn:hover {
+  background: var(--color-bg-hover);
+}
+
+.btn:active {
+  background: var(--color-bg-active);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.btn-danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.btn-danger:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--color-bg-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Dialog
+   --------------------------------------------------------------------------- */
+
+.dialogOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-overlay);
+}
+
+.dialog {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: var(--border);
+  border-radius: var(--radius);
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.dialogTitle {
+  padding: var(--space-lg) var(--space-xl);
+  font-weight: 500;
+  font-size: var(--font-size-lg);
+  border-bottom: var(--border-light);
+}
+
+.dialogContent {
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
+  border-top: var(--border-light);
+}
+
+/* ---------------------------------------------------------------------------
+   Menu / Dropdown
+   --------------------------------------------------------------------------- */
+
+.menuRoot {
+  position: relative;
+  display: inline-block;
+}
+
+.menuPanel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  min-width: 160px;
+  background: var(--color-bg);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-xs) 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menuRight {
+  left: auto;
+  right: 0;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.menuItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.menuDivider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: var(--space-xs) 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Select
+   --------------------------------------------------------------------------- */
+
+.selectLabel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+}
+
+.selectLabelText {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.select {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   TextField
+   --------------------------------------------------------------------------- */
+
+.textFieldLabel {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+}
+
+.textFieldLabelText {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.textField {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textField:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.textFieldError {
+  border-color: var(--color-danger);
+}
+
+.textFieldHelper {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+}
+
+.textFieldHelperError {
+  color: var(--color-danger);
+}
+
+/* ---------------------------------------------------------------------------
+   Toast
+   --------------------------------------------------------------------------- */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   Kbd
+   --------------------------------------------------------------------------- */
+
+.kbd {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  padding: 1px var(--space-sm);
+  border: var(--border-light);
+  border-radius: var(--radius);
+  background: var(--color-bg-raised);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  line-height: 1.4;
+}
