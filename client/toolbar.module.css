@@ -49,7 +49,8 @@
   gap: var(--space-md);
   flex-wrap: wrap;
   white-space: normal;
-  min-width: 0;
+  width: 0;
+  min-width: 100%;
   box-sizing: border-box;
 }
 
@@ -315,9 +316,8 @@
   font-size: var(--font-size);
   color: var(--color-text);
   border-collapse: collapse;
+  table-layout: fixed;
   width: 100%;
-  max-width: 100%;
-  table-layout: auto;
   line-height: 1.6;
 }
 
@@ -331,6 +331,7 @@
 .helpTable td:first-child {
   white-space: nowrap;
   padding-right: var(--space-md);
+  width: 1%;
 }
 
 .helpSection {
