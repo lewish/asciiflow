@@ -331,9 +331,21 @@ function ViewPanel() {
 // Draw panel — hint + expandable character picker
 // ---------------------------------------------------------------------------
 
+const BLOCK_ELEMENTS = [
+  "\u2588", // █ FULL BLOCK
+  "\u2584", // ▄ LOWER HALF
+  "\u2580", // ▀ UPPER HALF
+  "\u258C", // ▌ LEFT HALF
+  "\u2590", // ▐ RIGHT HALF
+  "\u2591", // ░ LIGHT SHADE
+  "\u2592", // ▒ MEDIUM SHADE
+  "\u2593", // ▓ DARK SHADE
+];
+
 const shortcutKeys = [
   ...Object.values(UNICODE),
   ...new Set(Object.values(ASCII)),
+  ...BLOCK_ELEMENTS,
   ...Array.from(Array(127 - 33).keys())
     .map((i) => i + 33)
     .map((i) => String.fromCharCode(i)),
