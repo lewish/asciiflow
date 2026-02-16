@@ -79,28 +79,23 @@ export function Toolbar() {
     setPanel(panel === id ? null : id);
   }
 
-  // Measure the primary row width so the second row can be constrained to it
-  const topRowRef = useRef<HTMLDivElement>(null);
-  const [topRowWidth, setTopRowWidth] = useState<number>(0);
-  useEffect(() => {
-    if (!topRowRef.current) return;
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setTopRowWidth(entry.contentBoxSize?.[0]?.inlineSize ?? entry.contentRect.width);
-      }
-    });
-    ro.observe(topRowRef.current);
-    return () => ro.disconnect();
-  }, []);
-
-  // Stop wheel events from propagating to the canvas pan/zoom handler.
+  // Measure the topBar border-box width so the second row can match it.
   const topBarRef = useRef<HTMLDivElement>(null);
+  const [topBarWidth, setTopBarWidth] = useState<number>(0);
   useEffect(() => {
     const el = topBarRef.current;
     if (!el) return;
+    // Prevent wheel events reaching the canvas pan/zoom handler.
     const stop = (e: WheelEvent) => e.stopPropagation();
     el.addEventListener("wheel", stop, { passive: true });
-    return () => el.removeEventListener("wheel", stop);
+    // Track the topBar's border-box width so the secondRow can match it.
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setTopBarWidth(entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width);
+      }
+    });
+    ro.observe(el);
+    return () => { el.removeEventListener("wheel", stop); ro.disconnect(); };
   }, []);
 
   // The freeform tool shows its picker in the second row when no panel is open
@@ -113,7 +108,7 @@ export function Toolbar() {
     <div className={styles.topBarWrapper}>
     <div className={styles.topBar} ref={topBarRef}>
       {/* ── Primary row ── */}
-      <div className={styles.topRow} ref={topRowRef}>
+      <div className={styles.topRow}>
         {/* Branding — colorful "af" */}
         <a
           href="https://github.com/lewish/asciiflow"
@@ -203,12 +198,13 @@ export function Toolbar() {
           help
         </PanelBtn>
       </div>
+    </div>
 
       {/* ── Secondary row (contextual) ── */}
       {showSecondRow && (
         <div
           className={styles.secondRow}
-          style={topRowWidth ? { maxWidth: topRowWidth } : undefined}
+          style={topBarWidth ? { width: topBarWidth } : undefined}
         >
           {panel === "file" && <FilePanel />}
           {panel === "help" && <HelpContent />}
@@ -217,7 +213,6 @@ export function Toolbar() {
           {showFreeformPicker && <DrawPanel />}
         </div>
       )}
-    </div>
     </div>
   );
 }
@@ -404,94 +399,56 @@ function HelpContent() {
   const divider = "\u2500".repeat(40);
 
   return (
-    <table className={styles.helpTable}>
-      <tbody>
-        <tr>
-          <td colSpan={2} className={styles.helpExplainer}>
-            asciiflow is a free tool for drawing technical diagrams as text, to embed in source code, docs, and anywhere plain text is used.
-          </td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpDivider}>{divider}</td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpSection}>tools</td>
-        </tr>
-        <tr>
-          <td style={{ color: "var(--color-cyan)" }}>box</td>
-          <td>drag corner to corner</td>
-        </tr>
-        <tr>
-          <td style={{ color: "var(--color-success)" }}>select</td>
-          <td>drag to resize/move. <Kbd>{cmd}+c</Kbd>/<Kbd>{cmd}+v</Kbd> copy/paste, <Kbd>delete</Kbd> erase, <Kbd>shift</Kbd> force select</td>
-        </tr>
-        <tr>
-          <td style={{ color: "var(--color-orange)" }}>draw</td>
-          <td>freeform. press any key to change character</td>
-        </tr>
-        <tr>
-          <td style={{ color: "var(--color-purple)" }}>arrow / line</td>
-          <td>drag start to end. <Kbd>shift</Kbd> changes orientation</td>
-        </tr>
-        <tr>
-          <td style={{ color: "var(--color-warning)" }}>text</td>
-          <td>click and type. <Kbd>enter</Kbd> commit, <Kbd>shift+enter</Kbd> newline</td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpDivider}>{divider}</td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpSection}>navigation</td>
-        </tr>
-        <tr>
-          <td><Kbd>scroll</Kbd></td>
-          <td>pan</td>
-        </tr>
-        <tr>
-          <td><Kbd>shift+scroll</Kbd></td>
-          <td>pan horizontally</td>
-        </tr>
-        <tr>
-          <td><Kbd>middle-click</Kbd></td>
-          <td>free pan</td>
-        </tr>
-        <tr>
-          <td><Kbd>{cmd}+scroll</Kbd></td>
-          <td>zoom</td>
-        </tr>
+    <div className={styles.helpContent}>
+      <div className={styles.helpExplainer}>
+        asciiflow is a free tool for drawing technical diagrams as text, to embed in source code, docs, and anywhere plain text is used.
+      </div>
+      <div className={styles.helpDivider} />
+      <div className={styles.helpSection}>tools</div>
+      <div className={styles.helpGrid}>
+        <span style={{ color: "var(--color-cyan)" }}>box</span>
+        <span>drag corner to corner</span>
+        <span style={{ color: "var(--color-success)" }}>select</span>
+        <span>drag to resize/move. <Kbd>{cmd}+c</Kbd>/<Kbd>{cmd}+v</Kbd> copy/paste, <Kbd>delete</Kbd> erase, <Kbd>shift</Kbd> force select</span>
+        <span style={{ color: "var(--color-orange)" }}>draw</span>
+        <span>freeform. press any key to change character</span>
+        <span style={{ color: "var(--color-purple)" }}>arrow / line</span>
+        <span>drag start to end. <Kbd>shift</Kbd> changes orientation</span>
+        <span style={{ color: "var(--color-warning)" }}>text</span>
+        <span>click and type. <Kbd>enter</Kbd> commit, <Kbd>shift+enter</Kbd> newline</span>
+      </div>
+      <div className={styles.helpDivider} />
+      <div className={styles.helpSection}>navigation</div>
+      <div className={styles.helpGrid}>
+        <span><Kbd>scroll</Kbd></span>
+        <span>pan</span>
+        <span><Kbd>shift+scroll</Kbd></span>
+        <span>pan horizontally</span>
+        <span><Kbd>middle-click</Kbd></span>
+        <span>free pan</span>
+        <span><Kbd>{cmd}+scroll</Kbd></span>
+        <span>zoom</span>
         {!isShared && (
           <>
-            <tr>
-              <td><Kbd>{cmd}+z</Kbd></td>
-              <td>undo</td>
-            </tr>
-            <tr>
-              <td><Kbd>{cmd}+shift+z</Kbd></td>
-              <td>redo</td>
-            </tr>
+            <span><Kbd>{cmd}+z</Kbd></span>
+            <span>undo</span>
+            <span><Kbd>{cmd}+shift+z</Kbd></span>
+            <span>redo</span>
           </>
         )}
-        <tr>
-          <td><Kbd>alt</Kbd></td>
-          <td>show tool shortcuts</td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpDivider}>{divider}</td>
-        </tr>
-        <tr>
-          <td colSpan={2} className={styles.helpSection}>links</td>
-        </tr>
-        <tr>
-          <td colSpan={2}>
-            <a className={styles.helpLink} href="https://github.com/lewish/asciiflow" target="_blank" rel="noopener">github</a>
-            {" \u2502 "}
-            <a className={styles.helpLink} href="https://github.com/lewish/asciiflow/issues/new" target="_blank" rel="noopener">file a bug</a>
-            {" \u2502 "}
-            <a className={styles.helpLink} href="https://asciiflow.com" target="_blank" rel="noopener">stable</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <span><Kbd>alt</Kbd></span>
+        <span>show tool shortcuts</span>
+      </div>
+      <div className={styles.helpDivider} />
+      <div className={styles.helpSection}>links</div>
+      <div>
+        <a className={styles.helpLink} href="https://github.com/lewish/asciiflow" target="_blank" rel="noopener">github</a>
+        {" \u2502 "}
+        <a className={styles.helpLink} href="https://github.com/lewish/asciiflow/issues/new" target="_blank" rel="noopener">file a bug</a>
+        {" \u2502 "}
+        <a className={styles.helpLink} href="https://asciiflow.com" target="_blank" rel="noopener">stable</a>
+      </div>
+    </div>
   );
 }
 

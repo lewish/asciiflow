@@ -9,7 +9,8 @@
   right: 0;
   z-index: 20;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   pointer-events: none;
   padding: 0 var(--space-xl);
   box-sizing: border-box;
@@ -21,8 +22,6 @@
   background: var(--color-bg);
   border: var(--border);
   user-select: none;
-  display: inline-flex;
-  flex-direction: column;
   white-space: nowrap;
   pointer-events: auto;
   max-width: 100%;
@@ -42,16 +41,16 @@
 /* --- Secondary row (contextual: file list, help, export, freeform chars) --- */
 
 .secondRow {
-  border-top: var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--font-size);
+  background: var(--color-bg);
+  border: var(--border);
+  border-top: none;
+  margin-top: -1px;
   padding: var(--space-md);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-md);
-  flex-wrap: wrap;
   white-space: normal;
-  width: 0;
-  min-width: 100%;
   box-sizing: border-box;
+  pointer-events: auto;
 }
 
 /* --- Branding --- */
@@ -311,47 +310,38 @@
 
 /* --- Help content (inline in second row, table layout) --- */
 
-.helpTable {
-  font-family: var(--font-mono);
-  font-size: var(--font-size);
-  color: var(--color-text);
-  border-collapse: collapse;
-  table-layout: fixed;
-  width: 100%;
+.helpContent {
   line-height: 1.6;
+  color: var(--color-text);
 }
 
-.helpTable td {
-  padding: 0 var(--space-sm);
-  vertical-align: top;
-  word-wrap: break-word;
+.helpGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 var(--space-md);
+}
+
+.helpGrid > span {
   overflow-wrap: break-word;
+  min-width: 0;
 }
 
-.helpTable td:first-child {
+.helpGrid > span:nth-child(odd) {
   white-space: nowrap;
-  padding-right: var(--space-md);
-  width: 1%;
 }
 
 .helpSection {
   color: var(--color-text-muted);
   font-weight: bold;
-  padding: 0 var(--space-sm) !important;
 }
 
 .helpDivider {
-  color: var(--color-border);
-  font-weight: normal;
-  line-height: 1.6;
-  padding: 0 var(--space-sm) !important;
-  overflow: hidden;
-  white-space: nowrap;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-xs) 0;
 }
 
 .helpExplainer {
   color: var(--color-text-muted);
-  padding: 0 var(--space-sm) !important;
 }
 
 .helpLink {
