@@ -79,30 +79,34 @@ site/                  # Static site assets
 
 ## Issue Priority List
 
-Triaged February 2025 with help from Claude. See GitHub issues for full details.
+Re-triaged February 2026. See GitHub issues for full details.
 
-### Bugs — Quick Fixes
+### Fixed in staging (merged to main, pending production deploy)
 
 | Issue | Summary |
 |-------|---------|
-| #258 | Blurry canvas on HiDPI/Retina displays (canvas DPI scaling) |
-| #189 | Ctrl+Z triggers browser undo instead of app undo (missing preventDefault) |
-| #202 | Apostrophe/slash in text mode triggers Firefox Quick Find (missing preventDefault) |
+| #258 | Blurry canvas on HiDPI/Retina displays — DPR scaling implemented |
+| #189 | Ctrl+Z triggers browser undo — preventDefault added |
+| #202 | Apostrophe/slash triggers Firefox Quick Find — preventDefault added |
 | #193 | Backspace in text mode doesn't move cursor |
-| #332 | Undo while entering text reverts previous drawing action instead of text |
+| #332 | Undo while entering text reverts previous drawing action |
 | #307 | Delete doesn't work for first scene |
-| #321 | Side-scroll wheel only zooms out (horizontal scroll event handling) |
+| #321 | Side-scroll wheel only zooms out |
+| #28 | Pan/zoom UX — scroll pans, Cmd+scroll zooms |
+| #129 | Two-finger swipe panning |
+| #195 | Space-to-pan in text mode |
+| #297 | Space and Delete in text mode |
+| #187 | Line breaks in paste — line ending normalization |
+| #338 | Copy/paste on macOS Safari/Firefox — native clipboard events |
+| #246 | Visible gridlines — toggle in view panel |
+| #238 | Usability review — closed, bulk addressed by terminal UI overhaul |
 
-### Bugs — Moderate Effort
+### Open bugs
 
 | Issue | Summary |
 |-------|---------|
-| #28 | Pan/zoom UX overhaul: scroll should pan, require modifier for zoom. Trackpad/touchpad issues across platforms |
-| #129 | Two-finger swipe should pan, not zoom (related to #28) |
-| #195 | Space-to-pan conflicts with space-to-insert in text mode |
-| #297 | Space and Delete stop working in text mode in certain states |
-| #187 | Line breaks handled incorrectly when pasting (also #211 — broken spaces in export) |
-| #338 | Copy/paste not working on macOS Tahoe Safari and Firefox |
+| #211 | Spaces broken during export |
+| #85 | CJK character support (fullwidth characters, IME input) |
 
 ### Feature Requests — High Priority
 
@@ -111,9 +115,8 @@ Triaged February 2025 with help from Claude. See GitHub issues for full details.
 | #241 | Customisable line/border/corner styles (Unicode box-drawing variants, rounded corners, ASCII mode, dashed lines) |
 | #43 | Diagonal lines |
 | #54 | Export selected area only |
-| #190 | Mobile device support |
+| #190 | Mobile device support (toolbar is responsive, needs touch gesture work) |
 | #346 | PWA support for offline/installable use (replaces Electron) |
-| #85 | CJK character support (fullwidth characters, IME input) |
 | #339 | Emoji support (wide character rendering) |
 
 ### Feature Requests — Moderate Priority
@@ -140,10 +143,8 @@ Triaged February 2025 with help from Claude. See GitHub issues for full details.
 | #229 | Circle/ellipse support |
 | #134 | Trapezoid/mux shapes |
 | #336 | Colour support |
-| #246 | Visible gridlines |
 | #228 | Block elements (▀▄█░▒▓) in freeform mode |
 | #273 | Pixel-perfect freeform lines |
-| #274 | Auto-hide/show sidebar on hover |
+| #274 | Auto-hide/show toolbar on hover (rethink with new top bar) |
 | #219 | Copy/paste characters in freeform mode |
 | #296 | VS Code extension (community — ASCIIFlow is MIT) |
-| #238 | Usability review (comprehensive feedback, many items tracked elsewhere) |
