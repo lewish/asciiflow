@@ -113,9 +113,6 @@ export const MAX_UNDO = 50;
 export const SPECIAL_LINE_H = "-";
 export const SPECIAL_LINE_V = "|";
 
-export const DRAG_LATENCY = 150; // Milliseconds.
-export const DRAG_ACCURACY = 6; // Pixels.
-
 // Character cell dimensions — measured dynamically from the loaded font.
 // Re-exported from font.ts so existing `import * as constants` usage keeps working.
 export { CHAR_PIXELS_H, CHAR_PIXELS_V } from "#asciiflow/client/font";

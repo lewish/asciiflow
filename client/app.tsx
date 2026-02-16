@@ -3,8 +3,7 @@ import * as React from "react";
 import styles from "#asciiflow/client/app.module.css";
 import {
   Controller,
-  DesktopController,
-  TouchController,
+  InputController,
 } from "#asciiflow/client/controller";
 import { Toolbar } from "#asciiflow/client/toolbar";
 import { DrawingId, store, ToolMode, useAppStore } from "#asciiflow/client/store";
@@ -18,8 +17,7 @@ import { layerToText, textToLayer } from "#asciiflow/client/text_utils";
 import { CHAR_PIXELS_H, CHAR_PIXELS_V } from "#asciiflow/client/constants";
 
 const controller = new Controller();
-const touchController = new TouchController(controller);
-const desktopController = new DesktopController(controller);
+const inputController = new InputController(controller);
 
 export interface IRouteProps {
   local: string;
@@ -43,8 +41,7 @@ export const App = () => {
     <div className={[styles.app, darkMode ? "dark" : ""].join(" ")}>
       <Toolbar />
       <View
-        {...desktopController.getHandlerProps()}
-        {...touchController.getHandlerProps()}
+        {...inputController.getHandlerProps()}
       />
     </div>
   );
@@ -85,7 +82,7 @@ document.getElementById("root").addEventListener("keyup", (e) => controller.hand
 // suppress browser page zoom on Ctrl+scroll / pinch-to-zoom.
 document.getElementById("root").addEventListener(
   "wheel",
-  (e) => desktopController.handleWheel(e),
+  (e) => inputController.handleWheel(e),
   { passive: false }
 );
 

@@ -85,17 +85,13 @@ export function Toolbar() {
   useEffect(() => {
     const el = topBarRef.current;
     if (!el) return;
-    // Prevent wheel events reaching the canvas pan/zoom handler.
-    const stop = (e: WheelEvent) => e.stopPropagation();
-    el.addEventListener("wheel", stop, { passive: true });
-    // Track the topBar's border-box width so the secondRow can match it.
     const ro = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setTopBarWidth(entry.borderBoxSize?.[0]?.inlineSize ?? entry.contentRect.width);
       }
     });
     ro.observe(el);
-    return () => { el.removeEventListener("wheel", stop); ro.disconnect(); };
+    return () => ro.disconnect();
   }, []);
 
   // The freeform tool shows its picker in the second row when no panel is open

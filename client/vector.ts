@@ -17,14 +17,8 @@ export class Vector implements IVector {
 
   constructor(public x: number, public y: number) {}
 
-  // TODO: These shouldn't be here.
-  static fromMouseEvent(event: React.MouseEvent<any>) {
+  static fromPointerEvent(event: React.PointerEvent<any> | PointerEvent) {
     return new Vector(event.clientX, event.clientY);
-  }
-
-  static fromTouchEvent(event: React.TouchEvent<any>, index = 0) {
-    const { pageX, pageY } = event.touches[index];
-    return new Vector(pageX, pageY);
   }
 
   toString() {

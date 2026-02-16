@@ -3,7 +3,6 @@ import { snapZoom } from "#asciiflow/client/font";
 import { store, IModifierKeys, ToolMode } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import { screenToCell, setCanvasCursor } from "#asciiflow/client/view";
-import { HTMLAttributes } from "react";
 
 import * as React from "react";
 
@@ -27,8 +26,8 @@ const Mode = {
 
 type EventWithModifierKeys =
   | KeyboardEvent
-  | React.MouseEvent
-  | React.TouchEvent;
+  | React.PointerEvent
+  | PointerEvent;
 
 /**
  * Handles user input events and modifies state.
@@ -209,27 +208,103 @@ function getModifierKeys(event: EventWithModifierKeys): IModifierKeys {
   };
 }
 /**
- * Handles desktop inputs, and passes them onto the main controller.
+ * Unified input controller — handles mouse, touch, and stylus via Pointer Events.
+ *
+ * - Single pointer (mouse left-click or one finger): draw with the active tool.
+ * - Middle mouse button: drag/pan.
+ * - Two touch pointers: pan + pinch-to-zoom.
+ * - Wheel: scroll to pan, Ctrl/Cmd+scroll to zoom.
  */
-export class DesktopController {
+export class InputController {
+  // Track active pointers for multi-touch gestures.
+  private pointers = new Map<number, Vector>();
+  private pinchStartLength: number = 0;
+  private pinchStartZoom: number = 0;
+  private panOrigin: Vector = null;
+  private panOriginOffset: Vector = null;
+
   constructor(private controller: Controller) {}
 
-  public getHandlerProps(): HTMLAttributes<any> {
+  public getHandlerProps(): React.HTMLAttributes<any> {
     return {
-      onMouseDown: this.handleMouseDown,
-      onMouseUp: this.handleMouseUp,
-      onMouseMove: this.handleMouseMove,
+      onPointerDown: this.handlePointerDown,
+      onPointerMove: this.handlePointerMove,
+      onPointerUp: this.handlePointerUp,
+      onPointerCancel: this.handlePointerUp,
+      onPointerLeave: this.handlePointerLeave,
       onAuxClick: this.handleAuxClick,
     };
   }
 
-  handleMouseDown = (e: React.MouseEvent<any>) => {
-    // Middle mouse button (button === 1) pans the canvas (Figma-style).
-    if (e.button === 1) {
-      e.preventDefault();
-      this.controller.startDrag(Vector.fromMouseEvent(e));
+  handlePointerDown = (e: React.PointerEvent<any>) => {
+    // Capture this pointer so we get move/up events even if it leaves the element.
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    const pos = Vector.fromPointerEvent(e);
+    this.pointers.set(e.pointerId, pos);
+
+    if (this.pointers.size === 2) {
+      // Second pointer: switch to pinch/pan, cancel any in-progress draw.
+      this.controller.endAll();
+      const [a, b] = [...this.pointers.values()];
+      this.pinchStartLength = a.subtract(b).length();
+      this.pinchStartZoom = store.currentCanvas.zoom;
+      // Use midpoint as pan origin.
+      this.panOrigin = new Vector((a.x + b.x) / 2, (a.y + b.y) / 2);
+      this.panOriginOffset = store.currentCanvas.offset;
+    } else if (this.pointers.size === 1) {
+      // Single pointer: middle mouse pans, everything else draws.
+      if (e.button === 1) {
+        e.preventDefault();
+        this.controller.startDrag(pos);
+      } else {
+        this.controller.startDraw(pos, e);
+      }
+    }
+  };
+
+  handlePointerMove = (e: React.PointerEvent<any>) => {
+    const pos = Vector.fromPointerEvent(e);
+    this.pointers.set(e.pointerId, pos);
+
+    if (this.pointers.size >= 2) {
+      const [a, b] = [...this.pointers.values()];
+      // Pinch-to-zoom.
+      const currentLength = a.subtract(b).length();
+      if (this.pinchStartLength > 0) {
+        let newZoom = (this.pinchStartZoom * currentLength) / this.pinchStartLength;
+        newZoom = snapZoom(Math.max(Math.min(newZoom, 5), 0.2));
+        store.currentCanvas.setZoom(newZoom);
+      }
+      // Two-finger pan.
+      if (this.panOrigin) {
+        const midpoint = new Vector((a.x + b.x) / 2, (a.y + b.y) / 2);
+        const delta = this.panOrigin.subtract(midpoint).scale(1 / store.currentCanvas.zoom);
+        store.currentCanvas.setOffset(this.panOriginOffset.add(delta));
+      }
     } else {
-      this.controller.startDraw(Vector.fromMouseEvent(e), e);
+      // Single pointer: pass to controller for draw or drag.
+      this.controller.handleMove(pos, e);
+    }
+  };
+
+  handlePointerUp = (e: React.PointerEvent<any>) => {
+    this.pointers.delete(e.pointerId);
+    if (this.pointers.size === 0) {
+      this.controller.endAll();
+      this.resetMultiTouch();
+    } else if (this.pointers.size === 1) {
+      // Went from 2 pointers to 1: don't start drawing, just reset multi-touch.
+      this.resetMultiTouch();
+    }
+  };
+
+  handlePointerLeave = (e: React.PointerEvent<any>) => {
+    // Only end if this pointer isn't captured (captured pointers fire pointerup instead).
+    if (!this.pointers.has(e.pointerId)) return;
+    this.pointers.delete(e.pointerId);
+    if (this.pointers.size === 0) {
+      this.controller.endAll();
+      this.resetMultiTouch();
     }
   };
 
@@ -240,22 +315,17 @@ export class DesktopController {
     }
   };
 
-  handleMouseUp = (e: React.MouseEvent<any>) => {
-    this.controller.endAll();
-  };
-
-  handleMouseLeave = (e: React.MouseEvent<any>) => {
-    this.controller.endAll();
-  };
-
   /**
    * Scroll = pan, Ctrl/Cmd+scroll = zoom (Figma-style).
-   * Trackpad pinch-to-zoom fires synthetic wheel events with ctrlKey=true,
-   * so this also handles pinch gestures automatically.
+   * Trackpad pinch-to-zoom fires synthetic wheel events with ctrlKey=true.
    * Registered via addEventListener({ passive: false }) in app.tsx so that
    * preventDefault() can suppress browser page zoom on Ctrl+scroll.
    */
   handleWheel = (e: WheelEvent) => {
+    // Only handle wheel events that originate on the canvas itself.
+    const target = e.target as HTMLElement;
+    if (target.id !== "ascii-canvas") return;
+
     if (e.ctrlKey || e.metaKey) {
       // Zoom: Ctrl/Cmd + scroll (also captures trackpad pinch).
       e.preventDefault();
@@ -282,113 +352,10 @@ export class DesktopController {
     }
   };
 
-  handleMouseMove = (e: React.MouseEvent<any>) => {
-    this.controller.handleMove(Vector.fromMouseEvent(e), e);
-  };
-}
-
-/**
- * Handles touch inputs, and passes them onto the main controller.
- */
-export class TouchController {
-  private pressVector: Vector;
-  private originalZoom: number;
-  private zoomLength: number;
-  private pressTimestamp: number;
-  private dragStarted = false;
-  private zoomStarted = false;
-
-  constructor(private controller: Controller) {}
-
-  public getHandlerProps(): HTMLAttributes<any> {
-    return {
-      onTouchStart: this.handleTouchStart,
-      onTouchMove: this.handleTouchMove,
-      onTouchEnd: this.handleTouchEnd,
-    };
+  private resetMultiTouch() {
+    this.pinchStartLength = 0;
+    this.pinchStartZoom = 0;
+    this.panOrigin = null;
+    this.panOriginOffset = null;
   }
-
-  private handlePress(position: Vector, e: EventWithModifierKeys) {
-    this.pressVector = position;
-    this.pressTimestamp = Date.now();
-    this.dragStarted = false;
-
-    // If a drag or zoom didn't start and if we didn't release already, then handle it as a draw.
-    window.setTimeout(() => {
-      if (!this.dragStarted && !this.zoomStarted && this.pressVector != null) {
-        this.controller.startDraw(position, e);
-      }
-    }, constants.DRAG_LATENCY);
-  }
-
-  private handlePressMulti(positionOne: Vector, positionTwo: Vector) {
-    // A second finger as been placed, cancel whatever we were doing.
-    this.controller.endAll();
-    this.zoomStarted = true;
-    this.dragStarted = false;
-    this.zoomLength = positionOne.subtract(positionTwo).length();
-    this.originalZoom = store.currentCanvas.zoom;
-  }
-
-  private handleMove(position: Vector, e: EventWithModifierKeys) {
-    // Initiate a drag if we have moved enough, quickly enough.
-    if (
-      !this.dragStarted &&
-      Date.now() - this.pressTimestamp < constants.DRAG_LATENCY &&
-      position.subtract(this.pressVector).length() > constants.DRAG_ACCURACY
-    ) {
-      this.dragStarted = true;
-      this.controller.startDrag(position);
-    }
-    // Pass on the event.
-    this.controller.handleMove(position, e);
-  }
-
-  private handleMoveMulti(positionOne: Vector, positionTwo: Vector) {
-    if (this.zoomStarted) {
-      let newZoom =
-        (this.originalZoom * positionOne.subtract(positionTwo).length()) /
-        this.zoomLength;
-      newZoom = snapZoom(Math.max(Math.min(newZoom, 5), 0.5));
-      store.currentCanvas.setZoom(newZoom);
-    }
-  }
-
-  /**
-   * Ends all current actions, cleans up any state.
-   */
-  reset() {
-    this.dragStarted = false;
-    this.zoomStarted = false;
-    this.pressVector = null;
-  }
-
-  public handleTouchStart = (e: React.TouchEvent<any>) => {
-    e.preventDefault();
-    if (e.touches.length === 1) {
-      this.handlePress(Vector.fromTouchEvent(e), e);
-    } else if (e.touches.length > 1) {
-      this.handlePressMulti(
-        Vector.fromTouchEvent(e, 0),
-        Vector.fromTouchEvent(e, 1)
-      );
-    }
-  };
-
-  public handleTouchMove = (e: React.TouchEvent<any>) => {
-    e.preventDefault();
-    if (e.touches.length === 1) {
-      this.handleMove(Vector.fromTouchEvent(e), e);
-    } else if (e.touches.length > 1) {
-      this.handleMoveMulti(
-        Vector.fromTouchEvent(e, 0),
-        Vector.fromTouchEvent(e, 1)
-      );
-    }
-  };
-  public handleTouchEnd = (e: React.TouchEvent<any>) => {
-    e.preventDefault();
-    this.reset();
-    this.controller.endAll();
-  };
 }
