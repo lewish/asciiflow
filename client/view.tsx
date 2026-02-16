@@ -1,6 +1,6 @@
 import * as constants from "#asciiflow/client/constants";
 import { FONT_SPEC, CHAR_BASELINE } from "#asciiflow/client/font";
-import { store, useAppStore } from "#asciiflow/client/store";
+import { store, useAppStore, ToolMode } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 import * as React from "react";
 import { useEffect, useState, useCallback } from "react";
@@ -194,6 +194,45 @@ function render(canvas: HTMLCanvasElement) {
     highlight(position, colors.highlight);
     const cellValue = scratch.get(position);
     text(position, cellValue);
+  }
+
+  // Show dimensions label while dragging with box, line, or arrow tools.
+  const toolMode = store.selectedToolMode;
+  if (
+    scratch.size() > 0 &&
+    (toolMode === ToolMode.BOX ||
+      toolMode === ToolMode.LINES ||
+      toolMode === ToolMode.ARROWS ||
+      toolMode === ToolMode.SELECT)
+  ) {
+    const scratchKeys = scratch.keys();
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const key of scratchKeys) {
+      if (key.x < minX) minX = key.x;
+      if (key.x > maxX) maxX = key.x;
+      if (key.y < minY) minY = key.y;
+      if (key.y > maxY) maxY = key.y;
+    }
+    const w = maxX - minX + 1;
+    const h = maxY - minY + 1;
+    const label = `${w}\u00d7${h}`;
+
+    // Position the label just below and right of the scratch bounds.
+    const labelX = (maxX + 1) * constants.CHAR_PIXELS_H - offset.x + 4;
+    const labelY = (maxY) * constants.CHAR_PIXELS_V - offset.y + 4;
+
+    context.font = FONT_SPEC;
+    const metrics = context.measureText(label);
+    const padding = 3;
+    const bgX = labelX - padding;
+    const bgY = labelY - constants.CHAR_PIXELS_V + padding;
+    const bgW = metrics.width + padding * 2;
+    const bgH = constants.CHAR_PIXELS_V;
+
+    context.fillStyle = colors.selection;
+    context.fillRect(bgX, bgY, bgW, bgH);
+    context.fillStyle = colors.background;
+    context.fillText(label, labelX, labelY);
   }
 
   if (!!selection) {
