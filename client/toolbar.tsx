@@ -443,6 +443,8 @@ function HelpContent() {
         <a className={styles.helpLink} href="https://github.com/lewish/asciiflow/issues/new" target="_blank" rel="noopener">file a bug</a>
         {" \u2502 "}
         <a className={styles.helpLink} href="https://asciiflow.com" target="_blank" rel="noopener">stable</a>
+        {" │ "}
+        <a className={styles.helpLink} href="/legacy/">legacy version</a>
       </div>
     </div>
   );
