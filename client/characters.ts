@@ -133,6 +133,40 @@ export function connections(value: string): Set<Direction> {
   return BOX_DRAWING_INFO[value]?.connections ?? new Set();
 }
 
+// Reverse lookup: the line/junction glyph that connects exactly a given set of
+// directions (used to normalise a cell to match its neighbours). Arrows are
+// excluded; sets of fewer than two directions have no canonical glyph.
+const LINE_GLYPHS = [
+  UNICODE.cornerTopLeft,
+  UNICODE.cornerTopRight,
+  UNICODE.cornerBottomRight,
+  UNICODE.cornerBottomLeft,
+  UNICODE.lineHorizontal,
+  UNICODE.lineVertical,
+  UNICODE.junctionDown,
+  UNICODE.junctionUp,
+  UNICODE.junctionLeft,
+  UNICODE.junctionRight,
+  UNICODE.junctionAll,
+];
+
+function directionKey(dirs: Direction[]): string {
+  return [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+    .map((d) => (dirs.indexOf(d) >= 0 ? "1" : "0"))
+    .join("");
+}
+
+const GLYPH_BY_CONNECTIONS = new Map<string, string>(
+  LINE_GLYPHS.map(
+    (glyph) => [directionKey([...connections(glyph)]), glyph] as [string, string]
+  )
+);
+
+/** The glyph connecting exactly `dirs`, or null if there isn't a clean one. */
+export function connectionGlyph(dirs: Direction[]): string | null {
+  return GLYPH_BY_CONNECTIONS.get(directionKey(dirs)) ?? null;
+}
+
 export function connect(
   value: string,
   direction: Direction | Direction[]
@@ -245,6 +279,9 @@ export function disconnect(
     if (value === UNICODE.junctionUp) {
       return UNICODE.junctionDown;
     }
+    if (value === UNICODE.junctionAll) {
+      return UNICODE.junctionUp;
+    }
   }
   if (direction === Direction.LEFT) {
     if (value === UNICODE.junctionLeft) {
@@ -259,6 +296,9 @@ export function disconnect(
     if (value === UNICODE.junctionRight) {
       return UNICODE.junctionLeft;
     }
+    if (value === UNICODE.junctionAll) {
+      return UNICODE.junctionRight;
+    }
   }
   if (direction === Direction.RIGHT) {
     if (value === UNICODE.junctionRight) {
@@ -272,6 +312,9 @@ export function disconnect(
     }
     if (value === UNICODE.junctionLeft) {
       return UNICODE.junctionRight;
+    }
+    if (value === UNICODE.junctionAll) {
+      return UNICODE.junctionLeft;
     }
   }
   // There are a few cases where we just can't do this, and that has to be OK.

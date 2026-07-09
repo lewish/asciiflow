@@ -2,6 +2,7 @@ import { Box } from "#asciiflow/client/common";
 import { UNICODE } from "#asciiflow/client/constants";
 import { AbstractDrawFunction } from "#asciiflow/client/draw/function";
 import { Layer } from "#asciiflow/client/layer";
+import { snap } from "#asciiflow/client/snap";
 import { store } from "#asciiflow/client/store";
 import { Vector } from "#asciiflow/client/vector";
 
@@ -35,6 +36,10 @@ export class DrawBox extends AbstractDrawFunction {
       layer.set(box.bottomRight(), UNICODE.cornerBottomRight);
       layer.set(box.bottomLeft(), UNICODE.cornerBottomLeft);
     }
+
+    // Connect the box to any adjacent lines/boxes (and tidy the junctions),
+    // the same way the line tool snaps.
+    layer.setFrom(snap(layer, store.currentCanvas.committed));
 
     store.currentCanvas.setScratchLayer(layer);
   }

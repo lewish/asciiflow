@@ -47,6 +47,11 @@ export class CanvasStore {
   private _offset: IVector;
   private _scratch: Layer = new Layer();
   private _selection: Box | undefined = undefined;
+  // Selection snapshots tracked alongside the undo/redo layer stacks, plus the
+  // selection captured at the start of the current scratch gesture.
+  private _undoSelections: (Box | undefined)[] = [];
+  private _redoSelections: (Box | undefined)[] = [];
+  private _pendingSelection: Box | undefined = undefined;
 
   // Keys for localStorage persistence.
   private committedKey: string;
@@ -184,17 +189,25 @@ export class CanvasStore {
   }
 
   setScratchLayer(layer: Layer) {
+    // Capture the selection as a gesture begins (empty → non-empty scratch), so
+    // undo can restore it to where it was before the change.
+    if (this._scratch.size() === 0 && layer.size() > 0) {
+      this._pendingSelection = this._selection;
+    }
     this._scratch = layer;
     this.notify();
   }
 
   clear() {
     this._undoLayers = [...this._undoLayers, this.committed];
+    this._undoSelections = [...this._undoSelections, this._selection];
     writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
     this._committed = new Layer();
     writePersistent(this.committedKey, this._committed, Layer);
     this._redoLayers = [];
+    this._redoSelections = [];
     writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this._selection = undefined;
     this.notify();
   }
 
@@ -209,6 +222,8 @@ export class CanvasStore {
     writePersistent(this.committedKey, this._committed, Layer);
     if (undoLayer.size() > 0) {
       this._undoLayers = [...this._undoLayers, undoLayer];
+      // Selection from before this gesture, so undo restores it.
+      this._undoSelections = [...this._undoSelections, this._pendingSelection];
       writePersistent(
         this.undoKey,
         this._undoLayers,
@@ -216,6 +231,7 @@ export class CanvasStore {
       );
     }
     this._redoLayers = [];
+    this._redoSelections = [];
     writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
     this._scratch = new Layer();
     this.notify();
@@ -234,6 +250,11 @@ export class CanvasStore {
     writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
     this._undoLayers = this._undoLayers.slice(0, -1);
     writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
+    // Move the selection through the stack: stash the current one for redo,
+    // restore the one captured before the undone action.
+    this._redoSelections = [...this._redoSelections, this._selection];
+    this._selection = this._undoSelections.at(-1);
+    this._undoSelections = this._undoSelections.slice(0, -1);
     this.notify();
   }
 
@@ -250,6 +271,9 @@ export class CanvasStore {
     writePersistent(this.undoKey, this._undoLayers, new ArrayStringifier(Layer));
     this._redoLayers = this._redoLayers.slice(0, -1);
     writePersistent(this.redoKey, this._redoLayers, new ArrayStringifier(Layer));
+    this._undoSelections = [...this._undoSelections, this._selection];
+    this._selection = this._redoSelections.at(-1);
+    this._redoSelections = this._redoSelections.slice(0, -1);
     this.notify();
   }
 }
