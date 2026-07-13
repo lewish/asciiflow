@@ -79,72 +79,80 @@ site/                  # Static site assets
 
 ## Issue Priority List
 
-Re-triaged February 2026. See GitHub issues for full details.
+Re-triaged July 13, 2026 after the v1.1.0 production release and the merge of PR #368. See GitHub issues for full details.
 
-### Fixed in staging (merged to main, pending production deploy)
+### Recently shipped and closed in v1.1.0
+
+These were previously labelled `fixed-in-staging`. The fixes are in tag `v1.1.0`, are live on asciiflow.com, and the issues have been closed or had the stale label removed.
 
 | Issue | Summary |
 |-------|---------|
-| #258 | Blurry canvas on HiDPI/Retina displays — DPR scaling implemented |
-| #189 | Ctrl+Z triggers browser undo — preventDefault added |
-| #202 | Apostrophe/slash triggers Firefox Quick Find — preventDefault added |
-| #193 | Backspace in text mode doesn't move cursor |
-| #332 | Undo while entering text reverts previous drawing action |
-| #307 | Delete doesn't work for first scene |
-| #321 | Side-scroll wheel only zooms out |
-| #28 | Pan/zoom UX — scroll pans, Cmd+scroll zooms |
+| #28 | Pan/zoom UX, scroll pans and Cmd/Ctrl+scroll zooms |
 | #129 | Two-finger swipe panning |
-| #195 | Space-to-pan in text mode |
+| #187 | Line breaks in paste and export normalization |
+| #189 | Ctrl/Cmd+Z browser undo prevention |
+| #193 | Backspace in text mode moves and clears correctly |
+| #195 | Space-to-pan in text mode conflict |
+| #246 | Visible gridlines toggle in view panel |
+| #258 | Blurry canvas on HiDPI/Retina displays |
 | #297 | Space and Delete in text mode |
-| #187 | Line breaks in paste — line ending normalization |
-| #338 | Copy/paste on macOS Safari/Firefox — native clipboard events |
-| #246 | Visible gridlines — toggle in view panel |
-| #238 | Usability review — closed, bulk addressed by terminal UI overhaul |
+| #307 | Delete works for the first scene |
+| #321 | Side-scroll wheel behaviour |
+| #332 | Undo while typing no longer reverts previous drawing action |
+| #338 | Copy/paste on macOS Safari/Firefox via native clipboard events |
+
+### Merged to main, pending next production release
+
+| Issue / PR | Summary |
+|------------|---------|
+| #368 | Entity-aware select/move tool and smarter snapping. Boxes move from their interior, attached lines reflow, line tips reshape, words move, rubber-band selections keep connected lines tidier. |
+| #58 | Partially addressed by #368, but still open because a full object model for arbitrary element manipulation is broader than the current select-tool work. |
 
 ### Open bugs
 
 | Issue | Summary |
 |-------|---------|
+| #202 | Firefox Quick Find still reported for apostrophe/slash after the original v1.1.0 fix, needs fresh repro on current production |
 | #211 | Spaces broken during export |
-| #85 | CJK character support (fullwidth characters, IME input) |
+| #85 | CJK character support, fullwidth characters and IME input |
 
-### Feature Requests — High Priority
+### Feature Requests, High Priority
 
 | Issue | Summary |
 |-------|---------|
-| #241 | Customisable line/border/corner styles (Unicode box-drawing variants, rounded corners, ASCII mode, dashed lines) |
+| #241 | Customisable line/border/corner styles, including Unicode variants, rounded corners, ASCII mode, dashed lines |
+| #361 | Different characters for boxes and lines, likely folds into #241 |
 | #43 | Diagonal lines |
 | #54 | Export selected area only |
-| #190 | Mobile device support (toolbar is responsive, needs touch gesture work) |
-| #346 | PWA support for offline/installable use (replaces Electron) |
-| #339 | Emoji support (wide character rendering) |
+| #346 | PWA support for offline/installable use, likely replaces Electron |
 
-### Feature Requests — Moderate Priority
+### Feature Requests, Moderate Priority
 
 | Issue | Summary |
 |-------|---------|
 | #162 | Vertical/horizontal flip and 90-degree rotation |
 | #76 | Auto-centre text within boxes |
-| #73 | Show x,y dimensions when drawing boxes |
 | #324 | Remember cursor position across select/text tool switches |
-| #240 | Text tool insert mode (in addition to overwrite) |
+| #240 | Text tool insert mode in addition to overwrite |
 | #303 | Ctrl+arrow for word navigation in text mode |
-| #337 | Distinguishing crossing arrows (╫ or similar) |
+| #337 | Distinguishing crossing arrows, for example ╫ or similar |
 | #259 | Table generator with specified rows/columns |
 | #200 | Drag/move with arrow keys |
 | #197 | Set exact size for lines/boxes |
 
-### Feature Requests — Lower Priority / Longer Term
+### Feature Requests, Lower Priority / Longer Term
 
 | Issue | Summary |
 |-------|---------|
-| #58 | Object model for manipulating individual elements |
-| #44 | Configurable/limited drawing area |
+| #44 | Configurable or limited drawing area |
 | #229 | Circle/ellipse support |
 | #134 | Trapezoid/mux shapes |
 | #336 | Colour support |
-| #228 | Block elements (▀▄█░▒▓) in freeform mode |
 | #273 | Pixel-perfect freeform lines |
-| #274 | Auto-hide/show toolbar on hover (rethink with new top bar) |
 | #219 | Copy/paste characters in freeform mode |
-| #296 | VS Code extension (community — ASCIIFlow is MIT) |
+
+### Non-action / community
+
+| Issue | Summary |
+|-------|---------|
+| #369 | Thank-you issue. Needs a friendly reply and can probably be closed afterwards. |
